@@ -365,15 +365,173 @@ KEYWORD_PAGES = [
     ("wound_x",                   "Wound X"),
 ]
 
-# ── Image search: Wikimedia Commons ───────────────────────────────────────────
+# ── Image sources ─────────────────────────────────────────────────────────────
 WIKI_COMMONS_API = "https://commons.wikimedia.org/w/api.php"
+LEGIONHQ_CDN     = "https://d2maxvwz12z6fm.cloudfront.net/unitCards/"
+
+# Mapping of SW Legion keyword (base name, no trailing X/value) → unit card webp filename.
+# Images are hosted at LEGIONHQ_CDN + filename (URL-encoded spaces as %20).
+# Generated from legionhq2.com JS bundle unit data; iconic/recognisable units preferred
+# for keywords that appear on many units.
+KEYWORD_CARD_IMAGES = {
+    "Advanced Targeting":            "Range%20Troopers.webp",
+    "Agile":                         "Jyn%20Erso.webp",
+    "Aid":                           "Pyke%20Syndicate%20Capo.webp",
+    "Allies of Convenience":         "Lando%20Calrissian.webp",
+    "Armor":                         "AT-ST.webp",
+    "Arsenal":                       "Boba%20Fett%20Infamous%20Bounty%20Hunter.webp",
+    "Associate":                     "Seventh%20Sister.webp",
+    "Ataru Mastery":                 "Yoda.webp",
+    "Barrage":                       "AAT%20Battle%20Tank.webp",
+    "Block":                         "Luke%20Skywalker%20Hero%20of%20the%20Rebellion.webp",
+    "Bolster":                       "T-Series%20Tactical%20Droid.webp",
+    "Bounty":                        "Boba%20Fett%20Infamous%20Bounty%20Hunter.webp",
+    "Calculate Odds":                "K-2SO.webp",
+    "Charge":                        "Luke%20Skywalker%20Hero%20of%20the%20Rebellion.webp",
+    "Climbing Vehicle":              "AT-RT%20Reb.webp",
+    "Command Vehicle":               "Jedi%20Knight%20Mounted%20Jedi%20General.webp",
+    "Compel":                        "Darth%20Vader%20Dark%20Lord%20of%20the%20Sith.webp",
+    "Complete the Mission":          "Clone%20Commandos.webp",
+    "Coordinate":                    "Rebel%20Veterans.webp",
+    "Cover":                         "74-Z%20Speeder%20Bikes.webp",
+    "Cunning":                       "Count%20Dooku.webp",
+    "Danger Sense":                  "Cad%20Bane.webp",
+    "Dauntless":                     "Black%20Sun%20Vigo.webp",
+    "Death from Above":              "Sun%20Fac.webp",
+    "Defend":                        "Ahsoka%20Tano.webp",
+    "Deflect":                       "Darth%20Vader%20Dark%20Lord%20of%20the%20Sith.webp",
+    "Demoralize":                    "Savage%20Opress%20Maul%27s%20Enforcer.webp",
+    "Detachment":                    "DF-90%20Mortar%20Trooper.webp",
+    "Direct":                        "Count%20Dooku.webp",
+    "Disciplined":                   "Seventh%20Sister.webp",
+    "Disengage":                     "Jyn%20Erso.webp",
+    "Distract":                      "Plo%20Koon.webp",
+    "Divine Influence":              "C-3PO%20Golden%20God.webp",
+    "Djem So Mastery":               "Anakin%20Skywalker.webp",
+    "Duelist":                       "Wookiee%20Chieftain.webp",
+    "Enrage":                        "Chewbacca%20Walking%20Carpet.webp",
+    "Entourage":                     "General%20Grievous%20Sinister%20Cyborg.webp",
+    "Equip":                         "Clone%20Commandos.webp",
+    "Exemplar":                      "Leia%20Organa.webp",
+    "Expert Climber":                "AT-RT%20Reb.webp",
+    "Field Commander":               "Cassian%20Andor.webp",
+    "Fire Support":                  "DF-90%20Mortar%20Trooper.webp",
+    "Fixed":                         "Persuader-Class%20Tank%20Droid.webp",
+    "Flexible Response":             "Guerilla%20Troopers.webp",
+    "Full Pivot":                    "DF-90%20Mortar%20Trooper.webp",
+    "Generator":                     "Droidekas.webp",
+    "Guardian":                      "Chewbacca%20Walking%20Carpet.webp",
+    "Guidance":                      "General%20Veers.webp",
+    "Gunslinger":                    "Han%20Solo.webp",
+    "Heavy Weapon Team":             "Mandalorian%20Warriors%20Fire%20Support.webp",
+    "Hover":                         "Saber-Class%20Tank.webp",
+    "Immune: Blast":                 "T-47%20Airspeeder.webp",
+    "Immune: Melee":                 "T-47%20Airspeeder.webp",
+    "Immune: Melee Pierce":          "Agent%20Kallus.webp",
+    "Immune: Pierce":                "Darth%20Vader%20Dark%20Lord%20of%20the%20Sith.webp",
+    "Immune: Range 1 Weapons":       "T-47%20Airspeeder.webp",
+    "Impervious":                    "Boba%20Fett%20Infamous%20Bounty%20Hunter.webp",
+    "Incognito":                     "K-2SO.webp",
+    "Inconspicuous":                 "R2-D2%20Hero%20of%20a%20Thousand%20Devices.webp",
+    "Independent":                   "Boba%20Fett%20Infamous%20Bounty%20Hunter.webp",
+    "Indomitable":                   "Wookiee%20Chieftain.webp",
+    "Infiltrate":                    "Cassian%20Andor.webp",
+    "Inspire":                       "Leia%20Organa.webp",
+    "Interrogate":                   "Agent%20Kallus.webp",
+    "Jar'Kai Mastery":               "Asajj%20Ventress.webp",
+    "Jedi Hunter":                   "General%20Grievous%20Sinister%20Cyborg.webp",
+    "Jump":                          "Luke%20Skywalker%20Hero%20of%20the%20Rebellion.webp",
+    "Juyo Mastery":                  "Maul%20Impatient%20Apprentice.webp",
+    "Low Profile":                   "Han%20Solo.webp",
+    "Makashi Mastery":               "Count%20Dooku.webp",
+    "Marksman":                      "Iden%20Versio.webp",
+    "Master Storyteller":            "C-3PO%20Golden%20God.webp",
+    "Master of the Force":           "Darth%20Vader%20Dark%20Lord%20of%20the%20Sith.webp",
+    "Mercenary":                     "Boba%20Fett%20Infamous%20Bounty%20Hunter.webp",
+    "Mobile":                        "TSMEU-6%20Wheel%20Bikes.webp",
+    "My Mood is Based on Profit":    "Hondo%20Ohnaka.webp",
+    "Nimble":                        "Leia%20Organa.webp",
+    "Observe":                       "Clone%20Commander%20Cody.webp",
+    "One Step Ahead":                "Grand%20Admiral%20Thrawn.webp",
+    "Outmaneuver":                   "Saber-Class%20Tank.webp",
+    "Override":                      "Kraken.webp",
+    "Plodding":                      "Imperial%20Dark%20Troopers.webp",
+    "Precise":                       "Stormtroopers.webp",
+    "Prepared Position":             "DF-90%20Mortar%20Trooper.webp",
+    "Programmed":                    "IG-11.webp",
+    "Pulling the Strings":           "Grand%20Moff%20Tarkin.webp",
+    "Quick Thinking":                "Iden%20Versio.webp",
+    "Recharge":                      "Clone%20Commandos.webp",
+    "Regenerate":                    "Bossk.webp",
+    "Reinforcements":                "Kalani.webp",
+    "Relentless":                    "Darth%20Vader%20Dark%20Lord%20of%20the%20Sith.webp",
+    "Reliable":                      "Clone%20Trooper%20Infantry.webp",
+    "Repair":                        "R2-D2%20Hero%20of%20a%20Thousand%20Devices.webp",
+    "Reposition":                    "Tauntaun%20Riders.webp",
+    "Retinue":                       "Mandalorian%20Leader.webp",
+    "Ruthless":                      "Moff%20Gideon.webp",
+    "Scale":                         "General%20Grievous%20Sinister%20Cyborg.webp",
+    "Scout":                         "Scout%20Troopers.webp",
+    "Scouting Party":                "Wicket.webp",
+    "Secret Mission":                "R2-D2%20Hero%20of%20a%20Thousand%20Devices.webp",
+    "Self-Destruct":                 "Imperial%20Probe%20Droid.webp",
+    "Self-Preservation":             "Han%20%26%20Chewie.webp",
+    "Sentinel":                      "Boba%20Fett%20Daimyo%20of%20Mos%20Espa.webp",
+    "Sharpshooter":                  "Scout%20Troopers.webp",
+    "Shielded":                      "Droidekas.webp",
+    "Shien Mastery":                 "Plo%20Koon.webp",
+    "Soresu Mastery":                "Obi-Wan%20Kenobi.webp",
+    "Special Issue":                 "Major%20Marquand.webp",
+    "Speeder":                       "74-Z%20Speeder%20Bikes.webp",
+    "Spotter":                       "General%20Veers.webp",
+    "Spur":                          "Han%20Solo%20Reluctant%20Hero.webp",
+    "Steady":                        "Han%20Solo.webp",
+    "Strategize":                    "Kraken.webp",
+    "Suppressive":                   "Stormtroopers.webp",
+    "Tactical":                      "Moff%20Gideon.webp",
+    "Take Cover":                    "Leia%20Organa.webp",
+    "Target":                        "Clone%20Commander%20Cody.webp",
+    "Teamwork":                      "Chewbacca%20Walking%20Carpet.webp",
+    "Tempted":                       "Anakin%20Skywalker.webp",
+    "Transport":                     "A-A5%20Speeder%20Truck%20R.webp",
+    "Uncanny Luck":                  "Han%20Solo.webp",
+    "Unconcerned":                   "Imperial%20Dark%20Troopers.webp",
+    "Unhindered":                    "Wicket.webp",
+    "Unstoppable":                   "Imperial%20Dark%20Troopers.webp",
+    "Vaapad Mastery":                "Mace%20Windu.webp",
+    "Weak Point":                    "AT-ST.webp",
+    "Weighed Down":                  "Poggle%20the%20Lesser.webp",
+    "Wheel Mode":                    "Droidekas.webp",
+    "Wound":                         "Maul%20A%20Rival.webp",
+}
 
 
-def safe_filename(name):
-    return re.sub(r"[^\w\s-]", "", name).strip().replace(" ", "_")[:60] + ".jpg"
+def _kw_lookup_key(keyword_name):
+    """Normalise a keyword display name to the lookup key used in KEYWORD_CARD_IMAGES."""
+    # Strip trailing [] markers and trailing X (variable value)
+    k = re.sub(r"\s*\[\]$", "", keyword_name).strip()
+    k = re.sub(r"\s+X$", "", k).strip()
+    # Also try without trailing value like "Keyword: Value"
+    return k
 
 
-def search_images(keyword_name, max_imgs=2):
+def safe_filename(name, ext=".jpg"):
+    """Return a safe filename stem + extension."""
+    stem = re.sub(r"[^\w\s-]", "", name).strip().replace(" ", "_")[:60]
+    return stem + ext
+
+
+def _get_ext(url):
+    """Return '.webp', '.jpg', or '.png' based on the URL."""
+    if re.search(r"\.webp", url, re.I):
+        return ".webp"
+    if re.search(r"\.png", url, re.I):
+        return ".png"
+    return ".jpg"
+
+
+def search_images_wiki(keyword_name, max_imgs=2):
+    """Fallback: search Wikimedia Commons for images."""
     clean = re.sub(r"\s*[\(\[].*?[\)\]]", "", keyword_name).strip()
     clean = re.sub(r"\s+X$", "", clean).strip()
     search_terms = [f"Star Wars Legion {clean}", f"Star Wars {clean}"]
@@ -408,7 +566,39 @@ def search_images(keyword_name, max_imgs=2):
 
 
 def download_images(keyword_name, imgdir, max_imgs=2):
-    base = safe_filename(keyword_name).replace(".jpg", "")
+    """Download images for a keyword.
+
+    Priority:
+    1. Use unit card image from legionhq2.com CloudFront CDN if available.
+    2. Fall back to Wikimedia Commons search.
+
+    Returns (list_of_relative_paths, already_cached: bool).
+    """
+    lookup_key = _kw_lookup_key(keyword_name)
+    card_filename = KEYWORD_CARD_IMAGES.get(lookup_key)
+
+    # ── Try CloudFront unit card first ────────────────────────────────────────
+    if card_filename:
+        card_url = LEGIONHQ_CDN + card_filename
+        ext      = _get_ext(card_url)
+        fname    = safe_filename(keyword_name, ext=ext)
+        # Use index 1 only (one authoritative card image per keyword)
+        filepath = os.path.join(imgdir, fname)
+        if os.path.exists(filepath) and os.path.getsize(filepath) > 1000:
+            return [f"images/{fname}"], True
+        try:
+            r = requests.get(card_url, headers=HEADERS, timeout=20)
+            r.raise_for_status()
+            with open(filepath, "wb") as f:
+                f.write(r.content)
+            print(f"(card)", end=" ")
+            return [f"images/{fname}"], False
+        except Exception as exc:
+            print(f"(card-fail:{exc})", end=" ")
+            # Fall through to Wikimedia
+
+    # ── Wikimedia Commons fallback ────────────────────────────────────────────
+    base     = safe_filename(keyword_name, ext="").rstrip("_")
     existing, needed = [], []
     for i in range(1, max_imgs + 1):
         fname    = f"{base}_{i}.jpg"
@@ -419,7 +609,7 @@ def download_images(keyword_name, imgdir, max_imgs=2):
             needed.append((i, fname, filepath))
     if not needed:
         return existing, True
-    urls  = search_images(keyword_name, max_imgs=len(needed))
+    urls = search_images_wiki(keyword_name, max_imgs=len(needed))
     saved = list(existing)
     for (i, fname, filepath), url in zip(needed, urls):
         try:
@@ -447,6 +637,95 @@ def scrape_keyword_page(slug, display_name, session):
     try:
         from bs4 import BeautifulSoup
         soup = BeautifulSoup(r.text, "html.parser")
+
+        # ── Replace inline icon <img> elements with readable text ─────────────
+        # Icons live at paths like /images/black/<name>.png or /images/tokens/<name>.png
+        # The 'title' attribute (when present) is the most reliable label.
+        # Fallback: derive label from the filename stem.
+        _ICON_TITLE_MAP = {
+            # Die-face icons
+            "hit":          "[HIT]",
+            "hit surge":    "[SURGE: HIT]",
+            "hit critical": "[CRIT]",
+            "block":        "[BLOCK]",
+            "block surge":  "[SURGE: BLOCK]",
+            # Range icons
+            "range melee":    "[MELEE]",
+            "range half":     "[RANGE 1/2]",
+            "range 1":        "[RANGE 1]",
+            "range 2":        "[RANGE 2]",
+            "range 3":        "[RANGE 3]",
+            "range 4":        "[RANGE 4]",
+            "range 5":        "[RANGE 5]",
+            "range infinite": "[RANGE ∞]",
+            # Rank icons
+            "rank commander": "[COMMANDER]",
+            "rank operative": "[OPERATIVE]",
+            "rank corps":     "[CORPS]",
+            "rank specialist":"[SPECIALIST]",
+            "rank support":   "[SUPPORT]",
+            "rank heavy":     "[HEAVY]",
+            # Courage / misc
+            "courage": "[COURAGE]",
+        }
+        _TOKEN_NAME_MAP = {
+            "aim":        "[AIM TOKEN]",
+            "dodge":      "[DODGE TOKEN]",
+            "surge":      "[SURGE TOKEN]",
+            "standby":    "[STANDBY TOKEN]",
+            "observation":"[OBSERVATION TOKEN]",
+            "smoke":      "[SMOKE TOKEN]",
+            "damage":     "[DAMAGE TOKEN]",
+            "order":      "[ORDER TOKEN]",
+            "commander":  "[COMMANDER TOKEN]",
+            "ion":        "[ION TOKEN]",
+            "poison":     "[POISON TOKEN]",
+            "immobilize": "[IMMOBILIZE TOKEN]",
+            "shield":     "[SHIELD TOKEN]",
+            "charge":     "[CHARGE TOKEN]",
+            "wheel-mode": "[WHEEL MODE TOKEN]",
+            "incognito":  "[INCOGNITO TOKEN]",
+            "graffiti":   "[GRAFFITI TOKEN]",
+            "poi":        "[POI TOKEN]",
+            "asset":      "[ASSET TOKEN]",
+            "advantage":  "[ADVANTAGE TOKEN]",
+        }
+
+        for img_tag in soup.find_all("img"):
+            src   = img_tag.get("src", "")
+            title = (img_tag.get("title") or "").strip().lower()
+            alt   = (img_tag.get("alt")   or "").strip().lower()
+
+            replacement = None
+
+            # Check title attribute first (most reliable)
+            if title and title in _ICON_TITLE_MAP:
+                replacement = _ICON_TITLE_MAP[title]
+
+            # Check token images by src path
+            if replacement is None and "/images/tokens/" in src:
+                stem = re.sub(r"\.[^.]+$", "", src.rsplit("/", 1)[-1]).lower()
+                replacement = _TOKEN_NAME_MAP.get(stem, f"[{stem.upper()} TOKEN]")
+
+            # Check black/ die / range / rank icons by src path
+            if replacement is None and "/images/black/" in src:
+                stem = re.sub(r"\.[^.]+$", "", src.rsplit("/", 1)[-1]).lower()
+                if stem in _ICON_TITLE_MAP:
+                    replacement = _ICON_TITLE_MAP[stem]
+                elif stem.startswith("range-"):
+                    rng = stem[len("range-"):]
+                    replacement = f"[RANGE {rng.upper()}]"
+                elif stem.startswith("rank-"):
+                    rank = stem[len("rank-"):].upper()
+                    replacement = f"[{rank}]"
+                else:
+                    # Generic fallback: use alt or title if available
+                    label = (alt or title or stem).upper()
+                    replacement = f"[{label}]"
+
+            if replacement:
+                img_tag.replace_with(replacement)
+
         text = soup.get_text(separator="\n", strip=True)
     except Exception as e:
         print(f"  PARSE ERROR {slug}: {e}")
@@ -479,13 +758,20 @@ def scrape_keyword_page(slug, display_name, session):
         return line in ("Back to Legion Helper", "I am One with the Force",
                         "I'm a Star Wars Muggle", display_name, "×")
 
+    # icon token pattern – short lines produced by our img replacements are valid
+    def is_icon_token(line):
+        return bool(re.match(r"^\[.+\]$", line))
+
     # Start collecting after the type line (or after the name if no type line)
     start_idx = type_line_idx + 1 if type_line_idx >= 0 else 0
     definition_parts = []
     for line in lines[start_idx:]:
-        if is_stop(line) or is_noise(line):
+        if is_stop(line):
             break
-        if len(line) > 10 and not line.startswith("http"):
+        if is_noise(line):
+            continue   # skip UI labels / display name, but keep collecting
+        # Accept icon tokens regardless of length; otherwise require > 3 chars
+        if not line.startswith("http") and (is_icon_token(line) or len(line) > 3):
             definition_parts.append(line)
 
     # If nothing found yet, fall back: take lines after the display name
@@ -497,13 +783,14 @@ def scrape_keyword_page(slug, display_name, session):
             if is_noise(line):
                 found_name = True
                 continue
-            if found_name and len(line) > 10 and not line.startswith("http"):
+            if found_name and not line.startswith("http") and (is_icon_token(line) or len(line) > 3):
                 definition_parts.append(line)
-                if len(definition_parts) >= 3:
+                if len(definition_parts) >= 12:
                     break
 
-    definition = " ".join(definition_parts[:3]).strip()
-    # Clean up icon placeholders and excess whitespace
+    # Join all parts (icon tokens inline), then truncate to 500 chars
+    definition = " ".join(definition_parts).strip()
+    # Clean up excess whitespace
     definition = re.sub(r"\s+", " ", definition)
     if len(definition) > 500:
         definition = definition[:497] + "..."
