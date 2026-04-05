@@ -738,6 +738,10 @@ def scrape_keyword_page(slug, display_name, session):
             "advantage":  "[ADVANTAGE TOKEN]",
         }
 
+        # Remove <head> entirely so the page <title> doesn't pollute the definition
+        if soup.head:
+            soup.head.decompose()
+
         for img_tag in soup.find_all("img"):
             src   = img_tag.get("src", "")
             title = (img_tag.get("title") or "").strip().lower()
@@ -796,7 +800,7 @@ def scrape_keyword_page(slug, display_name, session):
     # ── Extract definition ────────────────────────────────────────────────────
     # Skip header noise, find definition text after the keyword type label
     STOP = {"Related keywords", "Related Keywords", "Get sharable image",
-            "Share keyword", "This website uses cookies", "Back to Legion Helper"}
+            "Share keyword", "This website uses cookies"}
 
     def is_stop(line):
         return any(line.startswith(s) for s in STOP)
