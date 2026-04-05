@@ -1254,9 +1254,10 @@ html,body{width:100%;height:100%;overflow:hidden;
     <button class="fs-pill active" id="pill-learn" onclick="setMode('learn')">Learn</button>
     <button class="fs-pill" id="pill-quiz" onclick="setMode('quiz')">Quiz</button>
     <div id="fs-type-filter">
-      <button class="fs-pill active" id="pill-all"    onclick="setTypeFilter('all')">All</button>
-      <button class="fs-pill"        id="pill-unit"   onclick="setTypeFilter('unit')">Unit</button>
-      <button class="fs-pill"        id="pill-weapon" onclick="setTypeFilter('weapon')">Weapon</button>
+      <button class="fs-pill active" id="pill-all"     onclick="setTypeFilter('all')">All</button>
+      <button class="fs-pill"        id="pill-unit"    onclick="setTypeFilter('unit')">Unit</button>
+      <button class="fs-pill"        id="pill-weapon"  onclick="setTypeFilter('weapon')">Weapon</button>
+      <button class="fs-pill"        id="pill-concept" onclick="setTypeFilter('noconcept')">No Concepts</button>
     </div>
     <div id="fs-list-filter" style="display:none">
       <select id="list-select" class="fs-list-select" onchange="setListFilter(this.value)"></select>
@@ -1315,7 +1316,8 @@ html,body{width:100%;height:100%;overflow:hidden;
       <button class="dark-pill" onclick="setCF('unlearned',this)">Unlearned</button>
       <button class="dark-pill" onclick="setCF('unit',this)">Unit Keywords</button>
       <button class="dark-pill" onclick="setCF('weapon',this)">Weapon Keywords</button>
-      <button class="dark-pill" onclick="setCF('concept',this)">Concepts</button>
+      <button class="dark-pill" onclick="setCF('concept',this)">Concepts Only</button>
+      <button class="dark-pill" onclick="setCF('noconcept',this)">No Concepts</button>
     </div>
     <div class="cat-count" id="cat-count"></div>
     <div class="cat-grid" id="cat-grid"></div>
@@ -1464,7 +1466,11 @@ let activeListId=null; // ID of currently active list filter
 
 function setTypeFilter(t){
   typeFilter=t;
-  ['all','unit','weapon'].forEach(x=>{ document.getElementById('pill-'+x).classList.toggle('active',x===t); });
+  ['all','unit','weapon','concept'].forEach(x=>{
+    const el=document.getElementById('pill-'+x); if(el) el.classList.remove('active');
+  });
+  const activeId = t==='noconcept'?'pill-concept':'pill-'+t;
+  const activeEl=document.getElementById(activeId); if(activeEl) activeEl.classList.add('active');
   clrStatus(); initDeck(); render();
 }
 function filteredCards(){
@@ -1477,8 +1483,9 @@ function filteredCards(){
       cards=cards.filter(c=>kwSet.has(c.name.toLowerCase()));
     }
   }
-  if(typeFilter==='weapon') return cards.filter(c=>c.type==='weapon');
-  if(typeFilter==='unit')   return cards.filter(c=>c.type==='unit');
+  if(typeFilter==='weapon')    return cards.filter(c=>c.type==='weapon');
+  if(typeFilter==='unit')      return cards.filter(c=>c.type==='unit');
+  if(typeFilter==='noconcept') return cards.filter(c=>c.type!=='concept');
   return cards;
 }
 function setListFilter(listId){
@@ -1682,11 +1689,12 @@ function renderCatalog(){
       list=list.filter(c=>kwSet.has(c.name.toLowerCase()));
     }
   }
-  if(catFilter==='learned')   list=list.filter(c=>s(c.name).learned);
-  if(catFilter==='unlearned') list=list.filter(c=>!s(c.name).learned);
-  if(catFilter==='unit')      list=list.filter(c=>c.type==='unit');
-  if(catFilter==='weapon')    list=list.filter(c=>c.type==='weapon');
-  if(catFilter==='concept')   list=list.filter(c=>c.type==='concept');
+  if(catFilter==='learned')    list=list.filter(c=>s(c.name).learned);
+  if(catFilter==='unlearned')  list=list.filter(c=>!s(c.name).learned);
+  if(catFilter==='unit')       list=list.filter(c=>c.type==='unit');
+  if(catFilter==='weapon')     list=list.filter(c=>c.type==='weapon');
+  if(catFilter==='concept')    list=list.filter(c=>c.type==='concept');
+  if(catFilter==='noconcept')  list=list.filter(c=>c.type!=='concept');
   document.getElementById('cat-count').textContent=`${list.length} keyword${list.length!==1?'s':''}`;
   const g=document.getElementById('cat-grid');
   if(!list.length){ g.innerHTML='<p class="empty-msg">Nothing here.</p>'; return; }
