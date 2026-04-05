@@ -375,48 +375,68 @@ LEGIONHQ_CDN     = "https://d2maxvwz12z6fm.cloudfront.net/unitCards/"
 # for keywords that appear on many units.
 KEYWORD_CARD_IMAGES = {
     "Advanced Targeting":            "Range%20Troopers.webp",
+    "Advanced Targeting: Unit Type": "Range%20Troopers.webp",
     "Agile":                         "Jyn%20Erso.webp",
+    "AI: Action":                    "B2%20Super%20Battle%20Droids.webp",
     "Aid":                           "Pyke%20Syndicate%20Capo.webp",
+    "Aid: Affiliation":              "Pyke%20Syndicate%20Capo.webp",
     "Allies of Convenience":         "Lando%20Calrissian.webp",
+    "Arm":                           "AT-RT%20Reb.webp",
     "Armor":                         "AT-ST.webp",
     "Arsenal":                       "Boba%20Fett%20Infamous%20Bounty%20Hunter.webp",
     "Associate":                     "Seventh%20Sister.webp",
+    "Associate: Unit Name":          "Seventh%20Sister.webp",
     "Ataru Mastery":                 "Yoda.webp",
+    "Attack":                        "Darth%20Vader%20Dark%20Lord%20of%20the%20Sith.webp",
+    "Attack Run":                    "Raddaugh%20Gnasp%20Fluttercraft%20Attack%20Craft.webp",
     "Barrage":                       "AAT%20Battle%20Tank.webp",
+    "Blast":                         "DSD1%20Dwarf%20Spider%20Droid.webp",
     "Block":                         "Luke%20Skywalker%20Hero%20of%20the%20Rebellion.webp",
     "Bolster":                       "T-Series%20Tactical%20Droid.webp",
     "Bounty":                        "Boba%20Fett%20Infamous%20Bounty%20Hunter.webp",
     "Calculate Odds":                "K-2SO.webp",
     "Charge":                        "Luke%20Skywalker%20Hero%20of%20the%20Rebellion.webp",
+    "Climbing":                      "AT-RT%20Reb.webp",
     "Climbing Vehicle":              "AT-RT%20Reb.webp",
+    "Clone Trooper":                 "Clone%20Captain%20Rex.webp",
     "Command Vehicle":               "Jedi%20Knight%20Mounted%20Jedi%20General.webp",
     "Compel":                        "Darth%20Vader%20Dark%20Lord%20of%20the%20Sith.webp",
+    "Compel: Rank/Unit Type":        "Director%20Orson%20Krennic.webp",
     "Complete the Mission":          "Clone%20Commandos.webp",
     "Coordinate":                    "Rebel%20Veterans.webp",
+    "Coordinate: Type/Name":         "Rebel%20Veterans.webp",
     "Cover":                         "74-Z%20Speeder%20Bikes.webp",
+    "Creature Trooper":              "Tauntaun%20Riders.webp",
+    "Critical":                      "DF-90%20Mortar%20Trooper.webp",
     "Cunning":                       "Count%20Dooku.webp",
     "Danger Sense":                  "Cad%20Bane.webp",
     "Dauntless":                     "Black%20Sun%20Vigo.webp",
     "Death from Above":              "Sun%20Fac.webp",
+    "Death From Above":              "Sun%20Fac.webp",
     "Defend":                        "Ahsoka%20Tano.webp",
     "Deflect":                       "Darth%20Vader%20Dark%20Lord%20of%20the%20Sith.webp",
     "Demoralize":                    "Savage%20Opress%20Maul%27s%20Enforcer.webp",
     "Detachment":                    "DF-90%20Mortar%20Trooper.webp",
+    "Detachment: Name/Type":         "Rebel%20Commandos%20Strike%20Team.webp",
     "Direct":                        "Count%20Dooku.webp",
     "Disciplined":                   "Seventh%20Sister.webp",
     "Disengage":                     "Jyn%20Erso.webp",
     "Distract":                      "Plo%20Koon.webp",
     "Divine Influence":              "C-3PO%20Golden%20God.webp",
     "Djem So Mastery":               "Anakin%20Skywalker.webp",
+    "Droid Trooper":                 "B2%20Super%20Battle%20Droids.webp",
     "Duelist":                       "Wookiee%20Chieftain.webp",
+    "Emplacement Trooper":           "1.4%20FD%20Laser%20Cannon%20Team.webp",
     "Enrage":                        "Chewbacca%20Walking%20Carpet.webp",
     "Entourage":                     "General%20Grievous%20Sinister%20Cyborg.webp",
+    "Entourage: Unit Name":          "Director%20Orson%20Krennic.webp",
     "Equip":                         "Clone%20Commandos.webp",
     "Exemplar":                      "Leia%20Organa.webp",
     "Expert Climber":                "AT-RT%20Reb.webp",
     "Field Commander":               "Cassian%20Andor.webp",
     "Fire Support":                  "DF-90%20Mortar%20Trooper.webp",
     "Fixed":                         "Persuader-Class%20Tank%20Droid.webp",
+    "Fixed: Front/Rear":             "LAAT%20Patrol%20Transport%20R.webp",
     "Flexible Response":             "Guerilla%20Troopers.webp",
     "Full Pivot":                    "DF-90%20Mortar%20Trooper.webp",
     "Generator":                     "Droidekas.webp",
@@ -424,8 +444,14 @@ KEYWORD_CARD_IMAGES = {
     "Guidance":                      "General%20Veers.webp",
     "Gunslinger":                    "Han%20Solo.webp",
     "Heavy Weapon Team":             "Mandalorian%20Warriors%20Fire%20Support.webp",
+    "High Velocity":                 "AAT%20Battle%20Tank.webp",
+    "Hold the Line":                 "Riot%20Control%20Squad.webp",
     "Hover":                         "Saber-Class%20Tank.webp",
+    "Hover: Ground/Air":             "Saber-Class%20Tank.webp",
+    "Hunted":                        "Grogu.webp",
+    "Impact":                        "Luke%20Skywalker%20Hero%20of%20the%20Rebellion.webp",
     "Immune: Blast":                 "T-47%20Airspeeder.webp",
+    "Immune: Keyword":               "Luke%20Skywalker%20Hero%20of%20the%20Rebellion.webp",
     "Immune: Melee":                 "T-47%20Airspeeder.webp",
     "Immune: Melee Pierce":          "Agent%20Kallus.webp",
     "Immune: Pierce":                "Darth%20Vader%20Dark%20Lord%20of%20the%20Sith.webp",
@@ -434,33 +460,44 @@ KEYWORD_CARD_IMAGES = {
     "Incognito":                     "K-2SO.webp",
     "Inconspicuous":                 "R2-D2%20Hero%20of%20a%20Thousand%20Devices.webp",
     "Independent":                   "Boba%20Fett%20Infamous%20Bounty%20Hunter.webp",
+    "Independent: Token X/Action":   "Jyn%20Erso.webp",
     "Indomitable":                   "Wookiee%20Chieftain.webp",
     "Infiltrate":                    "Cassian%20Andor.webp",
     "Inspire":                       "Leia%20Organa.webp",
     "Interrogate":                   "Agent%20Kallus.webp",
+    "Ion":                           "Persuader-Class%20Tank%20Droid.webp",
     "Jar'Kai Mastery":               "Asajj%20Ventress.webp",
     "Jedi Hunter":                   "General%20Grievous%20Sinister%20Cyborg.webp",
     "Jump":                          "Luke%20Skywalker%20Hero%20of%20the%20Rebellion.webp",
     "Juyo Mastery":                  "Maul%20Impatient%20Apprentice.webp",
+    "Lethal":                        "Chewbacca%20Walking%20Carpet.webp",
+    "Long Shot":                     "Luke%20Skywalker%20Hero%20of%20the%20Rebellion.webp",
     "Low Profile":                   "Han%20Solo.webp",
     "Makashi Mastery":               "Count%20Dooku.webp",
     "Marksman":                      "Iden%20Versio.webp",
     "Master Storyteller":            "C-3PO%20Golden%20God.webp",
     "Master of the Force":           "Darth%20Vader%20Dark%20Lord%20of%20the%20Sith.webp",
     "Mercenary":                     "Boba%20Fett%20Infamous%20Bounty%20Hunter.webp",
+    "Mercenary: Faction":            "Boba%20Fett%20Infamous%20Bounty%20Hunter.webp",
     "Mobile":                        "TSMEU-6%20Wheel%20Bikes.webp",
     "My Mood is Based on Profit":    "Hondo%20Ohnaka.webp",
     "Nimble":                        "Leia%20Organa.webp",
     "Observe":                       "Clone%20Commander%20Cody.webp",
     "One Step Ahead":                "Grand%20Admiral%20Thrawn.webp",
     "Outmaneuver":                   "Saber-Class%20Tank.webp",
+    "Overrun":                       "Swoop%20Bike%20Riders.webp",
     "Override":                      "Kraken.webp",
+    "Pierce":                        "Han%20Solo.webp",
     "Plodding":                      "Imperial%20Dark%20Troopers.webp",
+    "Poison":                        "Savage%20Opress%20Maul%27s%20Enforcer.webp",
     "Precise":                       "Stormtroopers.webp",
     "Prepared Position":             "DF-90%20Mortar%20Trooper.webp",
+    "Primitive":                     "Wicket.webp",
     "Programmed":                    "IG-11.webp",
     "Pulling the Strings":           "Grand%20Moff%20Tarkin.webp",
     "Quick Thinking":                "Iden%20Versio.webp",
+    "Ram":                           "Tauntaun%20Riders.webp",
+    "Ready":                         "Imperial%20Death%20Troopers.webp",
     "Recharge":                      "Clone%20Commandos.webp",
     "Regenerate":                    "Bossk.webp",
     "Reinforcements":                "Kalani.webp",
@@ -469,6 +506,7 @@ KEYWORD_CARD_IMAGES = {
     "Repair":                        "R2-D2%20Hero%20of%20a%20Thousand%20Devices.webp",
     "Reposition":                    "Tauntaun%20Riders.webp",
     "Retinue":                       "Mandalorian%20Leader.webp",
+    "Retinue: Unit/Unit Type":       "Mandalorian%20Resistance%20Clan%20Wren.webp",
     "Ruthless":                      "Moff%20Gideon.webp",
     "Scale":                         "General%20Grievous%20Sinister%20Cyborg.webp",
     "Scout":                         "Scout%20Troopers.webp",
@@ -482,9 +520,13 @@ KEYWORD_CARD_IMAGES = {
     "Shien Mastery":                 "Plo%20Koon.webp",
     "Soresu Mastery":                "Obi-Wan%20Kenobi.webp",
     "Special Issue":                 "Major%20Marquand.webp",
+    "Special Issue: Battle Force":   "Stormtroopers%20Heavy%20Response%20Unit.webp",
     "Speeder":                       "74-Z%20Speeder%20Bikes.webp",
     "Spotter":                       "General%20Veers.webp",
+    "Spray":                         "Flametrooper.webp",
     "Spur":                          "Han%20Solo%20Reluctant%20Hero.webp",
+    "Standby":                       "Rebel%20Troopers.webp",
+    "Stationary":                    "1.4%20FD%20Laser%20Cannon%20Team.webp",
     "Steady":                        "Han%20Solo.webp",
     "Strategize":                    "Kraken.webp",
     "Suppressive":                   "Stormtroopers.webp",
@@ -492,16 +534,21 @@ KEYWORD_CARD_IMAGES = {
     "Take Cover":                    "Leia%20Organa.webp",
     "Target":                        "Clone%20Commander%20Cody.webp",
     "Teamwork":                      "Chewbacca%20Walking%20Carpet.webp",
+    "Teamwork: Unit Name":           "Chewbacca%20Walking%20Carpet.webp",
     "Tempted":                       "Anakin%20Skywalker.webp",
     "Transport":                     "A-A5%20Speeder%20Truck%20R.webp",
+    "Treat":                         "R2-D2%20Hero%20of%20a%20Thousand%20Devices.webp",
     "Uncanny Luck":                  "Han%20Solo.webp",
     "Unconcerned":                   "Imperial%20Dark%20Troopers.webp",
     "Unhindered":                    "Wicket.webp",
     "Unstoppable":                   "Imperial%20Dark%20Troopers.webp",
     "Vaapad Mastery":                "Mace%20Windu.webp",
+    "Versatile":                     "Boba%20Fett%20Infamous%20Bounty%20Hunter.webp",
     "Weak Point":                    "AT-ST.webp",
+    "We're Not Regs":                "The%20Bad%20Batch%20Rep.webp",
     "Weighed Down":                  "Poggle%20the%20Lesser.webp",
     "Wheel Mode":                    "Droidekas.webp",
+    "Wookiee Trooper":               "Chewbacca%20Walking%20Carpet.webp",
     "Wound":                         "Maul%20A%20Rival.webp",
 }
 
@@ -829,11 +876,138 @@ def scrape_keywords():
 
 
 # ── HTML builder ──────────────────────────────────────────────────────────────
+def build_unit_db_js():
+    """Return a compact JavaScript const UNIT_DB = {...}; string from the LegionHQ2 bundle.
+
+    Downloads and parses the LegionHQ2 JS bundle (cached to legionhq2_units.json next to
+    this script). Returns an empty object string if download fails.
+    """
+    cache_path = os.path.join(HERE, "legionhq2_units.json")
+    unit_db = None
+
+    # Try loading from cache first
+    if os.path.exists(cache_path):
+        try:
+            with open(cache_path, "r", encoding="utf-8") as f:
+                unit_db = json.load(f)
+            print(f"  (unit DB loaded from cache: {len(unit_db)} units)")
+        except Exception:
+            unit_db = None
+
+    if unit_db is None:
+        print("  Fetching LegionHQ2 unit database...")
+        try:
+            # Get main bundle URL
+            r = requests.get("https://legionhq2.com/list/empire", headers=HEADERS, timeout=15)
+            m = re.search(r'src="(/static/js/main\.[^"]+\.js)"', r.text)
+            if not m:
+                print("  WARN: could not find JS bundle URL")
+                return "const UNIT_DB = {};"
+            bundle_url = "https://legionhq2.com" + m.group(1)
+            print(f"  Fetching bundle: {bundle_url}")
+            rb = requests.get(bundle_url, headers=HEADERS, timeout=60)
+            rb.raise_for_status()
+            content = rb.text
+
+            # Extract JSON
+            start_marker = "JSON.parse('"
+            start = content.find(start_marker)
+            if start < 0:
+                print("  WARN: could not find unit JSON in bundle")
+                return "const UNIT_DB = {};"
+            start += len(start_marker)
+
+            # Find end of JS single-quoted string
+            i = start
+            json_end = -1
+            while i < len(content):
+                c = content[i]
+                if c == '\\':
+                    i += 2
+                    continue
+                if c == "'":
+                    json_end = i
+                    break
+                i += 1
+
+            if json_end < 0:
+                print("  WARN: could not find end of unit JSON")
+                return "const UNIT_DB = {};"
+
+            json_str = content[start:json_end]
+
+            # Unescape JS single-quoted string
+            def js_unescape(s):
+                result = []
+                i = 0
+                while i < len(s):
+                    if s[i] == '\\' and i + 1 < len(s):
+                        nc = s[i+1]
+                        if nc == '\\': result.append('\\')
+                        elif nc == "'": result.append("'")
+                        elif nc == '"': result.append('"')
+                        elif nc == 'n': result.append('\n')
+                        elif nc == 'r': result.append('\r')
+                        elif nc == 't': result.append('\t')
+                        elif nc == '/': result.append('/')
+                        else: result.append('\\'); result.append(nc)
+                        i += 2
+                    else:
+                        result.append(s[i]); i += 1
+                return ''.join(result)
+
+            json_decoded = js_unescape(json_str)
+            data = json.loads(json_decoded)
+
+            def extract_kw_names(kw_list):
+                names = []
+                for kw in (kw_list or []):
+                    if isinstance(kw, str):
+                        names.append(kw)
+                    elif isinstance(kw, dict):
+                        n = kw.get('name', '')
+                        v = kw.get('value')
+                        names.append(f"{n} {v}" if v is not None else n)
+                return names
+
+            unit_db = {}
+            for uid, card in data.items():
+                if card.get('cardType') != 'unit':
+                    continue
+                unit_db[uid] = {
+                    'n': card.get('cardName', ''),
+                    't': card.get('title', ''),
+                    'f': card.get('faction', ''),
+                    'r': card.get('rank', ''),
+                    'k': extract_kw_names(card.get('keywords', [])),
+                    'i': card.get('imageName', ''),
+                }
+
+            with open(cache_path, "w", encoding="utf-8") as f:
+                json.dump(unit_db, f, ensure_ascii=False)
+            print(f"  Unit DB: {len(unit_db)} units cached to legionhq2_units.json")
+
+        except Exception as e:
+            print(f"  WARN: could not build unit DB: {e}")
+            return "const UNIT_DB = {};"
+
+    # Generate compact JS
+    lines = ['const UNIT_DB = {']
+    for uid, u in sorted(unit_db.items()):
+        entry = json.dumps({k: v for k, v in u.items() if v}, ensure_ascii=False)
+        # Wrap in uid key
+        lines.append(f'  {json.dumps(uid)}:{entry},')
+    lines.append('};')
+    return '\n'.join(lines)
+
+
 def build_html(card_data):
     fish_js    = json.dumps(card_data, ensure_ascii=False)
     base_names = json.dumps([c["name"] for c in card_data], ensure_ascii=False)
+    unit_db_js = build_unit_db_js()
     html = HTML_TEMPLATE.replace("/*CARD_JSON*/", fish_js)
     html = html.replace("/*BASE_NAMES*/", base_names)
+    html = html.replace("/*UNIT_DB_JSON*/", unit_db_js)
     return html
 
 
@@ -1008,6 +1182,61 @@ html,body{width:100%;height:100%;overflow:hidden;
   #fs-opts{grid-template-columns:1fr}
   .cat-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}
 }
+/* Lists screen */
+.list-panel{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:var(--rb);padding:20px;margin-bottom:20px}
+.list-section-title{font-size:16px;font-weight:700;color:var(--gold);margin-bottom:16px}
+.list-input-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.list-url-input{flex:1;min-width:200px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:var(--rs);color:var(--white);font-size:13px;padding:10px 14px;font-family:inherit;outline:none}
+.list-url-input:focus{border-color:var(--gold)}
+.list-name-input{flex:1;min-width:180px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:var(--rs);color:var(--white);font-size:14px;padding:10px 14px;font-family:inherit;outline:none}
+.list-name-input:focus{border-color:var(--gold)}
+.list-parse-header{display:flex;gap:12px;align-items:center;margin:16px 0 12px;flex-wrap:wrap}
+.faction-badge{font-size:11px;font-weight:700;letter-spacing:.5px;padding:4px 12px;border-radius:20px;text-transform:uppercase}
+.faction-empire{background:rgba(192,57,43,.25);border:1px solid #c0392b;color:#f08080}
+.faction-rebels{background:rgba(52,152,219,.25);border:1px solid #3498db;color:#7ec8f5}
+.faction-republic{background:rgba(29,158,117,.25);border:1px solid var(--G);color:var(--Gt)}
+.faction-separatists{background:rgba(155,89,182,.25);border:1px solid #9b59b6;color:#d7b4f5}
+.faction-mercenary{background:rgba(245,166,35,.25);border:1px solid var(--A);color:var(--At)}
+.list-pts{font-size:14px;font-weight:700;color:var(--gold)}
+.list-parse-units{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.list-unit-row{display:flex;align-items:center;gap:10px;padding:8px 12px;background:rgba(255,255,255,.04);border-radius:var(--rs);font-size:13px}
+.list-unit-count{background:rgba(245,197,24,.15);border:1px solid rgba(245,197,24,.3);border-radius:6px;padding:2px 8px;color:var(--gold);font-weight:700;font-size:12px}
+.list-unit-name{color:var(--white);font-weight:600}
+.list-unit-kws{color:rgba(255,255,255,.4);font-size:11px;margin-top:2px}
+.list-kw-section{margin:12px 0}
+.list-kw-title{font-size:13px;color:rgba(255,255,255,.5);margin-bottom:8px}
+.list-kw-tags{display:flex;flex-wrap:wrap;gap:6px}
+.kw-tag{font-size:12px;padding:4px 10px;border-radius:12px;background:rgba(245,197,24,.12);border:1px solid rgba(245,197,24,.25);color:var(--gold);cursor:default}
+.kw-tag.removable{cursor:pointer;transition:all .15s}
+.kw-tag.removable:hover{background:rgba(192,57,43,.3);border-color:#c0392b;color:#f08080}
+.list-save-row{display:flex;gap:10px;align-items:center;margin-top:14px;flex-wrap:wrap}
+#list-save-status{font-size:13px;margin-top:8px;min-height:20px}
+.list-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:var(--rs);padding:14px 16px;margin-bottom:10px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all .15s}
+.list-card:hover{background:rgba(255,255,255,.07);border-color:rgba(245,197,24,.2)}
+.list-card.active-filter{border-color:var(--gold);background:rgba(245,197,24,.08)}
+.list-card-info{flex:1}
+.list-card-name{font-size:14px;font-weight:700;color:var(--white);margin-bottom:4px}
+.list-card-meta{font-size:12px;color:rgba(255,255,255,.4)}
+.list-card-actions{display:flex;gap:6px}
+.list-btn-filter{font-size:12px;padding:5px 12px;border-radius:12px;background:rgba(29,158,117,.2);border:1px solid var(--G);color:var(--Gt);cursor:pointer;font-family:inherit}
+.list-btn-filter.on{background:rgba(29,158,117,.4)}
+.list-btn-edit{font-size:12px;padding:5px 12px;border-radius:12px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);color:var(--white2);cursor:pointer;font-family:inherit}
+.list-btn-edit:hover{background:rgba(255,255,255,.12)}
+.lists-empty{color:rgba(255,255,255,.25);font-size:14px;text-align:center;padding:2rem 0}
+/* List modal */
+.list-modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:200;align-items:center;justify-content:center;padding:1rem;backdrop-filter:blur(10px)}
+.list-modal-bg.on{display:flex}
+.list-modal-box{background:#0d1020;border:1px solid rgba(245,197,24,.2);border-radius:var(--rb);max-width:600px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 0 40px rgba(245,197,24,.08)}
+.list-modal-header{display:flex;align-items:flex-start;justify-content:space-between;padding:20px 20px 0;gap:12px}
+.list-modal-name{font-size:20px;font-weight:800;color:var(--gold)}
+.list-modal-meta{font-size:12px;color:rgba(255,255,255,.4);margin-top:4px}
+.list-modal-tabs{display:flex;gap:0;border-bottom:1px solid rgba(255,255,255,.08);margin:12px 0 0;padding:0 20px}
+.lm-tab{background:none;border:none;border-bottom:2px solid transparent;color:rgba(255,255,255,.45);font-size:14px;padding:10px 16px;cursor:pointer;font-family:inherit;transition:all .15s;margin-bottom:-1px}
+.lm-tab.active{border-bottom-color:var(--gold);color:var(--gold)}
+.list-add-kw-row{display:flex;gap:8px;margin-top:14px;align-items:center}
+/* List filter select */
+.fs-list-select{background:rgba(0,0,0,.6);backdrop-filter:blur(12px);border:1px solid rgba(245,197,24,.4);border-radius:20px;color:var(--gold);font-size:13px;padding:6px 14px;cursor:pointer;font-family:inherit;outline:none;max-width:160px}
+.fs-list-select option{background:#0d1020;color:var(--white)}
 </style>
 </head>
 <body>
@@ -1029,6 +1258,10 @@ html,body{width:100%;height:100%;overflow:hidden;
       <button class="fs-pill"        id="pill-unit"   onclick="setTypeFilter('unit')">Unit</button>
       <button class="fs-pill"        id="pill-weapon" onclick="setTypeFilter('weapon')">Weapon</button>
     </div>
+    <div id="fs-list-filter" style="display:none">
+      <select id="list-select" class="fs-list-select" onchange="setListFilter(this.value)"></select>
+      <button class="fs-pill" id="pill-list-clear" onclick="clearListFilter()" title="Clear list filter">&#10005;</button>
+    </div>
     <div id="fs-progress"><div id="fs-pfill" style="width:0%"></div></div>
     <span id="fs-ctr"></span>
     <div id="fs-quiz-stats">
@@ -1038,6 +1271,7 @@ html,body{width:100%;height:100%;overflow:hidden;
   </div>
   <div id="fs-nav-btns">
     <button class="fs-pill" onclick="showScreen('catalog-screen')">Catalog</button>
+    <button class="fs-pill" id="pill-lists" onclick="showScreen('lists-screen')">Lists</button>
   </div>
   <button id="fs-prev" onclick="go(-1)">&#8592;</button>
   <button id="fs-next" onclick="go(1)">&#8594;</button>
@@ -1085,6 +1319,89 @@ html,body{width:100%;height:100%;overflow:hidden;
     </div>
     <div class="cat-count" id="cat-count"></div>
     <div class="cat-grid" id="cat-grid"></div>
+  </div>
+</div>
+
+<!-- LISTS SCREEN -->
+<div class="screen" id="lists-screen" style="background:#0a0a0f;overflow-y:auto">
+  <div class="cat-wrap">
+    <div class="cat-top">
+      <h1>&#9935; Army Lists</h1>
+      <div class="cat-top-btns">
+        <button class="dark-pill" onclick="showScreen('flashcard-screen')">&#8592; Back</button>
+      </div>
+    </div>
+    <!-- CREATE -->
+    <div class="list-panel" id="list-create-panel">
+      <h2 class="list-section-title">Import Army List from LegionHQ2</h2>
+      <div class="list-input-row">
+        <input type="text" id="list-url-input" class="list-url-input"
+               placeholder="Paste LegionHQ2 URL: https://legionhq2.com/list/empire/1000:..."
+               autocomplete="off" spellcheck="false">
+        <button class="dark-pill" onclick="parseListUrl()">Parse</button>
+      </div>
+      <div id="list-parse-result" style="display:none">
+        <div class="list-parse-header">
+          <span id="list-parse-faction-badge" class="faction-badge"></span>
+          <span id="list-parse-points" class="list-pts"></span>
+          <span id="list-parse-unit-count"></span>
+        </div>
+        <div id="list-parse-units"></div>
+        <div class="list-kw-section">
+          <div class="list-kw-title">Keywords in this list (<span id="list-kw-count">0</span>):</div>
+          <div id="list-kw-tags" class="list-kw-tags"></div>
+        </div>
+        <div class="list-save-row">
+          <input type="text" id="list-name-input" class="list-name-input" placeholder="List name (e.g. Vader Empire 1000pts)" maxlength="60">
+          <button class="big-btn gold" onclick="saveList()">Save List</button>
+        </div>
+        <div id="list-save-status"></div>
+      </div>
+    </div>
+    <!-- SAVED LISTS -->
+    <div class="list-panel" id="list-saved-panel">
+      <h2 class="list-section-title">Saved Lists</h2>
+      <div id="lists-container"></div>
+    </div>
+  </div>
+</div>
+
+<!-- LIST DETAIL MODAL -->
+<div id="list-modal-bg" class="list-modal-bg" onclick="closeListModal(event)">
+  <div class="list-modal-box" onclick="event.stopPropagation()">
+    <div class="list-modal-header">
+      <div>
+        <div class="list-modal-name" id="lm-name"></div>
+        <div id="lm-meta" class="list-modal-meta"></div>
+      </div>
+      <button class="dark-pill" onclick="closeListModal()">Close</button>
+    </div>
+    <div class="list-modal-tabs">
+      <button class="lm-tab active" id="lm-tab-kw" onclick="setLmTab('kw')">Keywords</button>
+      <button class="lm-tab" id="lm-tab-edit" onclick="setLmTab('edit')">Edit</button>
+    </div>
+    <div id="lm-tab-kw-panel">
+      <div class="list-kw-tags" id="lm-kw-tags" style="padding:16px"></div>
+    </div>
+    <div id="lm-tab-edit-panel" style="display:none">
+      <div style="padding:16px">
+        <div style="font-size:13px;color:rgba(255,255,255,.5);margin-bottom:12px">
+          Click keywords to remove them, or add new ones below.
+        </div>
+        <div class="list-kw-tags" id="lm-edit-tags"></div>
+        <div class="list-add-kw-row">
+          <input type="text" id="lm-add-kw-input" class="list-url-input" style="flex:1"
+                 placeholder="Add keyword (type to search)..." autocomplete="off" list="kw-datalist">
+          <datalist id="kw-datalist"></datalist>
+          <button class="dark-pill" onclick="lmAddKeyword()">Add</button>
+        </div>
+        <div class="list-save-row" style="margin-top:16px">
+          <button class="big-btn gold" onclick="lmSaveEdit()">Save Changes</button>
+          <button class="big-btn ghost" style="background:rgba(192,57,43,.2);border-color:#c0392b;color:#f08080" onclick="lmDeleteList()">Delete List</button>
+        </div>
+        <div id="lm-edit-status" style="margin-top:8px;font-size:13px"></div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -1139,18 +1456,54 @@ function showScreen(id){
   document.querySelectorAll('.screen').forEach(el=>el.classList.remove('on'));
   document.getElementById(id).classList.add('on');
   if(id==='catalog-screen') renderCatalog();
+  if(id==='lists-screen'){ renderSavedLists(); }
 }
 
 let typeFilter='all';
+let activeListId=null; // ID of currently active list filter
+
 function setTypeFilter(t){
   typeFilter=t;
   ['all','unit','weapon'].forEach(x=>{ document.getElementById('pill-'+x).classList.toggle('active',x===t); });
   clrStatus(); initDeck(); render();
 }
 function filteredCards(){
-  if(typeFilter==='weapon') return CARDS.filter(c=>c.type==='weapon');
-  if(typeFilter==='unit')   return CARDS.filter(c=>c.type==='unit');
-  return CARDS;
+  let cards=CARDS;
+  // Apply list filter first
+  if(activeListId){
+    const lst=getListById(activeListId);
+    if(lst){
+      const kwSet=new Set(lst.keywords.map(k=>k.toLowerCase()));
+      cards=cards.filter(c=>kwSet.has(c.name.toLowerCase()));
+    }
+  }
+  if(typeFilter==='weapon') return cards.filter(c=>c.type==='weapon');
+  if(typeFilter==='unit')   return cards.filter(c=>c.type==='unit');
+  return cards;
+}
+function setListFilter(listId){
+  activeListId=listId||null;
+  document.getElementById('fs-list-filter').style.display=activeListId?'flex':'none';
+  const sel=document.getElementById('list-select');
+  if(sel) sel.value=listId||'';
+  renderListFilterBadges();
+  clrStatus(); initDeck(); render();
+}
+function clearListFilter(){
+  activeListId=null;
+  document.getElementById('fs-list-filter').style.display='none';
+  renderListFilterBadges();
+  clrStatus(); initDeck(); render();
+}
+function renderListFilterBadges(){
+  // Update active state on list cards in the lists screen
+  document.querySelectorAll('.list-card').forEach(el=>{
+    el.classList.toggle('active-filter', el.dataset.listId===activeListId);
+  });
+  document.querySelectorAll('.list-btn-filter').forEach(el=>{
+    el.classList.toggle('on', el.dataset.listId===activeListId);
+    el.textContent=el.dataset.listId===activeListId?'Filtering':'Filter';
+  });
 }
 
 let deck=[],cur=0,mode='learn',revealed=false,answered=false,sc=0,sw=0;
@@ -1321,6 +1674,14 @@ function setCF(v,btn){
 }
 function renderCatalog(){
   let list=[...CARDS];
+  // Apply active list filter
+  if(activeListId){
+    const lst=getListById(activeListId);
+    if(lst){
+      const kwSet=new Set(lst.keywords.map(k=>k.toLowerCase()));
+      list=list.filter(c=>kwSet.has(c.name.toLowerCase()));
+    }
+  }
   if(catFilter==='learned')   list=list.filter(c=>s(c.name).learned);
   if(catFilter==='unlearned') list=list.filter(c=>!s(c.name).learned);
   if(catFilter==='unit')      list=list.filter(c=>c.type==='unit');
@@ -1391,6 +1752,318 @@ function closeMod(e){
 
 loadState();
 setMode('learn');
+
+// ─── UNIT DATABASE (from LegionHQ2) ──────────────────────────────────────────
+/*UNIT_DB_JSON*/
+
+// ─── ARMY LIST PARSING ───────────────────────────────────────────────────────
+function parseUnitCode(code){
+  // Format: {count}{2-char-unit-id}{upgrade-tokens...}
+  // upgrade token: '0' = empty slot, otherwise 2 chars = upgrade ID
+  let i=0;
+  const count=parseInt(code[i++])||1;
+  const unitId=code.slice(i,i+2); i+=2;
+  const upgrades=[];
+  while(i<code.length){
+    if(code[i]==='0'){ upgrades.push(null); i++; }
+    else{ upgrades.push(code.slice(i,i+2)); i+=2; }
+  }
+  return {count,unitId,upgrades};
+}
+
+function parseLegionHQUrl(url){
+  // URL format: https://legionhq2.com/list/{faction}/{points}:{codes}
+  // codes = comma-separated unit codes and card IDs
+  try{
+    const m=url.match(/legionhq2\.com\/list\/([^/]+)\/([^/?#]+)/);
+    if(!m) return null;
+    const faction=m[1];
+    const hashPart=m[2];
+    const colonIdx=hashPart.indexOf(':');
+    if(colonIdx<0) return null;
+    const points=parseInt(hashPart.slice(0,colonIdx))||0;
+    const codes=hashPart.slice(colonIdx+1).split(',');
+    return {faction,points,codes};
+  }catch(e){ return null; }
+}
+
+function getUnitFromCode(code){
+  const unit=UNIT_DB[code];
+  if(unit) return unit; // direct card reference (command/battle card)
+  return null;
+}
+
+// Normalize keyword base name (strip trailing numbers)
+function kwBase(kw){
+  return kw.replace(/\s+\d+(\s+.*)?$/,'').replace(/\s*:\s*.+$/,function(m){
+    // keep colon for keywords that are defined with subtypes like "Immune: Pierce"
+    return m;
+  }).trim();
+}
+
+function decodeArmy(url){
+  const parsed=parseLegionHQUrl(url);
+  if(!parsed) return null;
+  const {faction,points,codes}=parsed;
+  const units=[];
+  const allKeywords=new Set();
+
+  for(const code of codes){
+    // Check if it's a direct card ID (command/battle - 2 chars, no count prefix)
+    if(UNIT_DB[code]){
+      // standalone card - skip (command cards, battle cards)
+      continue;
+    }
+    // Try to parse as unit code
+    if(code.length<3) continue;
+    const firstChar=code[0];
+    if(!/[0-9]/.test(firstChar)) continue; // must start with count digit
+    const {count,unitId,upgrades}=parseUnitCode(code);
+    const unit=UNIT_DB[unitId];
+    if(!unit) continue;
+    units.push({count,unit,unitId,upgrades});
+    // Collect keywords
+    (unit.k||[]).forEach(kw=>{
+      const base=kw.replace(/\s+\d+(\s+.*)?$/,'').trim();
+      allKeywords.add(base);
+    });
+  }
+
+  return {faction,points,units,keywords:[...allKeywords].sort()};
+}
+
+// ─── LIST PERSISTENCE ─────────────────────────────────────────────────────────
+function loadLists(){
+  try{ return JSON.parse(localStorage.getItem('swlegion_lists')||'[]'); }
+  catch(e){ return []; }
+}
+function saveLists(lists){
+  localStorage.setItem('swlegion_lists',JSON.stringify(lists));
+}
+function getListById(id){
+  return loadLists().find(l=>l.id===id)||null;
+}
+
+// ─── LISTS SCREEN ─────────────────────────────────────────────────────────────
+let _parsedArmy=null;
+
+function parseListUrl(){
+  const url=document.getElementById('list-url-input').value.trim();
+  if(!url){ showListStatus('Please enter a LegionHQ2 URL','err'); return; }
+  if(!url.includes('legionhq2.com')){
+    showListStatus('URL must be from legionhq2.com','err'); return;
+  }
+  _parsedArmy=decodeArmy(url);
+  if(!_parsedArmy){
+    showListStatus('Could not parse URL. Make sure it includes the list hash.','err'); return;
+  }
+  renderParseResult(_parsedArmy, url);
+}
+
+function renderParseResult(army, url){
+  const panel=document.getElementById('list-parse-result');
+  panel.style.display='block';
+
+  // Faction badge
+  const fb=document.getElementById('list-parse-faction-badge');
+  fb.textContent=army.faction.toUpperCase();
+  fb.className='faction-badge faction-'+army.faction.toLowerCase();
+  document.getElementById('list-parse-points').textContent=army.points+' pts';
+  document.getElementById('list-parse-unit-count').textContent=army.units.length+' unit types';
+
+  // Units
+  const unitsEl=document.getElementById('list-parse-units');
+  unitsEl.innerHTML=army.units.map(({count,unit,unitId})=>{
+    const kws=(unit.k||[]).map(k=>k.replace(/\s+\d+(\s+.*)?$/,'').trim()).slice(0,3).join(', ');
+    const title=unit.t?` <em style="color:rgba(255,255,255,.4);font-size:11px">${unit.t}</em>`:'';
+    return `<div class="list-unit-row">
+      <span class="list-unit-count">${count}x</span>
+      <div><div class="list-unit-name">${unit.n}${title}</div>
+      ${kws?`<div class="list-unit-kws">${kws}${(unit.k||[]).length>3?'...':''}</div>`:''}
+      </div></div>`;
+  }).join('');
+
+  // Keywords
+  document.getElementById('list-kw-count').textContent=army.keywords.length;
+  const tagsEl=document.getElementById('list-kw-tags');
+  tagsEl.innerHTML=army.keywords.map(kw=>`<span class="kw-tag">${escHtml(kw)}</span>`).join('');
+
+  // Pre-fill list name
+  const defaultName=army.faction.charAt(0).toUpperCase()+army.faction.slice(1)+' '+army.points+'pts';
+  document.getElementById('list-name-input').value=defaultName;
+  document.getElementById('list-save-status').textContent='';
+}
+
+function saveList(){
+  if(!_parsedArmy){ showListStatus('Parse a URL first','err'); return; }
+  const name=document.getElementById('list-name-input').value.trim();
+  if(!name){ showListStatus('Enter a list name','err'); return; }
+  const url=document.getElementById('list-url-input').value.trim();
+
+  const lists=loadLists();
+  const id='lst_'+Date.now();
+  lists.push({
+    id, name,
+    faction:_parsedArmy.faction,
+    points:_parsedArmy.points,
+    keywords:_parsedArmy.keywords,
+    armyUrl:url,
+    createdAt:new Date().toISOString()
+  });
+  saveLists(lists);
+  showListStatus('List saved!','ok');
+  _parsedArmy=null;
+  document.getElementById('list-url-input').value='';
+  document.getElementById('list-parse-result').style.display='none';
+  renderSavedLists();
+  updateListSelectDropdown();
+}
+
+function showListStatus(msg,cls){
+  const el=document.getElementById('list-save-status');
+  el.textContent=msg;
+  el.style.color=cls==='err'?'#f08080':'#6effc4';
+}
+
+function renderSavedLists(){
+  const lists=loadLists();
+  const el=document.getElementById('lists-container');
+  if(!lists.length){
+    el.innerHTML='<div class="lists-empty">No lists saved yet. Import one above.</div>';
+    return;
+  }
+  el.innerHTML=lists.map(lst=>{
+    const isActive=activeListId===lst.id;
+    return `<div class="list-card${isActive?' active-filter':''}" data-list-id="${lst.id}" onclick="openListModal('${lst.id}')">
+      <div class="list-card-info">
+        <div class="list-card-name">${escHtml(lst.name)}</div>
+        <div class="list-card-meta">
+          <span class="faction-badge faction-${lst.faction||''}" style="font-size:10px;padding:2px 8px">${(lst.faction||'').toUpperCase()}</span>
+          &nbsp;${lst.points||0} pts &nbsp;&#183;&nbsp; ${lst.keywords.length} keywords
+        </div>
+      </div>
+      <div class="list-card-actions" onclick="event.stopPropagation()">
+        <button class="list-btn-filter${isActive?' on':''}" data-list-id="${lst.id}"
+          onclick="toggleListFilter('${lst.id}')">${isActive?'Filtering':'Filter'}</button>
+        <button class="list-btn-edit" onclick="openListModal('${lst.id}')">Edit</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleListFilter(listId){
+  if(activeListId===listId){
+    setListFilter(null);
+  } else {
+    setListFilter(listId);
+    showScreen('flashcard-screen');
+  }
+}
+
+function updateListSelectDropdown(){
+  const sel=document.getElementById('list-select');
+  if(!sel) return;
+  const lists=loadLists();
+  sel.innerHTML='<option value="">-- Select List --</option>'+
+    lists.map(l=>`<option value="${l.id}">${escHtml(l.name)}</option>`).join('');
+  if(activeListId) sel.value=activeListId;
+}
+
+// ─── LIST MODAL ───────────────────────────────────────────────────────────────
+let _lmListId=null;
+let _lmEditKws=[];
+
+function openListModal(listId){
+  _lmListId=listId;
+  const lst=getListById(listId);
+  if(!lst) return;
+  _lmEditKws=[...lst.keywords];
+  document.getElementById('lm-name').textContent=lst.name;
+  document.getElementById('lm-meta').innerHTML=
+    `<span class="faction-badge faction-${lst.faction||''}" style="font-size:10px;padding:2px 7px">${(lst.faction||'').toUpperCase()}</span>`+
+    ` &nbsp;${lst.points||0} pts &nbsp;&#183;&nbsp; ${lst.keywords.length} keywords`;
+
+  // KW tab
+  document.getElementById('lm-kw-tags').innerHTML=
+    lst.keywords.map(kw=>`<span class="kw-tag">${escHtml(kw)}</span>`).join('');
+
+  setLmTab('kw');
+  document.getElementById('list-modal-bg').classList.add('on');
+}
+
+function closeListModal(e){
+  if(e&&e.target.id!=='list-modal-bg') return;
+  document.getElementById('list-modal-bg').classList.remove('on');
+  _lmListId=null;
+}
+
+function setLmTab(tab){
+  document.getElementById('lm-tab-kw').classList.toggle('active',tab==='kw');
+  document.getElementById('lm-tab-edit').classList.toggle('active',tab==='edit');
+  document.getElementById('lm-tab-kw-panel').style.display=tab==='kw'?'block':'none';
+  document.getElementById('lm-tab-edit-panel').style.display=tab==='edit'?'block':'none';
+  if(tab==='edit') renderLmEditTags();
+}
+
+function renderLmEditTags(){
+  const el=document.getElementById('lm-edit-tags');
+  el.innerHTML=_lmEditKws.map((kw,i)=>
+    `<span class="kw-tag removable" onclick="lmRemoveKw(${i})" title="Remove">${escHtml(kw)} &#215;</span>`
+  ).join('');
+  // Populate datalist
+  const dl=document.getElementById('kw-datalist');
+  const existing=new Set(_lmEditKws.map(k=>k.toLowerCase()));
+  dl.innerHTML=CARDS.map(c=>c.name).filter(n=>!existing.has(n.toLowerCase()))
+    .map(n=>`<option value="${escHtml(n)}">`).join('');
+}
+
+function lmRemoveKw(idx){
+  _lmEditKws.splice(idx,1);
+  renderLmEditTags();
+}
+
+function lmAddKeyword(){
+  const inp=document.getElementById('lm-add-kw-input');
+  const val=inp.value.trim();
+  if(!val) return;
+  if(!_lmEditKws.map(k=>k.toLowerCase()).includes(val.toLowerCase())){
+    _lmEditKws.push(val);
+    renderLmEditTags();
+  }
+  inp.value='';
+}
+
+function lmSaveEdit(){
+  const lists=loadLists();
+  const idx=lists.findIndex(l=>l.id===_lmListId);
+  if(idx<0) return;
+  lists[idx].keywords=[..._lmEditKws];
+  saveLists(lists);
+  // Refresh view
+  openListModal(_lmListId);
+  setLmTab('kw');
+  renderSavedLists();
+  updateListSelectDropdown();
+  // Update active filter if needed
+  if(activeListId===_lmListId){ clrStatus(); initDeck(); render(); }
+  document.getElementById('lm-edit-status').textContent='Saved!';
+  document.getElementById('lm-edit-status').style.color='#6effc4';
+}
+
+function lmDeleteList(){
+  if(!confirm('Delete this list?')) return;
+  let lists=loadLists();
+  lists=lists.filter(l=>l.id!==_lmListId);
+  saveLists(lists);
+  if(activeListId===_lmListId) setListFilter(null);
+  document.getElementById('list-modal-bg').classList.remove('on');
+  renderSavedLists();
+  updateListSelectDropdown();
+}
+
+function escHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+updateListSelectDropdown();
 </script>
 </body>
 </html>"""
