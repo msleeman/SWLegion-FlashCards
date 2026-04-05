@@ -1234,9 +1234,24 @@ html,body{width:100%;height:100%;overflow:hidden;
 .lm-tab{background:none;border:none;border-bottom:2px solid transparent;color:rgba(255,255,255,.45);font-size:14px;padding:10px 16px;cursor:pointer;font-family:inherit;transition:all .15s;margin-bottom:-1px}
 .lm-tab.active{border-bottom-color:var(--gold);color:var(--gold)}
 .list-add-kw-row{display:flex;gap:8px;margin-top:14px;align-items:center}
-/* List filter select */
-.fs-list-select{background:rgba(0,0,0,.6);backdrop-filter:blur(12px);border:1px solid rgba(245,197,24,.4);border-radius:20px;color:var(--gold);font-size:13px;padding:6px 14px;cursor:pointer;font-family:inherit;outline:none;max-width:160px}
-.fs-list-select option{background:#0d1020;color:var(--white)}
+/* List pill dropdown */
+#list-dropdown-wrap{position:relative;display:inline-block}
+#list-dropdown{position:absolute;top:calc(100% + 6px);left:0;min-width:180px;
+  background:#0d1020;border:1px solid rgba(245,197,24,.35);border-radius:10px;
+  z-index:200;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.6);display:none}
+#list-dropdown.open{display:block}
+.list-dd-item{padding:9px 14px;font-size:13px;color:var(--white2);cursor:pointer;
+  border-bottom:1px solid rgba(255,255,255,.06);transition:background .15s}
+.list-dd-item:last-child{border-bottom:none}
+.list-dd-item:hover{background:rgba(245,197,24,.1);color:var(--gold)}
+.list-dd-item.active{color:var(--gold);font-weight:600}
+.list-dd-item.none-item{color:rgba(255,255,255,.4);font-style:italic}
+/* Catalog list dropdown */
+#cat-list-dropdown-wrap{position:relative;display:inline-block}
+#cat-list-dropdown{position:absolute;top:calc(100% + 6px);left:0;min-width:180px;
+  background:#0d1020;border:1px solid rgba(245,197,24,.35);border-radius:10px;
+  z-index:200;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.6);display:none}
+#cat-list-dropdown.open{display:block}
 </style>
 </head>
 <body>
@@ -1258,10 +1273,10 @@ html,body{width:100%;height:100%;overflow:hidden;
       <button class="fs-pill"        id="pill-unit"    onclick="setTypeFilter('unit')">Unit</button>
       <button class="fs-pill"        id="pill-weapon"  onclick="setTypeFilter('weapon')">Weapon</button>
       <button class="fs-pill"        id="pill-concept" onclick="setTypeFilter('noconcept')">No Concepts</button>
-    </div>
-    <div id="fs-list-filter" style="display:none">
-      <select id="list-select" class="fs-list-select" onchange="setListFilter(this.value)"></select>
-      <button class="fs-pill" id="pill-list-clear" onclick="clearListFilter()" title="Clear list filter">&#10005;</button>
+      <div id="list-dropdown-wrap">
+        <button class="fs-pill" id="pill-list" onclick="toggleListDropdown()">List: None &#9660;</button>
+        <div id="list-dropdown"></div>
+      </div>
     </div>
     <div id="fs-progress"><div id="fs-pfill" style="width:0%"></div></div>
     <span id="fs-ctr"></span>
@@ -1318,6 +1333,10 @@ html,body{width:100%;height:100%;overflow:hidden;
       <button class="dark-pill" onclick="setCF('weapon',this)">Weapon Keywords</button>
       <button class="dark-pill" onclick="setCF('concept',this)">Concepts Only</button>
       <button class="dark-pill" onclick="setCF('noconcept',this)">No Concepts</button>
+      <div id="cat-list-dropdown-wrap">
+        <button class="dark-pill" id="cat-pill-list" onclick="toggleCatListDropdown()">List: None &#9660;</button>
+        <div id="cat-list-dropdown"></div>
+      </div>
     </div>
     <div class="cat-count" id="cat-count"></div>
     <div class="cat-grid" id="cat-grid"></div>
@@ -1462,7 +1481,8 @@ function showScreen(id){
 }
 
 let typeFilter='all';
-let activeListId=null; // ID of currently active list filter
+let activeListId=null; // flashcard/quiz list filter
+let catListId=null;    // catalog list filter
 
 function setTypeFilter(t){
   typeFilter=t;
@@ -1490,20 +1510,76 @@ function filteredCards(){
 }
 function setListFilter(listId){
   activeListId=listId||null;
-  document.getElementById('fs-list-filter').style.display=activeListId?'flex':'none';
-  const sel=document.getElementById('list-select');
-  if(sel) sel.value=listId||'';
+  updateListPillLabel();
+  updateCatListPillLabel();
   renderListFilterBadges();
   clrStatus(); initDeck(); render();
 }
 function clearListFilter(){
   activeListId=null;
-  document.getElementById('fs-list-filter').style.display='none';
+  updateListPillLabel();
+  updateCatListPillLabel();
   renderListFilterBadges();
   clrStatus(); initDeck(); render();
 }
+function updateListPillLabel(){
+  const pill=document.getElementById('pill-list'); if(!pill) return;
+  if(activeListId){
+    const lst=getListById(activeListId);
+    pill.innerHTML=(lst?escHtml(lst.name):'List')+' &#9660;';
+    pill.classList.add('active');
+  } else {
+    pill.innerHTML='List: None &#9660;';
+    pill.classList.remove('active');
+  }
+}
+function updateCatListPillLabel(){
+  const pill=document.getElementById('cat-pill-list'); if(!pill) return;
+  if(catListId){
+    const lst=getListById(catListId);
+    pill.innerHTML=(lst?escHtml(lst.name):'List')+' &#9660;';
+    pill.classList.add('active');
+  } else {
+    pill.innerHTML='List: None &#9660;';
+    pill.classList.remove('active');
+  }
+}
+function toggleListDropdown(){
+  const dd=document.getElementById('list-dropdown');
+  if(dd.classList.contains('open')){ dd.classList.remove('open'); return; }
+  // Build items
+  const lists=loadLists();
+  let html=`<div class="list-dd-item none-item${!activeListId?' active':''}" onclick="setListFilter(null);document.getElementById('list-dropdown').classList.remove('open')">None</div>`;
+  lists.forEach(l=>{
+    const active=activeListId===l.id;
+    html+=`<div class="list-dd-item${active?' active':''}" onclick="setListFilter('${l.id}');document.getElementById('list-dropdown').classList.remove('open')">${escHtml(l.name)}</div>`;
+  });
+  if(!lists.length) html+=`<div class="list-dd-item none-item">No lists saved</div>`;
+  dd.innerHTML=html;
+  dd.classList.add('open');
+  // Close on outside click
+  setTimeout(()=>{ document.addEventListener('click', function _c(e){ if(!document.getElementById('list-dropdown-wrap').contains(e.target)){ dd.classList.remove('open'); document.removeEventListener('click',_c); } }); },0);
+}
+function toggleCatListDropdown(){
+  const dd=document.getElementById('cat-list-dropdown');
+  if(dd.classList.contains('open')){ dd.classList.remove('open'); return; }
+  const lists=loadLists();
+  let html=`<div class="list-dd-item none-item${!catListId?' active':''}" onclick="setCatList(null);document.getElementById('cat-list-dropdown').classList.remove('open')">None</div>`;
+  lists.forEach(l=>{
+    const active=catListId===l.id;
+    html+=`<div class="list-dd-item${active?' active':''}" onclick="setCatList('${l.id}');document.getElementById('cat-list-dropdown').classList.remove('open')">${escHtml(l.name)}</div>`;
+  });
+  if(!lists.length) html+=`<div class="list-dd-item none-item">No lists saved</div>`;
+  dd.innerHTML=html;
+  dd.classList.add('open');
+  setTimeout(()=>{ document.addEventListener('click', function _c(e){ if(!document.getElementById('cat-list-dropdown-wrap').contains(e.target)){ dd.classList.remove('open'); document.removeEventListener('click',_c); } }); },0);
+}
+function setCatList(listId){
+  catListId=listId||null;
+  updateCatListPillLabel();
+  renderCatalog();
+}
 function renderListFilterBadges(){
-  // Update active state on list cards in the lists screen
   document.querySelectorAll('.list-card').forEach(el=>{
     el.classList.toggle('active-filter', el.dataset.listId===activeListId);
   });
@@ -1681,9 +1757,9 @@ function setCF(v,btn){
 }
 function renderCatalog(){
   let list=[...CARDS];
-  // Apply active list filter
-  if(activeListId){
-    const lst=getListById(activeListId);
+  // Apply catalog list filter (independent of flashcard list filter)
+  if(catListId){
+    const lst=getListById(catListId);
     if(lst){
       const kwSet=new Set(lst.keywords.map(k=>k.toLowerCase()));
       list=list.filter(c=>kwSet.has(c.name.toLowerCase()));
@@ -1924,7 +2000,7 @@ function saveList(){
   document.getElementById('list-url-input').value='';
   document.getElementById('list-parse-result').style.display='none';
   renderSavedLists();
-  updateListSelectDropdown();
+  updateListPillLabel();
 }
 
 function showListStatus(msg,cls){
@@ -1968,14 +2044,8 @@ function toggleListFilter(listId){
   }
 }
 
-function updateListSelectDropdown(){
-  const sel=document.getElementById('list-select');
-  if(!sel) return;
-  const lists=loadLists();
-  sel.innerHTML='<option value="">-- Select List --</option>'+
-    lists.map(l=>`<option value="${l.id}">${escHtml(l.name)}</option>`).join('');
-  if(activeListId) sel.value=activeListId;
-}
+// kept for compatibility - just refreshes pill labels
+function updateListSelectDropdown(){ updateListPillLabel(); updateCatListPillLabel(); }
 
 // ─── LIST MODAL ───────────────────────────────────────────────────────────────
 let _lmListId=null;
@@ -2051,7 +2121,7 @@ function lmSaveEdit(){
   openListModal(_lmListId);
   setLmTab('kw');
   renderSavedLists();
-  updateListSelectDropdown();
+  updateListPillLabel();
   // Update active filter if needed
   if(activeListId===_lmListId){ clrStatus(); initDeck(); render(); }
   document.getElementById('lm-edit-status').textContent='Saved!';
@@ -2066,12 +2136,12 @@ function lmDeleteList(){
   if(activeListId===_lmListId) setListFilter(null);
   document.getElementById('list-modal-bg').classList.remove('on');
   renderSavedLists();
-  updateListSelectDropdown();
+  updateListPillLabel();
 }
 
 function escHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
-updateListSelectDropdown();
+updateListPillLabel();
 </script>
 </body>
 </html>"""
