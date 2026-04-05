@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(powershell -Command \"cd 'c:/Users/marti/AI/SWLegion-FlashCards'; Remove-Item build_swlegion.py; git add -A; git commit -m 'Remove obsolete v1 build script \\(superseded by build_swlegion_v3.py\\)'; git push\")"
+    ]
+  }
+}
