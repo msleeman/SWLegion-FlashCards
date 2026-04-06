@@ -2221,39 +2221,70 @@ function escHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;')
 const SUPA_URL = 'https://ddpretixfmrvkhyllcbm.supabase.co';
 const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRkcHJldGl4Zm1ydmtoeWxsY2JtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0NDA5NTUsImV4cCI6MjA5MTAxNjk1NX0.VFSG5ybkTu2pUW4Yjw9GN8r4Vl1CQt59w4tXlJ-hwoU';
 let _supa = null, _currentUser = null, _syncTimer = null, _isGuest = false;
+let _authReady = false; // tracks whether initAuth completed
+
+function _timeout(ms, label){
+  return new Promise((_,rej)=>setTimeout(()=>rej(new Error(label+' timed out after '+ms+'ms')),ms));
+}
 
 function initSupabase(){
-  try{ _supa = supabase.createClient(SUPA_URL, SUPA_KEY); }
-  catch(e){ console.warn('Supabase init failed:', e); }
+  try{
+    console.log('[AUTH] Creating Supabase client...');
+    _supa = supabase.createClient(SUPA_URL, SUPA_KEY);
+    console.log('[AUTH] Supabase client created OK');
+  }catch(e){
+    console.error('[AUTH] Supabase init FAILED:', e);
+  }
 }
 
 async function initAuth(){
+  console.log('[AUTH] initAuth starting...');
   initSupabase();
-  if(!_supa){ guestMode(); return; }
+  if(!_supa){ console.warn('[AUTH] No client, going guest'); guestMode(); return; }
 
+  // Register auth state listener
   _supa.auth.onAuthStateChange(async (event, session)=>{
+    console.log('[AUTH] onAuthStateChange:', event, session?.user?.email||'no user');
     if(event==='SIGNED_IN' && session){
       _currentUser = session.user; _isGuest = false;
+      console.log('[AUTH] SIGNED_IN — loading cloud state...');
       await loadCloudState();
       hideAuthScreen();
       startApp();
     } else if(event==='SIGNED_OUT'){
       _currentUser = null;
+      console.log('[AUTH] SIGNED_OUT');
     }
   });
 
-  const { data:{ session } } = await _supa.auth.getSession();
-  if(session){
-    _currentUser = session.user; _isGuest = false;
-    await loadCloudState();
-    hideAuthScreen();
-    startApp();
-  } else {
-    showAuthScreen();
+  // Check for existing session (with timeout so it never blocks forever)
+  try{
+    console.log('[AUTH] Calling getSession...');
+    const t0 = Date.now();
+    const { data, error } = await Promise.race([
+      _supa.auth.getSession(),
+      _timeout(5000, 'getSession')
+    ]);
+    console.log('[AUTH] getSession completed in', Date.now()-t0, 'ms',
+      data?.session ? 'HAS SESSION ('+data.session.user.email+')' : 'no session',
+      error || '');
+    if(data?.session){
+      _currentUser = data.session.user; _isGuest = false;
+      await loadCloudState();
+      hideAuthScreen();
+      startApp();
+    }
+  }catch(e){
+    console.warn('[AUTH] getSession failed:', e.message);
   }
+  _authReady = true;
+  console.log('[AUTH] initAuth complete, _authReady=true');
+  // Always ensure auth screen is visible if no user
+  if(!_currentUser) showAuthScreen();
 }
 
 function startApp(){
+  console.log('[AUTH] startApp, user:', _currentUser?.email||'guest');
   loadState();
   updateListPillLabel();
   updateCatListPillLabel();
@@ -2264,17 +2295,21 @@ function startApp(){
 async function loadCloudState(){
   if(!_supa || !_currentUser) return;
   try{
-    const { data } = await _supa.from('user_state')
-      .select('card_states,army_lists')
-      .eq('user_id', _currentUser.id)
-      .maybeSingle();
+    console.log('[AUTH] loadCloudState for', _currentUser.id);
+    const t0 = Date.now();
+    const { data, error } = await Promise.race([
+      _supa.from('user_state').select('card_states,army_lists').eq('user_id', _currentUser.id).maybeSingle(),
+      _timeout(5000, 'loadCloudState')
+    ]);
+    console.log('[AUTH] loadCloudState completed in', Date.now()-t0, 'ms',
+      data ? 'got data' : 'no data', error || '');
     if(data){
       if(data.card_states && Object.keys(data.card_states).length)
         localStorage.setItem('swlegion_v1', JSON.stringify(data.card_states));
       if(data.army_lists && data.army_lists.length)
         localStorage.setItem('swlegion_lists', JSON.stringify(data.army_lists));
     }
-  }catch(e){ console.warn('Cloud load failed:', e); }
+  }catch(e){ console.warn('[AUTH] Cloud load failed:', e.message); }
 }
 
 async function syncToCloud(){
@@ -2282,13 +2317,19 @@ async function syncToCloud(){
   try{
     const out={};
     Object.keys(ST).forEach(n=>{ const{idx,learned,flagged}=ST[n]; out[n]={idx,learned,flagged}; });
-    await _supa.from('user_state').upsert({
-      user_id: _currentUser.id,
-      card_states: out,
-      army_lists: loadLists(),
-      updated_at: new Date().toISOString()
-    }, { onConflict: 'user_id' });
-  }catch(e){ console.warn('Cloud sync failed:', e); }
+    console.log('[AUTH] syncToCloud starting...');
+    const t0 = Date.now();
+    const { error } = await Promise.race([
+      _supa.from('user_state').upsert({
+        user_id: _currentUser.id,
+        card_states: out,
+        army_lists: loadLists(),
+        updated_at: new Date().toISOString()
+      }, { onConflict: 'user_id' }),
+      _timeout(5000, 'syncToCloud')
+    ]);
+    console.log('[AUTH] syncToCloud completed in', Date.now()-t0, 'ms', error || 'OK');
+  }catch(e){ console.warn('[AUTH] Cloud sync failed:', e.message); }
 }
 
 function scheduleSync(){
@@ -2327,44 +2368,58 @@ function setAuthStatus(msg, cls){
 
 // Sign in / sign up
 async function authSubmit(){
-  if(!_supa){ guestMode(); return; }
+  if(!_supa){ console.warn('[AUTH] No client in authSubmit'); guestMode(); return; }
   const email = document.getElementById('auth-email').value.trim();
   const pwd   = document.getElementById('auth-pwd').value;
   if(!email){ setAuthStatus('Enter your email','err'); return; }
   if(!pwd)  { setAuthStatus('Enter your password','err'); return; }
+  console.log('[AUTH] authSubmit:', _authMode, email, '_authReady='+_authReady);
   const btn = document.getElementById('auth-submit');
   btn.disabled = true;
-  // 8-second timeout so we never hang forever
-  const timeout = new Promise((_,rej)=>setTimeout(()=>rej(new Error('Request timed out — check your connection')),8000));
   try{
     if(_authMode === 'login'){
       setAuthStatus('Signing in…','work');
-      const { error } = await Promise.race([
+      console.log('[AUTH] calling signInWithPassword...');
+      const t0 = Date.now();
+      const result = await Promise.race([
         _supa.auth.signInWithPassword({ email, password: pwd }),
-        timeout
+        _timeout(10000, 'signInWithPassword')
       ]);
+      const ms = Date.now()-t0;
+      console.log('[AUTH] signInWithPassword completed in', ms, 'ms');
+      console.log('[AUTH] result:', JSON.stringify({error:result.error?.message, user:result.data?.user?.email}));
       btn.disabled = false;
-      if(error){
-        const msg = error.message.includes('Email not confirmed')
+      if(result.error){
+        const msg = result.error.message.includes('Email not confirmed')
           ? 'Email not confirmed — check your inbox (or disable confirmation in Supabase dashboard)'
-          : error.message;
+          : result.error.message;
         setAuthStatus(msg,'err');
       }
       // success handled by onAuthStateChange
     } else {
       if(pwd.length < 6){ btn.disabled=false; setAuthStatus('Password must be at least 6 characters','err'); return; }
       setAuthStatus('Creating account…','work');
-      const { error } = await Promise.race([
+      console.log('[AUTH] calling signUp...');
+      const t0 = Date.now();
+      const result = await Promise.race([
         _supa.auth.signUp({ email, password: pwd }),
-        timeout
+        _timeout(10000, 'signUp')
       ]);
+      const ms = Date.now()-t0;
+      console.log('[AUTH] signUp completed in', ms, 'ms');
+      console.log('[AUTH] result:', JSON.stringify({error:result.error?.message, user:result.data?.user?.email, confirmed:result.data?.user?.confirmed_at}));
       btn.disabled = false;
-      if(error) setAuthStatus(error.message,'err');
-      else setAuthStatus('Account created! You can sign in now (check email if confirmation is required).','ok');
+      if(result.error){
+        setAuthStatus(result.error.message,'err');
+      } else if(result.data?.user && !result.data.user.confirmed_at){
+        setAuthStatus('Account created! Check your email to confirm, then sign in.','ok');
+      } else {
+        setAuthStatus('Signed up and logged in!','ok');
+      }
     }
   }catch(e){
     btn.disabled = false;
-    console.error('Auth error:', e);
+    console.error('[AUTH] authSubmit error:', e);
     setAuthStatus(e.message||'Connection error — try again','err');
   }
 }
