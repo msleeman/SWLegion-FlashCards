@@ -1020,7 +1020,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>SW Legion Keywords</title>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='%23000'/><circle cx='50' cy='50' r='47' fill='none' stroke='%23fff' stroke-width='2.5'/><path fill='%23fff' d='M45.2,36.8L34.3,6.7A46,46,0,0,1,65.7,6.7L54.8,36.8A14,14,0,0,0,45.2,36.8ZM59,39.3L79.6,14.8A46,46,0,0,1,95.3,42L63.8,47.6A14,14,0,0,0,59,39.3ZM63.8,52.4L95.3,58A46,46,0,0,1,79.6,85.2L59,60.7A14,14,0,0,0,63.8,52.4ZM54.8,63.2L65.7,93.2A46,46,0,0,1,34.3,93.2L45.2,63.2A14,14,0,0,0,54.8,63.2ZM41,60.7L20.4,85.2A46,46,0,0,1,4.7,58L36.2,52.4A14,14,0,0,0,41,60.7ZM36.2,47.6L4.7,42A46,46,0,0,1,20.4,14.8L41,39.3A14,14,0,0,0,36.2,47.6Z'/><circle cx='50' cy='50' r='14' fill='%23fff'/><circle cx='50' cy='50' r='7' fill='%23000'/></svg>">
+<link rel="icon" type="image/png" href="EmpireCrest.png">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -2334,19 +2334,38 @@ async function authSubmit(){
   if(!pwd)  { setAuthStatus('Enter your password','err'); return; }
   const btn = document.getElementById('auth-submit');
   btn.disabled = true;
-  if(_authMode === 'login'){
-    setAuthStatus('Signing in…','work');
-    const { error } = await _supa.auth.signInWithPassword({ email, password: pwd });
+  // 8-second timeout so we never hang forever
+  const timeout = new Promise((_,rej)=>setTimeout(()=>rej(new Error('Request timed out — check your connection')),8000));
+  try{
+    if(_authMode === 'login'){
+      setAuthStatus('Signing in…','work');
+      const { error } = await Promise.race([
+        _supa.auth.signInWithPassword({ email, password: pwd }),
+        timeout
+      ]);
+      btn.disabled = false;
+      if(error){
+        const msg = error.message.includes('Email not confirmed')
+          ? 'Email not confirmed — check your inbox (or disable confirmation in Supabase dashboard)'
+          : error.message;
+        setAuthStatus(msg,'err');
+      }
+      // success handled by onAuthStateChange
+    } else {
+      if(pwd.length < 6){ btn.disabled=false; setAuthStatus('Password must be at least 6 characters','err'); return; }
+      setAuthStatus('Creating account…','work');
+      const { error } = await Promise.race([
+        _supa.auth.signUp({ email, password: pwd }),
+        timeout
+      ]);
+      btn.disabled = false;
+      if(error) setAuthStatus(error.message,'err');
+      else setAuthStatus('Account created! You can sign in now (check email if confirmation is required).','ok');
+    }
+  }catch(e){
     btn.disabled = false;
-    if(error) setAuthStatus(error.message, 'err');
-    // success handled by onAuthStateChange
-  } else {
-    if(pwd.length < 6){ btn.disabled=false; setAuthStatus('Password must be at least 6 characters','err'); return; }
-    setAuthStatus('Creating account…','work');
-    const { error } = await _supa.auth.signUp({ email, password: pwd });
-    btn.disabled = false;
-    if(error) setAuthStatus(error.message, 'err');
-    else setAuthStatus('Account created! Check your email to confirm, then sign in.','ok');
+    console.error('Auth error:', e);
+    setAuthStatus(e.message||'Connection error — try again','err');
   }
 }
 
