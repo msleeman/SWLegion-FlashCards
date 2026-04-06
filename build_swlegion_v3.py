@@ -1020,6 +1020,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>SW Legion Keywords</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -1256,9 +1257,71 @@ html,body{width:100%;height:100%;overflow:hidden;
   background:#0d1020;border:1px solid rgba(245,197,24,.35);border-radius:10px;
   z-index:200;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.6);display:none}
 #cat-list-dropdown.open{display:block}
+/* Auth screen */
+#auth-screen{position:fixed;inset:0;background:#0a0a0f;z-index:9999;
+  display:flex;align-items:center;justify-content:center;padding:1rem}
+#auth-screen.hidden{display:none}
+.auth-box{width:100%;max-width:380px}
+.auth-logo{text-align:center;margin-bottom:28px}
+.auth-logo-icon{font-size:40px;margin-bottom:8px}
+.auth-logo h1{font-size:24px;font-weight:800;color:var(--gold);text-shadow:0 0 20px rgba(245,197,24,.4)}
+.auth-logo p{font-size:12px;color:rgba(255,255,255,.35);margin-top:6px}
+.auth-card{background:rgba(255,255,255,.04);border:1px solid rgba(245,197,24,.15);
+  border-radius:var(--rb);padding:24px}
+.auth-tabs{display:flex;border-bottom:1px solid rgba(255,255,255,.08);margin-bottom:20px}
+.auth-tab{background:none;border:none;border-bottom:2px solid transparent;
+  color:rgba(255,255,255,.4);font-size:14px;padding:8px 16px;cursor:pointer;
+  font-family:inherit;transition:all .15s;margin-bottom:-1px}
+.auth-tab.active{border-bottom-color:var(--gold);color:var(--gold)}
+.auth-fields{display:flex;flex-direction:column;gap:12px}
+.auth-status{font-size:13px;min-height:18px;text-align:center;padding:2px 0}
+.auth-status.ok{color:#6effc4}.auth-status.err{color:#f08080}.auth-status.work{color:#ffe0a0}
+.auth-divider{text-align:center;font-size:12px;color:rgba(255,255,255,.2);margin:4px 0}
+.auth-footer{text-align:center;font-size:11px;color:rgba(255,255,255,.2);margin-top:14px}
+/* Account dropdown */
+#acct-dropdown-wrap{position:relative;display:inline-block}
+#acct-dropdown{position:absolute;top:calc(100% + 6px);right:0;min-width:200px;
+  background:#0d1020;border:1px solid rgba(245,197,24,.35);border-radius:10px;
+  z-index:300;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.6);display:none}
+#acct-dropdown.open{display:block}
+.acct-email{padding:10px 14px;font-size:12px;color:rgba(255,255,255,.4);
+  border-bottom:1px solid rgba(255,255,255,.08)}
+.acct-item{padding:10px 14px;font-size:13px;color:var(--white2);cursor:pointer;
+  transition:background .15s}
+.acct-item:hover{background:rgba(245,197,24,.1);color:var(--gold)}
+.acct-item.danger{color:#f08080}
+.acct-item.danger:hover{background:rgba(192,57,43,.2);color:#f08080}
 </style>
 </head>
 <body>
+
+<!-- AUTH SCREEN -->
+<div id="auth-screen">
+  <div class="auth-box">
+    <div class="auth-logo">
+      <div class="auth-logo-icon">&#9876;</div>
+      <h1>SW Legion Keywords</h1>
+      <p>Master every keyword in v2.6</p>
+    </div>
+    <div class="auth-card">
+      <div class="auth-tabs">
+        <button id="auth-tab-login"  class="auth-tab active" onclick="setAuthMode('login')">Sign In</button>
+        <button id="auth-tab-signup" class="auth-tab"        onclick="setAuthMode('signup')">Create Account</button>
+      </div>
+      <div class="auth-fields">
+        <input type="email"    id="auth-email" class="list-url-input" placeholder="Email address"
+               autocomplete="email" onkeydown="if(event.key==='Enter')document.getElementById('auth-pwd').focus()">
+        <input type="password" id="auth-pwd"   class="list-url-input" placeholder="Password (min 6 characters)"
+               autocomplete="current-password" onkeydown="if(event.key==='Enter')authSubmit()">
+        <div id="auth-status" class="auth-status"></div>
+        <button id="auth-submit" class="big-btn gold" style="width:100%" onclick="authSubmit()">Sign In</button>
+        <div class="auth-divider">&#9472;&#9472; or &#9472;&#9472;</div>
+        <button class="big-btn ghost" style="width:100%" onclick="guestMode()">Play as Guest</button>
+      </div>
+    </div>
+    <p class="auth-footer">Guest progress is saved locally on this device only.</p>
+  </div>
+</div>
 
 <!-- FLASHCARD SCREEN -->
 <div class="screen on" id="flashcard-screen">
@@ -1292,6 +1355,15 @@ html,body{width:100%;height:100%;overflow:hidden;
   <div id="fs-nav-btns">
     <button class="fs-pill" onclick="showScreen('catalog-screen')">Catalog</button>
     <button class="fs-pill" id="pill-lists" onclick="showScreen('lists-screen')">Lists</button>
+    <div id="acct-dropdown-wrap">
+      <button class="fs-pill" id="acct-btn" onclick="toggleAcctDropdown()">&#128100;</button>
+      <div id="acct-dropdown">
+        <div class="acct-email" id="acct-email-label">Guest mode</div>
+        <div class="acct-item" id="acct-signin-item" onclick="showAuthFromApp()" style="display:none">Sign in / Switch account</div>
+        <div class="acct-item danger" id="acct-signout-item" onclick="authSignOut()" style="display:none">Sign out</div>
+        <div class="acct-item" id="acct-guest-label" style="display:none;cursor:default;color:rgba(255,255,255,.3)">Progress saved locally</div>
+      </div>
+    </div>
   </div>
   <button id="fs-prev" onclick="go(-1)">&#8592;</button>
   <button id="fs-next" onclick="go(1)">&#8594;</button>
@@ -1464,6 +1536,7 @@ function saveState(){
   const out={};
   Object.keys(ST).forEach(n=>{ const{idx,learned,flagged}=ST[n]; out[n]={idx,learned,flagged}; });
   localStorage.setItem('swlegion_v1',JSON.stringify(out));
+  scheduleSync();
 }
 function s(n){ return ST[n]||{idx:0,learned:false,flagged:false,busy:false}; }
 function ci(c){ const st=s(c.name); return (c.imgs&&c.imgs[st.idx])||(c.imgs&&c.imgs[0])||''; }
@@ -1838,9 +1911,6 @@ function closeMod(e){
   document.getElementById('modal-bg').classList.remove('on'); mcard=null;
 }
 
-loadState();
-setMode('learn');
-
 // ─── UNIT DATABASE (from LegionHQ2) ──────────────────────────────────────────
 /*UNIT_DB_JSON*/
 
@@ -1927,6 +1997,7 @@ function loadLists(){
 }
 function saveLists(lists){
   localStorage.setItem('swlegion_lists',JSON.stringify(lists));
+  scheduleSync();
 }
 function getListById(id){
   return loadLists().find(l=>l.id===id)||null;
@@ -2145,7 +2216,204 @@ function lmDeleteList(){
 
 function escHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
-updateListPillLabel();
+// ─── SUPABASE AUTH & CLOUD SYNC ───────────────────────────────────────────────
+const SUPA_URL = 'https://ddpretixfmrvkhyllcbm.supabase.co';
+const SUPA_KEY = 'sb_publishable_JWxIgV4KHYgCt0sNSQ4jug_JTxgFYF1';
+let _supa = null, _currentUser = null, _syncTimer = null, _isGuest = false;
+
+function initSupabase(){
+  try{ _supa = supabase.createClient(SUPA_URL, SUPA_KEY); }
+  catch(e){ console.warn('Supabase init failed:', e); }
+}
+
+async function initAuth(){
+  initSupabase();
+  if(!_supa){ guestMode(); return; }
+
+  _supa.auth.onAuthStateChange(async (event, session)=>{
+    if(event==='SIGNED_IN' && session){
+      _currentUser = session.user; _isGuest = false;
+      await loadCloudState();
+      hideAuthScreen();
+      startApp();
+    } else if(event==='SIGNED_OUT'){
+      _currentUser = null;
+    }
+  });
+
+  const { data:{ session } } = await _supa.auth.getSession();
+  if(session){
+    _currentUser = session.user; _isGuest = false;
+    await loadCloudState();
+    hideAuthScreen();
+    startApp();
+  } else {
+    showAuthScreen();
+  }
+}
+
+function startApp(){
+  loadState();
+  updateListPillLabel();
+  updateCatListPillLabel();
+  updateAccountUI();
+  setMode('learn');
+}
+
+async function loadCloudState(){
+  if(!_supa || !_currentUser) return;
+  try{
+    const { data } = await _supa.from('user_state')
+      .select('card_states,army_lists')
+      .eq('user_id', _currentUser.id)
+      .maybeSingle();
+    if(data){
+      if(data.card_states && Object.keys(data.card_states).length)
+        localStorage.setItem('swlegion_v1', JSON.stringify(data.card_states));
+      if(data.army_lists && data.army_lists.length)
+        localStorage.setItem('swlegion_lists', JSON.stringify(data.army_lists));
+    }
+  }catch(e){ console.warn('Cloud load failed:', e); }
+}
+
+async function syncToCloud(){
+  if(!_supa || !_currentUser || _isGuest) return;
+  try{
+    const out={};
+    Object.keys(ST).forEach(n=>{ const{idx,learned,flagged}=ST[n]; out[n]={idx,learned,flagged}; });
+    await _supa.from('user_state').upsert({
+      user_id: _currentUser.id,
+      card_states: out,
+      army_lists: loadLists(),
+      updated_at: new Date().toISOString()
+    }, { onConflict: 'user_id' });
+  }catch(e){ console.warn('Cloud sync failed:', e); }
+}
+
+function scheduleSync(){
+  if(!_currentUser || _isGuest) return;
+  clearTimeout(_syncTimer);
+  _syncTimer = setTimeout(syncToCloud, 2000);
+}
+
+// Auth screen visibility
+function showAuthScreen(){
+  document.getElementById('auth-screen').classList.remove('hidden');
+}
+function hideAuthScreen(){
+  document.getElementById('auth-screen').classList.add('hidden');
+}
+function showAuthFromApp(){
+  closeAcctDropdown();
+  showAuthScreen();
+}
+
+// Auth mode tabs
+let _authMode = 'login';
+function setAuthMode(m){
+  _authMode = m;
+  document.getElementById('auth-tab-login').classList.toggle('active', m==='login');
+  document.getElementById('auth-tab-signup').classList.toggle('active', m==='signup');
+  document.getElementById('auth-submit').textContent = m==='login'?'Sign In':'Create Account';
+  document.getElementById('auth-status').textContent = '';
+  document.getElementById('auth-status').className = 'auth-status';
+}
+function setAuthStatus(msg, cls){
+  const el = document.getElementById('auth-status');
+  el.textContent = msg;
+  el.className = 'auth-status ' + (cls||'');
+}
+
+// Sign in / sign up
+async function authSubmit(){
+  if(!_supa){ guestMode(); return; }
+  const email = document.getElementById('auth-email').value.trim();
+  const pwd   = document.getElementById('auth-pwd').value;
+  if(!email){ setAuthStatus('Enter your email','err'); return; }
+  if(!pwd)  { setAuthStatus('Enter your password','err'); return; }
+  const btn = document.getElementById('auth-submit');
+  btn.disabled = true;
+  if(_authMode === 'login'){
+    setAuthStatus('Signing in…','work');
+    const { error } = await _supa.auth.signInWithPassword({ email, password: pwd });
+    btn.disabled = false;
+    if(error) setAuthStatus(error.message, 'err');
+    // success handled by onAuthStateChange
+  } else {
+    if(pwd.length < 6){ btn.disabled=false; setAuthStatus('Password must be at least 6 characters','err'); return; }
+    setAuthStatus('Creating account…','work');
+    const { error } = await _supa.auth.signUp({ email, password: pwd });
+    btn.disabled = false;
+    if(error) setAuthStatus(error.message, 'err');
+    else setAuthStatus('Account created! Check your email to confirm, then sign in.','ok');
+  }
+}
+
+async function authSignOut(){
+  closeAcctDropdown();
+  // Flush any pending sync first
+  clearTimeout(_syncTimer);
+  await syncToCloud();
+  if(_supa) await _supa.auth.signOut();
+  _currentUser = null; _isGuest = false;
+  // Clear local cache
+  localStorage.removeItem('swlegion_v1');
+  localStorage.removeItem('swlegion_lists');
+  // Reset in-memory state
+  CARDS.forEach(c=>{ ST[c.name]={idx:0,learned:false,flagged:false,busy:false}; });
+  // Reset auth form
+  document.getElementById('auth-email').value = '';
+  document.getElementById('auth-pwd').value = '';
+  setAuthStatus('','');
+  showAuthScreen();
+}
+
+function guestMode(){
+  _isGuest = true; _currentUser = null;
+  hideAuthScreen();
+  startApp();
+}
+
+// Account button dropdown
+function toggleAcctDropdown(){
+  const dd = document.getElementById('acct-dropdown');
+  if(dd.classList.contains('open')){ closeAcctDropdown(); return; }
+  dd.classList.add('open');
+  setTimeout(()=>{ document.addEventListener('click', function _c(e){
+    if(!document.getElementById('acct-dropdown-wrap').contains(e.target)){
+      closeAcctDropdown(); document.removeEventListener('click',_c);
+    }
+  }); },0);
+}
+function closeAcctDropdown(){
+  document.getElementById('acct-dropdown').classList.remove('open');
+}
+function updateAccountUI(){
+  const btn   = document.getElementById('acct-btn');
+  const label = document.getElementById('acct-email-label');
+  const siItem = document.getElementById('acct-signin-item');
+  const soItem = document.getElementById('acct-signout-item');
+  const gLabel = document.getElementById('acct-guest-label');
+  if(!btn) return;
+  if(_currentUser){
+    const email = _currentUser.email || '';
+    const short = email.split('@')[0].substring(0,10);
+    btn.textContent   = '\u{1F464} ' + short;
+    label.textContent = email;
+    siItem.style.display = 'none';
+    soItem.style.display = 'block';
+    gLabel.style.display = 'none';
+  } else {
+    btn.textContent   = '\u{1F464}';
+    label.textContent = 'Guest mode';
+    siItem.style.display = 'block';
+    soItem.style.display = 'none';
+    gLabel.style.display = 'block';
+  }
+}
+
+// Boot
+initAuth();
 </script>
 </body>
 </html>"""
