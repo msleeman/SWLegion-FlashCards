@@ -2219,7 +2219,7 @@ function escHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;')
 
 // ─── SUPABASE AUTH & CLOUD SYNC ───────────────────────────────────────────────
 const SUPA_URL = 'https://ddpretixfmrvkhyllcbm.supabase.co';
-const SUPA_KEY = 'sb_publishable_JWxIgV4KHYgCt0sNSQ4jug_JTxgFYF1';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRkcHJldGl4Zm1ydmtoeWxsY2JtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0NDA5NTUsImV4cCI6MjA5MTAxNjk1NX0.VFSG5ybkTu2pUW4Yjw9GN8r4Vl1CQt59w4tXlJ-hwoU';
 let _supa = null, _currentUser = null, _syncTimer = null, _isGuest = false;
 
 function initSupabase(){
