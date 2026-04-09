@@ -279,6 +279,17 @@ html,body{width:100%;height:100%;overflow:hidden;
 .cat-card.out-list:hover{opacity:.65;transform:translateY(-2px)}
 .badge-inlist{background:var(--gold);color:#000}
 .badge-addlist{background:rgba(255,255,255,.12);color:rgba(255,255,255,.55)}
+/* Photo picker nav (overlaid on modal photo) */
+.photo-nav{position:absolute;bottom:0;left:0;right:0;padding:8px 12px;
+  display:flex;align-items:center;gap:8px;pointer-events:none;
+  background:linear-gradient(transparent,rgba(0,0,0,.75))}
+.photo-nav>*{pointer-events:all}
+.pnb{background:rgba(0,0,0,.55);backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,.2);border-radius:6px;
+  color:rgba(255,255,255,.85);padding:4px 10px;cursor:pointer;
+  font-size:12px;font-family:inherit;transition:all .15s}
+.pnb:hover{background:rgba(255,255,255,.15)}
+.pnb.del:hover{background:rgba(192,57,43,.4);border-color:#c0392b;color:#f08080}
 .cat-edit-bar{display:none;align-items:center;gap:10px;padding:10px 14px;
   margin-bottom:14px;background:rgba(245,197,24,.07);
   border:1px solid rgba(245,197,24,.22);border-radius:var(--rs);flex-wrap:wrap}
@@ -875,10 +886,20 @@ function showBack(c){
 function renderActions(c){
   const st=s(c.name), n=ic(c);
   const sn=c.name.replace(/'/g,"\\'");
-  const pl=st.busy?'Fetching...':n>1?`Photo (${st.idx+1}/${n})`:'Bad photo';
+  let photo;
+  if(st.busy){
+    photo=`<button class="fs-btn" disabled>Searching…</button>`;
+  } else if(n===0){
+    photo=`<button class="fs-btn" onclick="getPhotos('${sn}')">Get Photos</button>`;
+  } else {
+    photo=(n>1?`<button class="fs-btn" onclick="prevPhoto('${sn}')">&#9664;</button>`:'')
+      +`<button class="fs-btn" onclick="getPhotos('${sn}')" title="Get more photos">${st.idx+1}/${n}</button>`
+      +`<button class="fs-btn" onclick="discardPhoto('${sn}')" title="Discard this photo">&#10005;</button>`
+      +(n>1?`<button class="fs-btn" onclick="nextPhoto('${sn}')">&#9654;</button>`:'');
+  }
   document.getElementById('fs-actions').innerHTML=
-    `<button class="fs-btn${st.learned?' learned':''}" onclick="toggleLearned('${sn}')">${st.learned?'Learned':'Mark as learned'}</button>`+
-    `<button class="fs-btn${st.flagged?' flagged':''}" onclick="badPhoto('${sn}')">${pl}</button>`;
+    `<button class="fs-btn${st.learned?' learned':''}" onclick="toggleLearned('${sn}')">${st.learned?'Learned':'Mark as learned'}</button>`
+    +photo;
 }
 function handleTap(){
   if(mode==='quiz'&&!answered) return;
@@ -936,53 +957,92 @@ function resetLearned(){
   document.getElementById('fs-alldone').classList.remove('on');
   render();
 }
-function badPhoto(name){
-  const c=CARDS.find(x=>x.name===name), st=s(name);
-  if(st.busy) return;
-  const n=ic(c);
-  if(n>1&&st.idx<n-1){ st.idx++; st.flagged=true; saveState(); setStatus(`Photo ${st.idx+1} of ${n}`,'ok',3000); render(); return; }
-  st.busy=true; st.flagged=true;
-  setStatus(`Fetching photo for "${name}"...`,'work');
-  renderActions(c);
-  fetchImage(c).then(r=>{
-    st.busy=false;
-    if(r==='ok')        setStatus(`Photo loaded!`,'ok',5000);
-    else if(r==='none') setStatus(`No image found for "${name}"`, 'err',5000);
-    else                setStatus(`Network error`,'err',5000);
-    saveState(); render();
-  });
-}
-async function fetchImage(c){
+// ─── PHOTO PICKER ─────────────────────────────────────────────────────────────
+async function fetchImages(c, maxNew=6){
   const capi='https://commons.wikimedia.org/w/api.php';
+  const wapi='https://en.wikipedia.org/w/api.php';
   const clean=c.name.replace(/\s*X$/,'').replace(/\s*\(.*?\)/g,'').trim();
+  const candUrls=[];
+
+  // Wikipedia article thumbnail for "Star Wars [keyword]" — usually a good image
+  try{
+    const q=new URLSearchParams({action:'query',titles:`Star Wars ${clean}`,
+      prop:'pageimages',pithumbsize:'1200',format:'json',origin:'*'});
+    const d=await (await fetch(`${wapi}?${q}`)).json();
+    Object.values(d.query?.pages||{}).forEach(p=>{ if(p.thumbnail?.source) candUrls.push(p.thumbnail.source); });
+  }catch(e){}
+
+  // Wikimedia Commons file search — Star Wars Legion, then Star Wars, then bare name
   const terms=[`Star Wars Legion ${clean}`,`Star Wars ${clean}`,clean];
-  const cands=[];
   for(const term of terms){
     try{
-      const q=new URLSearchParams({action:'query',generator:'search',
-        gsrnamespace:'6',gsrsearch:term,gsrlimit:'5',
-        prop:'imageinfo',iiprop:'url|mime',iiurlwidth:'1200',format:'json',origin:'*'});
-      const data=await (await fetch(`${capi}?${q}`)).json();
-      if(data.query) Object.values(data.query.pages||{}).forEach(p=>{
+      const q=new URLSearchParams({action:'query',generator:'search',gsrnamespace:'6',
+        gsrsearch:term,gsrlimit:'10',prop:'imageinfo',iiprop:'url|mime',
+        iiurlwidth:'1200',format:'json',origin:'*'});
+      const d=await (await fetch(`${capi}?${q}`)).json();
+      Object.values(d.query?.pages||{}).forEach(p=>{
         const inf=(p.imageinfo||[])[0];
-        if(inf&&/\.(jpe?g|png)$/i.test(inf.url)) cands.push(inf.thumburl||inf.url);
+        if(inf&&/\.(jpe?g|png)$/i.test(inf.url)) candUrls.push(inf.thumburl||inf.url);
       });
     }catch(e){}
-    if(cands.length>=3) break;
+    if(candUrls.length>=18) break;
   }
+
   const have=new Set(c.imgs||[]);
-  const fresh=[...new Set(cands)].filter(u=>u&&!have.has(u));
-  if(!fresh.length) return 'none';
+  const fresh=[...new Set(candUrls)].filter(u=>u&&!have.has(u));
+  let added=0;
   for(const url of fresh){
+    if(added>=maxNew) break;
     try{
       const r=await fetch(url); if(!r.ok) continue;
-      const blobUrl=URL.createObjectURL(await r.blob());
+      const blob=URL.createObjectURL(await r.blob());
       if(!c.imgs) c.imgs=[];
-      c.imgs.push(blobUrl); s(c.name).idx=c.imgs.length-1;
-      return 'ok';
+      c.imgs.push(blob); added++;
     }catch(e){}
   }
-  return 'none';
+  return added;
+}
+
+async function getPhotos(name){
+  const c=CARDS.find(x=>x.name===name), st=s(name);
+  if(!c||st.busy) return;
+  const have=ic(c);
+  if(have>=6){ setStatus(`Already have ${have} photos — discard some first`,'work',3000); return; }
+  st.busy=true; saveState(); renderActions(c);
+  if(mcard===c) renderMod();
+  setStatus(`Searching for "${name}" photos…`,'work');
+  const added=await fetchImages(c, 6-have);
+  st.busy=false;
+  if(added>0){
+    s(name).idx=ic(c)-added; // jump to first new photo
+    setStatus(`Found ${added} photo${added!==1?'s':''}!`,'ok',4000);
+  } else {
+    setStatus(`No new photos found for "${name}"`,'err',4000);
+  }
+  saveState(); render(); if(mcard===c) renderMod();
+}
+
+function nextPhoto(name){
+  const c=CARDS.find(x=>x.name===name), st=s(name), n=ic(c);
+  if(!n) return;
+  st.idx=(st.idx+1)%n;
+  saveState(); render(); if(mcard===c) renderMod();
+}
+
+function prevPhoto(name){
+  const c=CARDS.find(x=>x.name===name), st=s(name), n=ic(c);
+  if(!n) return;
+  st.idx=(st.idx-1+n)%n;
+  saveState(); render(); if(mcard===c) renderMod();
+}
+
+function discardPhoto(name){
+  const c=CARDS.find(x=>x.name===name), st=s(name);
+  if(!c||!c.imgs?.length) return;
+  const gone=c.imgs.splice(st.idx,1)[0];
+  if(gone?.startsWith('blob:')) URL.revokeObjectURL(gone);
+  st.idx=Math.max(0,Math.min(st.idx,c.imgs.length-1));
+  saveState(); render(); if(mcard===c) renderMod();
 }
 
 let catFilter='all';
@@ -1053,11 +1113,23 @@ function openMod(name){
   renderMod(); document.getElementById('modal-bg').classList.add('on');
 }
 function renderMod(){
-  const c=mcard, st=s(c.name), src=ci(c);
-  document.getElementById('mod-img').innerHTML=src
-    ?`<img class="modal-photo" src="${src}" alt="${c.name}"
-           onerror="this.outerHTML='<div class=modal-photo-ph>No image</div>'">`
-    :`<div class="modal-photo-ph">No image — use Bad Photo to fetch one</div>`;
+  const c=mcard, st=s(c.name), src=ci(c), n=ic(c);
+  const sn=c.name.replace(/'/g,"\\'");
+  if(src){
+    const nav=n>0?`<div class="photo-nav">
+      ${n>1?`<button class="pnb" onclick="prevPhoto('${sn}')">&#9664;</button>`:''}
+      <span style="font-size:12px;color:rgba(255,255,255,.7)">${st.idx+1} / ${n}</span>
+      <button class="pnb del" onclick="discardPhoto('${sn}')" title="Discard this photo">&#10005; Discard</button>
+      <span style="flex:1"></span>
+      ${n>1?`<button class="pnb" onclick="nextPhoto('${sn}')">&#9654;</button>`:''}
+    </div>`:'';
+    document.getElementById('mod-img').innerHTML=
+      `<div style="position:relative"><img class="modal-photo" src="${src}" alt="${c.name}"
+        onerror="this.outerHTML='<div class=modal-photo-ph>Image failed to load</div>'">${nav}</div>`;
+  } else {
+    document.getElementById('mod-img').innerHTML=
+      `<div class="modal-photo-ph">No image yet — click Get Photos below</div>`;
+  }
   document.getElementById('mod-name').textContent=c.name;
   document.getElementById('mod-type').innerHTML=typeBadgeHTML(c.type);
   document.getElementById('mod-def').textContent=c.definition;
@@ -1065,23 +1137,29 @@ function renderMod(){
   ml.textContent=st.learned?'Learned — reset':'Mark as learned';
   ml.className='modal-btn'+(st.learned?' lrnd':'');
   const mb=document.getElementById('mod-photo');
-  mb.textContent=st.busy?'Fetching...':'Bad photo';
-  mb.className='modal-btn'+(st.flagged?' flagd':'');
+  mb.disabled=st.busy||n>=6;
+  mb.textContent=st.busy?'Searching…':n>=6?'6/6 photos':n===0?'Get Photos':`Get More (${n}/6)`;
+  mb.className='modal-btn';
 }
 function modToggleLearned(){ toggleLearned(mcard.name); renderMod(); renderCatalog(); }
 async function modBadPhoto(){
-  const c=mcard, st=s(c.name);
-  if(st.busy) return;
-  st.busy=true; st.flagged=true;
-  document.getElementById('mod-st').textContent='Fetching...';
+  const c=mcard, st=s(c.name), n=ic(c);
+  if(st.busy||n>=6) return;
+  st.busy=true;
+  document.getElementById('mod-st').textContent='Searching for photos…';
   document.getElementById('mod-st').className='modal-status work';
   renderMod();
-  const r=await fetchImage(c);
+  const added=await fetchImages(c, 6-n);
   st.busy=false;
   const el=document.getElementById('mod-st');
-  if(r==='ok'){el.textContent='Loaded!';el.className='modal-status ok';}
-  else if(r==='none'){el.textContent='No image found';el.className='modal-status err';}
-  else{el.textContent='Network error';el.className='modal-status err';}
+  if(added>0){
+    s(c.name).idx=ic(c)-added;
+    el.textContent=`Found ${added} photo${added!==1?'s':''}!`;
+    el.className='modal-status ok';
+  } else {
+    el.textContent='No new photos found';
+    el.className='modal-status err';
+  }
   saveState(); renderMod(); renderCatalog();
 }
 function closeMod(e){
