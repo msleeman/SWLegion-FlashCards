@@ -166,10 +166,67 @@ html,body{width:100%;height:100%;overflow:hidden;
 .modal-btn.lrnd{background:rgba(29,158,117,.25);border-color:var(--G);color:var(--Gt);font-weight:600}
 .modal-btn.flagd{background:var(--Abg);border-color:var(--A);color:var(--At)}
 .modal-btn.cls{margin-left:auto;background:rgba(255,255,255,.04)}
+/* ── Safe-area support (iPhone notch / home indicator) ───────────────── */
+@supports(padding:env(safe-area-inset-top)){
+  #fs-topbar{
+    padding-top:max(14px,env(safe-area-inset-top));
+    padding-left:max(16px,env(safe-area-inset-left));
+  }
+  #fs-nav-btns{
+    top:max(14px,env(safe-area-inset-top));
+    right:max(16px,env(safe-area-inset-right));
+  }
+  #fs-bottom{
+    padding-left:max(20px,env(safe-area-inset-left));
+    padding-right:max(20px,env(safe-area-inset-right));
+    padding-bottom:max(24px,env(safe-area-inset-bottom));
+  }
+  #fs-prev{left:max(12px,env(safe-area-inset-left))}
+  #fs-next{right:max(12px,env(safe-area-inset-right))}
+  .cat-wrap{padding-bottom:max(20px,env(safe-area-inset-bottom))}
+}
+/* ── Small phones (≤500px) ───────────────────────────────────────────── */
 @media(max-width:500px){
+  /* Pull type-filter chips out of topbar flex row into a scrollable strip
+     just below the topbar (position:absolute is relative to #fs-topbar) */
+  #fs-type-filter{
+    position:absolute;top:100%;left:0;right:0;
+    display:flex;overflow-x:auto;
+    -webkit-overflow-scrolling:touch;scrollbar-width:none;
+    gap:6px;padding:8px 16px 6px;
+    background:linear-gradient(rgba(0,0,0,.55),transparent);
+    pointer-events:none;
+  }
+  #fs-type-filter::-webkit-scrollbar{display:none}
+  #fs-type-filter .fs-pill{flex-shrink:0;pointer-events:all}
+  /* Extend top gradient to cover both the topbar row and filter strip */
+  #fs-top-grad{height:260px}
+  /* Topbar single row: Learn / Quiz / [spacer] / progress / ctr
+     Nav-btns sit over the right via their own absolute positioning */
+  #fs-topbar{gap:8px}
+  /* Keyword name & quiz options */
   #fs-keyword-name{font-size:28px}
   #fs-opts{grid-template-columns:1fr}
-  .cat-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}
+  /* Catalog grid */
+  .cat-grid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}
+  /* Modal photo shorter on small screens */
+  .modal-photo,.modal-photo-ph{height:160px}
+  /* Larger tap targets for prev/next */
+  #fs-prev,#fs-next{width:40px;height:40px;font-size:16px}
+}
+/* ── Landscape phones ────────────────────────────────────────────────── */
+@media(max-height:500px) and (orientation:landscape){
+  #fs-topbar{padding-top:6px}
+  #fs-top-grad{height:140px}
+  #fs-keyword-name{font-size:22px}
+  #fs-bottom{padding-bottom:10px}
+  .modal-photo,.modal-photo-ph{height:130px}
+}
+/* ── Tablets / iPad (768px – 1024px) ─────────────────────────────────── */
+@media(min-width:768px) and (max-width:1024px){
+  .cat-grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}
+  .modal-box{max-width:620px}
+  #fs-definition{font-size:16px}
 }
 /* Lists screen */
 .list-panel{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:var(--rb);padding:20px;margin-bottom:20px}
@@ -212,6 +269,10 @@ html,body{width:100%;height:100%;overflow:hidden;
 .list-btn-edit{font-size:12px;padding:5px 12px;border-radius:12px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);color:var(--white2);cursor:pointer;font-family:inherit}
 .list-btn-edit:hover{background:rgba(255,255,255,.12)}
 .lists-empty{color:rgba(255,255,255,.25);font-size:14px;text-align:center;padding:2rem 0}
+.lc-tabs{display:flex;border-bottom:1px solid rgba(255,255,255,.08);margin:0 0 20px}
+.lc-tab{background:none;border:none;border-bottom:2px solid transparent;color:rgba(255,255,255,.45);font-size:14px;padding:10px 16px;cursor:pointer;font-family:inherit;transition:all .15s;margin-bottom:-1px}
+.lc-tab.active{border-bottom-color:var(--gold);color:var(--gold)}
+.faction-custom{background:rgba(245,197,24,.15);border:1px solid var(--golddim);color:var(--gold)}
 /* List modal */
 .list-modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:200;align-items:center;justify-content:center;padding:1rem;backdrop-filter:blur(10px)}
 .list-modal-bg.on{display:flex}
@@ -414,29 +475,59 @@ html,body{width:100%;height:100%;overflow:hidden;
     </div>
     <!-- CREATE -->
     <div class="list-panel" id="list-create-panel">
-      <h2 class="list-section-title">Import Army List from LegionHQ2</h2>
-      <div class="list-input-row">
-        <input type="text" id="list-url-input" class="list-url-input"
-               placeholder="Paste LegionHQ2 URL: https://legionhq2.com/list/empire/1000:..."
-               autocomplete="off" spellcheck="false">
-        <button class="dark-pill" onclick="parseListUrl()">Parse</button>
+      <div class="lc-tabs">
+        <button class="lc-tab active" id="lc-tab-import" onclick="setCreateTab('import')">Import from LegionHQ2</button>
+        <button class="lc-tab"        id="lc-tab-custom" onclick="setCreateTab('custom')">Build Custom</button>
       </div>
-      <div id="list-parse-result" style="display:none">
-        <div class="list-parse-header">
-          <span id="list-parse-faction-badge" class="faction-badge"></span>
-          <span id="list-parse-points" class="list-pts"></span>
-          <span id="list-parse-unit-count"></span>
+
+      <!-- Import tab -->
+      <div id="lc-import-panel">
+        <div class="list-input-row">
+          <input type="text" id="list-url-input" class="list-url-input"
+                 placeholder="Paste LegionHQ2 URL: https://legionhq2.com/list/empire/1000:..."
+                 autocomplete="off" spellcheck="false">
+          <button class="dark-pill" onclick="parseListUrl()">Parse</button>
         </div>
-        <div id="list-parse-units"></div>
-        <div class="list-kw-section">
-          <div class="list-kw-title">Keywords in this list (<span id="list-kw-count">0</span>):</div>
-          <div id="list-kw-tags" class="list-kw-tags"></div>
+        <div id="list-parse-result" style="display:none">
+          <div class="list-parse-header">
+            <span id="list-parse-faction-badge" class="faction-badge"></span>
+            <span id="list-parse-points" class="list-pts"></span>
+            <span id="list-parse-unit-count"></span>
+          </div>
+          <div id="list-parse-units"></div>
+          <div class="list-kw-section">
+            <div class="list-kw-title">Keywords in this list (<span id="list-kw-count">0</span>):</div>
+            <div id="list-kw-tags" class="list-kw-tags"></div>
+          </div>
+          <div class="list-save-row">
+            <input type="text" id="list-name-input" class="list-name-input" placeholder="List name (e.g. Vader Empire 1000pts)" maxlength="60">
+            <button class="big-btn gold" onclick="saveList()">Save List</button>
+          </div>
+          <div id="list-save-status"></div>
         </div>
-        <div class="list-save-row">
-          <input type="text" id="list-name-input" class="list-name-input" placeholder="List name (e.g. Vader Empire 1000pts)" maxlength="60">
-          <button class="big-btn gold" onclick="saveList()">Save List</button>
+      </div>
+
+      <!-- Custom tab -->
+      <div id="lc-custom-panel" style="display:none">
+        <div class="list-input-row" style="margin-bottom:14px">
+          <input type="text" id="custom-list-name" class="list-name-input"
+                 placeholder="List name (e.g. My Keyword Focus)" maxlength="60" autocomplete="off">
         </div>
-        <div id="list-save-status"></div>
+        <div class="list-kw-title">Selected keywords (<span id="custom-kw-count">0</span>):</div>
+        <div id="custom-kw-tags" class="list-kw-tags" style="min-height:36px;margin:10px 0 14px">
+          <span style="font-size:13px;color:rgba(255,255,255,.25);font-style:italic">No keywords added yet — search below</span>
+        </div>
+        <div class="list-add-kw-row">
+          <input type="text" id="custom-kw-input" class="list-url-input" style="flex:1"
+                 placeholder="Search keywords..." autocomplete="off" list="custom-kw-datalist"
+                 onkeydown="if(event.key==='Enter'){customAddKw();event.preventDefault()}">
+          <datalist id="custom-kw-datalist"></datalist>
+          <button class="dark-pill" onclick="customAddKw()">Add</button>
+        </div>
+        <div class="list-save-row" style="margin-top:16px">
+          <button class="big-btn gold" onclick="saveCustomList()">Create List</button>
+        </div>
+        <div id="custom-list-status" style="font-size:13px;margin-top:8px;min-height:20px"></div>
       </div>
     </div>
     <!-- SAVED LISTS -->
@@ -1233,6 +1324,79 @@ function saveList(){
   _parsedArmy=null;
   document.getElementById('list-url-input').value='';
   document.getElementById('list-parse-result').style.display='none';
+  renderSavedLists();
+  updateListPillLabel();
+}
+
+// ─── CUSTOM LIST BUILDER ──────────────────────────────────────────────────────
+let _customKws=[];
+
+function setCreateTab(tab){
+  document.getElementById('lc-tab-import').classList.toggle('active',tab==='import');
+  document.getElementById('lc-tab-custom').classList.toggle('active',tab==='custom');
+  document.getElementById('lc-import-panel').style.display=tab==='import'?'block':'none';
+  document.getElementById('lc-custom-panel').style.display=tab==='custom'?'block':'none';
+  if(tab==='custom') _refreshCustomDatalist();
+}
+
+function _refreshCustomDatalist(){
+  const existing=new Set(_customKws.map(k=>k.toLowerCase()));
+  document.getElementById('custom-kw-datalist').innerHTML=
+    CARDS.map(c=>c.name).filter(n=>!existing.has(n.toLowerCase()))
+      .map(n=>`<option value="${escHtml(n)}">`).join('');
+}
+
+function customAddKw(){
+  const inp=document.getElementById('custom-kw-input');
+  const val=inp.value.trim();
+  if(!val) return;
+  // Accept only names that exist in CARDS (case-insensitive)
+  const match=CARDS.find(c=>c.name.toLowerCase()===val.toLowerCase());
+  if(!match){ document.getElementById('custom-list-status').textContent='Keyword not found — pick from the list';
+    document.getElementById('custom-list-status').style.color='#f08080'; return; }
+  document.getElementById('custom-list-status').textContent='';
+  if(!_customKws.map(k=>k.toLowerCase()).includes(match.name.toLowerCase())){
+    _customKws.push(match.name);
+    _renderCustomKws();
+    _refreshCustomDatalist();
+  }
+  inp.value='';
+  inp.focus();
+}
+
+function customRemoveKw(idx){
+  _customKws.splice(idx,1);
+  _renderCustomKws();
+  _refreshCustomDatalist();
+}
+
+function _renderCustomKws(){
+  const el=document.getElementById('custom-kw-tags');
+  document.getElementById('custom-kw-count').textContent=_customKws.length;
+  if(!_customKws.length){
+    el.innerHTML='<span style="font-size:13px;color:rgba(255,255,255,.25);font-style:italic">No keywords added yet — search below</span>';
+    return;
+  }
+  el.innerHTML=_customKws.map((kw,i)=>
+    `<span class="kw-tag removable" onclick="customRemoveKw(${i})" title="Remove">${escHtml(kw)} &#215;</span>`
+  ).join('');
+}
+
+function saveCustomList(){
+  const nameEl=document.getElementById('custom-list-name');
+  const statusEl=document.getElementById('custom-list-status');
+  const name=nameEl.value.trim();
+  if(!name){ statusEl.textContent='Enter a list name'; statusEl.style.color='#f08080'; return; }
+  if(!_customKws.length){ statusEl.textContent='Add at least one keyword'; statusEl.style.color='#f08080'; return; }
+  const lists=loadLists();
+  lists.push({id:'lst_'+Date.now(),name,faction:'custom',points:0,
+    keywords:[..._customKws],armyUrl:null,createdAt:new Date().toISOString()});
+  saveLists(lists);
+  _customKws=[];
+  nameEl.value='';
+  _renderCustomKws();
+  statusEl.textContent='List created!';
+  statusEl.style.color='#6effc4';
   renderSavedLists();
   updateListPillLabel();
 }
