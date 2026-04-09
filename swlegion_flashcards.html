@@ -273,6 +273,21 @@ html,body{width:100%;height:100%;overflow:hidden;
 .lc-tab{background:none;border:none;border-bottom:2px solid transparent;color:rgba(255,255,255,.45);font-size:14px;padding:10px 16px;cursor:pointer;font-family:inherit;transition:all .15s;margin-bottom:-1px}
 .lc-tab.active{border-bottom-color:var(--gold);color:var(--gold)}
 .faction-custom{background:rgba(245,197,24,.15);border:1px solid var(--golddim);color:var(--gold)}
+/* Catalog edit-list mode */
+.cat-card.in-list{border-color:rgba(245,197,24,.65);border-width:2px}
+.cat-card.out-list{opacity:.32}
+.cat-card.out-list:hover{opacity:.65;transform:translateY(-2px)}
+.badge-inlist{background:var(--gold);color:#000}
+.badge-addlist{background:rgba(255,255,255,.12);color:rgba(255,255,255,.55)}
+.cat-edit-bar{display:none;align-items:center;gap:10px;padding:10px 14px;
+  margin-bottom:14px;background:rgba(245,197,24,.07);
+  border:1px solid rgba(245,197,24,.22);border-radius:var(--rs);flex-wrap:wrap}
+.cat-edit-bar.on{display:flex}
+#cat-edit-dd-wrap{position:relative;display:inline-block}
+#cat-edit-dd{position:absolute;top:calc(100% + 6px);right:0;min-width:180px;
+  background:#0d1020;border:1px solid rgba(245,197,24,.35);border-radius:10px;
+  z-index:200;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.6);display:none}
+#cat-edit-dd.open{display:block}
 /* List modal */
 .list-modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:200;align-items:center;justify-content:center;padding:1rem;backdrop-filter:blur(10px)}
 .list-modal-bg.on{display:flex}
@@ -444,7 +459,18 @@ html,body{width:100%;height:100%;overflow:hidden;
       <h1>SW Legion Keywords (v2.6)</h1>
       <div class="cat-top-btns">
         <button class="dark-pill" onclick="showScreen('flashcard-screen')">&#8592; Back</button>
+        <div id="cat-edit-dd-wrap">
+          <button class="dark-pill" id="cat-edit-pill" onclick="toggleCatEditDropdown()">Edit List &#9660;</button>
+          <div id="cat-edit-dd"></div>
+        </div>
       </div>
+    </div>
+    <div id="cat-edit-bar" class="cat-edit-bar">
+      <span style="font-size:11px;font-weight:700;letter-spacing:.5px;color:var(--gold)">EDITING</span>
+      <span id="cat-edit-name" style="font-size:13px;color:var(--white);font-weight:600"></span>
+      <span id="cat-edit-count" style="font-size:13px;color:rgba(255,255,255,.4)"></span>
+      <span style="font-size:12px;color:rgba(255,255,255,.25);flex:1">— tap a card to add or remove</span>
+      <button class="dark-pill" onclick="stopCatEdit()">Done</button>
     </div>
     <div class="cat-filters" id="cat-filters">
       <button class="dark-pill active" onclick="setCF('all',this)">All</button>
@@ -635,6 +661,7 @@ function showScreen(id){
 let typeFilter='all';
 let activeListId=null; // flashcard/quiz list filter
 let catListId=null;    // catalog list filter
+let catEditListId=null; // catalog edit mode
 
 function setTypeFilter(t){
   typeFilter=t;
@@ -729,6 +756,63 @@ function toggleCatListDropdown(){
 function setCatList(listId){
   catListId=listId||null;
   updateCatListPillLabel();
+  renderCatalog();
+}
+function toggleCatEditDropdown(){
+  const dd=document.getElementById('cat-edit-dd');
+  if(dd.classList.contains('open')){ dd.classList.remove('open'); return; }
+  const lists=loadLists();
+  let html='';
+  if(catEditListId) html+=`<div class="list-dd-item none-item" onclick="stopCatEdit();document.getElementById('cat-edit-dd').classList.remove('open')">Stop editing</div>`;
+  if(!lists.length) html+=`<div class="list-dd-item none-item">No lists saved yet</div>`;
+  lists.forEach(l=>{
+    const active=catEditListId===l.id;
+    html+=`<div class="list-dd-item${active?' active':''}" onclick="setCatEditList('${l.id}');document.getElementById('cat-edit-dd').classList.remove('open')">${escHtml(l.name)}</div>`;
+  });
+  dd.innerHTML=html;
+  dd.classList.add('open');
+  setTimeout(()=>{ document.addEventListener('click',function _c(e){ if(!document.getElementById('cat-edit-dd-wrap').contains(e.target)){ dd.classList.remove('open'); document.removeEventListener('click',_c); } }); },0);
+}
+function setCatEditList(listId){
+  catEditListId=listId||null;
+  const bar=document.getElementById('cat-edit-bar');
+  const pill=document.getElementById('cat-edit-pill');
+  if(catEditListId){
+    const lst=getListById(catEditListId);
+    bar.classList.add('on');
+    document.getElementById('cat-edit-name').textContent=lst?lst.name:'';
+    pill.classList.add('active');
+    pill.innerHTML=escHtml(lst?lst.name:'List')+' &#9660;';
+    _updateCatEditCount();
+  } else {
+    stopCatEdit();
+  }
+  renderCatalog();
+}
+function stopCatEdit(){
+  catEditListId=null;
+  document.getElementById('cat-edit-bar').classList.remove('on');
+  const pill=document.getElementById('cat-edit-pill');
+  pill.classList.remove('active');
+  pill.innerHTML='Edit List &#9660;';
+  renderCatalog();
+}
+function _updateCatEditCount(){
+  const lst=getListById(catEditListId);
+  const n=lst?lst.keywords.length:0;
+  const el=document.getElementById('cat-edit-count');
+  if(el) el.textContent=n+' card'+(n!==1?'s':'');
+}
+function toggleCardInList(cardName){
+  if(!catEditListId) return;
+  const lists=loadLists();
+  const idx=lists.findIndex(l=>l.id===catEditListId);
+  if(idx<0) return;
+  const ki=lists[idx].keywords.findIndex(k=>k.toLowerCase()===cardName.toLowerCase());
+  if(ki>=0) lists[idx].keywords.splice(ki,1);
+  else lists[idx].keywords.push(cardName);
+  saveLists(lists);
+  _updateCatEditCount();
   renderCatalog();
 }
 function renderListFilterBadges(){
@@ -909,8 +993,8 @@ function setCF(v,btn){
 }
 function renderCatalog(){
   let list=[...CARDS];
-  // Apply catalog list filter (independent of flashcard list filter)
-  if(catListId){
+  // In edit mode show all cards so user can add any; otherwise apply list filter
+  if(!catEditListId && catListId){
     const lst=getListById(catListId);
     if(lst){
       const kwSet=new Set(lst.keywords.map(k=>k.toLowerCase()));
@@ -924,6 +1008,14 @@ function renderCatalog(){
   if(catFilter==='concept')    list=list.filter(c=>c.type==='concept');
   if(catFilter==='noconcept')  list=list.filter(c=>c.type!=='concept');
   document.getElementById('cat-count').textContent=`${list.length} keyword${list.length!==1?'s':''}`;
+
+  // Build membership set for edit mode
+  let editSet=null;
+  if(catEditListId){
+    const eLst=getListById(catEditListId);
+    if(eLst) editSet=new Set(eLst.keywords.map(k=>k.toLowerCase()));
+  }
+
   const g=document.getElementById('cat-grid');
   if(!list.length){ g.innerHTML='<p class="empty-msg">Nothing here.</p>'; return; }
   g.innerHTML=list.map(c=>{
@@ -933,6 +1025,17 @@ function renderCatalog(){
       ?`<img class="cat-thumb" src="${src}" alt="${c.name}" loading="lazy"
              onerror="this.outerHTML='<div class=cat-thumb-ph>${c.name[0]}</div>'">`
       :`<div class="cat-thumb-ph">${c.name[0]}</div>`;
+    if(editSet!==null){
+      const inList=editSet.has(c.name.toLowerCase());
+      return `<div class="cat-card${inList?' in-list':' out-list'}" onclick="toggleCardInList('${sn}')" title="${inList?'Remove from list':'Add to list'}">
+        ${th}
+        <span class="cat-badge${inList?' badge-inlist':' badge-addlist'}">${inList?'&#10003; In List':'+ Add'}</span>
+        <div class="cat-lbl">
+          <div class="cat-name">${c.name}</div>
+          <div class="cat-type">${c.type}</div>
+        </div>
+      </div>`;
+    }
     return `<div class="cat-card${st.learned?' lrnd':''}" onclick="openMod('${sn}')">
       ${th}
       ${st.learned?'<span class="cat-badge badge-learned">Learned</span>':''}
