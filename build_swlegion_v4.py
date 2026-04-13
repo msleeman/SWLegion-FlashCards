@@ -5,10 +5,10 @@ Star Wars Legion Flashcards Builder v4
 Merged from v2 (PDF keyword extraction, .webp CDN images) and
 v3 (Supabase auth, army lists, unit DB, full HTML template).
 
-Keyword sources (in priority order):
-  1. SWQ_Rulebook_2.6.0-1.pdf  (PDF extraction via pdfplumber)
-  2. legion.takras.net          (web scraping via beautifulsoup4)
-  3. BUNDLED_KEYWORDS           (offline fallback)
+Keyword sources:
+  1. legion.takras.net          (web scraping — names, types, definitions)
+  2. SWQ_Rulebook_2.6.0-1.pdf  (PDF extraction — overrides definitions with official AMG text)
+  3. BUNDLED_KEYWORDS           (offline fallback for any empty definitions)
 
 Image source: legionhq2.com CDN (d2maxvwz12z6fm.cloudfront.net)
 Fallback:     Wikimedia Commons
@@ -2946,43 +2946,71 @@ def main():
     os.makedirs(IMGDIR, exist_ok=True)
     print("=" * 62)
     print("  SW Legion Flashcards Builder v4")
-    print("  Keywords: PDF > Web Scrape > Bundled fallback")
+    print("  Keywords: Web Scrape (names+types) + PDF (definitions)")
     print("  Images:   legionhq2.com CDN + Wikimedia Commons")
     print("=" * 62)
 
-    # Step 1: Get keyword definitions
-    keywords = None
+    # ── Step 1a: Web scrape for full keyword list (names, types, definitions) ──
+    print("\n[1/3] Scraping keywords from legion.takras.net...")
+    keywords = []
+    try:
+        keywords = scrape_keywords()
+        print(f"      {len(keywords)} keywords from web scraper")
+    except Exception as e:
+        print(f"      Scrape failed: {e}")
 
-    # Try PDF first (v2 approach)
-    pdf_path = find_pdf()
-    if pdf_path:
-        print("\n[1/3] Extracting keywords from PDF...")
-        kw_dict = extract_keywords_from_pdf(pdf_path)
-        if kw_dict:
-            keywords = [{"name": k, "definition": v["definition"], "type": v["type"]}
-                        for k, v in kw_dict.items()]
-            print(f"      {len(keywords)} keywords from PDF")
-        else:
-            print("      PDF extraction returned nothing -- will try web scrape")
-    else:
-        print("\n[1/3] PDF not found -- will try web scrape")
-        print("      (Place SWQ_Rulebook_2.6.0-1.pdf here to use PDF extraction)")
-
-    # If PDF failed/missing, try web scraping (v3 approach)
+    # If scrape failed entirely, fall back to bundled
     if not keywords:
-        print("\n[1/3] Scraping keywords from legion.takras.net...")
-        try:
-            keywords = scrape_keywords()
-        except Exception as e:
-            print(f"      Scrape failed: {e}")
-            keywords = []
-
-    # If both failed, use bundled definitions
-    if not keywords:
-        print("\n[1/3] Using bundled keyword definitions (offline fallback)...")
+        print("      Falling back to bundled keyword definitions...")
         keywords = [{"name": k, "definition": v["definition"], "type": v["type"]}
                     for k, v in BUNDLED_KEYWORDS.items()]
         print(f"      {len(keywords)} bundled keywords")
+
+    # ── Step 1b: Extract official definitions from PDF and overlay ────────────
+    pdf_path = find_pdf()
+    if pdf_path:
+        print(f"\n      Overlaying PDF definitions from {os.path.basename(pdf_path)}...")
+        try:
+            pdf_dict = extract_keywords_from_pdf(pdf_path)
+            if pdf_dict:
+                # Normalize lookup: lowercase, strip punctuation
+                def _norm(s):
+                    return re.sub(r'[^a-z0-9]', '', s.lower())
+                pdf_lookup = {_norm(k): v for k, v in pdf_dict.items()}
+                overlaid = 0
+                for kw in keywords:
+                    key = _norm(kw["name"])
+                    # Try exact match first, then prefix match
+                    match = pdf_lookup.get(key)
+                    if not match:
+                        for pk, pv in pdf_lookup.items():
+                            if pk.startswith(key) or key.startswith(pk):
+                                match = pv
+                                break
+                    if match and match.get("definition"):
+                        kw["definition"] = match["definition"]
+                        overlaid += 1
+                print(f"      {overlaid}/{len(keywords)} definitions replaced with PDF versions")
+            else:
+                print("      PDF extraction returned nothing — keeping web definitions")
+        except Exception as e:
+            print(f"      PDF overlay failed: {e} — keeping web definitions")
+    else:
+        print("\n      No PDF found — using web definitions only")
+        print("      (Place SWQ_Rulebook_2.6.0-1.pdf in documents/ to use official AMG text)")
+
+    # Fill any empty definitions from bundled fallback
+    bundled_lookup = {re.sub(r'[^a-z0-9]', '', k.lower()): v
+                      for k, v in BUNDLED_KEYWORDS.items()}
+    filled = 0
+    for kw in keywords:
+        if not kw.get("definition") or len(kw["definition"]) < 15:
+            key = re.sub(r'[^a-z0-9]', '', kw["name"].lower())
+            if key in bundled_lookup:
+                kw["definition"] = bundled_lookup[key]["definition"]
+                filled += 1
+    if filled:
+        print(f"      {filled} empty definitions filled from bundled fallback")
 
     print(f"\n      {len(keywords)} keywords ready")
 
