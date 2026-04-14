@@ -965,6 +965,8 @@ def download_images(keyword_name, imgdir, max_imgs=2):
 # ── Scrape keywords from legion.takras.net ────────────────────────────────────
 def scrape_keyword_page(slug, display_name, session):
     """Fetch a single keyword page and extract type + definition."""
+    # Strip trailing [] placeholders that appear in some KEYWORD_PAGES names
+    display_name = display_name.replace("[]", "").strip()
     url = f"{BASE}/{slug}/"
     try:
         r = session.get(url, headers=HEADERS, timeout=15)
