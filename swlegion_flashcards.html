@@ -74,17 +74,19 @@ html,body{width:100%;height:100%;overflow:hidden;
 #fs-tap-hint{font-size:13px;color:rgba(255,255,255,.4);margin-top:6px;letter-spacing:.5px;font-style:italic}
 #fs-back-content{display:none}
 #fs-back-name{font-size:22px;font-weight:700;color:var(--gold);margin-bottom:6px}
-#fs-back-cols{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
-#fs-definition{font-size:14px;color:var(--white);line-height:1.7;text-shadow:0 1px 4px rgba(0,0,0,.6)}
-#fs-notes-col{display:flex;flex-direction:column;gap:4px}
+#fs-notes-col{display:flex;flex-direction:column;gap:4px;margin-bottom:8px}
 .fs-notes-label{font-size:10px;font-weight:700;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.6px}
 #fs-notes{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:8px;
   color:var(--white);font-size:13px;padding:8px 10px;font-family:inherit;resize:none;
-  width:100%;min-height:90px;line-height:1.6;outline:none;box-sizing:border-box}
+  width:100%;min-height:80px;line-height:1.6;outline:none;box-sizing:border-box}
 #fs-notes:focus{border-color:rgba(245,197,24,.6)}
+#fs-rules-section{margin-top:2px}
+#fs-rules-header{display:flex;align-items:center;gap:8px;cursor:pointer;padding:5px 0;user-select:none;border-top:1px solid rgba(255,255,255,.08)}
+#fs-rules-preview{font-size:13px;color:rgba(255,255,255,.45);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#fs-rules-caret{color:var(--gold);font-size:11px;flex-shrink:0;transition:transform .2s}
+#fs-definition{display:none;font-size:14px;color:var(--white);line-height:1.7;text-shadow:0 1px 4px rgba(0,0,0,.6);padding-top:6px}
 #fs-source{font-size:11px;color:rgba(255,255,255,.3);margin-top:4px}
 #fs-actions{display:flex;gap:8px;margin-top:7px;flex-wrap:wrap}
-@media(max-width:600px){#fs-back-cols{grid-template-columns:1fr}}
 .fs-btn{background:rgba(0,0,0,.55);backdrop-filter:blur(12px);
   border:1px solid rgba(255,255,255,.15);border-radius:var(--rs);
   color:var(--white2);font-size:13px;padding:8px 16px;cursor:pointer;
@@ -373,14 +375,19 @@ html,body{width:100%;height:100%;overflow:hidden;
     </div>
     <div id="fs-back-content">
       <div id="fs-back-name"></div>
-      <div id="fs-back-cols">
-        <div id="fs-definition"></div>
-        <div id="fs-notes-col">
-          <div class="fs-notes-label">Summary / Notes</div>
-          <textarea id="fs-notes" placeholder="Add your notes..."></textarea>
-        </div>
+      <div id="fs-notes-col">
+        <div class="fs-notes-label">Summary / Notes</div>
+        <textarea id="fs-notes" placeholder="Add your notes..."></textarea>
       </div>
-      <div id="fs-source">Source: legion.takras.net</div>
+      <div id="fs-rules-section">
+        <div id="fs-rules-header" onclick="toggleRulesSection()">
+          <span class="fs-notes-label">Rules</span>
+          <span id="fs-rules-preview"></span>
+          <span id="fs-rules-caret">&#9660;</span>
+        </div>
+        <div id="fs-definition"></div>
+      </div>
+      <div id="fs-source"></div>
       <div id="fs-actions"></div>
     </div>
   </div>
@@ -758,22 +765,42 @@ function autoSummary(def){
   const s=clean.slice(0,end).trim();
   return s.length<clean.length?s:s;
 }
+function cardSource(c,st){
+  if(st&&st.customDef) return 'Source: edited — tap Edit Rules to revert';
+  if(c.credit) return 'Source: '+c.credit.replace('AMG Rulebook v2.6','Rules PDF 2.6');
+  return 'Source: legion.takras.net';
+}
+function toggleRulesSection(){
+  const def=document.getElementById('fs-definition');
+  const caret=document.getElementById('fs-rules-caret');
+  const preview=document.getElementById('fs-rules-preview');
+  const open=def.style.display!=='none';
+  def.style.display=open?'none':'block';
+  preview.style.display=open?'':'none';
+  caret.textContent=open?'▼':'▲';
+}
 function showBack(c){
   document.getElementById('fs-front-content').style.display='none';
   document.getElementById('fs-back-content').style.display='block';
   document.getElementById('fs-back-name').innerHTML=c.name+' '+typeBadgeHTML(c.type);
-  document.getElementById('fs-definition').textContent=s(c.name).customDef||c.definition;
   const ta=document.getElementById('fs-notes');
   const saved=s(c.name).notes;
   ta.value=saved||autoSummary(c.definition);
   ta.dataset.card=c.name;
-  ta.dataset.isAuto=saved?'0':'1';
   ta.oninput=function(){
     const nm=this.dataset.card;
     if(ST[nm]) ST[nm].notes=this.value;
-    this.dataset.isAuto='0';
     saveState(); scheduleSync();
   };
+  const def=s(c.name).customDef||c.definition;
+  document.getElementById('fs-definition').textContent=def;
+  document.getElementById('fs-definition').style.display='none';
+  const dot=def.search(/[.!?]/);
+  const previewText=(dot>10&&dot<110)?def.slice(0,dot+1):def.slice(0,100)+(def.length>100?'…':'');
+  document.getElementById('fs-rules-preview').textContent=previewText;
+  document.getElementById('fs-rules-preview').style.display='';
+  document.getElementById('fs-rules-caret').textContent='▼';
+  document.getElementById('fs-source').textContent=cardSource(c,s(c.name));
 }
 function renderActions(c){
   const st=s(c.name), n=ic(c);
@@ -968,7 +995,7 @@ function renderMod(){
   document.getElementById('mod-def').textContent=st.customDef||c.definition;
   document.getElementById('mod-def').style.display='block';
   const msrc=document.getElementById('mod-src');
-  if(msrc) msrc.textContent=st.customDef?'Source: edited — tap Edit Rules to revert':'Source: legion.takras.net';
+  if(msrc) msrc.textContent=cardSource(c,st);
   document.getElementById('mod-def-edit').style.display='none';
   document.getElementById('mod-def-edit-acts').style.display='none';
   const me=document.getElementById('mod-edit'); if(me) me.textContent='Edit Rules';
@@ -1015,7 +1042,7 @@ function modSaveDef(){
   document.getElementById('mod-def-edit-acts').style.display='none';
   document.getElementById('mod-edit').textContent='Edit Rules';
   const src=document.getElementById('mod-src');
-  if(src) src.textContent=ST[mcard.name].customDef?'Source: edited (tap Edit Rules to revert)':'Source: legion.takras.net';
+  if(src) src.textContent=cardSource(mcard,s(mcard.name));
   if(deck[cur]&&deck[cur].name===mcard.name) document.getElementById('fs-definition').textContent=s(mcard.name).customDef||mcard.definition;
 }
 function modResetDef(){
