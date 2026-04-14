@@ -779,15 +779,11 @@ function showFront(c){
 }
 function autoSummary(def){
   if(!def) return '';
-  // Strip repeated keyword name prefix at start
-  const clean=def.replace(/^[A-Za-z][a-z]+(?:\s+[A-Z][a-z]+)*\s+(?=[A-Z])/,'').trim();
-  // Find first sentence end (any length)
-  const dot=clean.search(/[.!?]/);
-  if(dot>10) return clean.slice(0,dot+1).trim();
-  // No sentence end found — take up to 300 chars, trim to last complete word
-  const chunk=clean.slice(0,300);
+  if(def.length<=700) return def.trim();
+  // Truncate at 700 chars, trim to last complete word
+  const chunk=def.slice(0,700);
   const lastSpace=chunk.lastIndexOf(' ');
-  return (lastSpace>30?chunk.slice(0,lastSpace):chunk).trim()+'…';
+  return (lastSpace>50?chunk.slice(0,lastSpace):chunk).trim()+'…';
 }
 function cardSource(c,st){
   if(st&&st.customDef) return 'Source: edited — tap Edit Rules to revert';
