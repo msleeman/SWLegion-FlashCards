@@ -24,8 +24,7 @@ html,body{width:100%;height:100%;overflow:hidden;
 .screen{position:fixed;inset:0;display:none}
 .screen.on{display:block}
 #fs-bg{position:absolute;inset:0;background:#0a0a0f;overflow:hidden}
-#fs-img{position:absolute;top:68px;left:50%;transform:translateX(-50%);width:auto;height:calc(100% - 68px);max-width:100%;object-fit:contain;object-position:top center;opacity:1;transition:opacity .4s}
-#fs-img.dim{opacity:.15}
+#fs-img{position:absolute;top:68px;left:50%;transform:translateX(-50%);width:auto;height:calc(100% - 68px);max-width:100%;object-fit:contain;object-position:top center;opacity:1}
 #fs-scan{display:none}
 #fs-top-grad{display:none}
 #fs-bot-grad{display:none}
@@ -60,7 +59,7 @@ html,body{width:100%;height:100%;overflow:hidden;
 #fs-prev:hover,#fs-next:hover{background:rgba(245,197,24,.15)}
 #fs-prev:disabled,#fs-next:disabled{opacity:.2;cursor:default}
 #fs-nav-btns{position:absolute;top:14px;right:16px;display:flex;gap:8px;z-index:10}
-#fs-bottom{position:absolute;bottom:0;left:0;right:0;padding:0 10px 16px;z-index:10}
+#fs-bottom{position:absolute;bottom:0;left:0;right:0;padding:80px 10px 16px;z-index:10;background:linear-gradient(transparent,rgba(0,0,0,.92) 35%)}
 #fs-front-content{display:block}
 #fs-keyword-name{font-size:clamp(32px,7vw,64px);font-weight:800;color:var(--gold);line-height:1.1;
   text-shadow:0 0 40px rgba(245,197,24,.4),0 2px 8px rgba(0,0,0,.8);letter-spacing:-0.5px}
@@ -709,7 +708,6 @@ function showFront(c){
   document.getElementById('fs-keyword-name').textContent=c.name;
   document.getElementById('fs-keyword-subtext').innerHTML=typeBadgeHTML(c.type);
   document.getElementById('fs-tap-hint').style.display=mode==='learn'?'block':'none';
-  document.getElementById('fs-img').classList.remove('dim');
   if(mode==='quiz') renderOpts(c);
 }
 function autoSummary(def){
@@ -726,7 +724,6 @@ function showBack(c){
   document.getElementById('fs-back-content').style.display='block';
   document.getElementById('fs-back-name').innerHTML=c.name+' '+typeBadgeHTML(c.type);
   document.getElementById('fs-definition').textContent=c.definition;
-  document.getElementById('fs-img').classList.add('dim');
   const ta=document.getElementById('fs-notes');
   const saved=s(c.name).notes;
   ta.value=saved||autoSummary(c.definition);
