@@ -561,7 +561,12 @@ function filteredCards(){
     const lst=getListById(activeListId);
     if(lst){
       const kwSet=new Set(lst.keywords.map(k=>k.toLowerCase()));
-      cards=cards.filter(c=>kwSet.has(c.name.toLowerCase()));
+      const baseKw=k=>k.replace(/\s+x$/i,'').replace(/\s+\d+(\s+.*)?$/,'').trim();
+      const kwBaseSet=new Set([...kwSet].map(baseKw));
+      cards=cards.filter(c=>{
+        const cn=c.name.toLowerCase();
+        return kwSet.has(cn)||kwBaseSet.has(baseKw(cn));
+      });
     }
   }
   if(typeFilter==='weapon')    return cards.filter(c=>c.type==='weapon');
@@ -823,7 +828,12 @@ function renderCatalog(){
     const lst=getListById(catListId);
     if(lst){
       const kwSet=new Set(lst.keywords.map(k=>k.toLowerCase()));
-      list=list.filter(c=>kwSet.has(c.name.toLowerCase()));
+      const baseKw=k=>k.replace(/\s+x$/i,'').replace(/\s+\d+(\s+.*)?$/,'').trim();
+      const kwBaseSet=new Set([...kwSet].map(baseKw));
+      list=list.filter(c=>{
+        const cn=c.name.toLowerCase();
+        return kwSet.has(cn)||kwBaseSet.has(baseKw(cn));
+      });
     }
   }
   if(catFilter==='learned')    list=list.filter(c=>s(c.name).learned);
