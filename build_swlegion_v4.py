@@ -1335,14 +1335,10 @@ html,body{width:100%;height:100%;overflow:hidden;
 .screen{position:fixed;inset:0;display:none}
 .screen.on{display:block}
 #fs-bg{position:absolute;inset:0;background:#0a0a0f;overflow:hidden}
-#fs-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.45;transition:opacity .4s}
-#fs-img.dim{opacity:.25}
-#fs-scan{position:absolute;inset:0;pointer-events:none;
-  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.08) 2px,rgba(0,0,0,.08) 4px);z-index:1}
-#fs-top-grad{position:absolute;top:0;left:0;right:0;height:200px;
-  background:linear-gradient(rgba(0,0,0,.85),transparent);pointer-events:none;z-index:2}
-#fs-bot-grad{position:absolute;bottom:0;left:0;right:0;height:60%;
-  background:linear-gradient(transparent,rgba(0,0,0,.95));pointer-events:none;z-index:2}
+#fs-img{position:absolute;top:68px;left:50%;transform:translateX(-50%);width:auto;height:calc(100% - 68px);max-width:100%;object-fit:contain;object-position:top center;opacity:1;transition:opacity .4s}
+#fs-scan{display:none}
+#fs-top-grad{display:none}
+#fs-bot-grad{display:none}
 #fs-flip-zone{position:absolute;inset:0;cursor:pointer;z-index:3}
 #fs-topbar{position:absolute;top:0;left:0;right:0;
   padding:14px 16px 0;display:flex;align-items:center;gap:10px;z-index:10;pointer-events:none}
@@ -1374,17 +1370,28 @@ html,body{width:100%;height:100%;overflow:hidden;
 #fs-prev:hover,#fs-next:hover{background:rgba(245,197,24,.15)}
 #fs-prev:disabled,#fs-next:disabled{opacity:.2;cursor:default}
 #fs-nav-btns{position:absolute;top:14px;right:16px;display:flex;gap:8px;z-index:10}
-#fs-bottom{position:absolute;bottom:0;left:0;right:0;padding:0 20px 24px;z-index:10}
+#fs-bottom{position:absolute;bottom:0;left:0;right:0;max-height:calc(100% - 90px);overflow-y:auto;-webkit-overflow-scrolling:touch;padding:60px 16px 16px;z-index:10;background:linear-gradient(transparent,rgba(0,0,0,.92) 30%)}
+#fs-bottom::-webkit-scrollbar{width:4px}
+#fs-bottom::-webkit-scrollbar-track{background:transparent}
+#fs-bottom::-webkit-scrollbar-thumb{background:rgba(245,197,24,.45);border-radius:2px}
 #fs-front-content{display:block}
 #fs-keyword-name{font-size:clamp(32px,7vw,64px);font-weight:800;color:var(--gold);line-height:1.1;
   text-shadow:0 0 40px rgba(245,197,24,.4),0 2px 8px rgba(0,0,0,.8);letter-spacing:-0.5px}
 #fs-keyword-subtext{font-size:15px;color:var(--white2);margin-top:6px;text-shadow:0 1px 4px rgba(0,0,0,.8)}
 #fs-tap-hint{font-size:13px;color:rgba(255,255,255,.4);margin-top:12px;letter-spacing:.5px;font-style:italic}
 #fs-back-content{display:none}
-#fs-back-name{font-size:22px;font-weight:700;color:var(--gold);margin-bottom:8px}
-#fs-definition{font-size:15px;color:var(--white);line-height:1.7;max-width:660px;text-shadow:0 1px 4px rgba(0,0,0,.6)}
-#fs-source{font-size:11px;color:rgba(255,255,255,.3);margin-top:8px}
-#fs-actions{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+#fs-back-name{font-size:22px;font-weight:700;color:var(--gold);margin-bottom:6px}
+#fs-notes-col{display:flex;flex-direction:column;gap:4px;margin-bottom:8px}
+.fs-notes-label{font-size:10px;font-weight:700;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.6px}
+#fs-notes{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:8px;color:var(--white);font-size:13px;padding:8px 10px;font-family:inherit;resize:none;width:100%;min-height:80px;line-height:1.6;outline:none;box-sizing:border-box}
+#fs-notes:focus{border-color:rgba(245,197,24,.6)}
+#fs-rules-section{margin-top:2px}
+#fs-rules-header{display:flex;align-items:center;gap:8px;cursor:pointer;padding:5px 0;user-select:none;border-top:1px solid rgba(255,255,255,.08)}
+#fs-rules-preview{font-size:13px;color:rgba(255,255,255,.45);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#fs-rules-caret{color:var(--gold);font-size:11px;flex-shrink:0;transition:transform .2s}
+#fs-definition{display:none;font-size:14px;color:var(--white);line-height:1.7;text-shadow:0 1px 4px rgba(0,0,0,.6);padding-top:6px}
+#fs-source{font-size:11px;color:rgba(255,255,255,.3);margin-top:4px}
+#fs-actions{display:flex;gap:8px;margin-top:7px;flex-wrap:wrap}
 .fs-btn{background:rgba(0,0,0,.55);backdrop-filter:blur(12px);
   border:1px solid rgba(255,255,255,.15);border-radius:var(--rs);
   color:var(--white2);font-size:13px;padding:8px 16px;cursor:pointer;
@@ -1437,6 +1444,15 @@ html,body{width:100%;height:100%;overflow:hidden;
 .dark-pill.active{background:rgba(245,197,24,.15);border-color:var(--gold);color:var(--gold)}
 .cat-filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
 .cat-count{font-size:13px;color:rgba(255,255,255,.3);margin-bottom:12px}
+#cat-search{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:var(--rs);color:var(--white);font-size:13px;padding:8px 14px;font-family:inherit;outline:none;width:100%;margin-bottom:12px;box-sizing:border-box}
+#cat-search:focus{border-color:rgba(245,197,24,.4)}
+#cat-search::placeholder{color:rgba(255,255,255,.2)}
+#cat-add-row{display:none;flex-wrap:wrap;gap:6px;align-items:center;margin-top:6px;padding-top:6px;border-top:1px solid rgba(255,255,255,.07)}
+#cat-add-row .add-label{font-size:11px;color:rgba(255,255,255,.35);white-space:nowrap}
+.dark-pill.extra-on{background:rgba(245,197,24,.2);border-color:var(--gold);color:var(--gold)}
+#mod-def-edit{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:var(--rs);color:var(--white);font-size:13px;padding:10px 12px;font-family:inherit;resize:vertical;width:100%;min-height:120px;line-height:1.6;outline:none;box-sizing:border-box;margin-top:8px;display:none}
+#mod-def-edit:focus{border-color:rgba(245,197,24,.5)}
+.modal-btn.pin-on{background:rgba(245,197,24,.2);border-color:var(--gold);color:var(--gold)}
 .cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px}
 .cat-card{border-radius:var(--rs);overflow:hidden;background:rgba(255,255,255,.04);
   border:1px solid rgba(255,255,255,.08);cursor:pointer;
@@ -1673,8 +1689,19 @@ html,body{width:100%;height:100%;overflow:hidden;
     </div>
     <div id="fs-back-content">
       <div id="fs-back-name"></div>
-      <div id="fs-definition"></div>
-      <div id="fs-source">Source: legion.takras.net</div>
+      <div id="fs-notes-col">
+        <div class="fs-notes-label">Summary / Notes</div>
+        <textarea id="fs-notes" placeholder="Add your notes..."></textarea>
+      </div>
+      <div id="fs-rules-section">
+        <div id="fs-rules-header" onclick="toggleRulesSection()">
+          <span class="fs-notes-label">Rules</span>
+          <span id="fs-rules-preview"></span>
+          <span id="fs-rules-caret">&#9660;</span>
+        </div>
+        <div id="fs-definition"></div>
+      </div>
+      <div id="fs-source"></div>
       <div id="fs-actions"></div>
     </div>
   </div>
@@ -1709,6 +1736,14 @@ html,body{width:100%;height:100%;overflow:hidden;
         <div id="cat-list-dropdown"></div>
       </div>
     </div>
+    <div id="cat-add-row">
+      <span class="add-label">Also include:</span>
+      <button class="dark-pill" id="cat-add-unit" onclick="toggleCatExtra('unit',this)">+ Unit</button>
+      <button class="dark-pill" id="cat-add-weapon" onclick="toggleCatExtra('weapon',this)">+ Weapon</button>
+      <button class="dark-pill" id="cat-add-concept" onclick="toggleCatExtra('concept',this)">+ Concept</button>
+      <button class="dark-pill" id="cat-add-pinned" onclick="toggleCatExtra('pinned',this)">&#128204; Pinned</button>
+    </div>
+    <input type="text" id="cat-search" placeholder="&#128269; Search keywords..." oninput="renderCatalog()">
     <div class="cat-count" id="cat-count"></div>
     <div class="cat-grid" id="cat-grid"></div>
   </div>
@@ -1809,8 +1844,15 @@ html,body{width:100%;height:100%;overflow:hidden;
       <div class="modal-status" id="mod-st"></div>
       <div class="modal-acts">
         <button class="modal-btn" id="mod-lrnd"  onclick="modToggleLearned()"></button>
+        <button class="modal-btn" id="mod-pin"   onclick="modTogglePin()">&#128204; Pin</button>
+        <button class="modal-btn" id="mod-edit"  onclick="modToggleEditDef()">Edit Rules</button>
         <button class="modal-btn" id="mod-photo" onclick="modBadPhoto()">Bad photo</button>
         <button class="modal-btn cls"             onclick="closeMod()">Close</button>
+      </div>
+      <textarea id="mod-def-edit" placeholder="Edit the rules text..."></textarea>
+      <div id="mod-def-edit-acts" style="display:none;gap:8px;flex-wrap:wrap;margin-top:6px">
+        <button class="modal-btn" onclick="modSaveDef()">Save</button>
+        <button class="modal-btn" onclick="modResetDef()">Reset to Original</button>
       </div>
     </div>
   </div>
@@ -1819,7 +1861,7 @@ html,body{width:100%;height:100%;overflow:hidden;
 <script>
 const CARDS = /*CARD_JSON*/;
 const ST = {};
-CARDS.forEach(c => { ST[c.name]={idx:0,learned:false,flagged:false,busy:false}; });
+CARDS.forEach(c => { ST[c.name]={idx:0,learned:false,flagged:false,busy:false,notes:'',customDef:'',pinned:false}; });
 
 function loadState(){
   try{
@@ -1829,11 +1871,11 @@ function loadState(){
 }
 function saveState(){
   const out={};
-  Object.keys(ST).forEach(n=>{ const{idx,learned,flagged}=ST[n]; out[n]={idx,learned,flagged}; });
+  Object.keys(ST).forEach(n=>{ const{idx,learned,flagged,notes,customDef,pinned}=ST[n]; out[n]={idx,learned,flagged,notes:notes||'',customDef:customDef||'',pinned:!!pinned}; });
   localStorage.setItem('swlegion_v1',JSON.stringify(out));
   scheduleSync();
 }
-function s(n){ return ST[n]||{idx:0,learned:false,flagged:false,busy:false}; }
+function s(n){ return ST[n]||{idx:0,learned:false,flagged:false,busy:false,notes:'',customDef:'',pinned:false}; }
 function ci(c){ const st=s(c.name); return (c.imgs&&c.imgs[st.idx])||(c.imgs&&c.imgs[0])||''; }
 function ic(c){ return (c.imgs&&c.imgs.length)||0; }
 
@@ -1854,7 +1896,8 @@ function showScreen(id){
 
 let typeFilter='all';
 let activeListId=null; // flashcard/quiz list filter
-let catListId=null;    // catalog list filter
+let catListId=null;    // catalog list filter (null=inherit, ''=explicit none, id=specific)
+const catExtras=new Set(); // extra types union-included when a list filter is active
 
 function setTypeFilter(t){
   typeFilter=t;
@@ -1867,21 +1910,25 @@ function setTypeFilter(t){
 }
 function filteredCards(){
   let cards=CARDS;
-  // Apply list filter first
   if(activeListId){
     const lst=getListById(activeListId);
     if(lst){
       const kwSet=new Set(lst.keywords.map(k=>k.toLowerCase()));
-      cards=cards.filter(c=>kwSet.has(c.name.toLowerCase()));
+      const base=CARDS.filter(c=>kwSet.has(c.name.toLowerCase()));
+      const extras=CARDS.filter(c=>catExtras.has(c.type));
+      const pinned=CARDS.filter(c=>s(c.name).pinned);
+      cards=[...new Set([...base,...extras,...pinned])];
     }
   }
-  if(typeFilter==='weapon')    return cards.filter(c=>c.type==='weapon');
-  if(typeFilter==='unit')      return cards.filter(c=>c.type==='unit');
-  if(typeFilter==='noconcept') return cards.filter(c=>c.type!=='concept');
-  return cards;
+  const pinnedAll=CARDS.filter(c=>s(c.name).pinned);
+  if(typeFilter==='weapon'){const f=cards.filter(c=>c.type==='weapon');return[...new Set([...f,...pinnedAll])];}
+  if(typeFilter==='unit'){const f=cards.filter(c=>c.type==='unit');return[...new Set([...f,...pinnedAll])];}
+  if(typeFilter==='noconcept'){const f=cards.filter(c=>c.type!=='concept');return[...new Set([...f,...pinnedAll])];}
+  return [...new Set([...cards,...pinnedAll])];
 }
 function setListFilter(listId){
   activeListId=listId||null;
+  savePrefs();
   updateListPillLabel();
   updateCatListPillLabel();
   renderListFilterBadges();
@@ -1889,6 +1936,7 @@ function setListFilter(listId){
 }
 function clearListFilter(){
   activeListId=null;
+  savePrefs();
   updateListPillLabel();
   updateCatListPillLabel();
   renderListFilterBadges();
@@ -1907,13 +1955,18 @@ function updateListPillLabel(){
 }
 function updateCatListPillLabel(){
   const pill=document.getElementById('cat-pill-list'); if(!pill) return;
-  if(catListId){
+  if(catListId===null){
+    if(activeListId){
+      const lst=getListById(activeListId);
+      pill.innerHTML='('+escHtml(lst?lst.name:'?')+') &#9660;';
+      pill.classList.add('active');
+    } else { pill.innerHTML='List: None &#9660;'; pill.classList.remove('active'); }
+  } else if(catListId===''){
+    pill.innerHTML='List: None &#9660;'; pill.classList.remove('active');
+  } else {
     const lst=getListById(catListId);
     pill.innerHTML=(lst?escHtml(lst.name):'List')+' &#9660;';
     pill.classList.add('active');
-  } else {
-    pill.innerHTML='List: None &#9660;';
-    pill.classList.remove('active');
   }
 }
 function toggleListDropdown(){
@@ -1947,8 +2000,20 @@ function toggleCatListDropdown(){
   setTimeout(()=>{ document.addEventListener('click', function _c(e){ if(!document.getElementById('cat-list-dropdown-wrap').contains(e.target)){ dd.classList.remove('open'); document.removeEventListener('click',_c); } }); },0);
 }
 function setCatList(listId){
-  catListId=listId||null;
+  catListId=(listId===undefined)?null:listId;
+  savePrefs();
   updateCatListPillLabel();
+  updateCatAddRow();
+  renderCatalog();
+}
+function updateCatAddRow(){
+  const effectiveId=catListId===null?activeListId:catListId;
+  const row=document.getElementById('cat-add-row');
+  if(row) row.style.display=effectiveId?'flex':'none';
+}
+function toggleCatExtra(type,btn){
+  if(catExtras.has(type)){ catExtras.delete(type); btn.classList.remove('extra-on'); }
+  else { catExtras.add(type); btn.classList.add('extra-on'); }
   renderCatalog();
 }
 function renderListFilterBadges(){
@@ -2001,12 +2066,49 @@ function showFront(c){
   document.getElementById('fs-img').classList.remove('dim');
   if(mode==='quiz') renderOpts(c);
 }
+let _rulesOpen=false;
+function toggleRulesSection(){
+  _rulesOpen=!_rulesOpen;
+  const defEl=document.getElementById('fs-definition');
+  const caretEl=document.getElementById('fs-rules-caret');
+  if(defEl) defEl.style.display=_rulesOpen?'block':'none';
+  if(caretEl) caretEl.style.transform=_rulesOpen?'rotate(180deg)':'';
+}
+function autoSummary(def){
+  if(!def) return '';
+  if(def.length<=700) return def;
+  let t=def.slice(0,700);
+  const last=Math.max(t.lastIndexOf(' '),t.lastIndexOf('.'),t.lastIndexOf(','));
+  if(last>400) t=t.slice(0,last);
+  return t+'\u2026';
+}
+function cardSource(){ return 'Rules PDF v2.6 / legion.takras.net'; }
 function showBack(c){
   document.getElementById('fs-front-content').style.display='none';
   document.getElementById('fs-back-content').style.display='block';
   document.getElementById('fs-back-name').innerHTML=c.name+' '+typeBadgeHTML(c.type);
-  document.getElementById('fs-definition').textContent=c.definition;
-  document.getElementById('fs-img').classList.add('dim');
+  const st=s(c.name);
+  const def=st.customDef||c.definition||'';
+  // Notes / Summary
+  const notesEl=document.getElementById('fs-notes');
+  if(notesEl){
+    notesEl.value=(st.notes!==undefined&&st.notes!=='')?st.notes:autoSummary(def);
+    notesEl.oninput=()=>{ st.notes=notesEl.value; saveState(); };
+  }
+  // Rules section (collapsed by default)
+  _rulesOpen=false;
+  const defEl=document.getElementById('fs-definition');
+  const caretEl=document.getElementById('fs-rules-caret');
+  const previewEl=document.getElementById('fs-rules-preview');
+  if(defEl){ defEl.style.display='none'; defEl.textContent=def; }
+  if(caretEl) caretEl.style.transform='';
+  if(previewEl){
+    const first=(def.match(/^[^.!?]+[.!?]/)||[''])[0].trim();
+    previewEl.textContent=first||def.slice(0,80);
+  }
+  // Source
+  const srcEl=document.getElementById('fs-source');
+  if(srcEl) srcEl.textContent=cardSource();
 }
 function renderActions(c){
   const st=s(c.name), n=ic(c);
@@ -2129,12 +2231,15 @@ function setCF(v,btn){
 }
 function renderCatalog(){
   let list=[...CARDS];
-  // Apply catalog list filter (independent of flashcard list filter)
-  if(catListId){
-    const lst=getListById(catListId);
+  // Apply list filter (catListId===null inherits activeListId)
+  const effectiveCatListId=catListId===null?activeListId:catListId;
+  if(effectiveCatListId){
+    const lst=getListById(effectiveCatListId);
     if(lst){
       const kwSet=new Set(lst.keywords.map(k=>k.toLowerCase()));
-      list=list.filter(c=>kwSet.has(c.name.toLowerCase()));
+      const extras=CARDS.filter(c=>catExtras.has(c.type));
+      const pinnedExtra=CARDS.filter(c=>catExtras.has('pinned')&&s(c.name).pinned);
+      list=[...new Set([...CARDS.filter(c=>kwSet.has(c.name.toLowerCase())),...extras,...pinnedExtra])];
     }
   }
   if(catFilter==='learned')    list=list.filter(c=>s(c.name).learned);
@@ -2143,22 +2248,28 @@ function renderCatalog(){
   if(catFilter==='weapon')     list=list.filter(c=>c.type==='weapon');
   if(catFilter==='concept')    list=list.filter(c=>c.type==='concept');
   if(catFilter==='noconcept')  list=list.filter(c=>c.type!=='concept');
+  // Search filter
+  const q=(document.getElementById('cat-search')?.value||'').toLowerCase().trim();
+  if(q) list=list.filter(c=>c.name.toLowerCase().includes(q)||(c.definition||'').toLowerCase().includes(q));
   document.getElementById('cat-count').textContent=`${list.length} keyword${list.length!==1?'s':''}`;
   const g=document.getElementById('cat-grid');
   if(!list.length){ g.innerHTML='<p class="empty-msg">Nothing here.</p>'; return; }
   g.innerHTML=list.map(c=>{
     const st=s(c.name), src=ci(c);
     const sn=c.name.replace(/'/g,"\\'");
+    const def=st.customDef||c.definition||'';
+    const preview=def.length>90?def.slice(0,90).replace(/\s\S*$/,'')+'\u2026':def;
     const th=src
       ?`<img class="cat-thumb" src="${src}" alt="${c.name}" loading="lazy"
              onerror="this.outerHTML='<div class=cat-thumb-ph>${c.name[0]}</div>'">`
       :`<div class="cat-thumb-ph">${c.name[0]}</div>`;
     return `<div class="cat-card${st.learned?' lrnd':''}" onclick="openMod('${sn}')">
       ${th}
-      ${st.learned?'<span class="cat-badge badge-learned">Learned</span>':''}
+      ${st.learned?'<span class="cat-badge badge-learned">Learned</span>':''}${st.pinned?'<span class="cat-badge" style="background:rgba(245,197,24,.9);color:#000;top:6px;left:6px">&#128204;</span>':''}
       <div class="cat-lbl">
         <div class="cat-name">${c.name}</div>
         <div class="cat-type">${c.type}</div>
+        <div style="font-size:10px;color:rgba(255,255,255,.3);margin-top:3px;line-height:1.4;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">${escHtml(preview)}</div>
       </div>
     </div>`;
   }).join('');
@@ -2177,13 +2288,60 @@ function renderMod(){
     :`<div class="modal-photo-ph">No image — use Bad Photo to fetch one</div>`;
   document.getElementById('mod-name').textContent=c.name;
   document.getElementById('mod-type').innerHTML=typeBadgeHTML(c.type);
-  document.getElementById('mod-def').textContent=c.definition;
+  const defText=st.customDef||c.definition;
+  document.getElementById('mod-def').textContent=defText;
+  document.getElementById('mod-def').style.borderColor=st.customDef?'rgba(245,197,24,.3)':'';
   const ml=document.getElementById('mod-lrnd');
-  ml.textContent=st.learned?'Learned — reset':'Mark as learned';
+  ml.textContent=st.learned?'Learned \u2014 reset':'Mark as learned';
   ml.className='modal-btn'+(st.learned?' lrnd':'');
+  const mp=document.getElementById('mod-pin');
+  if(mp){ mp.innerHTML=st.pinned?'&#128204; Pinned':'&#128204; Pin'; mp.className='modal-btn'+(st.pinned?' pin-on':''); }
   const mb=document.getElementById('mod-photo');
   mb.textContent=st.busy?'Fetching...':'Bad photo';
   mb.className='modal-btn'+(st.flagged?' flagd':'');
+  const editTA=document.getElementById('mod-def-edit');
+  const editActs=document.getElementById('mod-def-edit-acts');
+  if(editTA){ editTA.style.display='none'; document.getElementById('mod-def').style.display='block'; }
+  if(editActs) editActs.style.display='none';
+}
+function modTogglePin(){
+  const st=s(mcard.name); st.pinned=!st.pinned;
+  saveState(); renderMod(); renderCatalog();
+}
+function modToggleEditDef(){
+  const editTA=document.getElementById('mod-def-edit');
+  const editActs=document.getElementById('mod-def-edit-acts');
+  const defEl=document.getElementById('mod-def');
+  if(!editTA) return;
+  const isOpen=editTA.style.display!=='none';
+  if(isOpen){
+    editTA.style.display='none';
+    if(editActs) editActs.style.display='none';
+    defEl.style.display='block';
+  } else {
+    editTA.value=s(mcard.name).customDef||mcard.definition;
+    editTA.style.display='block';
+    if(editActs) editActs.style.display='flex';
+    defEl.style.display='none';
+    editTA.focus();
+  }
+}
+function modSaveDef(){
+  const val=document.getElementById('mod-def-edit').value.trim();
+  s(mcard.name).customDef=val||'';
+  saveState();
+  document.getElementById('mod-def').textContent=val||mcard.definition;
+  document.getElementById('mod-def').style.borderColor=val?'rgba(245,197,24,.3)':'';
+  document.getElementById('mod-def-edit').style.display='none';
+  document.getElementById('mod-def-edit-acts').style.display='none';
+  document.getElementById('mod-def').style.display='block';
+}
+function modResetDef(){
+  s(mcard.name).customDef='';
+  saveState();
+  document.getElementById('mod-def-edit').value=mcard.definition;
+  document.getElementById('mod-def').textContent=mcard.definition;
+  document.getElementById('mod-def').style.borderColor='';
 }
 function modToggleLearned(){ toggleLearned(mcard.name); renderMod(); renderCatalog(); }
 async function modBadPhoto(){
@@ -2577,11 +2735,23 @@ async function initAuth(){
   if(!_currentUser) showAuthScreen();
 }
 
+function savePrefs(){
+  try{ localStorage.setItem('swlegion_prefs',JSON.stringify({activeListId:activeListId,catListId:catListId})); }catch(e){}
+}
+function loadPrefs(){
+  try{
+    const p=JSON.parse(localStorage.getItem('swlegion_prefs')||'{}');
+    if(p.activeListId!==undefined) activeListId=p.activeListId;
+    if(p.catListId!==undefined) catListId=p.catListId;
+  }catch(e){}
+}
 function startApp(){
   console.log('[AUTH] startApp, user:', _currentUser?.email||'guest');
   loadState();
+  loadPrefs();
   updateListPillLabel();
   updateCatListPillLabel();
+  updateCatAddRow();
   updateAccountUI();
   setMode('learn');
 }
@@ -2610,7 +2780,7 @@ async function syncToCloud(){
   if(!_supa || !_currentUser || _isGuest) return;
   try{
     const out={};
-    Object.keys(ST).forEach(n=>{ const{idx,learned,flagged}=ST[n]; out[n]={idx,learned,flagged}; });
+    Object.keys(ST).forEach(n=>{ const{idx,learned,flagged,notes,customDef,pinned}=ST[n]; out[n]={idx,learned,flagged,notes:notes||'',customDef:customDef||'',pinned:!!pinned}; });
     console.log('[AUTH] syncToCloud starting...');
     const t0 = Date.now();
     const { error } = await Promise.race([
@@ -2729,7 +2899,7 @@ async function authSignOut(){
   localStorage.removeItem('swlegion_v1');
   localStorage.removeItem('swlegion_lists');
   // Reset in-memory state
-  CARDS.forEach(c=>{ ST[c.name]={idx:0,learned:false,flagged:false,busy:false}; });
+  CARDS.forEach(c=>{ ST[c.name]={idx:0,learned:false,flagged:false,busy:false,notes:'',customDef:'',pinned:false}; });
   // Reset auth form
   document.getElementById('auth-email').value = '';
   document.getElementById('auth-pwd').value = '';
