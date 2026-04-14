@@ -1137,8 +1137,8 @@ def scrape_keyword_page(slug, display_name, session):
     definition = " ".join(definition_parts).strip()
     # Clean up excess whitespace
     definition = re.sub(r"\s+", " ", definition)
-    if len(definition) > 500:
-        definition = definition[:497] + "..."
+    if len(definition) > 2000:
+        definition = definition[:1997] + "..."
 
     if len(definition) < 15:
         print(f"  WARN: short definition for {display_name!r}")
