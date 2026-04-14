@@ -59,7 +59,8 @@ html,body{width:100%;height:100%;overflow:hidden;
 #fs-prev:hover,#fs-next:hover{background:rgba(245,197,24,.15)}
 #fs-prev:disabled,#fs-next:disabled{opacity:.2;cursor:default}
 #fs-nav-btns{position:absolute;top:14px;right:16px;display:flex;gap:8px;z-index:10}
-#fs-bottom{position:absolute;bottom:0;left:0;right:0;max-height:calc(100% - 90px);overflow-y:auto;padding:60px 10px 16px;z-index:10;background:linear-gradient(transparent,rgba(0,0,0,.92) 30%)}
+#fs-bottom{position:absolute;bottom:0;left:0;right:0;max-height:calc(100% - 90px);overflow-y:auto;-webkit-overflow-scrolling:touch;padding:60px 10px 16px;z-index:10;background:linear-gradient(transparent,rgba(0,0,0,.92) 30%)}
+-webkit-overflow-scrolling:touch}
 #fs-bottom::-webkit-scrollbar{width:4px}
 #fs-bottom::-webkit-scrollbar-track{background:transparent}
 #fs-bottom::-webkit-scrollbar-thumb{background:rgba(245,197,24,.45);border-radius:2px}
@@ -588,7 +589,6 @@ function setTypeFilter(t){
 }
 function filteredCards(){
   let cards=CARDS;
-  // Apply list filter first
   if(activeListId){
     const lst=getListById(activeListId);
     if(lst){
@@ -601,9 +601,14 @@ function filteredCards(){
       });
     }
   }
-  if(typeFilter==='weapon')    return cards.filter(c=>c.type==='weapon');
-  if(typeFilter==='unit')      return cards.filter(c=>c.type==='unit');
-  if(typeFilter==='noconcept') return cards.filter(c=>c.type!=='concept');
+  if(typeFilter==='weapon')         cards=cards.filter(c=>c.type==='weapon');
+  else if(typeFilter==='unit')      cards=cards.filter(c=>c.type==='unit');
+  else if(typeFilter==='noconcept') cards=cards.filter(c=>c.type!=='concept');
+  // Pinned cards always appear in the deck regardless of any filter
+  if(catPinned.size>0){
+    const inDeck=new Set(cards.map(c=>c.name));
+    CARDS.forEach(c=>{ if(catPinned.has(c.name)&&!inDeck.has(c.name)) cards=[...cards,c]; });
+  }
   return cards;
 }
 function setListFilter(listId){
@@ -957,13 +962,21 @@ function renderMod(){
   document.getElementById('mod-img').innerHTML=src
     ?`<img class="modal-photo" src="${src}" alt="${c.name}"
            onerror="this.outerHTML='<div class=modal-photo-ph>No image</div>'">`
-    :`<div class="modal-photo-ph">No image — use Bad Photo to fetch one</div>`;
+    :`<div class="modal-photo-ph">No image – use Bad Photo to fetch one</div>`;
   document.getElementById('mod-name').textContent=c.name;
   document.getElementById('mod-type').innerHTML=typeBadgeHTML(c.type);
-  document.getElementById('mod-def').textContent=c.definition;
+  document.getElementById('mod-def').textContent=st.customDef||c.definition;
+  document.getElementById('mod-def').style.display='block';
+  const msrc=document.getElementById('mod-src');
+  if(msrc) msrc.textContent=st.customDef?'Source: edited — tap Edit Rules to revert':'Source: legion.takras.net';
+  document.getElementById('mod-def-edit').style.display='none';
+  document.getElementById('mod-def-edit-acts').style.display='none';
+  const me=document.getElementById('mod-edit'); if(me) me.textContent='Edit Rules';
   const ml=document.getElementById('mod-lrnd');
-  ml.textContent=st.learned?'Learned — reset':'Mark as learned';
+  ml.textContent=st.learned?'Learned ✓ reset':'Mark as learned';
   ml.className='modal-btn'+(st.learned?' lrnd':'');
+  const bp=document.getElementById('mod-pin');
+  if(bp){ bp.classList.toggle('flagd',catPinned.has(c.name)); bp.textContent=catPinned.has(c.name)?'📌 Pinned':'📌 Pin'; }
   const mb=document.getElementById('mod-photo');
   mb.textContent=st.busy?'Fetching...':'Bad photo';
   mb.className='modal-btn'+(st.flagged?' flagd':'');
@@ -1023,23 +1036,6 @@ function updateCatAddRow(){
   if(row) row.style.display=effectiveId?'flex':'none';
 }
 // Also update renderMod to show pin/customDef state
-const _origRenderMod=renderMod;
-function renderMod(){
-  _origRenderMod();
-  const c=mcard, st=s(c.name);
-  // Pin button
-  const bp=document.getElementById('mod-pin');
-  if(bp){ bp.classList.toggle('flagd',catPinned.has(c.name)); bp.textContent=catPinned.has(c.name)?'\u{1F4CC} Pinned':'\u{1F4CC} Pin'; }
-  // Custom def
-  document.getElementById('mod-def').textContent=st.customDef||c.definition;
-  const src=document.getElementById('mod-src');
-  if(src) src.textContent=st.customDef?'Source: edited (tap Edit Rules to revert)':'Source: legion.takras.net';
-  // Close edit mode on card change
-  document.getElementById('mod-def-edit').style.display='none';
-  document.getElementById('mod-def-edit-acts').style.display='none';
-  document.getElementById('mod-def').style.display='block';
-  document.getElementById('mod-edit').textContent='Edit Rules';
-}
 async function modBadPhoto(){
   const c=mcard, st=s(c.name);
   if(st.busy) return;
