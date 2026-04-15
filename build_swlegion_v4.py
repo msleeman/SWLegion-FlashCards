@@ -1341,7 +1341,7 @@ html,body{width:100%;height:100%;overflow:hidden;
 #fs-bot-grad{display:none}
 #fs-flip-zone{position:absolute;inset:0;cursor:pointer;z-index:3}
 #fs-topbar{position:absolute;top:0;left:0;right:0;
-  padding:14px 16px 0;display:flex;align-items:center;gap:10px;z-index:10;pointer-events:none}
+  padding:14px 205px 0 16px;display:flex;align-items:center;gap:10px;z-index:10;pointer-events:none}
 #fs-topbar>*{pointer-events:all}
 .fs-pill{background:rgba(0,0,0,.6);backdrop-filter:blur(12px);
   border:1px solid rgba(245,197,24,.25);border-radius:20px;
@@ -1474,8 +1474,8 @@ html,body{width:100%;height:100%;overflow:hidden;
 .modal-box{background:#0d1020;border:1px solid rgba(245,197,24,.2);border-radius:var(--rb);
   max-width:540px;width:100%;overflow:hidden;max-height:90vh;overflow-y:auto;
   box-shadow:0 0 40px rgba(245,197,24,.1)}
-.modal-photo{width:100%;height:220px;object-fit:cover;display:block;background:#0a1020;opacity:.7}
-.modal-photo-ph{width:100%;height:220px;background:linear-gradient(135deg,#0a1020,#1a1a30);
+.modal-photo{width:100%;height:340px;object-fit:contain;display:block;background:#0a1020;opacity:.85}
+.modal-photo-ph{width:100%;height:340px;background:linear-gradient(135deg,#0a1020,#1a1a30);
   display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.2);
   font-size:13px;text-align:center;padding:1rem;line-height:1.6}
 .modal-body{padding:1.25rem}
@@ -1690,8 +1690,11 @@ html,body{width:100%;height:100%;overflow:hidden;
     <div id="fs-back-content">
       <div id="fs-back-name"></div>
       <div id="fs-notes-col">
-        <div class="fs-notes-label">Summary / Notes</div>
-        <textarea id="fs-notes" placeholder="Add your notes..."></textarea>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+          <div class="fs-notes-label">Summary / Notes</div>
+          <button class="fs-btn" style="font-size:11px;padding:3px 10px;line-height:1.4" onclick="badSummary()">Bad Summary</button>
+        </div>
+        <textarea id="fs-notes" placeholder="Add your notes..." maxlength="2000"></textarea>
       </div>
       <div id="fs-rules-section">
         <div id="fs-rules-header" onclick="toggleRulesSection()">
@@ -1845,11 +1848,13 @@ html,body{width:100%;height:100%;overflow:hidden;
       <div class="modal-acts">
         <button class="modal-btn" id="mod-lrnd"  onclick="modToggleLearned()"></button>
         <button class="modal-btn" id="mod-pin"   onclick="modTogglePin()">&#128204; Pin</button>
+        <button class="modal-btn" id="mod-add-list" onclick="modShowAddToList()">+ List</button>
         <button class="modal-btn" id="mod-edit"  onclick="modToggleEditDef()">Edit Rules</button>
         <button class="modal-btn" id="mod-photo" onclick="modBadPhoto()">Bad photo</button>
         <button class="modal-btn cls"             onclick="closeMod()">Close</button>
       </div>
-      <textarea id="mod-def-edit" placeholder="Edit the rules text..."></textarea>
+      <div id="mod-list-picker" style="display:none;margin-top:8px;background:#0d1020;border:1px solid rgba(245,197,24,.3);border-radius:10px;overflow:hidden"></div>
+      <textarea id="mod-def-edit" placeholder="Edit the rules text..." maxlength="2000"></textarea>
       <div id="mod-def-edit-acts" style="display:none;gap:8px;flex-wrap:wrap;margin-top:6px">
         <button class="modal-btn" onclick="modSaveDef()">Save</button>
         <button class="modal-btn" onclick="modResetDef()">Reset to Original</button>
@@ -1989,7 +1994,7 @@ function toggleCatListDropdown(){
   const dd=document.getElementById('cat-list-dropdown');
   if(dd.classList.contains('open')){ dd.classList.remove('open'); return; }
   const lists=loadLists();
-  let html=`<div class="list-dd-item none-item${!catListId?' active':''}" onclick="setCatList(null);document.getElementById('cat-list-dropdown').classList.remove('open')">None</div>`;
+  let html=`<div class="list-dd-item none-item${catListId===''||(catListId===null&&!activeListId)?' active':''}" onclick="setCatList('');document.getElementById('cat-list-dropdown').classList.remove('open')">None</div>`;
   lists.forEach(l=>{
     const active=catListId===l.id;
     html+=`<div class="list-dd-item${active?' active':''}" onclick="setCatList('${l.id}');document.getElementById('cat-list-dropdown').classList.remove('open')">${escHtml(l.name)}</div>`;
@@ -2081,6 +2086,25 @@ function autoSummary(def){
   const last=Math.max(t.lastIndexOf(' '),t.lastIndexOf('.'),t.lastIndexOf(','));
   if(last>400) t=t.slice(0,last);
   return t+'\u2026';
+}
+function badSummary(){
+  const c=deck[cur]; if(!c) return;
+  const st=s(c.name);
+  const def=(st.customDef||c.definition||'').trim();
+  if(!def){ setStatus('No definition to summarise','err',2000); return; }
+  let text=def.replace(/^[A-Z][A-Z\s\-:]+\s+/,'').trim();
+  const sents=(text.match(/[^.!?]+[.!?]+/g)||[text]);
+  let summary='';
+  for(const sent of sents){
+    if(summary.length+sent.length>220) break;
+    summary+=sent.trim()+' ';
+    if(summary.length>=80) break;
+  }
+  summary=(summary||text.slice(0,220)).trim();
+  st.notes=summary; saveState();
+  const el=document.getElementById('fs-notes');
+  if(el){ el.value=summary; el.oninput=()=>{ st.notes=el.value; saveState(); }; }
+  setStatus('Summary shortened','ok',2000);
 }
 function cardSource(){ return 'Rules PDF v2.6 / legion.takras.net'; }
 function showBack(c){
@@ -2361,7 +2385,51 @@ async function modBadPhoto(){
 }
 function closeMod(e){
   if(e&&!e.target.classList.contains('modal-bg')&&e.target.id!=='modal-bg') return;
+  const picker=document.getElementById('mod-list-picker');
+  if(picker) picker.style.display='none';
   document.getElementById('modal-bg').classList.remove('on'); mcard=null;
+}
+function modShowAddToList(){
+  const picker=document.getElementById('mod-list-picker');
+  if(!picker) return;
+  if(picker.style.display!=='none'){ picker.style.display='none'; return; }
+  const lists=loadLists();
+  const stEl=document.getElementById('mod-st');
+  if(!lists.length){
+    stEl.textContent='No lists saved yet \u2014 go to Lists to create one.';
+    stEl.className='modal-status err'; return;
+  }
+  const kwName=mcard.name;
+  picker.innerHTML=lists.map(l=>{
+    const has=(l.keywords||[]).some(k=>k.toLowerCase()===kwName.toLowerCase());
+    const id=l.id.replace(/'/g,"\\'");
+    return `<div class="list-dd-item${has?' active':''}" onclick="modAddToList('${id}')">`+
+      `${escHtml(l.name)}`+
+      (has?' <span style="color:var(--G);font-size:11px">&#10003; already in list</span>':'')+
+      `</div>`;
+  }).join('');
+  picker.style.display='block';
+}
+function modAddToList(listId){
+  const lists=loadLists();
+  const list=lists.find(l=>l.id===listId);
+  if(!list||!mcard) return;
+  const kwName=mcard.name;
+  const stEl=document.getElementById('mod-st');
+  const picker=document.getElementById('mod-list-picker');
+  const idx=(list.keywords||[]).findIndex(k=>k.toLowerCase()===kwName.toLowerCase());
+  if(idx===-1){
+    if(!list.keywords) list.keywords=[];
+    list.keywords.push(kwName);
+    list.keywords.sort();
+    saveLists(lists);
+    stEl.textContent=`"${kwName}" added to "${list.name}"`;
+    stEl.className='modal-status ok';
+  } else {
+    stEl.textContent=`Already in "${list.name}"`;
+    stEl.className='modal-status work';
+  }
+  if(picker) picker.style.display='none';
 }
 
 // ─── UNIT DATABASE (from LegionHQ2) ──────────────────────────────────────────
