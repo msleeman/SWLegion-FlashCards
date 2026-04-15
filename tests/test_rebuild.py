@@ -170,3 +170,29 @@ class TestRebuildAddToList:
         assert "function modAddToList(" in html, (
             "Rebuilt HTML: modAddToList() function must exist"
         )
+
+
+# ─── Fix 8: Progress counter centred on top of progress bar ──────────────────
+
+class TestRebuildProgressCounter:
+
+    def test_fs_ctr_inside_fs_progress(self, rebuilt_html):
+        html, _ = rebuilt_html
+        idx = html.find('id="fs-progress"')
+        assert idx != -1, "Rebuilt HTML: #fs-progress not found"
+        chunk = html[idx: idx + 200]
+        assert 'id="fs-ctr"' in chunk, (
+            "Rebuilt HTML: #fs-ctr must be inside #fs-progress (not a sibling)"
+        )
+
+    def test_progress_position_relative(self, rebuilt_html):
+        html, _ = rebuilt_html
+        assert "position:relative" in html, (
+            "Rebuilt HTML: #fs-progress must be position:relative"
+        )
+
+    def test_ctr_small_font_9px(self, rebuilt_html):
+        html, _ = rebuilt_html
+        assert "font-size:9px" in html, (
+            "Rebuilt HTML: #fs-ctr must use font-size:9px (centred overlay)"
+        )

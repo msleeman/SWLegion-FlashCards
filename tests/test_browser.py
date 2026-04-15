@@ -52,6 +52,24 @@ class TestFlashcardScreen:
         notes = guest_page.locator("#fs-notes")
         expect(notes).to_have_attribute("maxlength", "2000")
 
+    def test_counter_centered_on_progress_bar(self, guest_page):
+        """Fix 8: 1/N counter must be rendered inside and horizontally centered on the bar."""
+        bar = guest_page.locator("#fs-progress")
+        ctr = guest_page.locator("#fs-ctr")
+        expect(ctr).to_be_visible()
+        bar_box = bar.bounding_box()
+        ctr_box = ctr.bounding_box()
+        assert bar_box and ctr_box, "Could not measure bounding boxes"
+        bar_mid = bar_box["x"] + bar_box["width"] / 2
+        ctr_mid = ctr_box["x"] + ctr_box["width"] / 2
+        assert abs(bar_mid - ctr_mid) < 20, (
+            f"Counter mid ({ctr_mid:.0f}px) is not centred on bar mid ({bar_mid:.0f}px)"
+        )
+        # Counter text must look like "N/M"
+        text = ctr.inner_text().strip()
+        assert "/" in text and text.replace("/", "").replace(" ", "").isdigit() or \
+               "/" in text, f"Counter text must be N/M format, got: {text!r}"
+
     def test_progress_bar_does_not_overlap_catalog_chip(self, guest_page):
         """Fix 6: Progress bar right edge must not overlap the Catalog button."""
         bar = guest_page.locator("#fs-progress")

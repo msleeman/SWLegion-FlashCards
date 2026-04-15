@@ -1354,9 +1354,9 @@ html,body{width:100%;height:100%;overflow:hidden;
 .type-weapon{background:rgba(192,57,43,.25);border:1px solid #c0392b;color:#f08080}
 .type-upgrade{background:rgba(155,89,182,.25);border:1px solid #9b59b6;color:#d7b4f5}
 .type-concept{background:rgba(245,197,24,.15);border:1px solid var(--golddim);color:var(--gold)}
-#fs-progress{flex:1;height:2px;background:rgba(255,255,255,.15);border-radius:2px;margin:0 8px}
-#fs-pfill{height:100%;background:var(--gold);transition:width .3s;border-radius:2px}
-#fs-ctr{color:var(--white2);font-size:13px;white-space:nowrap}
+#fs-progress{flex:1;position:relative;height:14px;background:rgba(255,255,255,.06);border-radius:3px;margin:0 8px}
+#fs-pfill{position:absolute;bottom:0;left:0;height:2px;width:0%;background:var(--gold);transition:width .3s;border-radius:2px}
+#fs-ctr{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:9px;color:rgba(255,255,255,.45);white-space:nowrap;line-height:1;pointer-events:none;letter-spacing:.5px}
 #fs-quiz-stats{display:none;gap:12px;align-items:center}
 .fs-stat{color:var(--white2);font-size:13px}
 .fs-stat span{font-weight:700;color:var(--white)}
@@ -1656,8 +1656,7 @@ html,body{width:100%;height:100%;overflow:hidden;
         <div id="list-dropdown"></div>
       </div>
     </div>
-    <div id="fs-progress"><div id="fs-pfill" style="width:0%"></div></div>
-    <span id="fs-ctr"></span>
+    <div id="fs-progress"><div id="fs-pfill" style="width:0%"></div><span id="fs-ctr"></span></div>
     <div id="fs-quiz-stats">
       <div class="fs-stat ok">&#10003;<span id="sc">0</span></div>
       <div class="fs-stat wr">&#10007;<span id="sw">0</span></div>

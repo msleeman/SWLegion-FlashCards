@@ -189,3 +189,41 @@ class TestAddToList:
         assert "saveLists(" in body, (
             f"[{label}] modAddToList() must call saveLists() to persist"
         )
+
+
+# ─── Fix 8: Progress counter centred on top of progress bar ──────────────────
+
+class TestProgressCounter:
+
+    def test_fs_ctr_inside_fs_progress(self, source):
+        """#fs-ctr span must be a child of #fs-progress, not a sibling."""
+        label, text = source
+        idx = text.find('id="fs-progress"')
+        assert idx != -1, f"[{label}] #fs-progress not found"
+        # Grab the opening tag + inner content until the closing </div>
+        chunk = text[idx: idx + 200]
+        assert 'id="fs-ctr"' in chunk, (
+            f"[{label}] #fs-ctr must be inside #fs-progress, not a sibling"
+        )
+
+    def test_fs_progress_position_relative(self, source):
+        """#fs-progress must be position:relative so the absolute counter works."""
+        label, text = source
+        assertIn("position:relative", text, label)
+
+    def test_fs_ctr_position_absolute_centered(self, source):
+        """#fs-ctr must be absolutely positioned and centred with transform."""
+        label, text = source
+        assertIn("left:50%", text, label)
+        assertIn("transform:translate(-50%,-50%)", text, label)
+
+    def test_fs_ctr_small_font(self, source):
+        """Counter must use a small font (≤9px) — not the old 13px."""
+        label, text = source
+        # Must have 9px somewhere in the ctr rule
+        assertIn("font-size:9px", text, label)
+        # The old 13px rule for #fs-ctr must be gone
+        assert "#fs-ctr{color:var(--white2);font-size:13px" not in text, (
+            f"[{label}] Old 13px #fs-ctr style is still present"
+        )
+
