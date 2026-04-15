@@ -1,17 +1,24 @@
 #!/usr/bin/env python3
-"""Rebuild swlegion_flashcards.html from cached card data (no scraping)."""
-import json, os, sys
+"""Rebuild swlegion_flashcards.html from cached card data (no scraping).
+
+Steps:
+  1. Load cached keyword data from cards_cache.json
+  2. Re-apply image overrides (download from CDN if missing locally)
+  3. Overlay official definitions from the PDF rulebook (if found)
+  4. Regenerate swlegion_flashcards.html
+"""
+import json, os, re, sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 
-# Import the build script
-import build_swlegion_v3 as bld
+# Import the current build script
+import build_swlegion_v4 as bld
 
-# Load cached card data
+# ── 1. Load cached card data ──────────────────────────────────────────────────
 cache = os.path.join(HERE, "cards_cache.json")
 if not os.path.exists(cache):
-    print("ERROR: cards_cache.json not found. Run build_swlegion_v3.py first.")
+    print("ERROR: cards_cache.json not found. Run build_swlegion_v4.py first.")
     sys.exit(1)
 
 with open(cache, "r", encoding="utf-8") as f:
@@ -19,8 +26,7 @@ with open(cache, "r", encoding="utf-8") as f:
 
 print(f"Loaded {len(card_data)} cards from cache")
 
-# Update image paths using new KEYWORD_CARD_IMAGES mappings
-# Re-apply image assignments (the images may already be cached)
+# ── 2. Re-apply image overrides ───────────────────────────────────────────────
 IMGDIR = os.path.join(HERE, "images")
 for c in card_data:
     lookup_key = bld._kw_lookup_key(c["name"])
@@ -32,12 +38,43 @@ for c in card_data:
         if os.path.exists(filepath) and os.path.getsize(filepath) > 1000:
             c["imgs"] = [f"images/{fname}"]
         else:
-            # Try to download it
             img_paths, _ = bld.download_images(c["name"], IMGDIR, max_imgs=1)
             if img_paths:
                 c["imgs"] = img_paths
-            # else keep existing
 
+# ── 3. Overlay official definitions from PDF ─────────────────────────────────
+def _norm(s):
+    return re.sub(r'[^a-z0-9]', '', s.lower())
+
+pdf_path = bld.find_pdf()
+if pdf_path:
+    print(f"Overlaying PDF definitions from {os.path.basename(pdf_path)}...")
+    try:
+        pdf_dict = bld.extract_keywords_from_pdf(pdf_path)
+        if pdf_dict:
+            pdf_lookup = {_norm(k): v for k, v in pdf_dict.items()}
+            overlaid = 0
+            for c in card_data:
+                key = _norm(c["name"])
+                match = pdf_lookup.get(key)
+                if not match:
+                    for pk, pv in pdf_lookup.items():
+                        if pk.startswith(key) or key.startswith(pk):
+                            match = pv
+                            break
+                if match and match.get("definition"):
+                    c["definition"] = match["definition"]
+                    overlaid += 1
+            print(f"  {overlaid}/{len(card_data)} definitions replaced with PDF versions")
+        else:
+            print("  PDF extraction returned nothing — keeping cached definitions")
+    except Exception as e:
+        print(f"  PDF overlay failed: {e} — keeping cached definitions")
+else:
+    print("PDF not found — keeping cached definitions")
+    print("  (place SWQ_Rulebook_2.6.0-1.pdf in the project root or documents/ folder)")
+
+# ── 4. Build HTML ─────────────────────────────────────────────────────────────
 print("Building HTML...")
 html = bld.build_html(card_data)
 out = os.path.join(HERE, "swlegion_flashcards.html")

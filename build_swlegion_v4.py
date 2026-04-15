@@ -698,7 +698,7 @@ KEYWORD_CARD_IMAGES = {
     "Cover":                         "74-Z%20Speeder%20Bikes.webp",
     "Creature Trooper":              "Tauntaun%20Riders.webp",
     "Critical":                      "DF-90%20Mortar%20Trooper.webp",
-    "Cunning":                       "Count%20Dooku.webp",
+    "Cunning":                       "Director%20Orson%20Krennic.webp",
     "Danger Sense":                  "Cad%20Bane.webp",
     "Dauntless":                     "Black%20Sun%20Vigo.webp",
     "Death from Above":              "Sun%20Fac.webp",
