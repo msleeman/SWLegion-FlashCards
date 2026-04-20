@@ -2195,6 +2195,7 @@ function pick(btn,chosen,correct){
 function toggleLearned(name){
   ST[name].learned=!ST[name].learned;
   saveState(); initDeck(); render();
+  syncToCloud(); // immediate — don't wait 2s debounce for learned changes
 }
 function resetLearned(){
   CARDS.forEach(c=>{ ST[c.name].learned=false; });
@@ -2813,8 +2814,17 @@ async function loadCloudState(){
     console.log('[AUTH] loadCloudState completed in', Date.now()-t0, 'ms',
       data ? 'got data' : 'no data', error || '');
     if(data){
-      if(data.card_states && Object.keys(data.card_states).length)
-        localStorage.setItem('swlegion_v1', JSON.stringify(data.card_states));
+      if(data.card_states && Object.keys(data.card_states).length){
+        let merged = data.card_states;
+        try{
+          const local=JSON.parse(localStorage.getItem('swlegion_v1')||'{}');
+          if(Object.keys(local).length){
+            merged={...data.card_states};
+            Object.keys(local).forEach(k=>{ if(local[k]?.learned && merged[k]) merged[k]={...merged[k],learned:true}; });
+          }
+        }catch(e){}
+        localStorage.setItem('swlegion_v1', JSON.stringify(merged));
+      }
       if(data.army_lists && data.army_lists.length)
         localStorage.setItem('swlegion_lists', JSON.stringify(data.army_lists));
     }
