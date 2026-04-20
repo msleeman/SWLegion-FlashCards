@@ -1842,7 +1842,7 @@ html,body{width:100%;height:100%;overflow:hidden;
       <div class="modal-name" id="mod-name"></div>
       <div class="modal-type" id="mod-type"></div>
       <div class="modal-def"  id="mod-def"></div>
-      <div class="modal-src">Source: legion.takras.net</div>
+      <div class="modal-src" id="mod-src"></div>
       <div class="modal-status" id="mod-st"></div>
       <div class="modal-acts">
         <button class="modal-btn" id="mod-lrnd"  onclick="modToggleLearned()"></button>
@@ -2105,7 +2105,7 @@ function badSummary(){
   if(el){ el.value=summary; el.oninput=()=>{ st.notes=el.value; saveState(); }; }
   setStatus('Summary shortened','ok',2000);
 }
-function cardSource(){ return 'Rules PDF v2.6 / legion.takras.net'; }
+function cardSource(c){ const st=s(c.name); return st.customDef ? 'Admin' : (c.credit||'legion.takras.net'); }
 function showBack(c){
   document.getElementById('fs-front-content').style.display='none';
   document.getElementById('fs-back-content').style.display='block';
@@ -2131,7 +2131,7 @@ function showBack(c){
   }
   // Source
   const srcEl=document.getElementById('fs-source');
-  if(srcEl) srcEl.textContent=cardSource();
+  if(srcEl) srcEl.textContent=cardSource(c);
 }
 function renderActions(c){
   const st=s(c.name), n=ic(c);
@@ -2314,6 +2314,8 @@ function renderMod(){
   const defText=st.customDef||c.definition;
   document.getElementById('mod-def').textContent=defText;
   document.getElementById('mod-def').style.borderColor=st.customDef?'rgba(245,197,24,.3)':'';
+  const modSrc=document.getElementById('mod-src');
+  if(modSrc) modSrc.textContent='Source: '+cardSource(c);
   const ml=document.getElementById('mod-lrnd');
   ml.textContent=st.learned?'Learned \u2014 reset':'Mark as learned';
   ml.className='modal-btn'+(st.learned?' lrnd':'');
@@ -2358,6 +2360,8 @@ function modSaveDef(){
   document.getElementById('mod-def-edit').style.display='none';
   document.getElementById('mod-def-edit-acts').style.display='none';
   document.getElementById('mod-def').style.display='block';
+  const modSrc=document.getElementById('mod-src');
+  if(modSrc) modSrc.textContent='Source: '+cardSource(mcard);
 }
 function modResetDef(){
   s(mcard.name).customDef='';
@@ -2365,6 +2369,8 @@ function modResetDef(){
   document.getElementById('mod-def-edit').value=mcard.definition;
   document.getElementById('mod-def').textContent=mcard.definition;
   document.getElementById('mod-def').style.borderColor='';
+  const modSrc=document.getElementById('mod-src');
+  if(modSrc) modSrc.textContent='Source: '+cardSource(mcard);
 }
 function modToggleLearned(){ toggleLearned(mcard.name); renderMod(); renderCatalog(); }
 async function modBadPhoto(){
@@ -3001,7 +3007,12 @@ function updateAccountUI(){
   const soItem = document.getElementById('acct-signout-item');
   const gLabel = document.getElementById('acct-guest-label');
   if(!btn) return;
-  if(_currentUser){
+  const loggedIn = !!_currentUser;
+  const notesCol = document.getElementById('fs-notes-col');
+  const editRulesBtn = document.getElementById('mod-edit');
+  if(notesCol) notesCol.style.display = loggedIn ? '' : 'none';
+  if(editRulesBtn) editRulesBtn.style.display = loggedIn ? '' : 'none';
+  if(loggedIn){
     const email = _currentUser.email || '';
     const short = email.split('@')[0].substring(0,10);
     btn.textContent   = '\u{1F464} ' + short;
@@ -3228,6 +3239,7 @@ def main():
                                 break
                     if match and match.get("definition"):
                         kw["definition"] = match["definition"]
+                        kw["credit"] = "AMG Rulebook v2.6"
                         overlaid += 1
                 print(f"      {overlaid}/{len(keywords)} definitions replaced with PDF versions")
             else:
@@ -3286,7 +3298,7 @@ def main():
             "definition":  kw["definition"],
             "type":        kw["type"],
             "imgs":        img_paths,
-            "credit":      "AMG Rulebook v2.6 / legion.takras.net",
+            "credit":      kw.get("credit", "legion.takras.net"),
             "card_source": card_source,
         })
 
