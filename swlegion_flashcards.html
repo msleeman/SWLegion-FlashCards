@@ -94,7 +94,7 @@ html,body{width:100%;height:100%;overflow:hidden;
 #fs-status.ok{background:var(--Gbg);color:var(--Gt);border:1px solid rgba(29,158,117,.3)}
 #fs-status.err{background:var(--Rbg);color:var(--Rt);border:1px solid rgba(255,68,68,.3)}
 #fs-status.work{background:var(--Abg);color:var(--At);border:1px solid rgba(245,166,35,.3)}
-#fs-opts{display:none;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+#fs-opts{display:none;grid-template-columns:1fr;gap:8px;margin-bottom:12px}
 #fs-opts.on{display:grid}
 .fs-opt{background:rgba(0,0,0,.6);backdrop-filter:blur(12px);
   border:1px solid rgba(245,197,24,.2);border-radius:var(--rs);
@@ -320,7 +320,7 @@ html,body{width:100%;height:100%;overflow:hidden;
       </div>
     </div>
     <p class="auth-footer">Guest progress is saved locally on this device only.</p>
-    <p class="auth-footer">v4.2.0003</p>
+    <p class="auth-footer">v4.2.0004</p>
   </div>
 </div>
 
@@ -720,7 +720,7 @@ function renderListFilterBadges(){
   });
 }
 
-let deck=[],cur=0,mode='learn',revealed=false,answered=false,sc=0,sw=0;
+let deck=[],cur=0,mode='learn',revealed=false,answered=false,sc=0,sw=0,_quizChoices=[];
 function activeDeck(){ return filteredCards().filter(c=>!s(c.name).learned); }
 function shuffle(a){ for(let i=a.length-1;i>0;i--){const j=0|Math.random()*(i+1);[a[i],a[j]]=[a[j],a[i]];} }
 function initDeck(){ deck=[...activeDeck()]; shuffle(deck); cur=0; }
@@ -851,40 +851,59 @@ function setMode(m){
 }
 function renderOpts(c){
   const pool=filteredCards().filter(x=>x.name!==c.name); shuffle(pool);
-  const choices=[c,...pool.slice(0,3)]; shuffle(choices);
+  _quizChoices=[{card:c,correct:true},...pool.slice(0,3).map(x=>({card:x,correct:false}))];
+  shuffle(_quizChoices);
   const el=document.getElementById('fs-opts'); el.className='on';
-  const sn=c.name.replace(/'/g,"\\'");
-  el.innerHTML=choices.map(o=>{
-    const on=o.name.replace(/'/g,"\\'");
-    return `<button class="fs-opt" onclick="pick(this,'${on}','${sn}')">${o.name}</button>`;
+  el.innerHTML=_quizChoices.map((ch,i)=>{
+    const def=ch.card.definition||'';
+    const display=def.length>220?def.slice(0,def.lastIndexOf(' ',220))+'…':def;
+    return `<button class="fs-opt" onclick="pick(this,${i})">${display}</button>`;
   }).join('');
   document.getElementById('fs-tap-hint').style.display='none';
-  document.getElementById('fs-keyword-subtext').innerHTML=
-    typeBadgeHTML(c.type)+
-    `<div style="font-size:13px;color:rgba(255,255,255,.7);margin-top:8px;line-height:1.6;max-width:600px">${c.definition}</div>`;
 }
-function pick(btn,chosen,correct){
+function pick(btn,idx){
   if(answered)return; answered=true;
-  const ok=chosen===correct;
-  document.querySelectorAll('.fs-opt').forEach(b=>{
+  const ok=_quizChoices[idx].correct;
+  document.querySelectorAll('.fs-opt').forEach((b,i)=>{
     b.disabled=true;
-    if(b.textContent.trim()===correct) b.classList.add('correct');
+    if(_quizChoices[i].correct) b.classList.add('correct');
     else if(b===btn&&!ok) b.classList.add('wrong');
   });
   if(ok){sc++;}else{sw++;}
   document.getElementById('sc').textContent=sc;
   document.getElementById('sw').textContent=sw;
   const qr=document.getElementById('fs-qres');
-  qr.textContent=ok?`Correct!`:`Nope — it's "${correct}"`;
+  const correctName=_quizChoices.find(ch=>ch.correct).card.name;
+  qr.textContent=ok?'Correct!':'Nope — the answer was "'+correctName+'"';
   qr.className='on '+(ok?'ok':'no');
   revealed=true;
-  showBack(CARDS.find(c=>c.name===correct));
-  setTimeout(()=>{ if(cur<deck.length-1){cur++;render();}else{qr.textContent=`Done! ${sc} correct of ${sc+sw}`;} },2200);
+  const total=sc+sw;
+  if(cur<deck.length-1){
+    setTimeout(()=>{cur++;render();},2200);
+  } else {
+    const pct=total>0?Math.round(sc/total*100):0;
+    let msg;
+    if(pct===100) msg=`Perfect score! ${sc}/${total} — you're a Legion master!`;
+    else if(pct>=80) msg=`Excellent! ${sc}/${total} — nearly perfect!`;
+    else if(pct>=60) msg=`Great effort! ${sc}/${total} — you're getting there!`;
+    else if(pct>=40) msg=`Good start! ${sc}/${total} — keep practicing!`;
+    else msg=`${sc}/${total} — keep studying, you've got this!`;
+    setTimeout(()=>{qr.textContent=msg; qr.className='on ok';},2200);
+  }
 }
 function toggleLearned(name){
-  ST[name].learned=!ST[name].learned;
-  saveState(); render();
-  syncToCloud(); // immediate — don't wait 2s debounce for learned changes
+  const wasLearned=ST[name].learned;
+  ST[name].learned=!wasLearned;
+  saveState();
+  if(!wasLearned){
+    deck.splice(cur,1);
+    if(cur>=deck.length) cur=Math.max(0,deck.length-1);
+  } else {
+    const card=CARDS.find(c=>c.name===name);
+    if(card) deck.push(card);
+  }
+  render();
+  syncToCloud();
 }
 function resetLearned(){
   CARDS.forEach(c=>{ ST[c.name].learned=false; });
