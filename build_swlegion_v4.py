@@ -2202,53 +2202,23 @@ function resetLearned(){
   document.getElementById('fs-alldone').classList.remove('on');
   render();
 }
-function badPhoto(name){
-  const c=CARDS.find(x=>x.name===name), st=s(name);
-  if(st.busy) return;
-  const n=ic(c);
-  if(n>1&&st.idx<n-1){ st.idx++; st.flagged=true; saveState(); setStatus(`Photo ${st.idx+1} of ${n}`,'ok',3000); render(); return; }
-  st.busy=true; st.flagged=true;
-  setStatus(`Fetching photo for "${name}"...`,'work');
-  renderActions(c);
-  fetchImage(c).then(r=>{
-    st.busy=false;
-    if(r==='ok')        setStatus(`Photo loaded!`,'ok',5000);
-    else if(r==='none') setStatus(`No image found for "${name}"`, 'err',5000);
-    else                setStatus(`Network error`,'err',5000);
-    saveState(); render();
-  });
+function unitImgsForKeyword(c){
+  const kw=c.name, base=kw.replace(/\s+\d+$/,'');
+  return Object.values(UNIT_DB)
+    .filter(u=>u.k&&u.k.some(k=>k===kw||k===base||k.startsWith(base+' ')))
+    .map(u=>'images/'+u.i);
 }
-async function fetchImage(c){
-  const capi='https://commons.wikimedia.org/w/api.php';
-  const clean=c.name.replace(/\s*X$/,'').replace(/\s*\(.*?\)/g,'').trim();
-  const terms=[`Star Wars Legion ${clean}`,`Star Wars ${clean}`,clean];
-  const cands=[];
-  for(const term of terms){
-    try{
-      const q=new URLSearchParams({action:'query',generator:'search',
-        gsrnamespace:'6',gsrsearch:term,gsrlimit:'5',
-        prop:'imageinfo',iiprop:'url|mime',iiurlwidth:'1200',format:'json',origin:'*'});
-      const data=await (await fetch(`${capi}?${q}`)).json();
-      if(data.query) Object.values(data.query.pages||{}).forEach(p=>{
-        const inf=(p.imageinfo||[])[0];
-        if(inf&&/\.(jpe?g|png)$/i.test(inf.url)) cands.push(inf.thumburl||inf.url);
-      });
-    }catch(e){}
-    if(cands.length>=3) break;
-  }
-  const have=new Set(c.imgs||[]);
-  const fresh=[...new Set(cands)].filter(u=>u&&!have.has(u));
-  if(!fresh.length) return 'none';
-  for(const url of fresh){
-    try{
-      const r=await fetch(url); if(!r.ok) continue;
-      const blobUrl=URL.createObjectURL(await r.blob());
-      if(!c.imgs) c.imgs=[];
-      c.imgs.push(blobUrl); s(c.name).idx=c.imgs.length-1;
-      return 'ok';
-    }catch(e){}
-  }
-  return 'none';
+function badPhoto(name){
+  const c=CARDS.find(x=>x.name===name); if(!c) return;
+  const st=s(name);
+  const extras=unitImgsForKeyword(c).filter(p=>!(c.imgs||[]).includes(p));
+  if(extras.length){ if(!c.imgs) c.imgs=[]; c.imgs.push(...extras); }
+  const n=ic(c);
+  if(!n){ setStatus('No images available','err',2000); return; }
+  st.idx=n>1?(st.idx+1)%n:0;
+  st.flagged=true; saveState();
+  setStatus(`Photo ${st.idx+1} of ${n}`,'ok',3000);
+  render();
 }
 
 let catFilter='all';
@@ -2378,20 +2348,17 @@ function modResetDef(){
   if(modSrc) modSrc.textContent='Source: '+cardSource(mcard);
 }
 function modToggleLearned(){ toggleLearned(mcard.name); renderMod(); renderCatalog(); }
-async function modBadPhoto(){
+function modBadPhoto(){
   const c=mcard, st=s(c.name);
-  if(st.busy) return;
-  st.busy=true; st.flagged=true;
-  document.getElementById('mod-st').textContent='Fetching...';
-  document.getElementById('mod-st').className='modal-status work';
-  renderMod();
-  const r=await fetchImage(c);
-  st.busy=false;
+  const extras=unitImgsForKeyword(c).filter(p=>!(c.imgs||[]).includes(p));
+  if(extras.length){ if(!c.imgs) c.imgs=[]; c.imgs.push(...extras); }
+  const n=ic(c);
   const el=document.getElementById('mod-st');
-  if(r==='ok'){el.textContent='Loaded!';el.className='modal-status ok';}
-  else if(r==='none'){el.textContent='No image found';el.className='modal-status err';}
-  else{el.textContent='Network error';el.className='modal-status err';}
-  saveState(); renderMod(); renderCatalog();
+  if(!n){ el.textContent='No images available'; el.className='modal-status err'; return; }
+  st.idx=n>1?(st.idx+1)%n:0;
+  st.flagged=true; saveState();
+  el.textContent=`Photo ${st.idx+1} of ${n}`; el.className='modal-status ok';
+  renderMod();
 }
 function closeMod(e){
   if(e&&!e.target.classList.contains('modal-bg')&&e.target.id!=='modal-bg') return;
