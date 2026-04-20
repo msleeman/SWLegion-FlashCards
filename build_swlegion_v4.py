@@ -2087,24 +2087,28 @@ function autoSummary(def){
   if(last>400) t=t.slice(0,last);
   return t+'\u2026';
 }
-function badSummary(){
+async function badSummary(){
   const c=deck[cur]; if(!c) return;
   const st=s(c.name);
   const def=(st.customDef||c.definition||'').trim();
   if(!def){ setStatus('No definition to summarise','err',2000); return; }
-  let text=def.replace(/^[A-Z][A-Z\s\-:]+\s+/,'').trim();
-  const sents=(text.match(/[^.!?]+[.!?]+/g)||[text]);
-  let summary='';
-  for(const sent of sents){
-    if(summary.length+sent.length>220) break;
-    summary+=sent.trim()+' ';
-    if(summary.length>=80) break;
+  setStatus('Generating AI summary\u2026','work');
+  try {
+    const resp=await fetch(SUPA_URL+'/functions/v1/summarize',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+SUPA_KEY},
+      body:JSON.stringify({definition:def,name:c.name})
+    });
+    if(!resp.ok) throw new Error('HTTP '+resp.status);
+    const {summary,error}=await resp.json();
+    if(error) throw new Error(error);
+    st.notes=summary; saveState();
+    const el=document.getElementById('fs-notes');
+    if(el){ el.value=summary; el.oninput=()=>{ st.notes=el.value; saveState(); }; }
+    setStatus('AI summary ready','ok',2000);
+  } catch(e){
+    setStatus('AI unavailable — '+e.message,'err',3000);
   }
-  summary=(summary||text.slice(0,220)).trim();
-  st.notes=summary; saveState();
-  const el=document.getElementById('fs-notes');
-  if(el){ el.value=summary; el.oninput=()=>{ st.notes=el.value; saveState(); }; }
-  setStatus('Summary shortened','ok',2000);
 }
 function cardSource(c){ const st=s(c.name); return st.customDef ? 'Admin' : (c.credit||'legion.takras.net'); }
 function showBack(c){
