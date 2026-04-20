@@ -320,7 +320,7 @@ html,body{width:100%;height:100%;overflow:hidden;
       </div>
     </div>
     <p class="auth-footer">Guest progress is saved locally on this device only.</p>
-    <p class="auth-footer">v4.2.0002</p>
+    <p class="auth-footer">v4.2.0003</p>
   </div>
 </div>
 
@@ -883,7 +883,7 @@ function pick(btn,chosen,correct){
 }
 function toggleLearned(name){
   ST[name].learned=!ST[name].learned;
-  saveState(); initDeck(); render();
+  saveState(); render();
   syncToCloud(); // immediate — don't wait 2s debounce for learned changes
 }
 function resetLearned(){
