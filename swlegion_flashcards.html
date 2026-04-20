@@ -320,7 +320,7 @@ html,body{width:100%;height:100%;overflow:hidden;
       </div>
     </div>
     <p class="auth-footer">Guest progress is saved locally on this device only.</p>
-    <p class="auth-footer">v4.2.0004</p>
+    <p class="auth-footer">v4.2.0005</p>
   </div>
 </div>
 
@@ -855,7 +855,8 @@ function renderOpts(c){
   shuffle(_quizChoices);
   const el=document.getElementById('fs-opts'); el.className='on';
   el.innerHTML=_quizChoices.map((ch,i)=>{
-    const def=ch.card.definition||'';
+    const escaped=ch.card.name.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+    const def=(ch.card.definition||'').replace(new RegExp('\\b'+escaped+'\\b','gi'),'the keyword');
     const display=def.length>220?def.slice(0,def.lastIndexOf(' ',220))+'…':def;
     return `<button class="fs-opt" onclick="pick(this,${i})">${display}</button>`;
   }).join('');
