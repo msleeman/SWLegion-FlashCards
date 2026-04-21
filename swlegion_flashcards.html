@@ -320,7 +320,7 @@ html,body{width:100%;height:100%;overflow:hidden;
       </div>
     </div>
     <p class="auth-footer">Guest progress is saved locally on this device only.</p>
-    <p class="auth-footer">v4.2.0005</p>
+    <p class="auth-footer">v4.2.0006</p>
   </div>
 </div>
 
@@ -856,7 +856,9 @@ function renderOpts(c){
   const el=document.getElementById('fs-opts'); el.className='on';
   el.innerHTML=_quizChoices.map((ch,i)=>{
     const escaped=ch.card.name.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
-    const def=(ch.card.definition||'').replace(new RegExp('\\b'+escaped+'\\b','gi'),'the keyword');
+    const raw=s(ch.card.name).notes||ch.card.definition||'';
+    const def=raw.replace(new RegExp('\\b'+escaped+'\\b','gi'),'the keyword')
+                  .replace(/\bthe keyword keyword\b/gi,'the keyword');
     const display=def.length>220?def.slice(0,def.lastIndexOf(' ',220))+'…':def;
     return `<button class="fs-opt" onclick="pick(this,${i})">${display}</button>`;
   }).join('');
@@ -918,11 +920,87 @@ function unitImgsForKeyword(c){
     .filter(u=>u.k&&u.k.some(k=>k===kw||k===base||k.startsWith(base+' ')))
     .map(u=>'images/'+u.i);
 }
+// Fallback images for keywords that don't appear in UNIT_DB — ordered, first match wins
+const KEYWORD_FALLBACK=[
+  ['Compulsory Move',    'AT-ST.webp'],
+  ['Cumbersome',         'AT-ST.webp'],
+  ['Plodding',           'Imperial Dark Troopers.webp'],
+  ['Unstoppable',        'Imperial Dark Troopers.webp'],
+  ['Unconcerned',        'Imperial Dark Troopers.webp'],
+  ['Climbing Vehicle',   'AT-RT Reb.webp'],
+  ['Expert Climber',     'AT-RT Reb.webp'],
+  ['Fixed Front',        'AAT Battle Tank.webp'],
+  ['Barrage',            'AAT Battle Tank.webp'],
+  ['Hover Air',          'LAAT Patrol Transport E.webp'],
+  ['Hover Ground',       'AAT Battle Tank.webp'],
+  ['Transport',          'TX-225 GAVw Occupier Tank.webp'],
+  ['Weak Point',         'AT-ST.webp'],
+  ['Command Vehicle',    'Jedi Knight Mounted Jedi General.webp'],
+  ['Mobile',             'TSMEU-6 Wheel Bikes.webp'],
+  ['Wheel Mode',         'Droidekas.webp'],
+  ['Ion',                'AT-ST.webp'],
+  ['Immune: Melee',      'T-47 Airspeeder.webp'],
+  ['Immune: Blast',      'T-47 Airspeeder.webp'],
+  ['Immune: Range',      'T-47 Airspeeder.webp'],
+  ['Immune: Pierce',     'Obi-Wan Kenobi.webp'],
+  ['Immune:',            'Darth Vader Dark Lord of the Sith.webp'],
+  ['Soresu Mastery',     'Obi-Wan Kenobi.webp'],
+  ['Makashi Mastery',    'Count Dooku.webp'],
+  ['Ataru Mastery',      'Ki-Adi-Mundi.webp'],
+  ['Djem So Mastery',    'Anakin Skywalker.webp'],
+  ['Juyo Mastery',       'Maul Impatient Apprentice.webp'],
+  ["Jar'Kai Mastery",    'Asajj Ventress.webp'],
+  ['Vaapad Mastery',     'Mace Windu.webp'],
+  ['Shien Mastery',      'Ahsoka Tano Padawan Commander.webp'],
+  ['Master of the Force','Obi-Wan Kenobi.webp'],
+  ['Deflect',            'Obi-Wan Kenobi.webp'],
+  ['Pierce',             'Luke Skywalker Jedi Knight.webp'],
+  ['Melee',              'Luke Skywalker Jedi Knight.webp'],
+  ['Impact',             'General Grievous Sinister Cyborg.webp'],
+  ['Blast',              'AAT Battle Tank.webp'],
+  ['Programmed',         'Droidekas.webp'],
+  ['Override',           'Command and Control Droid.webp'],
+  ['Speeder',            '74-Z Speeder Bikes.webp'],
+  ['Strafe',             'T-47 Airspeeder.webp'],
+  ['Attack Run',         'Raddaugh Gnasp Fluttercraft Attack Craft.webp'],
+  ['Scout',              'Rebel Commandos.webp'],
+  ['Infiltrate',         'Jyn Erso.webp'],
+  ['Incognito',          'K-2SO.webp'],
+  ['Inconspicuous',      'R2-D2 Hero of a Thousand Devices.webp'],
+  ['Shielded',           'Droidekas.webp'],
+  ['Generator',          'Droidekas.webp'],
+  ['Bounty',             'Boba Fett Infamous Bounty Hunter.webp'],
+  ['Suppressive',        'Stormtroopers.webp'],
+  ['Demoralize',         'Stormtroopers.webp'],
+  ['Jump',               'Sabine Wren.webp'],
+  ['Repair',             'R2-D2 Hero of a Thousand Devices.webp'],
+  ['Enrage',             'Chewbacca Walking Carpet.webp'],
+  ['Scale',              'Chewbacca Walking Carpet.webp'],
+  ['Indomitable',        'Wookiee Warriors Freedom Fighters.webp'],
+  ['Guardian',           'Obi-Wan Kenobi.webp'],
+  ['Inspire',            'Leia Organa.webp'],
+  ['Bolster',            'T-Series Tactical Droid.webp'],
+  ['Observe',            'Imperial Probe Droid.webp'],
+  ['Entourage',          'Darth Vader Dark Lord of the Sith.webp'],
+  ['Charge',             'Luke Skywalker Hero of the Rebellion.webp'],
+];
+function fallbackImg(name){
+  const lower=name.toLowerCase();
+  for(const [pat,img] of KEYWORD_FALLBACK){
+    if(lower.startsWith(pat.toLowerCase())) return 'images/'+img;
+  }
+  return null;
+}
 function badPhoto(name){
   const c=CARDS.find(x=>x.name===name); if(!c) return;
   const st=s(name);
   const extras=unitImgsForKeyword(c).filter(p=>!(c.imgs||[]).includes(p));
   if(extras.length){ if(!c.imgs) c.imgs=[]; c.imgs.push(...extras); }
+  // If still no images, try thematic fallback
+  if(!ic(c)){
+    const fb=fallbackImg(name);
+    if(fb){ if(!c.imgs) c.imgs=[]; c.imgs.push(fb); }
+  }
   const n=ic(c);
   if(!n){ setStatus('No images available','err',2000); return; }
   st.idx=n>1?(st.idx+1)%n:0;
