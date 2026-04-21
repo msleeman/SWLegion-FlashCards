@@ -320,7 +320,7 @@ html,body{width:100%;height:100%;overflow:hidden;
       </div>
     </div>
     <p class="auth-footer">Guest progress is saved locally on this device only.</p>
-    <p class="auth-footer">v4.2.0006</p>
+    <p class="auth-footer">v4.2.0007</p>
   </div>
 </div>
 
@@ -328,6 +328,7 @@ html,body{width:100%;height:100%;overflow:hidden;
 <div class="screen on" id="flashcard-screen">
   <div id="fs-bg">
     <img id="fs-img" src="" alt="">
+    <div id="fs-stats-cover" style="display:none;position:absolute;background:#0a0a0f;border:2px solid rgba(245,197,24,.5);border-radius:6px;pointer-events:none;"></div>
     <div id="fs-scan"></div>
     <div id="fs-top-grad"></div>
     <div id="fs-bot-grad"></div>
@@ -336,6 +337,7 @@ html,body{width:100%;height:100%;overflow:hidden;
   <div id="fs-topbar">
     <button class="fs-pill active" id="pill-learn" onclick="setMode('learn')">Learn</button>
     <button class="fs-pill" id="pill-quiz" onclick="setMode('quiz')">Quiz</button>
+    <button class="fs-pill" id="pill-stats" onclick="setMode('stats')">Stats</button>
     <div id="fs-type-filter">
       <button class="fs-pill active" id="pill-all"     onclick="setTypeFilter('all')">All</button>
       <button class="fs-pill"        id="pill-unit"    onclick="setTypeFilter('unit')">Unit</button>
@@ -350,6 +352,10 @@ html,body{width:100%;height:100%;overflow:hidden;
     <div id="fs-quiz-stats">
       <div class="fs-stat ok">&#10003;<span id="sc">0</span></div>
       <div class="fs-stat wr">&#10007;<span id="sw">0</span></div>
+    </div>
+    <div id="fs-stats-score" style="display:none;gap:12px;align-items:center">
+      <div class="fs-stat ok">&#10003;<span id="ss">0</span></div>
+      <div class="fs-stat wr">&#10007;<span id="se">0</span></div>
     </div>
   </div>
   <div id="fs-nav-btns">
@@ -721,11 +727,14 @@ function renderListFilterBadges(){
 }
 
 let deck=[],cur=0,mode='learn',revealed=false,answered=false,sc=0,sw=0,_quizChoices=[];
+let _stDeck=[],_stCur=0,_stSc=0,_stSw=0,_stQ=null,_stAnswered=false;
 function activeDeck(){ return filteredCards().filter(c=>!s(c.name).learned); }
 function shuffle(a){ for(let i=a.length-1;i>0;i--){const j=0|Math.random()*(i+1);[a[i],a[j]]=[a[j],a[i]];} }
 function initDeck(){ deck=[...activeDeck()]; shuffle(deck); cur=0; }
 
 function render(){
+  if(mode==='stats'){ renderStatCard(); return; }
+  document.getElementById('fs-stats-cover').style.display='none';
   const alive=activeDeck();
   const alldone=document.getElementById('fs-alldone');
   if(!alive.length){ alldone.classList.add('on'); return; }
@@ -836,18 +845,27 @@ function renderActions(c){
     `<button class="fs-btn${st.flagged?' flagged':''}" onclick="badPhoto('${sn}')">${pl}</button>`;
 }
 function handleTap(){
+  if(mode==='stats') return;
   if(mode==='quiz'&&!answered) return;
   if(!revealed){ revealed=true; showBack(deck[cur]); }
   else { if(cur<deck.length-1){ cur++; render(); } }
 }
-function go(d){ cur=Math.max(0,Math.min(deck.length-1,cur+d)); render(); }
+function go(d){
+  if(mode==='stats'){ _stCur=Math.max(0,Math.min(_stDeck.length-1,_stCur+d)); renderStatCard(); return; }
+  cur=Math.max(0,Math.min(deck.length-1,cur+d)); render();
+}
 function setMode(m){
   mode=m;
   document.getElementById('pill-learn').classList.toggle('active',m==='learn');
   document.getElementById('pill-quiz').classList.toggle('active',m==='quiz');
+  document.getElementById('pill-stats').classList.toggle('active',m==='stats');
   document.getElementById('fs-quiz-stats').style.display=m==='quiz'?'flex':'none';
+  document.getElementById('fs-stats-score').style.display=m==='stats'?'flex':'none';
+  document.getElementById('fs-stats-cover').style.display=m==='stats'?'block':'none';
   if(m==='quiz'){sc=0;sw=0;['sc','sw'].forEach(id=>document.getElementById(id).textContent=0);}
-  clrStatus(); initDeck(); render();
+  clrStatus();
+  if(m==='stats'){ initStatsDeck(); renderStatCard(); }
+  else { document.getElementById('fs-stats-cover').style.display='none'; initDeck(); render(); }
 }
 function renderOpts(c){
   const pool=filteredCards().filter(x=>x.name!==c.name); shuffle(pool);
@@ -892,6 +910,119 @@ function pick(btn,idx){
     else if(pct>=40) msg=`Good start! ${sc}/${total} — keep practicing!`;
     else msg=`${sc}/${total} — keep studying, you've got this!`;
     setTimeout(()=>{qr.textContent=msg; qr.className='on ok';},2200);
+  }
+}
+function initStatsDeck(){
+  _stDeck=Object.keys(UNIT_STATS).filter(k=>UNIT_DB[k]);
+  shuffle(_stDeck);
+  _stCur=0; _stSc=0; _stSw=0;
+  document.getElementById('ss').textContent=0;
+  document.getElementById('se').textContent=0;
+}
+
+function makeStatQuestion(code){
+  const st=UNIT_STATS[code];
+  const qs=[
+    {key:'sp', label:'Movement?', ans:String(st.sp),
+      opts:()=>{const s=new Set([1,2,3]);s.add(st.sp);return [...s].map(String);}},
+    {key:'w',  label:'Total Wounds?', ans:String(st.w),
+      opts:()=>{
+        const pool=[...new Set(Object.values(UNIT_STATS).map(u=>u.w))];
+        shuffle(pool);
+        const wrong=pool.filter(v=>v!==st.w).slice(0,3);
+        return shuffle([st.w,...wrong]).map(String);
+      }},
+    {key:'cg', label:'Courage?', ans:st.cg===null?'Fearless':String(st.cg),
+      opts:()=>shuffle(['1','2','3','Fearless'])},
+    {key:'as', label:'Attack Surge?',
+      ans:st.as==='h'?'Hit':st.as==='c'?'Critical':'None',
+      opts:()=>shuffle(['Hit','Critical','None','Block'])},
+    {key:'dd', label:'Defense Die?', ans:st.dd==='r'?'Red':'White',
+      opts:()=>shuffle(['Red','White'])},
+  ];
+  const q=qs[Math.floor(Math.random()*qs.length)];
+  const opts=q.opts();
+  if(!opts.includes(q.ans)) opts[0]=q.ans;
+  return {label:q.label, ans:q.ans, opts};
+}
+
+function positionStatsOverlay(){
+  const img=document.getElementById('fs-img');
+  const cover=document.getElementById('fs-stats-cover');
+  if(!img||!cover||img.style.display==='none') return;
+  const imgR=img.getBoundingClientRect();
+  const bgR=document.getElementById('fs-bg').getBoundingClientRect();
+  const ow=imgR.width*0.44, oh=imgR.height*0.28;
+  cover.style.left=(imgR.right-bgR.left-ow)+'px';
+  cover.style.top=(imgR.bottom-bgR.top-oh)+'px';
+  cover.style.width=ow+'px';
+  cover.style.height=oh+'px';
+  cover.style.display='block';
+}
+
+function renderStatCard(){
+  if(_stCur>=_stDeck.length){
+    document.getElementById('fs-alldone').classList.add('on');
+    return;
+  }
+  document.getElementById('fs-alldone').classList.remove('on');
+  const code=_stDeck[_stCur];
+  const unit=UNIT_DB[code];
+  _stQ=makeStatQuestion(code);
+  _stAnswered=false;
+  // Progress
+  document.getElementById('fs-pfill').style.width=Math.round((_stCur+1)/_stDeck.length*100)+'%';
+  document.getElementById('fs-ctr').textContent=(_stCur+1)+'/'+_stDeck.length;
+  document.getElementById('fs-prev').disabled=_stCur===0;
+  document.getElementById('fs-next').disabled=true;
+  // Show unit card image
+  const img=document.getElementById('fs-img');
+  img.src='images/'+unit.i;
+  img.style.display='block';
+  img.classList.remove('dim');
+  // Front content: show unit name + question
+  document.getElementById('fs-front-content').style.display='block';
+  document.getElementById('fs-back-content').style.display='none';
+  const uname=(unit.t?unit.n+' — '+unit.t:unit.n);
+  document.getElementById('fs-keyword-name').textContent=uname;
+  document.getElementById('fs-keyword-subtext').innerHTML='<span style="font-size:18px;color:var(--gold);font-weight:700">'+_stQ.label+'</span>';
+  document.getElementById('fs-tap-hint').style.display='none';
+  // Options
+  const el=document.getElementById('fs-opts'); el.className='on';
+  el.innerHTML=_stQ.opts.map((o,i)=>`<button class="fs-opt" onclick="pickStat(this,'${o.replace(/'/g,"\\'")}',${i})">${o}</button>`).join('');
+  // Result
+  const qr=document.getElementById('fs-qres'); qr.className=''; qr.textContent='';
+  // Position overlay after image loads
+  if(img.complete) positionStatsOverlay();
+  else img.onload=positionStatsOverlay;
+}
+
+function pickStat(btn,chosen,idx){
+  if(_stAnswered) return;
+  _stAnswered=true;
+  const ok=chosen===_stQ.ans;
+  document.querySelectorAll('.fs-opt').forEach(b=>{
+    b.disabled=true;
+    if(b.textContent.trim()===_stQ.ans) b.classList.add('correct');
+    else if(b===btn&&!ok) b.classList.add('wrong');
+  });
+  if(ok){_stSc++;}else{_stSw++;}
+  document.getElementById('ss').textContent=_stSc;
+  document.getElementById('se').textContent=_stSw;
+  const qr=document.getElementById('fs-qres');
+  qr.textContent=ok?'Correct!':'The answer is "'+_stQ.ans+'"';
+  qr.className='on '+(ok?'ok':'no');
+  const total=_stSc+_stSw;
+  if(_stCur<_stDeck.length-1){
+    setTimeout(()=>{_stCur++;renderStatCard();},2200);
+  } else {
+    const pct=total>0?Math.round(_stSc/total*100):0;
+    let msg;
+    if(pct===100) msg='Perfect! '+_stSc+'/'+total+' — you know every unit!';
+    else if(pct>=80) msg='Excellent! '+_stSc+'/'+total+' — nearly perfect!';
+    else if(pct>=60) msg='Good work! '+_stSc+'/'+total+' — getting there!';
+    else msg=_stSc+'/'+total+' — keep studying those stat cards!';
+    setTimeout(()=>{qr.textContent=msg; qr.className='on ok'; document.getElementById('fs-stats-cover').style.display='none';},2200);
   }
 }
 function toggleLearned(name){
@@ -984,12 +1115,32 @@ const KEYWORD_FALLBACK=[
   ['Entourage',          'Darth Vader Dark Lord of the Sith.webp'],
   ['Charge',             'Luke Skywalker Hero of the Rebellion.webp'],
 ];
+const EXTRA_IMGS = {
+  'Anti-Materiel X':                ['images/AT-ST.webp'],
+  'Anti-Personnel X':               ['images/Wicket.webp','images/Ewok Skirmishers.webp'],
+  'Upgrading and Downgrading Dice': ['images/Grand Admiral Thrawn.webp'],
+  'Cumbersome':                     ['images/AT-ST.webp'],
+  'Beam X':                         ['images/Iden Versio.webp'],
+};
 function fallbackImg(name){
   const lower=name.toLowerCase();
   for(const [pat,img] of KEYWORD_FALLBACK){
     if(lower.startsWith(pat.toLowerCase())) return 'images/'+img;
   }
   return null;
+}
+function applyPermImgs(){
+  CARDS.forEach(c=>{
+    const base=c.name.replace(/\s+\d+$/,'');
+    // Named overrides (exact match or base name match)
+    const named=EXTRA_IMGS[c.name]||EXTRA_IMGS[base];
+    if(named){ if(!c.imgs)c.imgs=[]; named.forEach(p=>{if(!c.imgs.includes(p))c.imgs.push(p);}); }
+    // KEYWORD_FALLBACK for any card still without images
+    if(!c.imgs||!c.imgs.length){
+      const fb=fallbackImg(c.name);
+      if(fb){ if(!c.imgs)c.imgs=[]; c.imgs.push(fb); }
+    }
+  });
 }
 function badPhoto(name){
   const c=CARDS.find(x=>x.name===name); if(!c) return;
@@ -1407,6 +1558,145 @@ const UNIT_DB = {
   "ya":{"n": "LM-432 Crab Droid", "f": "separatists", "r": "support", "k": ["Armor 2", "Climbing Vehicle", "Programmed", "Reposition", "Scale", "Scout 1", "Scouting Party 1"], "i": "LM-432 Crab Droid.webp"},
 };
 
+const UNIT_STATS={
+  "at":{"sp":2,"w":20,"cg":null,"dd":"r","ds":false,"as":"c"},
+  "au":{"sp":2,"w":5, "cg":3,   "dd":"w","ds":false,"as":null},
+  "av":{"sp":2,"w":5, "cg":2,   "dd":"w","ds":false,"as":null},
+  "ay":{"sp":2,"w":6, "cg":1,   "dd":"w","ds":false,"as":null},
+  "az":{"sp":2,"w":6, "cg":1,   "dd":"w","ds":false,"as":null},
+  "ba":{"sp":2,"w":5, "cg":1,   "dd":"w","ds":false,"as":null},
+  "bd":{"sp":2,"w":8, "cg":2,   "dd":"w","ds":false,"as":null},
+  "be":{"sp":1,"w":6, "cg":2,   "dd":"w","ds":false,"as":null},
+  "bg":{"sp":1,"w":11,"cg":3,   "dd":"r","ds":false,"as":null},
+  "bf":{"sp":3,"w":5, "cg":2,   "dd":"w","ds":false,"as":null},
+  "bh":{"sp":2,"w":10,"cg":3,   "dd":"r","ds":false,"as":null},
+  "fn":{"sp":2,"w":8, "cg":null,"dd":"r","ds":false,"as":"c"},
+  "kg":{"sp":2,"w":5, "cg":3,   "dd":"w","ds":false,"as":null},
+  "nm":{"sp":2,"w":5, "cg":2,   "dd":"w","ds":false,"as":null},
+  "on":{"sp":2,"w":10,"cg":3,   "dd":"r","ds":false,"as":null},
+  "tm":{"sp":1,"w":8, "cg":3,   "dd":"r","ds":false,"as":null},
+  "we":{"sp":1,"w":11,"cg":3,   "dd":"r","ds":false,"as":null},
+  "wl":{"sp":2,"w":5, "cg":null,"dd":"r","ds":false,"as":"c"},
+  "wm":{"sp":2,"w":5, "cg":null,"dd":"r","ds":false,"as":"c"},
+  "ui":{"sp":2,"w":5, "cg":3,   "dd":"w","ds":false,"as":null},
+  "Ff":{"sp":2,"w":5, "cg":3,   "dd":"w","ds":false,"as":null},
+  "Fg":{"sp":2,"w":4, "cg":3,   "dd":"w","ds":false,"as":null},
+  "hf":{"sp":2,"w":6, "cg":2,   "dd":"w","ds":true, "as":null},
+  "xh":{"sp":2,"w":5, "cg":2,   "dd":"w","ds":false,"as":null},
+  "xz":{"sp":2,"w":6, "cg":1,   "dd":"w","ds":false,"as":null},
+  "sr":{"sp":2,"w":6, "cg":1,   "dd":"w","ds":false,"as":null},
+  "ab":{"sp":2,"w":5, "cg":3,   "dd":"w","ds":false,"as":null},
+  "ac":{"sp":2,"w":5, "cg":3,   "dd":"w","ds":false,"as":"h"},
+  "ad":{"sp":2,"w":6, "cg":3,   "dd":"r","ds":false,"as":"c"},
+  "ae":{"sp":2,"w":5, "cg":3,   "dd":"w","ds":false,"as":null},
+  "af":{"sp":2,"w":8, "cg":null,"dd":"r","ds":false,"as":"c"},
+  "ag":{"sp":2,"w":5, "cg":3,   "dd":"w","ds":false,"as":null},
+  "ah":{"sp":2,"w":6, "cg":2,   "dd":"w","ds":false,"as":null},
+  "ai":{"sp":2,"w":6, "cg":2,   "dd":"w","ds":false,"as":null},
+  "aj":{"sp":2,"w":8, "cg":3,   "dd":"r","ds":false,"as":"c"},
+  "ak":{"sp":2,"w":5, "cg":2,   "dd":"w","ds":false,"as":null},
+  "an":{"sp":1,"w":4, "cg":2,   "dd":"w","ds":false,"as":null},
+  "ao":{"sp":2,"w":6, "cg":2,   "dd":"w","ds":false,"as":null},
+  "ap":{"sp":3,"w":9, "cg":3,   "dd":"r","ds":false,"as":null},
+  "aq":{"sp":3,"w":8, "cg":3,   "dd":"r","ds":false,"as":null},
+  "fm":{"sp":2,"w":6, "cg":3,   "dd":"r","ds":false,"as":"c"},
+  "gv":{"sp":2,"w":6, "cg":2,   "dd":"w","ds":false,"as":null},
+  "he":{"sp":3,"w":6, "cg":2,   "dd":"w","ds":false,"as":null},
+  "jg":{"sp":2,"w":4, "cg":3,   "dd":"w","ds":false,"as":null},
+  "kf":{"sp":2,"w":5, "cg":3,   "dd":"w","ds":false,"as":null},
+  "lv":{"sp":2,"w":6, "cg":3,   "dd":"w","ds":false,"as":null},
+  "nl":{"sp":2,"w":5, "cg":3,   "dd":"w","ds":false,"as":"h"},
+  "om":{"sp":3,"w":9, "cg":3,   "dd":"r","ds":false,"as":null},
+  "vd":{"sp":2,"w":6, "cg":3,   "dd":"r","ds":false,"as":"c"},
+  "Fb":{"sp":2,"w":6, "cg":3,   "dd":"r","ds":false,"as":"c"},
+  "Fc":{"sp":2,"w":5, "cg":3,   "dd":"w","ds":false,"as":"h"},
+  "ve":{"sp":2,"w":4, "cg":2,   "dd":"w","ds":false,"as":null},
+  "vk":{"sp":2,"w":4, "cg":1,   "dd":"w","ds":false,"as":null},
+  "vu":{"sp":2,"w":3, "cg":1,   "dd":"w","ds":false,"as":null},
+  "vv":{"sp":2,"w":3, "cg":3,   "dd":"w","ds":false,"as":null},
+  "wd":{"sp":2,"w":4, "cg":2,   "dd":"w","ds":false,"as":null},
+  "pl":{"sp":2,"w":8, "cg":3,   "dd":"r","ds":false,"as":"c"},
+  "gw":{"sp":2,"w":6, "cg":null,"dd":"r","ds":false,"as":"c"},
+  "na":{"sp":2,"w":6, "cg":null,"dd":"r","ds":false,"as":"c"},
+  "Fp":{"sp":2,"w":6, "cg":null,"dd":"r","ds":false,"as":"c"},
+  "Gs":{"sp":2,"w":5, "cg":3,   "dd":"r","ds":false,"as":"c"},
+  "Gu":{"sp":2,"w":5, "cg":3,   "dd":"r","ds":false,"as":"c"},
+  "Gw":{"sp":2,"w":5, "cg":3,   "dd":"r","ds":false,"as":"c"},
+  "fy":{"sp":2,"w":5, "cg":3,   "dd":"w","ds":false,"as":null},
+  "fz":{"sp":2,"w":6, "cg":1,   "dd":"w","ds":false,"as":null},
+  "gb":{"sp":2,"w":10,"cg":3,   "dd":"r","ds":false,"as":null},
+  "ic":{"sp":3,"w":5, "cg":2,   "dd":"w","ds":false,"as":null},
+  "jh":{"sp":2,"w":4, "cg":3,   "dd":"w","ds":false,"as":null},
+  "kw":{"sp":2,"w":5, "cg":3,   "dd":"w","ds":false,"as":null},
+  "kz":{"sp":2,"w":5, "cg":2,   "dd":"w","ds":false,"as":null},
+  "mb":{"sp":2,"w":6, "cg":2,   "dd":"w","ds":false,"as":null},
+  "ns":{"sp":2,"w":5, "cg":3,   "dd":"w","ds":false,"as":null},
+  "oo":{"sp":2,"w":10,"cg":3,   "dd":"r","ds":false,"as":null},
+  "ol":{"sp":2,"w":5, "cg":null,"dd":"r","ds":false,"as":"c"},
+  "ue":{"sp":2,"w":5, "cg":3,   "dd":"w","ds":false,"as":null},
+  "xi":{"sp":2,"w":6, "cg":3,   "dd":"w","ds":false,"as":null},
+  "xj":{"sp":2,"w":6, "cg":2,   "dd":"w","ds":false,"as":null},
+  "xp":{"sp":2,"w":6, "cg":2,   "dd":"w","ds":false,"as":null},
+  "ph":{"sp":2,"w":8, "cg":null,"dd":"r","ds":false,"as":"c"},
+  "pg":{"sp":2,"w":8, "cg":3,   "dd":"r","ds":false,"as":"c"},
+  "pm":{"sp":2,"w":8, "cg":3,   "dd":"r","ds":false,"as":"c"},
+  "po":{"sp":2,"w":8, "cg":null,"dd":"r","ds":false,"as":"c"},
+  "qs":{"sp":2,"w":9, "cg":3,   "dd":"r","ds":false,"as":null},
+  "qh":{"sp":3,"w":6, "cg":2,   "dd":"w","ds":false,"as":null},
+  "fx":{"sp":2,"w":6, "cg":null,"dd":"r","ds":false,"as":"c"},
+  "ga":{"sp":2,"w":6, "cg":1,   "dd":"w","ds":false,"as":null},
+  "gc":{"sp":2,"w":10,"cg":3,   "dd":"r","ds":false,"as":null},
+  "gx":{"sp":2,"w":6, "cg":1,   "dd":"w","ds":false,"as":null},
+  "ia":{"sp":2,"w":11,"cg":null,"dd":"r","ds":false,"as":"c"},
+  "ie":{"sp":2,"w":6, "cg":2,   "dd":"w","ds":false,"as":null},
+  "la":{"sp":2,"w":5, "cg":2,   "dd":"w","ds":false,"as":null},
+  "mc":{"sp":3,"w":5, "cg":1,   "dd":"w","ds":false,"as":null},
+  "nb":{"sp":2,"w":6, "cg":null,"dd":"r","ds":false,"as":"c"},
+  "px":{"sp":2,"w":6, "cg":2,   "dd":"r","ds":false,"as":"c"},
+  "pz":{"sp":2,"w":5, "cg":3,   "dd":"w","ds":false,"as":null},
+  "qa":{"sp":2,"w":5, "cg":3,   "dd":"w","ds":false,"as":null},
+  "qk":{"sp":2,"w":6, "cg":2,   "dd":"r","ds":false,"as":null},
+  "qt":{"sp":2,"w":10,"cg":3,   "dd":"r","ds":false,"as":null},
+  "ut":{"sp":2,"w":6, "cg":null,"dd":"r","ds":false,"as":"c"},
+  "wn":{"sp":2,"w":5, "cg":3,   "dd":"w","ds":false,"as":null},
+  "wo":{"sp":3,"w":5, "cg":3,   "dd":"w","ds":false,"as":null},
+  "wp":{"sp":3,"w":5, "cg":1,   "dd":"w","ds":false,"as":null},
+  "ya":{"sp":2,"w":6, "cg":2,   "dd":"r","ds":false,"as":null},
+  "aw":{"sp":2,"w":6, "cg":null,"dd":"r","ds":false,"as":"c"},
+  "ax":{"sp":2,"w":8, "cg":null,"dd":"r","ds":false,"as":null},
+  "Bj":{"sp":2,"w":5, "cg":3,   "dd":"w","ds":false,"as":null},
+  "Fe":{"sp":3,"w":8, "cg":3,   "dd":"r","ds":false,"as":null},
+  "Hb":{"sp":2,"w":8, "cg":null,"dd":"r","ds":false,"as":"c"},
+  "Hc":{"sp":2,"w":8, "cg":null,"dd":"r","ds":false,"as":"c"},
+  "Hr":{"sp":2,"w":6, "cg":2,   "dd":"w","ds":false,"as":null},
+  "Hw":{"sp":2,"w":6, "cg":3,   "dd":"r","ds":false,"as":null},
+  "Hz":{"sp":2,"w":6, "cg":3,   "dd":"r","ds":false,"as":null},
+  "Hy":{"sp":2,"w":5, "cg":3,   "dd":"w","ds":false,"as":null},
+  "kx":{"sp":2,"w":5, "cg":3,   "dd":"w","ds":false,"as":null},
+  "mk":{"sp":2,"w":6, "cg":2,   "dd":"w","ds":false,"as":null},
+  "qy":{"sp":2,"w":5, "cg":2,   "dd":"w","ds":false,"as":null},
+  "qz":{"sp":2,"w":6, "cg":1,   "dd":"w","ds":false,"as":null},
+  "ra":{"sp":2,"w":5, "cg":2,   "dd":"w","ds":false,"as":null},
+  "rb":{"sp":2,"w":6, "cg":2,   "dd":"w","ds":false,"as":null},
+  "rc":{"sp":2,"w":6, "cg":null,"dd":"r","ds":false,"as":"c"},
+  "rd":{"sp":2,"w":5, "cg":3,   "dd":"w","ds":false,"as":null},
+  "sm":{"sp":3,"w":9, "cg":3,   "dd":"r","ds":false,"as":null},
+  "sq":{"sp":3,"w":5, "cg":2,   "dd":"w","ds":false,"as":null},
+  "ti":{"sp":2,"w":6, "cg":null,"dd":"r","ds":false,"as":"c"},
+  "tj":{"sp":2,"w":5, "cg":null,"dd":"r","ds":false,"as":"c"},
+  "tk":{"sp":2,"w":6, "cg":null,"dd":"r","ds":false,"as":null},
+  "tl":{"sp":2,"w":6, "cg":null,"dd":"r","ds":false,"as":"c"},
+  "vj":{"sp":1,"w":12,"cg":null,"dd":"r","ds":false,"as":"c"},
+  "Ef":{"sp":3,"w":11,"cg":null,"dd":"r","ds":false,"as":"c"},
+  "xd":{"sp":2,"w":6, "cg":2,   "dd":"r","ds":false,"as":"c"},
+  "xe":{"sp":2,"w":10,"cg":3,   "dd":"r","ds":false,"as":null},
+  "Bc":{"sp":2,"w":5, "cg":3,   "dd":"r","ds":false,"as":"c"},
+  "Hq":{"sp":2,"w":4, "cg":1,   "dd":"w","ds":false,"as":null},
+  "nr":{"sp":2,"w":5, "cg":3,   "dd":"w","ds":false,"as":null},
+  "nk":{"sp":2,"w":3, "cg":2,   "dd":"w","ds":false,"as":null},
+  "Fd":{"sp":2,"w":6, "cg":2,   "dd":"w","ds":false,"as":null},
+};
+
 // ─── ARMY LIST PARSING ───────────────────────────────────────────────────────
 function parseUnitCode(code){
   // Format: {count}{2-char-unit-id}{upgrade-tokens...}
@@ -1793,6 +2083,7 @@ function startApp(){
   updateCatListPillLabel();
   updateCatAddRow();
   updateAccountUI();
+  applyPermImgs();
   setMode('learn');
 }
 
