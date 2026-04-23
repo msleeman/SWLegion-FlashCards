@@ -753,7 +753,9 @@
     "definition": "Commanders and Checking For Panic Commanders and Checking For Panic [PANIC TOKEN] When a unit checks to see if it is Panicked, if there are 1 or more [COMMANDER] units with higher [COURAGE] within [RANGE 3] , it uses the highest of those [COURAGE] instead of its own. For example, a unit with 3 Suppression tokens and Courage value 1 would not be Panicked if there is an allied [COMMANDER] within [RANGE 3] that has a Courage value of 2 or greater.",
     "summary": "",
     "type": "concept",
-    "imgs": [],
+    "imgs": [
+      "images/Commander_and_Panic_Check_1.jpg"
+    ],
     "credit": "legion.takras.net",
     "card_source": "",
     "art_credit": ""
