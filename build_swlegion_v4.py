@@ -1694,7 +1694,7 @@ html,body{width:100%;height:100%;overflow:hidden;
       </div>
     </div>
     <p class="auth-footer">Guest progress is saved locally on this device only.</p>
-    <p class="auth-footer">v4.2.0011</p>
+    <p class="auth-footer">v4.2.0012</p>
   </div>
 </div>
 
@@ -2596,6 +2596,10 @@ function openMod(name){
 }
 function renderMod(){
   const c=mcard, st=s(c.name), src=ci(c);
+  const stEl=document.getElementById('mod-st');
+  if(stEl){ stEl.textContent=''; stEl.className='modal-status'; }
+  const picker=document.getElementById('mod-list-picker');
+  if(picker) picker.style.display='none';
   document.getElementById('mod-img').innerHTML=src
     ?`<img class="modal-photo" src="${src}" alt="${c.name}"
            onerror="this.outerHTML='<div class=modal-photo-ph>No image</div>'">`
@@ -2729,7 +2733,7 @@ function modAddToList(listId){
     list.keywords.push(kwName);
     list.keywords.sort();
     saveLists(lists);
-    stEl.textContent=`"${kwName}" added to "${list.name}"`;
+    stEl.textContent=`"${dispName(kwName)}" added to "${list.name}"`;
     stEl.className='modal-status ok';
   } else {
     stEl.textContent=`Already in "${list.name}"`;
