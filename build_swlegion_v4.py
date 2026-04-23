@@ -1694,7 +1694,7 @@ html,body{width:100%;height:100%;overflow:hidden;
       </div>
     </div>
     <p class="auth-footer">Guest progress is saved locally on this device only.</p>
-    <p class="auth-footer">v4.2.0010</p>
+    <p class="auth-footer">v4.2.0011</p>
   </div>
 </div>
 
@@ -2140,7 +2140,7 @@ function typeBadgeHTML(type){
 function showFront(c){
   document.getElementById('fs-front-content').style.display='block';
   document.getElementById('fs-back-content').style.display='none';
-  document.getElementById('fs-keyword-name').textContent=c.name;
+  document.getElementById('fs-keyword-name').textContent=dispName(c.name);
   document.getElementById('fs-keyword-subtext').innerHTML=typeBadgeHTML(c.type);
   document.getElementById('fs-tap-hint').style.display=mode==='learn'?'block':'none';
   document.getElementById('fs-img').classList.remove('dim');
@@ -2189,7 +2189,7 @@ function cardSource(c){ const st=s(c.name); return st.customDef ? 'Admin' : (c.c
 function showBack(c){
   document.getElementById('fs-front-content').style.display='none';
   document.getElementById('fs-back-content').style.display='block';
-  document.getElementById('fs-back-name').innerHTML=c.name+' '+typeBadgeHTML(c.type);
+  document.getElementById('fs-back-name').innerHTML=dispName(c.name)+' '+typeBadgeHTML(c.type);
   const st=s(c.name);
   const def=st.customDef||c.definition||'';
   // Notes / Summary
