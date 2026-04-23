@@ -864,15 +864,40 @@ def _card_art_stem(keyword_name):
 
 
 def find_card_art(keyword_name):
-    """Return 'card_art/<file>' if a manually placed image exists in card_art/, else None.
+    """Return 'card_art/<file>' using the actual on-disk filename (case-insensitive match).
     Checks .png, .webp, .jpg in that order."""
     if not os.path.isdir(CARD_ART_DIR):
         return None
-    stem = _card_art_stem(keyword_name)
+    stem_lower = _card_art_stem(keyword_name).lower()
+    try:
+        entries = os.listdir(CARD_ART_DIR)
+    except OSError:
+        return None
     for ext in ('.png', '.webp', '.jpg'):
-        fp = os.path.join(CARD_ART_DIR, stem + ext)
-        if os.path.exists(fp) and os.path.getsize(fp) > 0:
-            return f"card_art/{stem}{ext}"
+        for entry in entries:
+            name, e = os.path.splitext(entry)
+            if name.lower() == stem_lower and e.lower() == ext:
+                return f"card_art/{entry}"
+    return None
+
+
+def find_card_art_credit(keyword_name):
+    """Return text content of card_art/<stem>.txt if present (up to 1000 chars), else None."""
+    if not os.path.isdir(CARD_ART_DIR):
+        return None
+    stem_lower = _card_art_stem(keyword_name).lower()
+    try:
+        entries = os.listdir(CARD_ART_DIR)
+    except OSError:
+        return None
+    for entry in entries:
+        name, e = os.path.splitext(entry)
+        if name.lower() == stem_lower and e.lower() == '.txt':
+            try:
+                with open(os.path.join(CARD_ART_DIR, entry), encoding='utf-8') as f:
+                    return f.read(1000).strip()
+            except OSError:
+                return None
     return None
 
 
@@ -1520,6 +1545,7 @@ html,body{width:100%;height:100%;overflow:hidden;
   border-radius:6px;border-left:2px solid rgba(245,197,24,.35)}
 .modal-def{font-size:14px;color:rgba(255,255,255,.75);line-height:1.7;margin-top:.75rem}
 .modal-src{font-size:11px;color:rgba(255,255,255,.25);margin-top:.5rem}
+.modal-art-credit{font-size:11px;color:rgba(255,255,255,.3);font-style:italic;margin-top:.3rem}
 .modal-status{font-size:12px;font-weight:500;margin-top:.4rem;min-height:18px}
 .modal-status.ok{color:var(--Gt)}.modal-status.err{color:var(--Rt)}.modal-status.work{color:var(--At)}
 .modal-acts{display:flex;gap:8px;margin-top:1rem;flex-wrap:wrap}
@@ -1668,7 +1694,7 @@ html,body{width:100%;height:100%;overflow:hidden;
       </div>
     </div>
     <p class="auth-footer">Guest progress is saved locally on this device only.</p>
-    <p class="auth-footer">v4.2.0009</p>
+    <p class="auth-footer">v4.2.0010</p>
   </div>
 </div>
 
@@ -1888,6 +1914,7 @@ html,body{width:100%;height:100%;overflow:hidden;
       <div class="modal-summary" id="mod-summary" style="display:none"></div>
       <div class="modal-def"  id="mod-def"></div>
       <div class="modal-src" id="mod-src"></div>
+      <div class="modal-art-credit" id="mod-art-credit" style="display:none"></div>
       <div class="modal-status" id="mod-st"></div>
       <div class="modal-acts">
         <button class="modal-btn" id="mod-lrnd"  onclick="modToggleLearned()"></button>
@@ -1910,6 +1937,7 @@ html,body{width:100%;height:100%;overflow:hidden;
 <script>
 const CARDS = /*CARD_JSON*/;
 const ST = {};
+function dispName(n){ return n.replace(/\[\]/g,'').trim(); }
 CARDS.forEach(c => { ST[c.name]={idx:0,learned:false,flagged:false,busy:false,notes:'',customDef:'',pinned:false}; });
 
 function loadState(){
@@ -2544,15 +2572,16 @@ function renderCatalog(){
     const sn=c.name.replace(/'/g,"\\'");
     const def=st.customDef||c.definition||'';
     const preview=def.length>90?def.slice(0,90).replace(/\s\S*$/,'')+'\u2026':def;
+    const dn=dispName(c.name);
     const th=src
-      ?`<img class="cat-thumb" src="${src}" alt="${c.name}" loading="lazy"
-             onerror="this.outerHTML='<div class=cat-thumb-ph>${c.name[0]}</div>'">`
-      :`<div class="cat-thumb-ph">${c.name[0]}</div>`;
+      ?`<img class="cat-thumb" src="${src}" alt="${dn}" loading="lazy"
+             onerror="this.outerHTML='<div class=cat-thumb-ph>${dn[0]}</div>'">`
+      :`<div class="cat-thumb-ph">${dn[0]}</div>`;
     return `<div class="cat-card${st.learned?' lrnd':''}" onclick="openMod('${sn}')">
       ${th}
       ${st.learned?'<span class="cat-badge badge-learned">Learned</span>':''}${st.pinned?'<span class="cat-badge" style="background:rgba(245,197,24,.9);color:#000;top:6px;left:6px">&#128204;</span>':''}
       <div class="cat-lbl">
-        <div class="cat-name">${c.name}</div>
+        <div class="cat-name">${dn}</div>
         <div class="cat-type">${c.type}</div>
         <div style="font-size:10px;color:rgba(255,255,255,.3);margin-top:3px;line-height:1.4;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">${escHtml(preview)}</div>
       </div>
@@ -2571,7 +2600,7 @@ function renderMod(){
     ?`<img class="modal-photo" src="${src}" alt="${c.name}"
            onerror="this.outerHTML='<div class=modal-photo-ph>No image</div>'">`
     :`<div class="modal-photo-ph">No image — use Bad Photo to fetch one</div>`;
-  document.getElementById('mod-name').textContent=c.name;
+  document.getElementById('mod-name').textContent=dispName(c.name);
   document.getElementById('mod-type').innerHTML=typeBadgeHTML(c.type);
   const defText=st.customDef||c.definition;
   const modSum=document.getElementById('mod-summary');
@@ -2585,6 +2614,12 @@ function renderMod(){
   document.getElementById('mod-def').style.borderColor=st.customDef?'rgba(245,197,24,.3)':'';
   const modSrc=document.getElementById('mod-src');
   if(modSrc) modSrc.textContent='Source: '+cardSource(c);
+  const modArtCredit=document.getElementById('mod-art-credit');
+  if(modArtCredit){
+    const ac=c.art_credit||'';
+    modArtCredit.textContent=ac?'Image: '+ac:'';
+    modArtCredit.style.display=ac?'':'none';
+  }
   const ml=document.getElementById('mod-lrnd');
   ml.textContent=st.learned?'Learned \u2014 reset':'Mark as learned';
   ml.className='modal-btn'+(st.learned?' lrnd':'');
@@ -3715,6 +3750,7 @@ def main():
             "imgs":        img_paths,
             "credit":      kw.get("credit", "legion.takras.net"),
             "card_source": card_source,
+            "art_credit":  find_card_art_credit(name) or "",
         })
 
     ok = len(keywords) - len(failed)

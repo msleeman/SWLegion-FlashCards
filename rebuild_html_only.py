@@ -32,6 +32,7 @@ for c in card_data:
     art = bld.find_card_art(c["name"])
     if art:
         c["imgs"] = [art]
+        c["art_credit"] = bld.find_card_art_credit(c["name"]) or ""
         continue
     lookup_key = bld._kw_lookup_key(c["name"])
     card_filename = bld.KEYWORD_CARD_IMAGES.get(lookup_key)
