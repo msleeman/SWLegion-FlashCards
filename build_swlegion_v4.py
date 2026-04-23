@@ -1694,7 +1694,7 @@ html,body{width:100%;height:100%;overflow:hidden;
       </div>
     </div>
     <p class="auth-footer">Guest progress is saved locally on this device only.</p>
-    <p class="auth-footer">v4.2.0012</p>
+    <p class="auth-footer">v4.2.0013</p>
   </div>
 </div>
 
@@ -3763,6 +3763,12 @@ def main():
         short = ', '.join(failed[:5]) + ('...' if len(failed) > 5 else '')
         print(f"  No image: {short}")
     print(f"  {ok}/{len(keywords)} keywords have images")
+
+    # Save cache so rebuild_html_only.py picks up fresh data
+    cache_path = os.path.join(HERE, "cards_cache.json")
+    with open(cache_path, "w", encoding="utf-8") as f:
+        json.dump(card_data, f, ensure_ascii=False, indent=2)
+    print(f"\n      Cached {len(card_data)} cards to cards_cache.json")
 
     # Step 3: Build HTML
     print(f"\n[3/3] Building swlegion_flashcards.html...")
