@@ -9,7 +9,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": "https://www.cgtrader.com/3d-models/military/gun/anti-materiel-sniper-rifle-barrett-m107a1"
+    "art_credit": "https://www.cgtrader.com/3d-models/military/gun/anti-materiel-sniper-rifle-barrett-m107a1",
+    "units": ""
   },
   {
     "name": "Anti-Personnel X",
@@ -22,7 +23,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Upgrading and Downgrading Dice",
@@ -32,7 +34,8 @@
     "imgs": [],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Cumbersome",
@@ -44,7 +47,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: AT-ST",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Command Vehicle X",
@@ -56,7 +60,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "General Grievous, Jedi Knight"
   },
   {
     "name": "Mobile",
@@ -68,7 +73,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "General Grievous, TSMEU-6 Wheel Bikes"
   },
   {
     "name": "Abilities That Provide Moves",
@@ -78,7 +84,8 @@
     "imgs": [],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Activating a Unit",
@@ -91,7 +98,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Activation Phase",
@@ -104,7 +112,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Advanced Targeting: Unit Type X",
@@ -116,7 +125,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "See: General Grievous",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Advantage Cards",
@@ -129,7 +139,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Advantage Token",
@@ -139,7 +150,8 @@
     "imgs": [],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Affiliations",
@@ -149,7 +161,8 @@
     "imgs": [],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Agile X",
@@ -161,7 +174,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "See: 74-Z Speeder Bikes",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "Jyn Erso, Padme Amidala, Rebel Troopers, STAP Riders, Tauntaun Riders, Wookiee Chieftain"
   },
   {
     "name": "AI: Action",
@@ -173,7 +187,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "See: B1 Battle Droids",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Aid: Affiliation",
@@ -185,7 +200,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "See: Rebel Commandos",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Aim",
@@ -198,7 +214,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Allied and Enemy",
@@ -211,7 +228,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Allies of Convenience",
@@ -223,7 +241,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "See: Boba Fett",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "Gar Saxon, Lando Calrissian, Maul, Shaak Ti"
   },
   {
     "name": "Apply Dodge and Cover",
@@ -236,7 +255,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Area Terrain",
@@ -249,7 +269,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Area Weapon",
@@ -262,7 +283,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Arm X",
@@ -274,7 +296,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Armor X",
@@ -286,7 +309,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: AT-ST",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "A-A5 Speeder Truck, AAT Battle Tank, AT-RT, AT-ST, Aqua Droids, Chewbacca, DSD1 Dwarf Spider Droid, Dewback Rider, General Grievous, IG-11, IG-88, Imperial Dark Troopers, Infantry Support Platform, K-2SO, LAAT/le Patrol Transport, LM-432 Crab Droid, Major Marquand, Persuader-Class Tank Droid, Range Troopers, Saber-Class Tank, T-47 Airspeeder, TSMEU-6 Wheel Bikes, TX-225 GAVw Occupier Tank, WLO-5 Speeder Tank, X-34 Landspeeder"
   },
   {
     "name": "Army Building",
@@ -299,7 +323,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Arsenal X",
@@ -311,7 +336,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: Wookiee Warriors",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "AAT Battle Tank, AT-ST, BARC Speeder, Boba Fett, Chewbacca, Din Djarin, Han Solo, LAAT/le Patrol Transport, Major Marquand, Persuader-Class Tank Droid, Saber-Class Tank, T-47 Airspeeder, TX-225 GAVw Occupier Tank, WLO-5 Speeder Tank, X-34 Landspeeder"
   },
   {
     "name": "Associate: Unit Name",
@@ -323,7 +349,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: DF-90 Mortar Trooper",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "Ahsoka Tano, Seventh Sister"
   },
   {
     "name": "Ataru Mastery",
@@ -335,7 +362,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: Ahsoka Tano",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "Ki-Adi-Mundi, Yoda"
   },
   {
     "name": "Attack",
@@ -347,7 +375,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Attack Run",
@@ -359,7 +388,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: T-47 Airspeeder",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "Raddaugh Gnasp Fluttercraft"
   },
   {
     "name": "Make Actions",
@@ -372,7 +402,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Backup",
@@ -384,7 +415,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Bane Tokens",
@@ -394,7 +426,8 @@
     "imgs": [],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Barrage",
@@ -406,7 +439,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: Imperial Death Troopers",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "AAT Battle Tank"
   },
   {
     "name": "Barricades",
@@ -416,7 +450,8 @@
     "imgs": [],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Bases and Base Contact",
@@ -426,7 +461,8 @@
     "imgs": [],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Battle Cards",
@@ -439,7 +475,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Battle Forces",
@@ -452,7 +489,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Battlefield",
@@ -465,7 +503,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Beam X",
@@ -478,7 +517,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: Director Orson Krennic",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Blast",
@@ -490,7 +530,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: TX-225 GAVw Occupier Combat Assault Tank",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "DSD1 Dwarf Spider Droid"
   },
   {
     "name": "Block",
@@ -502,7 +543,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: Chewbacca",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "Fifth Brother, General Grievous, Luke Skywalker, Seventh Sister"
   },
   {
     "name": "Bolster X",
@@ -514,7 +556,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: Grand Moff Tarkin",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Bounty",
@@ -526,7 +569,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: Bossk",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "Agent Kallus, Boba Fett, Bossk, Cad Bane, Din Djarin, IG-88"
   },
   {
     "name": "Building a Battle Deck",
@@ -539,7 +583,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Building a Command Hand",
@@ -552,7 +597,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Building a Mission",
@@ -565,7 +611,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Objects/Battlefield",
@@ -575,7 +622,8 @@
     "imgs": [],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Cache",
@@ -583,12 +631,12 @@
     "summary": "",
     "type": "unit",
     "imgs": [
-      "images/Cache_1.jpg",
-      "images/Cache_2.jpg"
+      "card_art/cache.webp"
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: Rebel Specialists",
-    "art_credit": ""
+    "art_credit": "https://ar.inspiredpencil.com/pictures-2023/legion-token",
+    "units": ""
   },
   {
     "name": "Calculate Odds",
@@ -600,7 +648,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: R2-D2 and C-3PO",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "General Tagge, K-2SO"
   },
   {
     "name": "Canceling Results",
@@ -613,7 +662,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Card Action",
@@ -626,7 +676,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Card Effects",
@@ -639,7 +690,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Charge",
@@ -651,7 +703,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: Imperial Royal Guards",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "ARC Troopers, Agent Kallus, Ahsoka Tano, Anakin Skywalker, Axe Woves, Fleet Troopers, Han Solo, IG-100 MagnaGuard, Ki-Adi-Mundi, Kraken, Luke Skywalker, Mace Windu, Obi-Wan Kenobi, Plo Koon, Seventh Sister, Shaak Ti, Stormtrooper Riot Squad, The Armorer, Weequay Pirates, Wookiee Chieftain, Wookiee Warriors"
   },
   {
     "name": "Charge Token",
@@ -661,7 +714,8 @@
     "imgs": [],
     "credit": "AMG Rulebook v2.6",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Claiming Objective Tokens",
@@ -671,7 +725,8 @@
     "imgs": [],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Climbing",
@@ -683,7 +738,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Climbing Vehicle",
@@ -695,7 +751,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: AT-RT",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "AT-RT, DSD1 Dwarf Spider Droid, General Grievous, LM-432 Crab Droid, TSMEU-6 Wheel Bikes"
   },
   {
     "name": "Clone Trooper",
@@ -707,7 +764,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Cohesion",
@@ -720,7 +778,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Command Cards",
@@ -733,7 +792,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Command Phase",
@@ -746,19 +806,19 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Commander and Panic Check",
     "definition": "Commanders and Checking For Panic Commanders and Checking For Panic [PANIC TOKEN] When a unit checks to see if it is Panicked, if there are 1 or more [COMMANDER] units with higher [COURAGE] within [RANGE 3] , it uses the highest of those [COURAGE] instead of its own. For example, a unit with 3 Suppression tokens and Courage value 1 would not be Panicked if there is an allied [COMMANDER] within [RANGE 3] that has a Courage value of 2 or greater.",
     "summary": "",
     "type": "concept",
-    "imgs": [
-      "images/Commander_and_Panic_Check_1.jpg"
-    ],
+    "imgs": [],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Compel: Rank/Unit Type",
@@ -770,7 +830,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Complete the Mission",
@@ -782,7 +843,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Compulsory Move",
@@ -795,7 +857,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Contesting Objective Tokens",
@@ -805,7 +868,8 @@
     "imgs": [],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Coordinate: Type/Name",
@@ -817,7 +881,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Counterpart",
@@ -830,7 +895,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "See: Darth Vader Dark Lord of the Sith",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Cover",
@@ -842,7 +908,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "74-Z Speeder Bikes, Anakin Skywalker, BARC Speeder, Infantry Support Platform, Jedi Knight, LAAT/le Patrol Transport, Raddaugh Gnasp Fluttercraft, STAP Riders, Sun Fac, Swoop Bike Riders, T-47 Airspeeder, X-34 Landspeeder"
   },
   {
     "name": "Cover X",
@@ -854,7 +921,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "See: Stormtroopers",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Covert Ops",
@@ -864,7 +932,8 @@
     "imgs": [],
     "credit": "legion.takras.net",
     "card_source": "See: Scout Troopers Strike Team",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Creature Trooper",
@@ -876,7 +945,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Critical X",
@@ -888,7 +958,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: Imperial Death Troopers",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Cunning",
@@ -900,7 +971,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "See: Director Orson Krennic",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "Count Dooku, Director Orson Krennic, Grand Admiral Thrawn"
   },
   {
     "name": "Cycle",
@@ -913,7 +985,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: Imperial Specialists",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Danger Sense",
@@ -925,7 +998,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "Cad Bane, Cassian Andor, Ki-Adi-Mundi, Pyke Syndicate Capo, Pyke Syndicate Foot Soldiers"
   },
   {
     "name": "Dauntless",
@@ -937,7 +1011,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: Imperial Royal Guards",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "Black Sun Enforcers, Black Sun Vigo, Clan Wren Veterans, Fifth Brother"
   },
   {
     "name": "Death From Above",
@@ -949,7 +1024,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: Imperial Jumptroopers",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "Bo-Katan Kryze, Geonosian Warriors, Sun Fac"
   },
   {
     "name": "Declare and Place Terrain",
@@ -959,7 +1035,8 @@
     "imgs": [],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Declare Defender",
@@ -972,7 +1049,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Defeating Upgrade Card and Discarding Upgrade Cards",
@@ -982,7 +1060,8 @@
     "imgs": [],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Defend X",
@@ -994,7 +1073,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: Emperor Palpatine",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "Ahsoka Tano, Jedi Knight, Mandalorian Super Commandos, Plo Koon"
   },
   {
     "name": "Deflect",
@@ -1006,7 +1086,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: Darth Vader Dark Lord of the Sith",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "Ahsoka Tano, Anakin Skywalker, Asajj Ventress, Count Dooku, Darth Vader, Jedi Knight, Jedi Knight General, Ki-Adi-Mundi, Luke Skywalker, Mace Windu, Maul, Obi-Wan Kenobi, Plo Koon, Shaak Ti, Yoda"
   },
   {
     "name": "Demoralize X",
@@ -1018,7 +1099,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: Grand Moff Tarkin",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Deploy",
@@ -1031,7 +1113,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Detachment: Name/Type",
@@ -1043,7 +1126,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "ARC Troopers, BX-Series Droid Commandos, DF-90 Mortar Trooper, DRK-1 Sith Probe Droids, Imperial Probe Droid, K-2SO, Mandalorian Warriors, Mark II Medium Blaster Trooper, Rebel Commandos, Scout Troopers"
   },
   {
     "name": "Determine Blue Player",
@@ -1056,7 +1140,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Determine Priority",
@@ -1066,7 +1151,8 @@
     "imgs": [],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Detonate X (Charge Type)",
@@ -1079,7 +1165,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Dice",
@@ -1087,12 +1174,12 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Dice_1.jpg",
-      "images/Dice_2.jpg"
+      "card_art/dice.jpg"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Difficult Terrain",
@@ -1105,7 +1192,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Direct Name/Type",
@@ -1118,7 +1206,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Disciplined X",
@@ -1130,7 +1219,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: Imperial Death Troopers",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "Imperial Death Troopers, Seventh Sister"
   },
   {
     "name": "Disengage",
@@ -1142,7 +1232,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: Scout Troopers",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "Hondo Ohnaka, Imperial Probe Droid, Jyn Erso, Luke Skywalker"
   },
   {
     "name": "Distract",
@@ -1154,7 +1245,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: Han Solo",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Divine Influence",
@@ -1166,7 +1258,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: R2-D2 and C-3PO",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Divulge",
@@ -1179,7 +1272,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "See: Darth Vader Dark Lord of the Sith",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Djem So Mastery",
@@ -1191,7 +1285,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: Darth Vader Dark Lord of the Sith",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "Anakin Skywalker"
   },
   {
     "name": "Dodge",
@@ -1199,12 +1294,12 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Dodge_1.jpg",
-      "images/Dodge_2.jpg"
+      "card_art/dodge.jpg"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Dodge token",
@@ -1214,7 +1309,8 @@
     "imgs": [],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Droid Trooper",
@@ -1226,7 +1322,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Dual-Sided Upgrade Cards",
@@ -1236,7 +1333,8 @@
     "imgs": [],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Duelist",
@@ -1248,7 +1346,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: General Grievous",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "Grand Admiral Thrawn, Mandalorian Warriors, Wookiee Chieftain, Wookiee Warriors"
   },
   {
     "name": "Emplacement Trooper",
@@ -1260,7 +1359,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Empty Decks",
@@ -1270,7 +1370,8 @@
     "imgs": [],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "End Phase",
@@ -1283,7 +1384,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Engaged",
@@ -1296,7 +1398,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Enrage X",
@@ -1308,7 +1411,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "See: Wookiee Warriors",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "Bossk, Chewbacca, Fifth Brother, Savage Opress"
   },
   {
     "name": "Entourage: Unit Name",
@@ -1320,7 +1424,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "See: Director Orson Krennic",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Equip",
@@ -1332,7 +1437,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "See: Imperial Specialists",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "Cassian Andor, Clone Commandos, General Tagge, Imperial Agent, Imperial Officer, Imperial Special Forces, Jedi Knight, Jedi Knight General, Mandalorian Hunter, Mandalorian Leader, Mandalorian Resistance, Rebel Agent, Rebel Officer, Super Tactical Command Droid, The Bad Batch"
   },
   {
     "name": "Establish the Battlefield and Prepare Components",
@@ -1345,7 +1451,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Exemplar",
@@ -1357,7 +1464,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "See: Stormtroopers",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Exhaust and Expend",
@@ -1370,7 +1478,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Expert Climber",
@@ -1382,7 +1491,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "See: Wookiee Warriors",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "AT-RT, DSD1 Dwarf Spider Droid"
   },
   {
     "name": "Factions",
@@ -1395,7 +1505,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Field Commander",
@@ -1407,7 +1518,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "See: Imperial Officer",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "Cassian Andor, Major Marquand, Paz Vizsla"
   },
   {
     "name": "Fire Support",
@@ -1419,7 +1531,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "See: DF-90 Mortar Trooper",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "DF-90 Mortar Trooper, Mark II Medium Blaster Trooper"
   },
   {
     "name": "Fitting on Terrain",
@@ -1429,7 +1542,8 @@
     "imgs": [],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Fixed: Front/Rear",
@@ -1441,7 +1555,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: AT-ST",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Flexible Response X",
@@ -1453,7 +1568,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: Rebel Troopers",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "Guerilla Troopers, Stormtroopers"
   },
   {
     "name": "Form Attack Pools",
@@ -1466,7 +1582,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Free Card Action",
@@ -1479,7 +1596,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Full Pivot",
@@ -1491,7 +1609,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: E-Web Heavy Blaster Team",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "1.4 FD Laser Cannon Team, DF-90 Mortar Trooper, Mark II Medium Blaster Trooper"
   },
   {
     "name": "Game Effects",
@@ -1504,7 +1623,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Game Overview",
@@ -1517,7 +1637,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Generator X",
@@ -1529,7 +1650,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: TX-225 GAVw Occupier Combat Assault Tank",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "Droidekas"
   },
   {
     "name": "Golden Rule of Terrain",
@@ -1542,7 +1664,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Graffiti Tokens",
@@ -1552,7 +1675,8 @@
     "imgs": [],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Ground Vehicles",
@@ -1565,7 +1689,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Guardian X",
@@ -1577,7 +1702,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: Imperial Royal Guards",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Guidance",
@@ -1589,7 +1715,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: Admiral Ackbar",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Gunslinger",
@@ -1601,7 +1728,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: Boba Fett",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "Clone Captain Rex, Han Solo, IG-11, Sabine Wren"
   },
   {
     "name": "Heavy Weapon Team",
@@ -1613,7 +1741,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: E-Web Heavy Blaster Team",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "ARC Troopers, BX-Series Droid Commandos, Mandalorian Warriors, Rebel Commandos, Scout Troopers"
   },
   {
     "name": "High Velocity",
@@ -1625,7 +1754,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: Imperial Death Troopers",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Hold the Line",
@@ -1637,7 +1767,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "Stormtrooper Riot Squad"
   },
   {
     "name": "Hover: Ground/Air X",
@@ -1649,7 +1780,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: LAAT/le Patrol Transport",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "A-A5 Speeder Truck, AAT Battle Tank, DRK-1 Sith Probe Droids, Imperial Probe Droid, Infantry Support Platform, LAAT/le Patrol Transport, Saber-Class Tank, WLO-5 Speeder Tank"
   },
   {
     "name": "Hunted",
@@ -1661,7 +1793,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: Rebel Commandos",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "I'm Part of the Squad Too",
@@ -1671,7 +1804,8 @@
     "imgs": [],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Immobilize X",
@@ -1683,7 +1817,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: Snowtroopers",
-    "art_credit": "https://www.theverge.com/2013/2/12/3980494/darth-vaders-faith-is-disturbing"
+    "art_credit": "https://www.theverge.com/2013/2/12/3980494/darth-vaders-faith-is-disturbing",
+    "units": ""
   },
   {
     "name": "Impact X",
@@ -1695,7 +1830,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "See: AT-RT",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "LAAT/le Patrol Transport"
   },
   {
     "name": "Impassable Terrain",
@@ -1705,7 +1841,8 @@
     "imgs": [],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Impervious",
@@ -1717,7 +1854,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "See: Darth Vader Dark Lord of the Sith",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "ARC Troopers, Axe Woves, BX-Series Droid Commandos, Bo-Katan Kryze, Boba Fett, Clan Kryze Veterans, Clan Wren Veterans, Din Djarin, Gar Saxon, IG-11, IG-88, Mandalorian Hunter, Mandalorian Leader, Mandalorian Resistance, Mandalorian Super Commandos, Mandalorian Warriors, Paz Vizsla, Sabine Wren, The Armorer, The Bad Batch"
   },
   {
     "name": "Incognito",
@@ -1729,7 +1867,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "See: Rebel Commandos",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Inconspicious",
@@ -1739,7 +1878,8 @@
     "imgs": [],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Independent: Token X/Action",
@@ -1751,7 +1891,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "Ahsoka Tano, Anakin Skywalker, Asajj Ventress, Black Sun Enforcers, Black Sun Vigo, Boba Fett, Bossk, Cad Bane, Clone Commandos, Din Djarin, Ewok Slingers, Guerilla Troopers, Han Solo, Hondo Ohnaka, Jyn Erso, Logray, Mandalorian Super Commandos, Pyke Syndicate Capo, Pyke Syndicate Foot Soldiers, Rebel Agent, Swoop Bike Riders, Weequay Pirates, Wicket"
   },
   {
     "name": "Indomitable",
@@ -1763,7 +1904,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: AT-ST",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "Asajj Ventress, Range Troopers, Wookiee Chieftain, Wookiee Warriors"
   },
   {
     "name": "Infiltrate",
@@ -1775,7 +1917,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "See: Scout Troopers",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "Aqua Droids, C-3P0, Cassian Andor, Clone Commandos, Guerilla Troopers, Iden Versio, Imperial Probe Droid, Imperial Special Forces, Jyn Erso, K-2SO, R2-D2"
   },
   {
     "name": "Inspire X",
@@ -1787,19 +1930,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
-  },
-  {
-    "name": "Interrogate",
-    "definition": "During the Command Phase, if a player reveals a Command Card that belongs to a unit at of one or more enemy units with the Interrogate keyword and there would be a tie for priority, treat that Command Card as having one more pip.",
-    "summary": "",
-    "type": "unit",
-    "imgs": [
-      "images/Interrogate.webp"
-    ],
-    "credit": "AMG Rulebook v2.6",
-    "card_source": "See: Emperor Palpatine",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Ion X",
@@ -1811,7 +1943,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "See: Snowtroopers",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Nominate Commanders and Issue Orders",
@@ -1821,7 +1954,8 @@
     "imgs": [],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Jar'Kai Mastery",
@@ -1833,7 +1967,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "Ahsoka Tano, Asajj Ventress"
   },
   {
     "name": "Jedi Hunter",
@@ -1845,7 +1980,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: General Grievous",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "Darth Vader, General Grievous"
   },
   {
     "name": "Jump X",
@@ -1857,7 +1993,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: Imperial Royal Guards",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "Ahsoka Tano, Anakin Skywalker, Asajj Ventress, Axe Woves, BX-Series Droid Commandos, Bo-Katan Kryze, Boba Fett, Cad Bane, Clan Kryze Veterans, Clan Wren Veterans, Clone Commander Cody, Gar Saxon, Geonosian Warriors, Ki-Adi-Mundi, Luke Skywalker, Mace Windu, Mandalorian Hunter, Mandalorian Leader, Mandalorian Resistance, Mandalorian Super Commandos, Mandalorian Warriors, Maul, Obi-Wan Kenobi, Paz Vizsla, Plo Koon, Poggle the Lesser, Sabine Wren, Savage Opress, Seventh Sister, Shaak Ti, Sun Fac, The Armorer"
   },
   {
     "name": "Juyo Mastery",
@@ -1869,7 +2006,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: Darth Maul",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "Maul"
   },
   {
     "name": "Keywords",
@@ -1882,7 +2020,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Latent Power",
@@ -1892,7 +2031,8 @@
     "imgs": [],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: Darth Vader Dark Lord of the Sith",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Leader",
@@ -1905,7 +2045,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Leaving the Battlefield",
@@ -1915,7 +2056,8 @@
     "imgs": [],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Lethal X",
@@ -1927,7 +2069,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "See: Imperial Death Troopers",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Line of Sight",
@@ -1940,7 +2083,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Long Shot",
@@ -1952,7 +2096,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "See: Scout Troopers Strike Team",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Low Profile",
@@ -1964,7 +2109,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: Stormtroopers",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "ARF Troopers, Ewok Skirmishers, Ewok Slingers, Han Solo, Logray, Rebel Commandos, Rebel Veterans, Scout Troopers, Wicket"
   },
   {
     "name": "Makashi Mastery",
@@ -1976,7 +2122,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: Count Dooku",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "Count Dooku, Shaak Ti"
   },
   {
     "name": "Map Cards",
@@ -1989,7 +2136,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Marksman",
@@ -2001,7 +2149,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: Scout Troopers Strike Team",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "Cassian Andor, Clone Trooper Marksmen, Iden Versio, Imperial Special Forces"
   },
   {
     "name": "Master of the Force",
@@ -2013,7 +2162,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "Anakin Skywalker, Count Dooku, Darth Vader, Jedi Knight General, Ki-Adi-Mundi, Luke Skywalker, Mace Windu, Obi-Wan Kenobi, Yoda"
   },
   {
     "name": "Master Storyteller",
@@ -2025,7 +2175,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: Saw Gerrera",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "C-3P0"
   },
   {
     "name": "Measurement",
@@ -2038,7 +2189,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Measuring Range",
@@ -2051,7 +2203,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Melee",
@@ -2064,7 +2217,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Melee Pierce",
@@ -2074,7 +2228,8 @@
     "imgs": [],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Mercenaries",
@@ -2087,7 +2242,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "Axe Woves, Black Sun Enforcers, Black Sun Vigo, Bo-Katan Kryze, Boba Fett, Bossk, Cad Bane, Clan Kryze Veterans, Clan Wren Veterans, Din Djarin, Ewok Skirmishers, Ewok Slingers, Han & Chewie, Hondo Ohnaka, IG-11, IG-88, Mandalorian Hunter, Pyke Syndicate Capo, Pyke Syndicate Foot Soldiers, Swoop Bike Riders, The Bad Batch, WLO-5 Speeder Tank, Weequay Pirates, Wicket"
   },
   {
     "name": "Mercenary: Faction",
@@ -2099,7 +2255,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Miniatures",
@@ -2112,7 +2269,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Move",
@@ -2125,7 +2283,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Moving Into Melee",
@@ -2135,7 +2294,8 @@
     "imgs": [],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Moving Through Miniatures",
@@ -2148,7 +2308,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Moving Through Terrain",
@@ -2161,7 +2322,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "My Mood is Based on Profit",
@@ -2173,7 +2335,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "Hondo Ohnaka"
   },
   {
     "name": "Nimble",
@@ -2185,7 +2348,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "See: 74-Z Speeder Bikes",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "Clan Wren Veterans, Hondo Ohnaka, Iden Versio, Jyn Erso, Leia Organa, Logray, Mandalorian Resistance, Padme Amidala, Rebel Agent, Rebel Sleeper Cell, Rebel Troopers, Sabine Wren, Wicket"
   },
   {
     "name": "Noncombatant",
@@ -2195,7 +2359,8 @@
     "imgs": [],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Notched Base Movement",
@@ -2205,7 +2370,8 @@
     "imgs": [],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Notched Bases",
@@ -2215,7 +2381,8 @@
     "imgs": [],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Null Courage Value",
@@ -2228,7 +2395,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Permanent",
@@ -2241,7 +2409,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Objective Cards",
@@ -2251,7 +2420,8 @@
     "imgs": [],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Objective Tokens",
@@ -2261,7 +2431,8 @@
     "imgs": [],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Observe X",
@@ -2273,7 +2444,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: Scout Troopers",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Obstacle Terrain",
@@ -2283,7 +2455,8 @@
     "imgs": [],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "One Step Ahead",
@@ -2295,7 +2468,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "Grand Admiral Thrawn, Lando Calrissian"
   },
   {
     "name": "Open Terrain",
@@ -2308,7 +2482,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Outmaneuver",
@@ -2320,7 +2495,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "See: 74-Z Speeder Bikes",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "Pyke Syndicate Foot Soldiers, Saber-Class Tank"
   },
   {
     "name": "Overlapping Objects",
@@ -2330,7 +2506,8 @@
     "imgs": [],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Override",
@@ -2342,7 +2519,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: R2-D2 and C-3PO",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Overrun X",
@@ -2354,7 +2532,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "See: TX-225 GAVw Occupier Combat Assault Tank",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Pass Pool",
@@ -2367,7 +2546,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Pierce X",
@@ -2379,7 +2559,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "See: Darth Vader Dark Lord of the Sith",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Pivot",
@@ -2392,7 +2573,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Place Order Token",
@@ -2405,7 +2587,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Placing Objectives",
@@ -2418,7 +2601,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Plodding",
@@ -2430,7 +2614,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: TX-225 GAVw Occupier Combat Assault Tank",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "Imperial Dark Troopers"
   },
   {
     "name": "POI (Point of Interest)",
@@ -2443,7 +2628,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Poison X",
@@ -2455,7 +2641,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: Wookiee Warriors",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Precise X",
@@ -2467,7 +2654,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: Imperial Death Troopers",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "Black Sun Enforcers, Imperial Death Troopers, Stormtroopers"
   },
   {
     "name": "Prepared Positions",
@@ -2480,7 +2668,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "1.4 FD Laser Cannon Team, Clone Trooper Marksmen, DF-90 Mortar Trooper, E-Web Heavy Blaster Team, Mark II Medium Blaster Trooper, Rebel Veterans, Shoretroopers"
   },
   {
     "name": "Primitive",
@@ -2492,7 +2681,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: Ewoks",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Programmed",
@@ -2504,7 +2694,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "DSD1 Dwarf Spider Droid, IG-11, LM-432 Crab Droid, Persuader-Class Tank Droid"
   },
   {
     "name": "Promote",
@@ -2517,7 +2708,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Pulling the Strings",
@@ -2529,7 +2721,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Quick Thinking",
@@ -2541,7 +2734,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "Iden Versio, Shaak Ti"
   },
   {
     "name": "Rally Step",
@@ -2554,7 +2748,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Ram",
@@ -2566,7 +2761,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Range",
@@ -2579,7 +2775,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Ranks and Rank Requirements",
@@ -2592,7 +2789,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Ready X",
@@ -2604,7 +2802,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "See: Imperial Death Troopers",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "Imperial Death Troopers"
   },
   {
     "name": "Recharge X",
@@ -2616,7 +2815,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "Clone Commandos"
   },
   {
     "name": "Recover",
@@ -2629,7 +2829,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Regenerate X",
@@ -2641,7 +2842,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "Bossk"
   },
   {
     "name": "Reinforcements",
@@ -2653,7 +2855,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "Kalani, Swoop Bike Riders"
   },
   {
     "name": "Relentless",
@@ -2665,7 +2868,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: Darth Vader Dark Lord of the Sith",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "Asajj Ventress, Darth Vader, Dewback Rider, General Grievous, Imperial Agent, Luke Skywalker, Tauntaun Riders, Wicket"
   },
   {
     "name": "Reliable X",
@@ -2677,7 +2881,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "Chewbacca, Clone Trooper Infantry, Imperial Special Forces, The Armorer"
   },
   {
     "name": "Repair X: Capacity Y",
@@ -2690,7 +2895,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Reposition",
@@ -2702,7 +2908,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: 74-Z Speeder Bikes",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "A-A5 Speeder Truck, Anakin Skywalker, DF-90 Mortar Trooper, Dewback Rider, E-Web Heavy Blaster Team, Han Solo, LM-432 Crab Droid, Luke Skywalker, Mark II Medium Blaster Trooper, Persuader-Class Tank Droid, Raddaugh Gnasp Fluttercraft, TX-225 GAVw Occupier Tank, Tauntaun Riders"
   },
   {
     "name": "Repulsor Vehicles",
@@ -2712,7 +2919,8 @@
     "imgs": [],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Resiliency",
@@ -2725,7 +2933,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Resolve Setup Effects",
@@ -2735,7 +2944,8 @@
     "imgs": [],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Restore",
@@ -2748,7 +2958,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Retinue: Unit/Unit Type",
@@ -2760,7 +2971,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: Imperial Death Troopers",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Reverse Moves",
@@ -2773,7 +2985,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Roll Attack Dice",
@@ -2783,7 +2996,8 @@
     "imgs": [],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Ruthless",
@@ -2795,7 +3009,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: Director Orson Krennic",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Scale",
@@ -2807,7 +3022,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: AT-RT",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "ARC Troopers, BX-Series Droid Commandos, Bossk, Chewbacca, General Grievous, Geonosian Warriors, LM-432 Crab Droid, Range Troopers, Sun Fac, The Bad Batch, Wookiee Chieftain, Wookiee Warriors"
   },
   {
     "name": "Scatter",
@@ -2817,7 +3033,8 @@
     "imgs": [],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: T-47 Airspeeder",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Scatter Terrain",
@@ -2827,7 +3044,8 @@
     "imgs": [],
     "credit": "AMG Rulebook v2.6",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Scout X",
@@ -2839,7 +3057,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: Scout Troopers",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "ARC Troopers, ARF Troopers, AT-RT, Ahsoka Tano, BX-Series Droid Commandos, Clone Captain Rex, LM-432 Crab Droid, Rebel Commandos, Rebel Sleeper Cell, Scout Troopers, Wicket"
   },
   {
     "name": "Scouting Party X",
@@ -2851,7 +3070,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: Scout Troopers",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "Clone Captain Rex, LM-432 Crab Droid, Wicket"
   },
   {
     "name": "Secondary Objective Cards",
@@ -2861,7 +3081,8 @@
     "imgs": [],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Secret Information",
@@ -2874,7 +3095,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Secret Mission",
@@ -2886,7 +3108,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: Rebel Commandos",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "R2-D2"
   },
   {
     "name": "Self-Destruct X",
@@ -2898,7 +3121,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: B1 Battle Droids",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Self-Preservation",
@@ -2910,7 +3134,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: B1 Battle Droids",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "Black Sun Enforcers, Han & Chewie, Pyke Syndicate Foot Soldiers, Weequay Pirates"
   },
   {
     "name": "Sentinel",
@@ -2922,7 +3147,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: E-Web Heavy Blaster Team",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Setup",
@@ -2932,7 +3158,8 @@
     "imgs": [],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Sharpshooter",
@@ -2944,7 +3171,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "ARC Troopers, BX-Series Droid Commandos, Boba Fett, Cad Bane, Cassian Andor, Clone Captain Rex, Clone Commander, Gar Saxon, General Veers, Han Solo, IG-11, IG-88, Jyn Erso, Kalani, Kraken, Leia Organa, Luke Skywalker, Mandalorian Warriors, Moff Gideon, Padme Amidala, Rebel Commandos, Scout Troopers, Tauntaun Riders, The Bad Batch, Wookiee Warriors"
   },
   {
     "name": "Shielded X",
@@ -2956,7 +3184,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: Droidekas",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "Clone Commandos, Droidekas"
   },
   {
     "name": "Shien Mastery",
@@ -2968,7 +3197,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "Ahsoka Tano, Plo Koon"
   },
   {
     "name": "Sidearm",
@@ -2981,7 +3211,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Silhouettes",
@@ -2994,7 +3225,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Small",
@@ -3007,7 +3239,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Smoke Tokens",
@@ -3020,7 +3253,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Smoke X",
@@ -3033,7 +3267,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "See: Imperial Shoretroopers",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Soresu Mastery",
@@ -3045,7 +3280,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "See: Obi-Wan Kenobi",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "Obi-Wan Kenobi"
   },
   {
     "name": "Special Issue: Battle Force",
@@ -3057,7 +3293,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "IG-100 MagnaGuard, Major Marquand, Persuader-Class Tank Droid, Raddaugh Gnasp Fluttercraft, Stormtroopers"
   },
   {
     "name": "Speeder X",
@@ -3069,7 +3306,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "See: 74-Z Speeder Bikes",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "74-Z Speeder Bikes, Anakin Skywalker, BARC Speeder, Jedi Knight, Raddaugh Gnasp Fluttercraft, STAP Riders, Swoop Bike Riders, T-47 Airspeeder, X-34 Landspeeder"
   },
   {
     "name": "Spotter X",
@@ -3081,7 +3319,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Spray",
@@ -3094,7 +3333,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: AT-RT",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Spur",
@@ -3106,7 +3346,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Standby",
@@ -3118,7 +3359,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Stationary",
@@ -3130,7 +3372,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: E-Web Heavy Blaster Team",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "1.4 FD Laser Cannon Team"
   },
   {
     "name": "Steady",
@@ -3142,7 +3385,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "See: Snowtroopers",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "Cad Bane, Han Solo, Lando Calrissian, Paz Vizsla, Snowtroopers, The Bad Batch"
   },
   {
     "name": "Strafe Move",
@@ -3155,7 +3399,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "LAAT/le Patrol Transport"
   },
   {
     "name": "Strategize X",
@@ -3167,7 +3412,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Suffering Wounds",
@@ -3180,7 +3426,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Suppression",
@@ -3190,7 +3437,8 @@
     "imgs": [],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Suppressive",
@@ -3202,7 +3450,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: E-Web Heavy Blaster Team",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "R2-D2, Stormtrooper Riot Squad"
   },
   {
     "name": "Surge token",
@@ -3212,7 +3461,8 @@
     "imgs": [],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Tactical X",
@@ -3224,7 +3474,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "ARC Troopers, Axe Woves, Bo-Katan Kryze, Boba Fett, Cassian Andor, Clan Kryze Veterans, Clone Captain Rex, Din Djarin, Grand Admiral Thrawn, Moff Gideon, Rebel Sleeper Cell"
   },
   {
     "name": "Take Cover X",
@@ -3236,7 +3487,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: Han Solo",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Target X",
@@ -3248,7 +3500,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: General Veers",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "Clone Commander Cody, Clone Commandos, Ewok Slingers"
   },
   {
     "name": "Teamwork: Unit Name",
@@ -3260,7 +3513,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: Han Solo",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Tempted",
@@ -3272,7 +3526,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: Luke Skywalker Son of Skywalker",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Terrain",
@@ -3285,7 +3540,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Terrain Height",
@@ -3298,7 +3554,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Terrain Providing Cover",
@@ -3308,7 +3565,8 @@
     "imgs": [],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Terrain Restricting Movement",
@@ -3321,7 +3579,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Timing",
@@ -3334,7 +3593,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Tokens",
@@ -3347,7 +3607,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Tow Cable",
@@ -3357,7 +3618,8 @@
     "imgs": [],
     "credit": "legion.takras.net",
     "card_source": "See: T-47 Airspeeder",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Transport",
@@ -3369,7 +3631,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: LAAT/le Patrol Transport",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "A-A5 Speeder Truck, LAAT/le Patrol Transport, Persuader-Class Tank Droid, TX-225 GAVw Occupier Tank, WLO-5 Speeder Tank"
   },
   {
     "name": "Treat X",
@@ -3381,7 +3644,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Trooper",
@@ -3394,7 +3658,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Uncanny Luck X",
@@ -3406,7 +3671,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: Han Solo",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "Han & Chewie, Han Solo, Lando Calrissian"
   },
   {
     "name": "Unconcerned",
@@ -3418,7 +3684,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: Probe Droid",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "Imperial Dark Troopers"
   },
   {
     "name": "Undeployed Units",
@@ -3428,7 +3695,8 @@
     "imgs": [],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Unhindered",
@@ -3440,7 +3708,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: AT-ST",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "ARF Troopers, Dewback Rider, Ewok Skirmishers, Han Solo, IG-100 MagnaGuard, Luke Skywalker, Stormtroopers, Tauntaun Riders, Wicket"
   },
   {
     "name": "Unique and Limited",
@@ -3453,7 +3722,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Unit Cards",
@@ -3466,7 +3736,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Unit Types",
@@ -3479,7 +3750,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Units",
@@ -3492,7 +3764,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Unstoppable",
@@ -3504,7 +3777,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: Wookiee Warriors",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "Imperial Dark Troopers"
   },
   {
     "name": "Upgrade Cards",
@@ -3514,7 +3788,8 @@
     "imgs": [],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Vaapad Mastery",
@@ -3526,7 +3801,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "Mace Windu"
   },
   {
     "name": "Vehicles",
@@ -3539,7 +3815,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Versatile",
@@ -3551,7 +3828,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "See: BX-series Droid Commandos",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "We're Not Regs",
@@ -3563,7 +3841,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "See: ARC Troopers",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "The Bad Batch"
   },
   {
     "name": "Weak Point X",
@@ -3575,7 +3854,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "A-A5 Speeder Truck, AAT Battle Tank, AT-ST, Chewbacca, Infantry Support Platform, Major Marquand, Persuader-Class Tank Droid, Saber-Class Tank, TX-225 GAVw Occupier Tank, WLO-5 Speeder Tank"
   },
   {
     "name": "Weapons",
@@ -3588,7 +3868,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Weighed Down",
@@ -3600,7 +3881,8 @@
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: Rebel Troopers",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "Geonosian Warriors, Poggle the Lesser, Sun Fac"
   },
   {
     "name": "Wheel Mode",
@@ -3612,7 +3894,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "See: Droidekas",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "Droidekas"
   },
   {
     "name": "Winning the Game",
@@ -3625,7 +3908,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Withdraw",
@@ -3638,7 +3922,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Within, Completely Within, and Not Within",
@@ -3648,7 +3933,8 @@
     "imgs": [],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Wookiee Trooper",
@@ -3660,7 +3946,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Wound Tokens",
@@ -3673,7 +3960,8 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": ""
+    "art_credit": "",
+    "units": ""
   },
   {
     "name": "Wound X",
@@ -3685,6 +3973,7 @@
     ],
     "credit": "legion.takras.net",
     "card_source": "See: B2 Super Battle Droids",
-    "art_credit": ""
+    "art_credit": "",
+    "units": "Maul"
   }
 ]
