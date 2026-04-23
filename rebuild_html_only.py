@@ -79,7 +79,12 @@ else:
     print("PDF not found — keeping cached definitions")
     print("  (place SWQ_Rulebook_2.6.0-1.pdf in the project root or documents/ folder)")
 
-# ── 4. Build HTML ─────────────────────────────────────────────────────────────
+# ── 4. Apply manual overrides (always last — they win over everything) ────────
+manual_count = bld.apply_manual_overlays(card_data)
+if manual_count:
+    print(f"  {manual_count} definitions overridden from manual/ folder")
+
+# ── 5. Build HTML ─────────────────────────────────────────────────────────────
 print("Building HTML...")
 html = bld.build_html(card_data)
 out = os.path.join(HERE, "swlegion_flashcards.html")
