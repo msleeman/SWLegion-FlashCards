@@ -26,8 +26,9 @@ import os, re, json, time, sys
 import requests
 from urllib.parse import urlencode
 
-HERE   = os.path.dirname(os.path.abspath(__file__))
-IMGDIR = os.path.join(HERE, 'images')
+HERE         = os.path.dirname(os.path.abspath(__file__))
+IMGDIR       = os.path.join(HERE, 'images')
+CARD_ART_DIR = os.path.join(HERE, 'card_art')
 OUT    = os.path.join(HERE, 'swlegion_flashcards.html')
 BASE   = 'https://legion.takras.net'
 CDN    = 'https://d2maxvwz12z6fm.cloudfront.net'
@@ -853,6 +854,28 @@ def _kw_lookup_key(keyword_name):
     return k
 
 
+def _card_art_stem(keyword_name):
+    """Normalize a keyword name to a card_art filename stem.
+    Strips variable placeholders (X), bracket suffixes, and subtype qualifiers."""
+    name = re.sub(r'\[.*?\]', '', keyword_name)       # strip [...]
+    name = re.sub(r'\s+X\b.*$', '', name, flags=re.I) # strip trailing X (variable placeholder)
+    name = re.sub(r'\s*[:/].*$', '', name)             # strip : or / subtypes
+    return safe_filename(name.strip(), ext="").rstrip("_")
+
+
+def find_card_art(keyword_name):
+    """Return 'card_art/<file>' if a manually placed image exists in card_art/, else None.
+    Checks .png, .webp, .jpg in that order."""
+    if not os.path.isdir(CARD_ART_DIR):
+        return None
+    stem = _card_art_stem(keyword_name)
+    for ext in ('.png', '.webp', '.jpg'):
+        fp = os.path.join(CARD_ART_DIR, stem + ext)
+        if os.path.exists(fp) and os.path.getsize(fp) > 0:
+            return f"card_art/{stem}{ext}"
+    return None
+
+
 def safe_filename(name, ext=".jpg"):
     """Return a safe filename stem + extension."""
     stem = re.sub(r"[^\w\s-]", "", name).strip().replace(" ", "_")[:60]
@@ -912,6 +935,11 @@ def download_images(keyword_name, imgdir, max_imgs=2):
 
     Returns (list_of_relative_paths, already_cached: bool).
     """
+    # ── card_art/ folder takes priority over everything ───────────────────────
+    art = find_card_art(keyword_name)
+    if art:
+        return [art], True
+
     lookup_key = _kw_lookup_key(keyword_name)
     card_filename = KEYWORD_CARD_IMAGES.get(lookup_key)
 
@@ -939,12 +967,18 @@ def download_images(keyword_name, imgdir, max_imgs=2):
     base     = safe_filename(keyword_name, ext="").rstrip("_")
     existing, needed = [], []
     for i in range(1, max_imgs + 1):
-        fname    = f"{base}_{i}.jpg"
-        filepath = os.path.join(imgdir, fname)
-        if os.path.exists(filepath) and os.path.getsize(filepath) > 1000:
-            existing.append(f"images/{fname}")
+        found = None
+        for ext in (".png", ".webp", ".jpg"):
+            candidate = f"{base}_{i}{ext}"
+            fp = os.path.join(imgdir, candidate)
+            if os.path.exists(fp) and os.path.getsize(fp) > 1000:
+                found = candidate
+                break
+        if found:
+            existing.append(f"images/{found}")
         else:
-            needed.append((i, fname, filepath))
+            fname = f"{base}_{i}.jpg"
+            needed.append((i, fname, os.path.join(imgdir, fname)))
     if not needed:
         return existing, True
     urls = search_images_wiki(keyword_name, max_imgs=len(needed))
@@ -1453,18 +1487,18 @@ html,body{width:100%;height:100%;overflow:hidden;
 #mod-def-edit{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:var(--rs);color:var(--white);font-size:13px;padding:10px 12px;font-family:inherit;resize:vertical;width:100%;min-height:120px;line-height:1.6;outline:none;box-sizing:border-box;margin-top:8px;display:none}
 #mod-def-edit:focus{border-color:rgba(245,197,24,.5)}
 .modal-btn.pin-on{background:rgba(245,197,24,.2);border-color:var(--gold);color:var(--gold)}
-.cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px}
+.cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
 .cat-card{border-radius:var(--rs);overflow:hidden;background:rgba(255,255,255,.04);
   border:1px solid rgba(255,255,255,.08);cursor:pointer;
   transition:transform .15s,box-shadow .15s,border-color .15s;position:relative}
 .cat-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,.5);border-color:rgba(245,197,24,.2)}
 .cat-card.lrnd{border-color:rgba(29,158,117,.4);border-width:2px}
-.cat-thumb{width:100%;height:100px;object-fit:cover;display:block;background:#0a1020;opacity:.7}
-.cat-thumb-ph{width:100%;height:100px;background:linear-gradient(135deg,#0a1020,#1a1a30);
+.cat-thumb{width:100%;height:130px;object-fit:cover;display:block;background:#0a1020;opacity:.7}
+.cat-thumb-ph{width:100%;height:130px;background:linear-gradient(135deg,#0a1020,#1a1a30);
   display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.15);font-size:11px;text-align:center;padding:.5rem}
-.cat-lbl{padding:8px 10px}
-.cat-name{font-size:12px;font-weight:600;color:var(--white);line-height:1.3}
-.cat-type{font-size:10px;color:rgba(255,255,255,.35);margin-top:2px;text-transform:uppercase;letter-spacing:.3px}
+.cat-lbl{padding:10px 12px}
+.cat-name{font-size:14px;font-weight:600;color:var(--white);line-height:1.3}
+.cat-type{font-size:11px;color:rgba(255,255,255,.35);margin-top:3px;text-transform:uppercase;letter-spacing:.3px}
 .cat-badge{position:absolute;top:6px;right:6px;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px}
 .badge-learned{background:var(--G);color:#fff}
 .empty-msg{color:rgba(255,255,255,.2);font-size:14px;grid-column:1/-1;padding:3rem 0;text-align:center}
@@ -1472,16 +1506,19 @@ html,body{width:100%;height:100%;overflow:hidden;
   z-index:100;align-items:center;justify-content:center;padding:1rem;backdrop-filter:blur(10px)}
 #modal-bg.on{display:flex}
 .modal-box{background:#0d1020;border:1px solid rgba(245,197,24,.2);border-radius:var(--rb);
-  max-width:540px;width:100%;overflow:hidden;max-height:90vh;overflow-y:auto;
+  max-width:640px;width:100%;overflow:hidden;max-height:90vh;overflow-y:auto;
   box-shadow:0 0 40px rgba(245,197,24,.1)}
-.modal-photo{width:100%;height:340px;object-fit:contain;display:block;background:#0a1020;opacity:.85}
-.modal-photo-ph{width:100%;height:340px;background:linear-gradient(135deg,#0a1020,#1a1a30);
+.modal-photo{width:100%;height:420px;object-fit:contain;display:block;background:#0a1020;opacity:.85}
+.modal-photo-ph{width:100%;height:420px;background:linear-gradient(135deg,#0a1020,#1a1a30);
   display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.2);
   font-size:13px;text-align:center;padding:1rem;line-height:1.6}
-.modal-body{padding:1.25rem}
-.modal-name{font-size:22px;font-weight:800;color:var(--gold)}
-.modal-type{font-size:12px;margin-top:4px}
-.modal-def{font-size:13px;color:rgba(255,255,255,.75);line-height:1.7;margin-top:.75rem}
+.modal-body{padding:1.5rem}
+.modal-name{font-size:26px;font-weight:800;color:var(--gold)}
+.modal-type{font-size:13px;margin-top:4px}
+.modal-summary{font-size:13px;color:rgba(255,255,255,.6);font-style:italic;line-height:1.6;
+  margin-top:.6rem;padding:.5rem .75rem;background:rgba(255,255,255,.04);
+  border-radius:6px;border-left:2px solid rgba(245,197,24,.35)}
+.modal-def{font-size:14px;color:rgba(255,255,255,.75);line-height:1.7;margin-top:.75rem}
 .modal-src{font-size:11px;color:rgba(255,255,255,.25);margin-top:.5rem}
 .modal-status{font-size:12px;font-weight:500;margin-top:.4rem;min-height:18px}
 .modal-status.ok{color:var(--Gt)}.modal-status.err{color:var(--Rt)}.modal-status.work{color:var(--At)}
@@ -1496,7 +1533,7 @@ html,body{width:100%;height:100%;overflow:hidden;
 @media(max-width:500px){
   #fs-keyword-name{font-size:28px}
   #fs-opts{grid-template-columns:1fr}
-  .cat-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}
+  .cat-grid{grid-template-columns:repeat(auto-fill,minmax(165px,1fr))}
 }
 /* Lists screen */
 .list-panel{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:var(--rb);padding:20px;margin-bottom:20px}
@@ -1631,7 +1668,7 @@ html,body{width:100%;height:100%;overflow:hidden;
       </div>
     </div>
     <p class="auth-footer">Guest progress is saved locally on this device only.</p>
-    <p class="auth-footer">v4.2.0008</p>
+    <p class="auth-footer">v4.2.0009</p>
   </div>
 </div>
 
@@ -1848,6 +1885,7 @@ html,body{width:100%;height:100%;overflow:hidden;
     <div class="modal-body">
       <div class="modal-name" id="mod-name"></div>
       <div class="modal-type" id="mod-type"></div>
+      <div class="modal-summary" id="mod-summary" style="display:none"></div>
       <div class="modal-def"  id="mod-def"></div>
       <div class="modal-src" id="mod-src"></div>
       <div class="modal-status" id="mod-st"></div>
@@ -2497,6 +2535,7 @@ function renderCatalog(){
   // Search filter
   const q=(document.getElementById('cat-search')?.value||'').toLowerCase().trim();
   if(q) list=list.filter(c=>c.name.toLowerCase().includes(q)||(c.definition||'').toLowerCase().includes(q));
+  list.sort((a,b)=>a.name.localeCompare(b.name));
   document.getElementById('cat-count').textContent=`${list.length} keyword${list.length!==1?'s':''}`;
   const g=document.getElementById('cat-grid');
   if(!list.length){ g.innerHTML='<p class="empty-msg">Nothing here.</p>'; return; }
@@ -2535,6 +2574,13 @@ function renderMod(){
   document.getElementById('mod-name').textContent=c.name;
   document.getElementById('mod-type').innerHTML=typeBadgeHTML(c.type);
   const defText=st.customDef||c.definition;
+  const modSum=document.getElementById('mod-summary');
+  if(modSum){
+    const firstSent=(defText||'').split(/(?<=\.)\s/)[0]||'';
+    const summary=firstSent.length>20&&defText.length>firstSent.length+30?firstSent:'';
+    modSum.textContent=summary;
+    modSum.style.display=summary?'':'none';
+  }
   document.getElementById('mod-def').textContent=defText;
   document.getElementById('mod-def').style.borderColor=st.customDef?'rgba(245,197,24,.3)':'';
   const modSrc=document.getElementById('mod-src');
