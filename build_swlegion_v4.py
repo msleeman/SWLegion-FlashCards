@@ -2198,6 +2198,16 @@ function typeBadgeHTML(type){
   const labels={unit:'Unit Keyword',weapon:'Weapon Keyword',upgrade:'Upgrade',concept:'Concept'};
   return `<span class="type-badge type-${type}">${labels[type]||type}</span>`;
 }
+function fitImg(){
+  const img=document.getElementById('fs-img');
+  const bot=document.getElementById('fs-bottom');
+  if(!img||!bot) return;
+  requestAnimationFrame(()=>{
+    const botH=bot.getBoundingClientRect().height;
+    const clearH=Math.max(0,botH-60); // 60px = gradient top-padding, overlap is intentional
+    img.style.height=`calc(100% - 68px - ${clearH}px)`;
+  });
+}
 function showFront(c){
   document.getElementById('fs-front-content').style.display='block';
   document.getElementById('fs-back-content').style.display='none';
@@ -2206,6 +2216,7 @@ function showFront(c){
   document.getElementById('fs-tap-hint').style.display=mode==='learn'?'block':'none';
   document.getElementById('fs-img').classList.remove('dim');
   if(mode==='quiz') renderOpts(c);
+  fitImg();
 }
 let _rulesOpen=false;
 function toggleRulesSection(){
@@ -2276,6 +2287,7 @@ function showBack(c){
   // Source
   const srcEl=document.getElementById('fs-source');
   if(srcEl) srcEl.textContent=cardSource(c);
+  fitImg();
 }
 function renderActions(c){
   const st=s(c.name), n=ic(c);
