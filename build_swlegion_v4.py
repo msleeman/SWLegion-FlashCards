@@ -1967,6 +1967,12 @@ html,body{width:100%;height:100%;overflow:hidden;
       <div class="modal-name" id="mod-name"></div>
       <div class="modal-type" id="mod-type"></div>
       <div class="modal-summary" id="mod-summary" style="display:none"></div>
+      <button class="modal-btn" id="mod-edit-summary" onclick="modToggleEditSummary()" style="display:none;font-size:11px;padding:3px 10px;margin-top:4px">Edit Summary</button>
+      <textarea id="mod-summary-edit" placeholder="Edit summary..." maxlength="500" style="display:none"></textarea>
+      <div id="mod-summary-edit-acts" style="display:none;gap:8px;flex-wrap:wrap;margin-top:4px">
+        <button class="modal-btn" onclick="modSaveSummary()">Save</button>
+        <button class="modal-btn" onclick="modResetSummary()">Reset</button>
+      </div>
       <div class="modal-def"  id="mod-def"></div>
       <div class="modal-src" id="mod-src"></div>
       <div class="modal-art-credit" id="mod-art-credit" style="display:none"></div>
@@ -1993,7 +1999,7 @@ html,body{width:100%;height:100%;overflow:hidden;
 const CARDS = /*CARD_JSON*/;
 const ST = {};
 function dispName(n){ return n.replace(/\[\]/g,'').trim(); }
-CARDS.forEach(c => { ST[c.name]={idx:0,learned:false,flagged:false,busy:false,notes:'',customDef:'',pinned:false}; });
+CARDS.forEach(c => { ST[c.name]={idx:0,learned:false,flagged:false,busy:false,notes:'',customDef:'',customSummary:'',pinned:false}; });
 
 function loadState(){
   try{
@@ -2667,14 +2673,19 @@ function renderMod(){
   const defText=st.customDef||c.definition;
   const modSum=document.getElementById('mod-summary');
   if(modSum){
-    let summary=c.summary||'';
+    let summary=st.customSummary||c.summary||'';
     if(!summary){
       const firstSent=(defText||'').split(/(?<=\.)\s/)[0]||'';
       summary=firstSent.length>20&&(defText||'').length>firstSent.length+30?firstSent:'';
     }
     modSum.textContent=summary;
     modSum.style.display=summary?'':'none';
+    modSum.style.borderColor=st.customSummary?'rgba(245,197,24,.3)':'';
   }
+  const sumTA=document.getElementById('mod-summary-edit');
+  const sumActs=document.getElementById('mod-summary-edit-acts');
+  if(sumTA) sumTA.style.display='none';
+  if(sumActs) sumActs.style.display='none';
   document.getElementById('mod-def').textContent=defText;
   document.getElementById('mod-def').style.borderColor=st.customDef?'rgba(245,197,24,.3)':'';
   const modSrc=document.getElementById('mod-src');
@@ -2740,6 +2751,38 @@ function modResetDef(){
   document.getElementById('mod-def').style.borderColor='';
   const modSrc=document.getElementById('mod-src');
   if(modSrc) modSrc.textContent='Source: '+cardSource(mcard);
+}
+function modToggleEditSummary(){
+  const sumTA=document.getElementById('mod-summary-edit');
+  const sumActs=document.getElementById('mod-summary-edit-acts');
+  const sumEl=document.getElementById('mod-summary');
+  if(!sumTA) return;
+  const isOpen=sumTA.style.display!=='none';
+  if(isOpen){
+    sumTA.style.display='none';
+    if(sumActs) sumActs.style.display='none';
+  } else {
+    sumTA.value=s(mcard.name).customSummary||mcard.summary||'';
+    sumTA.style.display='block';
+    if(sumActs) sumActs.style.display='flex';
+    sumTA.focus();
+  }
+}
+function modSaveSummary(){
+  const val=document.getElementById('mod-summary-edit').value.trim();
+  s(mcard.name).customSummary=val;
+  saveState();
+  const modSum=document.getElementById('mod-summary');
+  if(modSum){ modSum.textContent=val||mcard.summary||''; modSum.style.display=(val||mcard.summary)?'':'none'; modSum.style.borderColor=val?'rgba(245,197,24,.3)':''; }
+  document.getElementById('mod-summary-edit').style.display='none';
+  document.getElementById('mod-summary-edit-acts').style.display='none';
+}
+function modResetSummary(){
+  s(mcard.name).customSummary='';
+  saveState();
+  document.getElementById('mod-summary-edit').value=mcard.summary||'';
+  const modSum=document.getElementById('mod-summary');
+  if(modSum){ modSum.textContent=mcard.summary||''; modSum.style.display=mcard.summary?'':'none'; modSum.style.borderColor=''; }
 }
 function modToggleLearned(){ toggleLearned(mcard.name); renderMod(); renderCatalog(); }
 function modBadPhoto(){
@@ -3525,10 +3568,15 @@ function updateAccountUI(){
   const gLabel = document.getElementById('acct-guest-label');
   if(!btn) return;
   const loggedIn = !!_currentUser;
+  const isOwner = (_currentUser?.email === 'martinjsleeman@gmail.com');
   const notesCol = document.getElementById('fs-notes-col');
   const editRulesBtn = document.getElementById('mod-edit');
+  const photoBtn = document.getElementById('mod-photo');
+  const editSumBtn = document.getElementById('mod-edit-summary');
   if(notesCol) notesCol.style.display = loggedIn ? '' : 'none';
-  if(editRulesBtn) editRulesBtn.style.display = loggedIn ? '' : 'none';
+  if(editRulesBtn) editRulesBtn.style.display = isOwner ? '' : 'none';
+  if(photoBtn) photoBtn.style.display = isOwner ? '' : 'none';
+  if(editSumBtn) editSumBtn.style.display = isOwner ? '' : 'none';
   if(loggedIn){
     const email = _currentUser.email || '';
     const short = email.split('@')[0].substring(0,10);
