@@ -1830,6 +1830,14 @@ html,body{width:100%;height:100%;overflow:hidden;
       </div>
       <div id="fs-source"></div>
       <div id="fs-actions"></div>
+      <div id="fs-feedback-area" style="display:none;margin-top:8px">
+        <textarea id="fs-feedback-input" placeholder="Send feedback about this card (max 1000 chars)..." maxlength="1000" style="width:100%;min-height:70px;box-sizing:border-box;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.2);border-radius:8px;color:#fff;font-size:13px;padding:8px 10px;font-family:inherit;resize:vertical;outline:none"></textarea>
+        <div style="display:flex;gap:8px;margin-top:4px">
+          <button class="fs-btn" onclick="submitFsFeedback()">Submit</button>
+          <button class="fs-btn" onclick="toggleFsFeedback()">Cancel</button>
+        </div>
+      </div>
+      <div id="fs-owner-feedback" style="display:none;margin-top:8px;background:rgba(245,197,24,.06);border:1px solid rgba(245,197,24,.2);border-radius:8px;padding:10px;font-size:12px;line-height:1.6;color:rgba(255,255,255,.7)"></div>
     </div>
   </div>
   <div id="fs-alldone">
@@ -1858,6 +1866,7 @@ html,body{width:100%;height:100%;overflow:hidden;
       <button class="dark-pill" onclick="setCF('weapon',this)">Weapon Keywords</button>
       <button class="dark-pill" onclick="setCF('concept',this)">Concepts Only</button>
       <button class="dark-pill" onclick="setCF('noconcept',this)">No Concepts</button>
+      <button class="dark-pill" id="cat-pill-feedback" onclick="setCF('feedback',this)" style="display:none">Feedback</button>
       <div id="cat-list-dropdown-wrap">
         <button class="dark-pill" id="cat-pill-list" onclick="toggleCatListDropdown()">List: None &#9660;</button>
         <div id="cat-list-dropdown"></div>
@@ -1981,11 +1990,19 @@ html,body{width:100%;height:100%;overflow:hidden;
         <button class="modal-btn" id="mod-lrnd"  onclick="modToggleLearned()"></button>
         <button class="modal-btn" id="mod-pin"   onclick="modTogglePin()">&#128204; Pin</button>
         <button class="modal-btn" id="mod-add-list" onclick="modShowAddToList()">+ List</button>
-        <button class="modal-btn" id="mod-edit"  onclick="modToggleEditDef()">Edit Rules</button>
-        <button class="modal-btn" id="mod-photo" onclick="modBadPhoto()">Bad photo</button>
-        <button class="modal-btn cls"             onclick="closeMod()">Close</button>
+        <button class="modal-btn" id="mod-edit"     onclick="modToggleEditDef()">Edit Rules</button>
+        <button class="modal-btn" id="mod-feedback" onclick="modToggleFeedback()">Feedback</button>
+        <button class="modal-btn cls"               onclick="closeMod()">Close</button>
       </div>
       <div id="mod-list-picker" style="display:none;margin-top:8px;background:#0d1020;border:1px solid rgba(245,197,24,.3);border-radius:10px;overflow:hidden"></div>
+      <div id="mod-owner-feedback" style="display:none;margin-top:10px;background:rgba(245,197,24,.06);border:1px solid rgba(245,197,24,.2);border-radius:8px;padding:10px;font-size:12px;line-height:1.6;color:rgba(255,255,255,.7)"></div>
+      <div id="mod-feedback-area" style="display:none;margin-top:8px">
+        <textarea id="mod-feedback-input" placeholder="Send feedback about this card (max 1000 chars)..." maxlength="1000" style="width:100%;min-height:80px;box-sizing:border-box;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.2);border-radius:8px;color:#fff;font-size:13px;padding:8px 10px;font-family:inherit;resize:vertical;outline:none"></textarea>
+        <div style="display:flex;gap:8px;margin-top:4px">
+          <button class="modal-btn" onclick="submitModFeedback()">Submit</button>
+          <button class="modal-btn" onclick="modToggleFeedback()">Cancel</button>
+        </div>
+      </div>
       <textarea id="mod-def-edit" placeholder="Edit the rules text..." maxlength="2000"></textarea>
       <div id="mod-def-edit-acts" style="display:none;gap:8px;flex-wrap:wrap;margin-top:6px">
         <button class="modal-btn" onclick="modSaveDef()">Save</button>
@@ -2287,15 +2304,21 @@ function showBack(c){
   // Source
   const srcEl=document.getElementById('fs-source');
   if(srcEl) srcEl.textContent=cardSource(c);
+  // Reset feedback area
+  const fba=document.getElementById('fs-feedback-area');
+  if(fba) fba.style.display='none';
+  const fbi=document.getElementById('fs-feedback-input');
+  if(fbi) fbi.value='';
+  // Owner feedback display
+  renderOwnerFeedbackEl(c.name, 'fs-owner-feedback');
   fitImg();
 }
 function renderActions(c){
-  const st=s(c.name), n=ic(c);
+  const st=s(c.name);
   const sn=c.name.replace(/'/g,"\\'");
-  const pl=st.busy?'Fetching...':n>1?`Photo (${st.idx+1}/${n})`:'Bad photo';
   document.getElementById('fs-actions').innerHTML=
     `<button class="fs-btn${st.learned?' learned':''}" onclick="toggleLearned('${sn}')">${st.learned?'Learned':'Mark as learned'}</button>`+
-    `<button class="fs-btn${st.flagged?' flagged':''}" onclick="badPhoto('${sn}')">${pl}</button>`;
+    `<button class="fs-btn" onclick="toggleFsFeedback()">Feedback</button>`;
 }
 function handleTap(){
   if(mode==='stats') return;
@@ -2594,23 +2617,8 @@ function applyPermImgs(){
     }
   });
 }
-function badPhoto(name){
-  const c=CARDS.find(x=>x.name===name); if(!c) return;
-  const st=s(name);
-  const extras=unitImgsForKeyword(c).filter(p=>!(c.imgs||[]).includes(p));
-  if(extras.length){ if(!c.imgs) c.imgs=[]; c.imgs.push(...extras); }
-  if(!ic(c)){
-    const fb=fallbackImg(name);
-    if(fb){ if(!c.imgs) c.imgs=[]; c.imgs.push(fb); }
-  }
-  const n=ic(c);
-  if(!n){ setStatus('No images available','err',2000); return; }
-  st.idx=n>1?(st.idx+1)%n:0;
-  st.flagged=true; saveState();
-  setStatus(`Photo ${st.idx+1} of ${n}`,'ok',3000);
-  render();
-}
 
+let _allFeedback = {}; // card_name -> [{user_identifier, feedback, created_at}]
 let catFilter='all';
 function setCF(v,btn){
   catFilter=v;
@@ -2636,6 +2644,7 @@ function renderCatalog(){
   if(catFilter==='weapon')     list=list.filter(c=>c.type==='weapon');
   if(catFilter==='concept')    list=list.filter(c=>c.type==='concept');
   if(catFilter==='noconcept')  list=list.filter(c=>c.type!=='concept');
+  if(catFilter==='feedback')   list=list.filter(c=>(_allFeedback[c.name]||[]).length>0);
   // Search filter
   const q=(document.getElementById('cat-search')?.value||'').toLowerCase().trim();
   if(q) list=list.filter(c=>c.name.toLowerCase().includes(q)||(c.definition||'').toLowerCase().includes(q));
@@ -2679,7 +2688,7 @@ function renderMod(){
   document.getElementById('mod-img').innerHTML=src
     ?`<img class="modal-photo" src="${src}" alt="${c.name}"
            onerror="this.outerHTML='<div class=modal-photo-ph>No image</div>'">`
-    :`<div class="modal-photo-ph">No image — use Bad Photo to fetch one</div>`;
+    :`<div class="modal-photo-ph">No image</div>`;
   document.getElementById('mod-name').textContent=dispName(c.name);
   document.getElementById('mod-type').innerHTML=typeBadgeHTML(c.type);
   const defText=st.customDef||c.definition;
@@ -2713,13 +2722,17 @@ function renderMod(){
   ml.className='modal-btn'+(st.learned?' lrnd':'');
   const mp=document.getElementById('mod-pin');
   if(mp){ mp.innerHTML=st.pinned?'&#128204; Pinned':'&#128204; Pin'; mp.className='modal-btn'+(st.pinned?' pin-on':''); }
-  const mb=document.getElementById('mod-photo');
-  mb.textContent=st.busy?'Fetching...':'Bad photo';
-  mb.className='modal-btn'+(st.flagged?' flagd':'');
   const editTA=document.getElementById('mod-def-edit');
   const editActs=document.getElementById('mod-def-edit-acts');
   if(editTA){ editTA.style.display='none'; document.getElementById('mod-def').style.display='block'; }
   if(editActs) editActs.style.display='none';
+  // Reset feedback area
+  const mfa=document.getElementById('mod-feedback-area');
+  const mfi=document.getElementById('mod-feedback-input');
+  if(mfa) mfa.style.display='none';
+  if(mfi) mfi.value='';
+  // Owner feedback display
+  renderOwnerFeedbackEl(c.name, 'mod-owner-feedback');
 }
 function modTogglePin(){
   const st=s(mcard.name); st.pinned=!st.pinned;
@@ -2797,17 +2810,80 @@ function modResetSummary(){
   if(modSum){ modSum.textContent=mcard.summary||''; modSum.style.display=mcard.summary?'':'none'; modSum.style.borderColor=''; }
 }
 function modToggleLearned(){ toggleLearned(mcard.name); renderMod(); renderCatalog(); }
-function modBadPhoto(){
-  const c=mcard, st=s(c.name);
-  const extras=unitImgsForKeyword(c).filter(p=>!(c.imgs||[]).includes(p));
-  if(extras.length){ if(!c.imgs) c.imgs=[]; c.imgs.push(...extras); }
-  const n=ic(c);
+function modToggleFeedback(){
+  const area=document.getElementById('mod-feedback-area');
+  if(!area) return;
+  area.style.display=area.style.display==='none'?'block':'none';
+  if(area.style.display==='block') document.getElementById('mod-feedback-input')?.focus();
+}
+async function submitModFeedback(){
+  const text=(document.getElementById('mod-feedback-input')?.value||'').trim();
+  if(!text){ alert('Please enter some feedback.'); return; }
   const el=document.getElementById('mod-st');
-  if(!n){ el.textContent='No images available'; el.className='modal-status err'; return; }
-  st.idx=n>1?(st.idx+1)%n:0;
-  st.flagged=true; saveState();
-  el.textContent=`Photo ${st.idx+1} of ${n}`; el.className='modal-status ok';
-  renderMod();
+  if(el){ el.textContent='Submitting\u2026'; el.className='modal-status work'; }
+  const ok=await submitFeedback(mcard.name, text);
+  if(ok){
+    document.getElementById('mod-feedback-input').value='';
+    document.getElementById('mod-feedback-area').style.display='none';
+    if(el){ el.textContent='Feedback submitted \u2014 thank you!'; el.className='modal-status ok'; }
+  } else {
+    if(el){ el.textContent='Failed to submit feedback.'; el.className='modal-status err'; }
+  }
+}
+function toggleFsFeedback(){
+  const area=document.getElementById('fs-feedback-area');
+  if(!area) return;
+  area.style.display=area.style.display==='none'?'block':'none';
+  if(area.style.display==='block') document.getElementById('fs-feedback-input')?.focus();
+}
+async function submitFsFeedback(){
+  const text=(document.getElementById('fs-feedback-input')?.value||'').trim();
+  if(!text){ setStatus('Please enter some feedback.','err',2000); return; }
+  setStatus('Submitting\u2026','work');
+  const ok=await submitFeedback(deck[cur].name, text);
+  if(ok){
+    document.getElementById('fs-feedback-input').value='';
+    document.getElementById('fs-feedback-area').style.display='none';
+    setStatus('Feedback submitted \u2014 thank you!','ok',3000);
+  } else {
+    setStatus('Failed to submit feedback.','err',3000);
+  }
+}
+async function submitFeedback(cardName, text){
+  if(!_supa) return false;
+  try{
+    const userIdentifier=_currentUser?.email||'guest';
+    const{error}=await _supa.from('card_feedback').insert({card_name:cardName,user_identifier:userIdentifier,feedback:text});
+    if(error) throw error;
+    return true;
+  }catch(e){ console.warn('submitFeedback failed:',e.message); return false; }
+}
+async function loadOwnerFeedback(){
+  if(!_supa||!_currentUser) return;
+  try{
+    const{data,error}=await _supa.from('card_feedback').select('card_name,user_identifier,feedback,created_at').order('created_at',{ascending:false});
+    if(error) throw error;
+    _allFeedback={};
+    (data||[]).forEach(r=>{
+      if(!_allFeedback[r.card_name]) _allFeedback[r.card_name]=[];
+      _allFeedback[r.card_name].push(r);
+    });
+    const fbPill=document.getElementById('cat-pill-feedback');
+    if(fbPill) fbPill.style.display='';
+  }catch(e){ console.warn('loadOwnerFeedback failed:',e.message); }
+}
+function renderOwnerFeedbackEl(cardName, elId){
+  const el=document.getElementById(elId);
+  if(!el) return;
+  const isOwner=(_currentUser?.email==='martinjsleeman@gmail.com');
+  const entries=_allFeedback[cardName]||[];
+  if(!isOwner||!entries.length){ el.style.display='none'; return; }
+  el.style.display='block';
+  el.innerHTML='<div style="font-size:10px;font-weight:700;color:rgba(245,197,24,.6);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Feedback</div>'+
+    entries.map(r=>{
+      const dt=new Date(r.created_at).toLocaleDateString();
+      return `<div style="margin-bottom:6px;padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,.07)"><span style="color:rgba(245,197,24,.7);font-size:11px">${escHtml(r.user_identifier)} &bull; ${dt}</span><br>${escHtml(r.feedback)}</div>`;
+    }).join('');
 }
 function closeMod(e){
   if(e&&!e.target.classList.contains('modal-bg')&&e.target.id!=='modal-bg') return;
@@ -3583,12 +3659,11 @@ function updateAccountUI(){
   const isOwner = (_currentUser?.email === 'martinjsleeman@gmail.com');
   const notesCol = document.getElementById('fs-notes-col');
   const editRulesBtn = document.getElementById('mod-edit');
-  const photoBtn = document.getElementById('mod-photo');
   const editSumBtn = document.getElementById('mod-edit-summary');
   if(notesCol) notesCol.style.display = '';
   if(editRulesBtn) editRulesBtn.style.display = isOwner ? '' : 'none';
-  if(photoBtn) photoBtn.style.display = isOwner ? '' : 'none';
   if(editSumBtn) editSumBtn.style.display = isOwner ? '' : 'none';
+  if(isOwner) loadOwnerFeedback();
   if(loggedIn){
     const email = _currentUser.email || '';
     const short = email.split('@')[0].substring(0,10);
