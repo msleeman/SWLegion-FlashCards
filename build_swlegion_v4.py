@@ -2250,8 +2250,11 @@ function showBack(c){
   // Notes / Summary
   const notesEl=document.getElementById('fs-notes');
   if(notesEl){
-    notesEl.value=(st.notes!==undefined&&st.notes!=='')?st.notes:autoSummary(def);
-    notesEl.oninput=()=>{ st.notes=notesEl.value; saveState(); };
+    notesEl.value=(st.notes!==undefined&&st.notes!=='')?st.notes:(c.summary||autoSummary(def));
+    const isOwner=(_currentUser?.email==='martinjsleeman@gmail.com');
+    notesEl.readOnly=!isOwner;
+    notesEl.style.opacity=isOwner?'1':'0.85';
+    if(isOwner) notesEl.oninput=()=>{ st.notes=notesEl.value; saveState(); };
   }
   // Rules section (collapsed by default)
   _rulesOpen=false;
