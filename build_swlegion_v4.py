@@ -1992,6 +1992,7 @@ html,body{width:100%;height:100%;overflow:hidden;
       <div class="modal-type" id="mod-type"></div>
       <div class="modal-summary" id="mod-summary" style="display:none"></div>
       <button class="modal-btn" id="mod-edit-summary" onclick="modToggleEditSummary()" style="display:none;font-size:11px;padding:3px 10px;margin-top:4px">Edit Summary</button>
+      <button class="modal-btn" id="mod-regen-summary" onclick="modRegenSummary()" style="display:none;font-size:11px;padding:3px 10px;margin-top:4px">Regen AI Summary</button>
       <textarea id="mod-summary-edit" placeholder="Edit summary..." maxlength="500" style="display:none"></textarea>
       <div id="mod-summary-edit-acts" style="display:none;gap:8px;flex-wrap:wrap;margin-top:4px">
         <button class="modal-btn" onclick="modSaveSummary()">Save</button>
@@ -2659,7 +2660,7 @@ function renderCatalog(){
   if(catFilter==='weapon')     list=list.filter(c=>c.type==='weapon');
   if(catFilter==='concept')    list=list.filter(c=>c.type==='concept');
   if(catFilter==='noconcept')  list=list.filter(c=>c.type!=='concept');
-  if(catFilter==='feedback')   list=list.filter(c=>(_allFeedback[c.name]||[]).length>0);
+  if(catFilter==='feedback')   list=list.filter(c=>(_allFeedback[c.name]||[]).some(r=>!r.handled));
   // Search filter
   const q=(document.getElementById('cat-search')?.value||'').toLowerCase().trim();
   if(q) list=list.filter(c=>c.name.toLowerCase().includes(q)||(c.definition||'').toLowerCase().includes(q));
@@ -2873,10 +2874,34 @@ async function submitFeedback(cardName, text){
     return true;
   }catch(e){ console.warn('submitFeedback failed:',e.message); return false; }
 }
+async function modRegenSummary(){
+  if(!mcard) return;
+  const c=mcard, st=s(c.name);
+  const def=(st.customDef||c.definition||'').trim();
+  const el=document.getElementById('mod-st');
+  if(!def){ if(el){ el.textContent='No definition to summarise'; el.className='modal-status err'; } return; }
+  if(el){ el.textContent='Generating AI summary\u2026'; el.className='modal-status work'; }
+  try{
+    const resp=await fetch(SUPA_URL+'/functions/v1/summarize',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+SUPA_KEY},
+      body:JSON.stringify({definition:def,name:c.name})
+    });
+    if(!resp.ok) throw new Error('HTTP '+resp.status);
+    const{summary,error}=await resp.json();
+    if(error) throw new Error(error);
+    st.customSummary=summary; saveState();
+    const modSum=document.getElementById('mod-summary');
+    if(modSum){ modSum.textContent=summary; modSum.style.display=''; modSum.style.borderColor='rgba(245,197,24,.3)'; }
+    if(el){ el.textContent='AI summary updated'; el.className='modal-status ok'; }
+  }catch(e){
+    if(el){ el.textContent='AI unavailable \u2014 '+e.message; el.className='modal-status err'; }
+  }
+}
 async function loadOwnerFeedback(){
   if(!_supa||!_currentUser) return;
   try{
-    const{data,error}=await _supa.from('card_feedback').select('card_name,user_identifier,feedback,created_at').order('created_at',{ascending:false});
+    const{data,error}=await _supa.from('card_feedback').select('id,card_name,user_identifier,feedback,created_at,handled').order('created_at',{ascending:false});
     if(error) throw error;
     _allFeedback={};
     (data||[]).forEach(r=>{
@@ -2887,6 +2912,20 @@ async function loadOwnerFeedback(){
     if(fbPill) fbPill.style.display='';
   }catch(e){ console.warn('loadOwnerFeedback failed:',e.message); }
 }
+async function markFeedbackHandled(id, cardName){
+  if(!_supa) return;
+  try{
+    const{error}=await _supa.from('card_feedback').update({handled:true}).eq('id',id);
+    if(error) throw error;
+    // Update local state
+    const entries=_allFeedback[cardName]||[];
+    const entry=entries.find(r=>r.id===id);
+    if(entry) entry.handled=true;
+    renderOwnerFeedbackEl(cardName,'mod-owner-feedback');
+    renderOwnerFeedbackEl(cardName,'fs-owner-feedback');
+    renderCatalog(); // refresh feedback filter
+  }catch(e){ console.warn('markFeedbackHandled failed:',e.message); }
+}
 function renderOwnerFeedbackEl(cardName, elId){
   const el=document.getElementById(elId);
   if(!el) return;
@@ -2894,10 +2933,15 @@ function renderOwnerFeedbackEl(cardName, elId){
   const entries=_allFeedback[cardName]||[];
   if(!isOwner||!entries.length){ el.style.display='none'; return; }
   el.style.display='block';
+  const sn=cardName.replace(/'/g,"\\'");
   el.innerHTML='<div style="font-size:10px;font-weight:700;color:rgba(245,197,24,.6);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Feedback</div>'+
     entries.map(r=>{
       const dt=new Date(r.created_at).toLocaleDateString();
-      return `<div style="margin-bottom:6px;padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,.07)"><span style="color:rgba(245,197,24,.7);font-size:11px">${escHtml(r.user_identifier)} &bull; ${dt}</span><br>${escHtml(r.feedback)}</div>`;
+      const dim=r.handled?'opacity:.4;':'';
+      const btn=r.handled
+        ?`<span style="font-size:10px;color:rgba(255,255,255,.3)">\u2713 Handled</span>`
+        :`<button onclick="markFeedbackHandled('${r.id}','${sn}')" style="font-size:10px;padding:2px 7px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:4px;color:rgba(255,255,255,.6);cursor:pointer;font-family:inherit">\u2713 Mark handled</button>`;
+      return `<div style="${dim}margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,.07)"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px"><span style="color:rgba(245,197,24,.7);font-size:11px">${escHtml(r.user_identifier)} &bull; ${dt}</span>${btn}</div>${escHtml(r.feedback)}</div>`;
     }).join('');
 }
 function closeMod(e){
@@ -3675,9 +3719,11 @@ function updateAccountUI(){
   const notesCol = document.getElementById('fs-notes-col');
   const editRulesBtn = document.getElementById('mod-edit');
   const editSumBtn = document.getElementById('mod-edit-summary');
+  const regenSumBtn = document.getElementById('mod-regen-summary');
   if(notesCol) notesCol.style.display = '';
   if(editRulesBtn) editRulesBtn.style.display = isOwner ? '' : 'none';
   if(editSumBtn) editSumBtn.style.display = isOwner ? '' : 'none';
+  if(regenSumBtn) regenSumBtn.style.display = isOwner ? '' : 'none';
   if(isOwner) loadOwnerFeedback();
   if(loggedIn){
     const email = _currentUser.email || '';
