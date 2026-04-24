@@ -3573,7 +3573,7 @@ function updateAccountUI(){
   const editRulesBtn = document.getElementById('mod-edit');
   const photoBtn = document.getElementById('mod-photo');
   const editSumBtn = document.getElementById('mod-edit-summary');
-  if(notesCol) notesCol.style.display = loggedIn ? '' : 'none';
+  if(notesCol) notesCol.style.display = '';
   if(editRulesBtn) editRulesBtn.style.display = isOwner ? '' : 'none';
   if(photoBtn) photoBtn.style.display = isOwner ? '' : 'none';
   if(editSumBtn) editSumBtn.style.display = isOwner ? '' : 'none';
