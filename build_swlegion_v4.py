@@ -1412,13 +1412,28 @@ def build_unit_db_js():
     return '\n'.join(lines)
 
 
+def next_version():
+    vfile = os.path.join(os.path.dirname(os.path.abspath(__file__)), "version.txt")
+    try:
+        parts = open(vfile).read().strip().split(".")
+        major, minor, build = parts[0], parts[1], int(parts[2]) + 1
+    except Exception:
+        major, minor, build = "4", "3", 1
+    ver = f"{major}.{minor}.{build:04d}"
+    with open(vfile, "w") as f:
+        f.write(ver + "\n")
+    return ver
+
 def build_html(card_data):
     fish_js    = json.dumps(card_data, ensure_ascii=False)
     base_names = json.dumps([c["name"] for c in card_data], ensure_ascii=False)
     unit_db_js = build_unit_db_js()
+    ver = next_version()
     html = HTML_TEMPLATE.replace("/*CARD_JSON*/", fish_js)
     html = html.replace("/*BASE_NAMES*/", base_names)
     html = html.replace("/*UNIT_DB_JSON*/", unit_db_js)
+    html = html.replace("v4.3.0001", "v" + ver)
+    print(f"  Version: v{ver}")
     return html
 
 
