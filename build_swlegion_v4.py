@@ -1816,7 +1816,7 @@ html,body{width:100%;height:100%;overflow:hidden;
       <div id="fs-notes-col">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
           <div class="fs-notes-label">Summary / Notes</div>
-          <button class="fs-btn" style="font-size:11px;padding:3px 10px;line-height:1.4" onclick="badSummary()">Bad Summary</button>
+          <button id="fs-ai-summary-btn" class="fs-btn" style="font-size:11px;padding:3px 10px;line-height:1.4;display:none" onclick="badSummary()">Bad Summary</button>
         </div>
         <textarea id="fs-notes" placeholder="Add your notes..." maxlength="2000"></textarea>
       </div>
@@ -3329,6 +3329,8 @@ function startApp(){
   updateCatAddRow();
   updateAccountUI();
   applyPermImgs();
+  const aiBtn=document.getElementById('fs-ai-summary-btn');
+  if(aiBtn) aiBtn.style.display=(_currentUser?.email==='martinjsleeman@gmail.com')?'':'none';
   setMode('learn');
 }
 
