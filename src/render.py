@@ -128,27 +128,25 @@ def build_unit_db_js():
     return '\n'.join(lines)
 
 
-def next_version():
-    vfile = os.path.join(HERE, "version.txt")
+def get_version():
+    """Return version string from git describe, e.g. 'v5.0.0' or 'v5.0.0-3-gabc1234'."""
+    import subprocess
     try:
-        parts = open(vfile).read().strip().split(".")
-        major, minor, build = parts[0], parts[1], int(parts[2]) + 1
+        ver = subprocess.check_output(
+            ['git', 'describe', '--tags', '--always', '--dirty'],
+            cwd=HERE, text=True, stderr=subprocess.DEVNULL
+        ).strip()
+        return ver
     except Exception:
-        major, minor, build = "4", "3", 1
-    ver = f"{major}.{minor}.{build:04d}"
-    with open(vfile, "w") as f:
-        f.write(ver + "\n")
-    return ver
+        return 'dev'
 
 
 def build_html(card_data):
-    template_dir = TEMPLATE_DIR
-
-    with open(os.path.join(template_dir, 'index.html'), encoding='utf-8') as f:
+    with open(os.path.join(TEMPLATE_DIR, 'index.html'), encoding='utf-8') as f:
         html = f.read()
-    with open(os.path.join(template_dir, 'app.css'), encoding='utf-8') as f:
+    with open(os.path.join(TEMPLATE_DIR, 'app.css'), encoding='utf-8') as f:
         css = f.read()
-    with open(os.path.join(template_dir, 'app.js'), encoding='utf-8') as f:
+    with open(os.path.join(TEMPLATE_DIR, 'app.js'), encoding='utf-8') as f:
         js = f.read()
 
     fish_js    = json.dumps(card_data, ensure_ascii=False)
@@ -161,7 +159,7 @@ def build_html(card_data):
     html = html.replace("/*STYLE_CSS*/", css)
     html = html.replace("/*APP_JS*/", js)
 
-    ver = next_version()
-    html = html.replace("v4.3.0001", "v" + ver)
-    print(f"  Version: v{ver}")
+    ver = get_version()
+    html = html.replace("{{VERSION}}", ver)
+    print(f"  Version: {ver}")
     return html

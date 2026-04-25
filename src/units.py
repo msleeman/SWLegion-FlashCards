@@ -10,6 +10,15 @@ from collections import defaultdict
 from src.config import DATA_DIR
 
 
+def _load_mappings():
+    """Load unit keyword → card name mappings from data/unit_keyword_mappings.json."""
+    path = os.path.join(DATA_DIR, 'unit_keyword_mappings.json')
+    with open(path, encoding='utf-8') as f:
+        data = json.load(f)
+    # Strip the _comment key if present
+    return {k: v for k, v in data.items() if not k.startswith('_')}
+
+
 def inject_units(card_data):
     """Add 'units' field to each card listing which units have that keyword."""
     unit_db_path = os.path.join(DATA_DIR, 'unit_db.json')
@@ -18,6 +27,8 @@ def inject_units(card_data):
 
     with open(unit_db_path, encoding="utf-8") as f:
         units = json.load(f)
+
+    _manual = _load_mappings()
 
     def _norm_cache(name):
         n = re.sub(r'\s*\[\]$', '', name)
@@ -30,45 +41,6 @@ def inject_units(card_data):
         n = re.sub(r'\s+\d+(\s*:\s*.+)?$', '', kw)
         n = re.sub(r'\s*:\s*.+$', '', n)
         return n.strip().lower()
-
-    _manual = {
-        'prepared position': 'Prepared Positions',
-        'ai attack': 'AI: Action[]', 'ai dodge': 'AI: Action[]', 'ai move': 'AI: Action[]',
-        'hover air': 'Hover: Ground/Air X', 'hover ground': 'Hover: Ground/Air X',
-        'immune': 'Immune: Keyword',
-        'sharpshooter': 'Sharpshooter',
-        'strafe': 'Strafe Move',
-        'death from above': 'Death From Above',
-        'pull the strings empire trooper': 'Pulling the Strings[]',
-        'special issue blizzard force': 'Special Issue: Battle Force',
-        'special issue experimental droids': 'Special Issue: Battle Force',
-        'special issue tempest force': 'Special Issue: Battle Force',
-        'special issue wookiee defenders': 'Special Issue: Battle Force',
-        'mercenary': 'Mercenaries',
-        'equip': 'Equip', 'associate': 'Associate: Unit Name',
-        'aid': 'Backup[]', 'allies of convenience': 'Allies of Convenience',
-        'compel': 'Compel: Rank/Unit Type[]',
-        'complete the mission': 'Complete the Mission[]',
-        'coordinate': 'Coordinate: Type/Name[]',
-        'detachment': 'Detachment: Name/Type',
-        'direct': 'Direct Name/Type[]',
-        'entourage': 'Entourage: Unit Name[]',
-        'guidance': 'Guidance[]', 'guardian': 'Guardian X[]',
-        'retinue': 'Retinue: Unit/Unit Type[]',
-        'teamwork': 'Teamwork: Unit Name[]',
-        'bolster': 'Bolster X[]', 'demoralize': 'Demoralize X[]',
-        'exemplar': 'Exemplar[]', 'inspire': 'Inspire X[]',
-        'observe': 'Observe X[]', 'repair': 'Repair X: Capacity Y[]',
-        'self-destruct': 'Self-Destruct X[]', 'sentinel': 'Sentinel[]',
-        'smoke': 'Smoke X[]', 'spotter': 'Spotter X[]',
-        'spur': 'Spur[]', 'standby': 'Standby[]',
-        'strategize': 'Strategize X[]', 'take cover': 'Take Cover X[]',
-        'treat': 'Treat X[]', 'tempted': 'Tempted[]',
-        'distract': 'Distract[]', 'divine influence': 'Divine Influence[]',
-        'interrogate': 'Interrogate[]', 'incognito': 'Incognito[]',
-        'inconspicuous': 'Inconspicious', 'override': 'Override[]',
-        'ruthless': 'Ruthless[]', 'independent': 'Independent: Token X/Action',
-    }
 
     cache_lookup = {}
     for e in card_data:
