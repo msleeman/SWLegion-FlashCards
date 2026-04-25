@@ -1876,7 +1876,9 @@
     "definition": "While a unit with the Inconspicuous keyword has 1 or more Suppression tokens, attacking enemy units must target another unit, if able. When a unit with the Inconspicuous keyword Rallies, it may choose to not remove any number of Suppression tokens, including 0.",
     "summary": "",
     "type": "unit",
-    "imgs": [],
+    "imgs": [
+      "images/Inconspicious.webp"
+    ],
     "credit": "legion.takras.net",
     "card_source": "",
     "art_credit": "",
