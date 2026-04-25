@@ -4084,7 +4084,7 @@ def main():
             'treat': 'Treat X[]', 'tempted': 'Tempted[]',
             'distract': 'Distract[]', 'divine influence': 'Divine Influence[]',
             'interrogate': 'Interrogate[]', 'incognito': 'Incognito[]',
-            'inconspicuous': 'Inconspicious[]', 'override': 'Override[]',
+            'inconspicuous': 'Inconspicious', 'override': 'Override[]',
             'ruthless': 'Ruthless[]', 'independent': 'Independent: Token X/Action',
         }
 
