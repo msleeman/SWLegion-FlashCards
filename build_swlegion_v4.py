@@ -22,7 +22,8 @@ from src.overrides import (
 )
 from src.scrape import find_pdf, extract_keywords_from_pdf, scrape_keyword_page, scrape_keywords
 from src.images import download_images, search_images_wiki
-from src.render import build_unit_db_js, next_version, build_html
+from src.render import build_unit_db_js, get_version, build_html
+next_version = get_version  # legacy alias
 
 if __name__ == '__main__':
     main()
