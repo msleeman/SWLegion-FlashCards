@@ -80,6 +80,7 @@ html,body{width:100%;height:100%;overflow:hidden;
 #fs-rules-caret{color:var(--gold);font-size:11px;flex-shrink:0;transition:transform .2s}
 #fs-definition{display:none;font-size:14px;color:var(--white);line-height:1.7;text-shadow:0 1px 4px rgba(0,0,0,.6);padding-top:6px}
 #fs-source{font-size:11px;color:rgba(255,255,255,.3);margin-top:4px}
+#fs-units{font-size:11px;color:rgba(255,255,255,.45);margin-top:3px;font-style:italic}
 #fs-actions{display:flex;gap:8px;margin-top:7px;flex-wrap:wrap}
 .fs-btn{background:rgba(0,0,0,.55);backdrop-filter:blur(12px);
   border:1px solid rgba(255,255,255,.15);border-radius:var(--rs);
@@ -324,7 +325,7 @@ html,body{width:100%;height:100%;overflow:hidden;
       </div>
     </div>
     <p class="auth-footer">Guest progress is saved locally on this device only.</p>
-    <p class="auth-footer">v4.3.0010</p>
+    <p class="auth-footer">v4.3.0012</p>
   </div>
 </div>
 
@@ -404,6 +405,7 @@ html,body{width:100%;height:100%;overflow:hidden;
         <div id="fs-definition"></div>
       </div>
       <div id="fs-source"></div>
+      <div id="fs-units"></div>
       <div id="fs-actions"></div>
       <div id="fs-feedback-area" style="display:none;margin-top:8px">
         <textarea id="fs-feedback-input" placeholder="Send feedback about this card (max 1000 chars)..." maxlength="1000" style="width:100%;min-height:70px;box-sizing:border-box;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.2);border-radius:8px;color:#fff;font-size:13px;padding:8px 10px;font-family:inherit;resize:vertical;outline:none"></textarea>
@@ -561,6 +563,7 @@ html,body{width:100%;height:100%;overflow:hidden;
       <div class="modal-def"  id="mod-def"></div>
       <div class="modal-src" id="mod-src"></div>
       <div class="modal-art-credit" id="mod-art-credit" style="display:none"></div>
+      <div class="modal-art-credit" id="mod-units" style="display:none"></div>
       <div class="modal-status" id="mod-st"></div>
       <div class="modal-acts">
         <button class="modal-btn" id="mod-lrnd"  onclick="modToggleLearned()"></button>
@@ -880,6 +883,8 @@ function showBack(c){
   // Source
   const srcEl=document.getElementById('fs-source');
   if(srcEl) srcEl.textContent=cardSource(c);
+  const unitsEl=document.getElementById('fs-units');
+  if(unitsEl) unitsEl.textContent=c.units?'Units: '+c.units:'';
   // Reset feedback area
   const fba=document.getElementById('fs-feedback-area');
   if(fba) fba.style.display='none';
@@ -1292,6 +1297,11 @@ function renderMod(){
     const ac=c.art_credit||'';
     modArtCredit.textContent=ac?'Image: '+ac:'';
     modArtCredit.style.display=ac?'':'none';
+  }
+  const modUnits=document.getElementById('mod-units');
+  if(modUnits){
+    modUnits.textContent=c.units?'Units: '+c.units:'';
+    modUnits.style.display=c.units?'':'none';
   }
   const ml=document.getElementById('mod-lrnd');
   ml.textContent=st.learned?'Learned \u2014 reset':'Mark as learned';
