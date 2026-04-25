@@ -12,11 +12,19 @@ import json, os, re, sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 
-# Import the current build script
-import build_swlegion_v4 as bld
+from src.config import DIST_IMGDIR, CACHE_DIR, DIST_DIR
+from src.data_tables import KEYWORD_CARD_IMAGES
+from src.overrides import (
+    find_card_art, find_card_art_credit,
+    _kw_lookup_key, _get_ext, safe_filename,
+    apply_manual_overlays,
+)
+from src.scrape import find_pdf, extract_keywords_from_pdf
+from src.images import download_images
+from src.render import build_html
 
 # ── 1. Load cached card data ──────────────────────────────────────────────────
-cache = os.path.join(HERE, "cache", "card_data.json")
+cache = os.path.join(CACHE_DIR, "card_data.json")
 if not os.path.exists(cache):
     print("ERROR: cache/card_data.json not found. Run build_swlegion_v4.py first.")
     sys.exit(1)
@@ -27,23 +35,23 @@ with open(cache, "r", encoding="utf-8") as f:
 print(f"Loaded {len(card_data)} cards from cache")
 
 # ── 2. Re-apply image overrides ───────────────────────────────────────────────
-IMGDIR = os.path.join(HERE, "dist", "images")
+IMGDIR = DIST_IMGDIR
 for c in card_data:
-    art = bld.find_card_art(c["name"])
+    art = find_card_art(c["name"])
     if art:
         c["imgs"] = [art]
-        c["art_credit"] = bld.find_card_art_credit(c["name"]) or ""
+        c["art_credit"] = find_card_art_credit(c["name"]) or ""
         continue
-    lookup_key = bld._kw_lookup_key(c["name"])
-    card_filename = bld.KEYWORD_CARD_IMAGES.get(lookup_key)
+    lookup_key = _kw_lookup_key(c["name"])
+    card_filename = KEYWORD_CARD_IMAGES.get(lookup_key)
     if card_filename:
-        ext = bld._get_ext(card_filename)
-        fname = bld.safe_filename(c["name"], ext=ext)
+        ext = _get_ext(card_filename)
+        fname = safe_filename(c["name"], ext=ext)
         filepath = os.path.join(IMGDIR, fname)
         if os.path.exists(filepath) and os.path.getsize(filepath) > 1000:
             c["imgs"] = [f"images/{fname}"]
         else:
-            img_paths, _ = bld.download_images(c["name"], IMGDIR, max_imgs=1)
+            img_paths, _ = download_images(c["name"], IMGDIR, max_imgs=1)
             if img_paths:
                 c["imgs"] = img_paths
 
@@ -51,11 +59,11 @@ for c in card_data:
 def _norm(s):
     return re.sub(r'[^a-z0-9]', '', s.lower())
 
-pdf_path = bld.find_pdf()
+pdf_path = find_pdf()
 if pdf_path:
     print(f"Overlaying PDF definitions from {os.path.basename(pdf_path)}...")
     try:
-        pdf_dict = bld.extract_keywords_from_pdf(pdf_path)
+        pdf_dict = extract_keywords_from_pdf(pdf_path)
         if pdf_dict:
             pdf_lookup = {_norm(k): v for k, v in pdf_dict.items()}
             overlaid = 0
@@ -80,15 +88,15 @@ else:
     print("  (place SWQ_Rulebook_2.6.0-1.pdf in the project root or documents/ folder)")
 
 # ── 4. Apply manual overrides (always last — they win over everything) ────────
-manual_count = bld.apply_manual_overlays(card_data)
+manual_count = apply_manual_overlays(card_data)
 if manual_count:
     print(f"  {manual_count} definitions overridden from manual/ folder")
 
 # ── 5. Build HTML ─────────────────────────────────────────────────────────────
 print("Building HTML...")
-html = bld.build_html(card_data)
-out = os.path.join(HERE, "dist", "index.html")
-os.makedirs(os.path.join(HERE, "dist"), exist_ok=True)
+html = build_html(card_data)
+out = os.path.join(DIST_DIR, "index.html")
+os.makedirs(DIST_DIR, exist_ok=True)
 with open(out, "w", encoding="utf-8") as f:
     f.write(html)
 
