@@ -26,11 +26,17 @@ import os, re, json, time, sys
 import requests
 from urllib.parse import urlencode
 
-HERE         = os.path.dirname(os.path.abspath(__file__))
-IMGDIR       = os.path.join(HERE, 'images')
-CARD_ART_DIR = os.path.join(HERE, 'card_art')
-MANUAL_DIR   = os.path.join(HERE, 'manual')
-OUT    = os.path.join(HERE, 'swlegion_flashcards.html')
+HERE          = os.path.dirname(os.path.abspath(__file__))
+CACHE_DIR     = os.path.join(HERE, 'cache')
+IMGDIR        = os.path.join(CACHE_DIR, 'images')        # download cache (gitignored)
+DIST_DIR      = os.path.join(HERE, 'dist')
+DIST_IMGDIR   = os.path.join(DIST_DIR, 'images')         # final distributed images
+OVERRIDES_DIR = os.path.join(HERE, 'overrides')          # was: card_art + manual
+DATA_DIR      = os.path.join(HERE, 'data')
+OUT           = os.path.join(DIST_DIR, 'index.html')
+# Keep these for backward compat with code that uses them:
+CARD_ART_DIR  = OVERRIDES_DIR
+MANUAL_DIR    = OVERRIDES_DIR
 BASE   = 'https://legion.takras.net'
 CDN    = 'https://d2maxvwz12z6fm.cloudfront.net'
 LEGIONHQ_CDN     = 'https://d2maxvwz12z6fm.cloudfront.net/unitCards/'
@@ -869,8 +875,10 @@ _card_art_stem = _keyword_stem
 
 
 def find_card_art(keyword_name):
-    """Return 'card_art/<file>' using the actual on-disk filename (case-insensitive match).
-    Checks .png, .webp, .jpg in that order."""
+    """Return 'images/<file>' (dist-relative) using the actual on-disk filename from
+    OVERRIDES_DIR (case-insensitive match). Checks .png, .webp, .jpg in that order.
+    Also copies the file into DIST_IMGDIR so dist/index.html can reference it."""
+    import shutil as _shutil
     if not os.path.isdir(CARD_ART_DIR):
         return None
     stem_lower = _keyword_stem(keyword_name).lower()
@@ -882,7 +890,14 @@ def find_card_art(keyword_name):
         for entry in entries:
             name, e = os.path.splitext(entry)
             if name.lower() == stem_lower and e.lower() == ext:
-                return f"card_art/{entry}"
+                src = os.path.join(CARD_ART_DIR, entry)
+                os.makedirs(DIST_IMGDIR, exist_ok=True)
+                dst = os.path.join(DIST_IMGDIR, entry)
+                try:
+                    _shutil.copy2(src, dst)
+                except OSError:
+                    pass
+                return f"images/{entry}"
     return None
 
 
@@ -1294,7 +1309,7 @@ def build_unit_db_js():
     Downloads and parses the LegionHQ2 JS bundle (cached to legionhq2_units.json next to
     this script). Returns an empty object string if download fails.
     """
-    cache_path = os.path.join(HERE, "legionhq2_units.json")
+    cache_path = os.path.join(CACHE_DIR, "legionhq2_units.json")
     unit_db = None
 
     # Try loading from cache first
@@ -3919,6 +3934,9 @@ BUNDLED_KEYWORDS = {
 
 def main():
     os.makedirs(IMGDIR, exist_ok=True)
+    os.makedirs(DIST_IMGDIR, exist_ok=True)
+    os.makedirs(CACHE_DIR, exist_ok=True)
+    os.makedirs(DATA_DIR, exist_ok=True)
     print("=" * 62)
     print("  SW Legion Flashcards Builder v4")
     print("  Keywords: Web Scrape (names+types) + PDF (definitions)")
@@ -4010,8 +4028,12 @@ def main():
             if existed:
                 print(f"skip ({len(img_paths)} cached)")
             else:
-                total_kb = sum(os.path.getsize(os.path.join(HERE, p)) // 1024
-                               for p in img_paths if os.path.exists(os.path.join(HERE, p)))
+                def _imgsize(p):
+                    # p is like "images/foo.webp" (dist-relative); file lives in IMGDIR
+                    fname = os.path.basename(p)
+                    fpath = os.path.join(IMGDIR, fname)
+                    return os.path.getsize(fpath) // 1024 if os.path.exists(fpath) else 0
+                total_kb = sum(_imgsize(p) for p in img_paths)
                 print(f"OK  ({len(img_paths)} imgs, ~{total_kb} KB)")
             time.sleep(0.3)
         else:
@@ -4042,7 +4064,7 @@ def main():
     print(f"  {ok}/{len(keywords)} keywords have images")
 
     # --- Inject units field: which units have each keyword ---
-    unit_db_path = os.path.join(HERE, "..", "unit_db.json")
+    unit_db_path = os.path.join(DATA_DIR, 'unit_db.json')
     if os.path.exists(unit_db_path):
         import re as _re
         from collections import defaultdict as _dd
@@ -4130,22 +4152,33 @@ def main():
         print(f"      Injected 'units' field ({sum(1 for e in card_data if e.get('units'))} keywords have units)")
 
     # Save cache so rebuild_html_only.py picks up fresh data
-    cache_path = os.path.join(HERE, "cards_cache.json")
+    cache_path = os.path.join(CACHE_DIR, 'card_data.json')
     with open(cache_path, "w", encoding="utf-8") as f:
         json.dump(card_data, f, ensure_ascii=False, indent=2)
-    print(f"\n      Cached {len(card_data)} cards to cards_cache.json")
+    print(f"\n      Cached {len(card_data)} cards to cache/card_data.json")
+
+    # Copy cached images → dist/images/ (so dist/index.html can reference them)
+    import shutil as _shutil2
+    img_copied = 0
+    for fname in os.listdir(IMGDIR):
+        src = os.path.join(IMGDIR, fname)
+        dst = os.path.join(DIST_IMGDIR, fname)
+        if os.path.isfile(src):
+            _shutil2.copy2(src, dst)
+            img_copied += 1
+    print(f"      Copied {img_copied} images from cache/images/ -> dist/images/")
 
     # Step 3: Build HTML
-    print(f"\n[3/3] Building swlegion_flashcards.html...")
+    print(f"\n[3/3] Building dist/index.html...")
     html = build_html(card_data)
     with open(OUT, "w", encoding="utf-8") as f:
         f.write(html)
     kb = os.path.getsize(OUT) // 1024
-    print(f"      swlegion_flashcards.html  ({kb} KB)")
-    print(f"      images/                   ({ok} images)")
+    print(f"      dist/index.html  ({kb} KB)")
+    print(f"      dist/images/     ({img_copied} images)")
     print()
-    print("  Open swlegion_flashcards.html in your browser.")
-    print("  Keep the images/ folder in the same directory.")
+    print("  Open dist/index.html in your browser.")
+    print("  Images are in the dist/images/ folder.")
     print("=" * 62)
 
 
