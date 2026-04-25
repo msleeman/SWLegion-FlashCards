@@ -4029,6 +4029,94 @@ def main():
         print(f"  No image: {short}")
     print(f"  {ok}/{len(keywords)} keywords have images")
 
+    # --- Inject units field: which units have each keyword ---
+    unit_db_path = os.path.join(HERE, "..", "unit_db.json")
+    if os.path.exists(unit_db_path):
+        import re as _re
+        from collections import defaultdict as _dd
+        with open(unit_db_path, encoding="utf-8") as _f:
+            _units = json.load(_f)
+
+        def _norm_cache(name):
+            n = _re.sub(r'\s*\[\]$', '', name)
+            n = _re.sub(r'\s*:\s*.+$', '', n)
+            n = _re.sub(r'\s+X$', '', n)
+            n = _re.sub(r'\s+\d+$', '', n)
+            return n.strip().lower()
+
+        def _norm_unit(kw):
+            n = _re.sub(r'\s+\d+(\s*:\s*.+)?$', '', kw)
+            n = _re.sub(r'\s*:\s*.+$', '', n)
+            return n.strip().lower()
+
+        _manual = {
+            'prepared position': 'Prepared Positions',
+            'ai attack': 'AI: Action[]', 'ai dodge': 'AI: Action[]', 'ai move': 'AI: Action[]',
+            'hover air': 'Hover: Ground/Air X', 'hover ground': 'Hover: Ground/Air X',
+            'immune': 'Immune: Keyword',
+            'sharpshooter': 'Sharpshooter',
+            'strafe': 'Strafe Move',
+            'death from above': 'Death From Above',
+            'pull the strings empire trooper': 'Pulling the Strings[]',
+            'special issue blizzard force': 'Special Issue: Battle Force',
+            'special issue experimental droids': 'Special Issue: Battle Force',
+            'special issue tempest force': 'Special Issue: Battle Force',
+            'special issue wookiee defenders': 'Special Issue: Battle Force',
+            'mercenary': 'Mercenaries',
+            'equip': 'Equip', 'associate': 'Associate: Unit Name',
+            'aid': 'Backup[]', 'allies of convenience': 'Allies of Convenience',
+            'compel': 'Compel: Rank/Unit Type[]',
+            'complete the mission': 'Complete the Mission[]',
+            'coordinate': 'Coordinate: Type/Name[]',
+            'detachment': 'Detachment: Name/Type',
+            'direct': 'Direct Name/Type[]',
+            'entourage': 'Entourage: Unit Name[]',
+            'guidance': 'Guidance[]', 'guardian': 'Guardian X[]',
+            'retinue': 'Retinue: Unit/Unit Type[]',
+            'teamwork': 'Teamwork: Unit Name[]',
+            'bolster': 'Bolster X[]', 'demoralize': 'Demoralize X[]',
+            'exemplar': 'Exemplar[]', 'inspire': 'Inspire X[]',
+            'observe': 'Observe X[]', 'repair': 'Repair X: Capacity Y[]',
+            'self-destruct': 'Self-Destruct X[]', 'sentinel': 'Sentinel[]',
+            'smoke': 'Smoke X[]', 'spotter': 'Spotter X[]',
+            'spur': 'Spur[]', 'standby': 'Standby[]',
+            'strategize': 'Strategize X[]', 'take cover': 'Take Cover X[]',
+            'treat': 'Treat X[]', 'tempted': 'Tempted[]',
+            'distract': 'Distract[]', 'divine influence': 'Divine Influence[]',
+            'interrogate': 'Interrogate[]', 'incognito': 'Incognito[]',
+            'inconspicuous': 'Inconspicious[]', 'override': 'Override[]',
+            'ruthless': 'Ruthless[]', 'independent': 'Independent: Token X/Action',
+        }
+
+        _cache_lookup = {}
+        for _e in card_data:
+            _b = _norm_cache(_e['name'])
+            if _b not in _cache_lookup:
+                _cache_lookup[_b] = _e['name']
+
+        def _find_cache_name(kw):
+            base = _norm_unit(kw)
+            if base in _manual:
+                return _manual[base]
+            for pfx, cn in _manual.items():
+                if base.startswith(pfx + ' ') or base == pfx:
+                    return cn
+            return _cache_lookup.get(base)
+
+        _kw_units = _dd(list)
+        for _u in _units.values():
+            _dname = _u['name']
+            for _kw in _u.get('keywords', []):
+                _cn = _find_cache_name(_kw)
+                if _cn and _dname not in _kw_units[_cn]:
+                    _kw_units[_cn].append(_dname)
+        for _k in _kw_units:
+            _kw_units[_k].sort()
+        for _e in card_data:
+            _ul = _kw_units.get(_e['name'], [])
+            _e['units'] = ', '.join(_ul)
+        print(f"      Injected 'units' field ({sum(1 for e in card_data if e.get('units'))} keywords have units)")
+
     # Save cache so rebuild_html_only.py picks up fresh data
     cache_path = os.path.join(HERE, "cards_cache.json")
     with open(cache_path, "w", encoding="utf-8") as f:

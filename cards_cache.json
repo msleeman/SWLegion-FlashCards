@@ -18,8 +18,7 @@
     "summary": "",
     "type": "weapon",
     "imgs": [
-      "images/Anti-Personnel_X_1.jpg",
-      "images/Anti-Personnel_X_2.jpg"
+      "card_art/Anti-Personnel.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -31,7 +30,9 @@
     "definition": "Some effects will instruct players to upgrade or downgrade a unit’s attack or defense dice. When a die is upgraded or downgraded, it is removed from the Attack or Defense pool and the corresponding die it was upgraded or downgraded to is added. If the color of a die being upgraded or downgraded is not specified by the effect, the player controlling that effect may choose which dice are upgraded or downgraded. A die cannot be upgraded or downgraded more than once by the same effect. When upgrading attack dice, a white attack die is upgraded to a black attack die, and a black attack die is upgraded to a red attack die. A red attack die cannot be upgraded. When downgrading attack dice, a red attack die is downgraded to a black attack die, and a black attack die is downgraded to a white attack die. A white attack die cannot be downgraded. When upgrading defense dice, a white defense die is upgraded to a red defense die. A red defense die cannot be upgraded.",
     "summary": "",
     "type": "concept",
-    "imgs": [],
+    "imgs": [
+      "card_art/Upgrading_and_Downgrading_Dice.webp"
+    ],
     "credit": "legion.takras.net",
     "card_source": "",
     "art_credit": "",
@@ -81,7 +82,9 @@
     "definition": "Some abilities provide Standard Moves, often of certain Speeds. A Move provided by an ability is not a Move action unless specifically stated.",
     "summary": "",
     "type": "concept",
-    "imgs": [],
+    "imgs": [
+      "card_art/Abilities_That_Provide_Moves.webp"
+    ],
     "credit": "legion.takras.net",
     "card_source": "",
     "art_credit": "",
@@ -93,8 +96,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Activating_a_Unit_1.jpg",
-      "images/Activating_a_Unit_2.jpg"
+      "card_art/Activating_a_Unit.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -107,8 +109,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Activation_Phase_1.jpg",
-      "images/Activation_Phase_2.jpg"
+      "card_art/Activation_Phase.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -134,8 +135,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Advantage_Cards_1.jpg",
-      "images/Advantage_Cards_2.jpg"
+      "card_art/Advantage_Cards.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -147,7 +147,9 @@
     "definition": "[ADVANTAGE TOKEN] A 1-inch token used to represent the effects of Advantage Cards. They are also used to form the Pass Pool.",
     "summary": "",
     "type": "concept",
-    "imgs": [],
+    "imgs": [
+      "card_art/Advantage_Token.webp"
+    ],
     "credit": "legion.takras.net",
     "card_source": "",
     "art_credit": "",
@@ -158,7 +160,9 @@
     "definition": "Every Mercenary unit has an Affiliation. Their Affiliation is where their true loyalty lies. Affiliations represent criminal organizations, syndicates, guilds, gangs, or even a lone bounty hunter just looking out for themselves. A unit’s Affiliation is represented by an icon in the upper left corner of their Unit Card, where a unit’s Factionicon would normally be. A unit with an Affiliation can be issued orders only by an allied unit that has the same Aaffiliation. Affiliation Icons Each Affiliation is represented by an icon. The Affiliations found in Star Wars: Legion are as follows: [BLACK/FACTION_BLACK_SUN.PNG] Black Sun [BLACK/FACTION_PYKE_SYNDICATE.PNG] The Pyke Syndicat [BLACK/FACTION_RAIDERS.PNG] Raiders [BLACK/FACTION_ROGUE.PNG] Rogues [BLACK/FACTION_MAUL_LOYALISTS.PNG] Maul Loyalists [BLACK/FACTION_EWOKS.PNG] Ewoks NOTE: THE FOLLOWING ARE GUESSES ONLY: [BLACK/FACTION_WREN.PNG] Clan Wren [BLACK/FACTION_COVERT.PNG] Clan Covert [BLACK/FACTION_DEATHWATCH.PNG] Clan Deathwatch [BLACK/FACTION_KRYZE.PNG] Clan Kryze [BLACK/FACTION_SAXON.PNG] Clan Saxon",
     "summary": "",
     "type": "concept",
-    "imgs": [],
+    "imgs": [
+      "card_art/Affiliations.webp"
+    ],
     "credit": "legion.takras.net",
     "card_source": "",
     "art_credit": "",
@@ -209,8 +213,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Aim_1.jpg",
-      "images/Aim_2.jpg"
+      "card_art/Aim.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -223,8 +226,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Allied_and_Enemy_1.jpg",
-      "images/Allied_and_Enemy_2.jpg"
+      "card_art/Allied_and_Enemy.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -250,8 +252,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Apply_Dodge_and_Cover_1.jpg",
-      "images/Apply_Dodge_and_Cover_2.jpg"
+      "card_art/Apply_Dodge_and_Cover.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -264,12 +265,11 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Area_Terrain_1.jpg",
-      "images/Area_Terrain_2.jpg"
+      "card_art/Area_Terrain.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": "",
+    "art_credit": "https://www.reddit.com/r/SWlegion/comments/e925fo/just_finished_my_downed_atst_and_some_matching/",
     "units": ""
   },
   {
@@ -278,8 +278,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Area_Weapon_1.jpg",
-      "images/Area_Weapon_2.jpg"
+      "card_art/Area_Weapon.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -318,8 +317,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Army_Building_1.jpg",
-      "images/Army_Building_2.jpg"
+      "card_art/Army_Building.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -397,8 +395,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Make_Actions_1.jpg",
-      "images/Make_Actions_2.jpg"
+      "card_art/Make_Actions.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -423,7 +420,9 @@
     "definition": "(Upgrade and Command Keyword) Cad Bane has a set of three unique Bane tokens that he can place on the battlefield. Bane tokens are double-sided, with a uniform back and three different images on the front, each linked to a unique effect. Bane tokens must be placed facedown on the battlefield and cannot overlap Objective or Advantage tokens. Bane tokens are enemy effects. Each player may only have one copy of each different Bane token on the battlefield at the same time. When an enemy miniature moves, Deploys, or is placed within [RANGE 1] of an enemy Bane token, if that miniature has LOS to the token, it is revealed. Miniatures can move through but not overlap Bane tokens. When a Bane token is revealed, it has one of the following effects: Here I Am: If Cad Bane is not on the battlefield and is not defeated, his Here I Am token is replaced by his miniature. Then, Cad Bane issues himself an order. [CAD-HERE-I-AM TOKEN] If Cad Bane is on the battlefield, his Here I Am token is replaced by his miniature. Any tokens assigned to Cad Bane remain assigned to him. If Cad Bane is defeated, the token is removed. At the start of each Round, starting with the blue player, a player may reveal an alliedHere I Am token and resolve it. Smoke and Mirrors: The token is removed. [CAD-SMOKE TOKEN] Kablamo!: The token detonates using the weapon profile on Cad Bane’s I Make the Rules Now Command Card, then the token is removed. [CAD-KABLAMO TOKEN]",
     "summary": "",
     "type": "concept",
-    "imgs": [],
+    "imgs": [
+      "card_art/Bane_Tokens.webp"
+    ],
     "credit": "legion.takras.net",
     "card_source": "",
     "art_credit": "",
@@ -447,7 +446,9 @@
     "definition": "Barricades are a specific type of scatter terrain. Barricades are no more than 3\" wide, 1\" tall and 1\" deep. Barricades are open terrain and provide Trooper units that are not Creature Troopers or Heavy Troopers with heavy Cover. Barricades cannot overlap Objective or Advantage tokens and cannot have Objective or Advantage tokens placed on them. A Trooper miniature can never end a Move or be placed overlapping a barricade.",
     "summary": "",
     "type": "concept",
-    "imgs": [],
+    "imgs": [
+      "card_art/Barricades.webp"
+    ],
     "credit": "legion.takras.net",
     "card_source": "",
     "art_credit": "",
@@ -458,7 +459,9 @@
     "definition": "Each miniature in Star Wars : Legion is modeled on a base. A unit’s base depends on its unit type: Troopers, Clone Troopers, Droid Troopers, and Wookiee Troopers are on small bases. Everything else is on notched bases of various sizes. Many rules in Star Wars : Legion use the term “base contact,” which means that the miniature's base must be touching whatever the rule is referencing. This includes another miniature’s base, a piece of terrain, or a token. Miniatures cannot Move into base contact with miniatures from enemy units unless the unit leader has a Melee weapon ( [MELEE] ). If the unit leader does, the unit leader can make a Move into base contact with an enemy miniature to start a melee. See: Melee Because an object can be placed on top of uneven terrain, there are situations in which another miniature cannot be placed into physical base contact with the object because of a difference in elevation between the two bases. In these situations, if the following two conditions are met, the miniature and object are treated as if they are in base contact: when viewed from above, there is no space between the miniature's base and the object, such that if they were not on differing elevations or were both flat on the battlefield, the miniature's base and the object would be touching, and the vertical distance between the miniature's base and the object is no greater than the height of either object's Silhouette. See: Silhouettes",
     "summary": "",
     "type": "concept",
-    "imgs": [],
+    "imgs": [
+      "card_art/Bases_and_Base_Contact.png"
+    ],
     "credit": "legion.takras.net",
     "card_source": "",
     "art_credit": "",
@@ -470,8 +473,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Battle_Cards_1.jpg",
-      "images/Battle_Cards_2.jpg"
+      "card_art/Battle_Cards.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -484,8 +486,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Battle_Forces_1.jpg",
-      "images/Battle_Forces_2.jpg"
+      "card_art/Battle_Forces.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -498,8 +499,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Battlefield_1.jpg",
-      "images/Battlefield_2.jpg"
+      "card_art/Battlefield.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -512,8 +512,7 @@
     "summary": "",
     "type": "weapon",
     "imgs": [
-      "images/Beam_X_1.jpg",
-      "images/Beam_X_2.jpg"
+      "card_art/Beam.webp"
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: Director Orson Krennic",
@@ -578,8 +577,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Building_a_Battle_Deck_1.jpg",
-      "images/Building_a_Battle_Deck_2.jpg"
+      "card_art/Building_a_Battle_Deck.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -592,8 +590,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Building_a_Command_Hand_1.jpg",
-      "images/Building_a_Command_Hand_2.jpg"
+      "card_art/Building_a_Command_Hand.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -606,8 +603,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Building_a_Mission_1.jpg",
-      "images/Building_a_Mission_2.jpg"
+      "card_art/Building_a_Mission.jpg"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -619,7 +615,9 @@
     "definition": "ObjectsBattlefield Miniatures, tokens, and terrain are all objects. The table or surface being played on is the battlefield. Overlapping Objects Objects can rest on top of each other only in the following ways: Terrain can be placed resting on top of other terrain but cannot be placed resting on top of tokens or miniatures. Tokens that are on the battlefield can be placed resting on top of terrain and other tokens but cannot be placed resting on top of miniatures. Miniatures can be placed resting on top of both tokens and terrain but cannot be placed resting on top of each other. Bases and Base Contact Each miniature in Star Wars: Legion is modeled on a base. A unit’s base depends on its unit type: Troopers, Clone Troopers, Droid Troopers, and Wookiee Troopers are on small bases. Everything else is on notched bases of various sizes. Many rules in Star Wars: Legion use the term “base contact,” which means that the miniature's base must be touching whatever the rule is referencing. This includes another miniature’s base, a piece of terrain, or a token. Miniatures cannot Move into base contact with miniatures from enemy units unless the unit leader has a Melee weapon ( [MELEE] ). If the unit leader does, the unit leader can perform a Move into base contact with an enemy miniature to start a Melee. Because an object can be placed on top of uneven terrain, there are situations in which another miniature cannot be placed into physical base contact with the object because of a difference in elevation between the two bases. In these situations, if the following two conditions are met, the miniature and object are treated as if they are in base contact: when viewed from above, there is no space between the miniature's base and the object, such that if they were not on differing elevations or were both flat on the battlefield, the miniature's base and the object would be touching, and the vertical distance between the miniature's base and the object is no greater than the ...",
     "summary": "",
     "type": "concept",
-    "imgs": [],
+    "imgs": [
+      "card_art/Objects.webp"
+    ],
     "credit": "legion.takras.net",
     "card_source": "",
     "art_credit": "",
@@ -657,8 +655,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Canceling_Results_1.jpg",
-      "images/Canceling_Results_2.jpg"
+      "card_art/Canceling_Results.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -671,8 +668,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Card_Action_1.jpg",
-      "images/Card_Action_2.jpg"
+      "card_art/Card_Action.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -685,8 +681,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Card_Effects_1.jpg",
-      "images/Card_Effects_2.jpg"
+      "card_art/Card_Effects.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -711,10 +706,12 @@
     "definition": "After a unit that has the Charge keyword performs a move action that brings it into base contact with an enemy miniature to start a melee, it may perform a free attack action against that unit using only melee weapons.",
     "summary": "",
     "type": "concept",
-    "imgs": [],
+    "imgs": [
+      "card_art/charge_token.jpg"
+    ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "",
-    "art_credit": "",
+    "art_credit": "https://www.belloflostsouls.net/2018/04/star-wars-legion-rebel-trooper-tactics.html",
     "units": ""
   },
   {
@@ -722,7 +719,9 @@
     "definition": "Battle Cards describe which units are eligible to claim Asset tokens in that mission by granting them a Claim free action. An eligible unit can claim an unclaimed Asset token it is Contesting by making that free action. When a unit claims an Asset Objective token, remove that token from the battlefield and place it on that unit’s Unit Card. That unit is now holding that Asset token. When a unit drops an Asset token it is holding, the opponent of that unit’s controlling player places that token on the battlefield within [RANGE 1/2] of that unit’s unit leader. While an Asset Objective token is on the battlefield, it is unclaimed. When a unit Panics, it drops all Asset tokens it is holding. When a unit is defeated, it drops all Asset tokens it is holding before removing its unit leader miniature from the battlefield.",
     "summary": "",
     "type": "concept",
-    "imgs": [],
+    "imgs": [
+      "card_art/Claiming_Objective_Tokens.webp"
+    ],
     "credit": "legion.takras.net",
     "card_source": "",
     "art_credit": "",
@@ -773,8 +772,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Cohesion_1.jpg",
-      "images/Cohesion_2.jpg"
+      "card_art/Cohesion.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -787,8 +785,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Command_Cards_1.jpg",
-      "images/Command_Cards_2.jpg"
+      "card_art/Command_Cards.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -801,8 +798,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Command_Phase_1.jpg",
-      "images/Command_Phase_2.jpg"
+      "card_art/Command_Phase.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -814,7 +810,9 @@
     "definition": "Commanders and Checking For Panic Commanders and Checking For Panic [PANIC TOKEN] When a unit checks to see if it is Panicked, if there are 1 or more [COMMANDER] units with higher [COURAGE] within [RANGE 3] , it uses the highest of those [COURAGE] instead of its own. For example, a unit with 3 Suppression tokens and Courage value 1 would not be Panicked if there is an allied [COMMANDER] within [RANGE 3] that has a Courage value of 2 or greater.",
     "summary": "",
     "type": "concept",
-    "imgs": [],
+    "imgs": [
+      "card_art/Commander_and_Panic_Check.webp"
+    ],
     "credit": "legion.takras.net",
     "card_source": "",
     "art_credit": "",
@@ -852,8 +850,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Compulsory_Move_1.jpg",
-      "images/Compulsory_Move_2.jpg"
+      "card_art/Compulsory_Move.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -865,7 +862,9 @@
     "definition": "A unit is Contesting an Objective token if its unit leader is within [RANGE 1/2] of the Objective token and the unit is not Panicked.",
     "summary": "",
     "type": "concept",
-    "imgs": [],
+    "imgs": [
+      "card_art/Contesting_Objective_Tokens.webp"
+    ],
     "credit": "legion.takras.net",
     "card_source": "",
     "art_credit": "",
@@ -890,8 +889,7 @@
     "summary": "",
     "type": "unit",
     "imgs": [
-      "images/Counterpart_1.jpg",
-      "images/Counterpart_2.jpg"
+      "card_art/Counterpart.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "See: Darth Vader Dark Lord of the Sith",
@@ -929,7 +927,9 @@
     "definition": "During Setup, a unit with the Covert Ops keyword may change its Rank to [OPERATIVE] for all rules purposes for the rest of the game. If it does, it gains the Infiltrate keyword that game. A unit cannot change its Rank to [OPERATIVE] if there are no other [COMMANDER] units in that player’s army.",
     "summary": "",
     "type": "unit",
-    "imgs": [],
+    "imgs": [
+      "card_art/Covert_Ops.webp"
+    ],
     "credit": "legion.takras.net",
     "card_source": "See: Scout Troopers Strike Team",
     "art_credit": "",
@@ -980,8 +980,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Cycle_1.jpg",
-      "images/Cycle_2.jpg"
+      "card_art/Cycle.webp"
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: Imperial Specialists",
@@ -1032,7 +1031,9 @@
     "definition": "Players determine what pieces of terrain to use in their game and their rules. Players should be sure to agree with their opponent on the rules for each terrain piece before the game begins. Once players have determined what terrain is being used and any applicable rules, they then cooperatively set up terrain on the battlefield.",
     "summary": "",
     "type": "concept",
-    "imgs": [],
+    "imgs": [
+      "card_art/Declare_and_Place_Terrain.webp"
+    ],
     "credit": "legion.takras.net",
     "card_source": "",
     "art_credit": "",
@@ -1044,8 +1045,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Declare_Defender_1.jpg",
-      "images/Declare_Defender_2.jpg"
+      "card_art/Declare_Defender.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -1057,7 +1057,9 @@
     "definition": "When all miniatures added by an Upgrade Card is defeated, the unit it was added to can no longer use or benefit from any rules on the Upgrade Card, with the exception of additional upgrade icons granted to the unit. If an Upgrade Card that adds a miniature to a unit is discarded, but the miniatures are not defeated, the miniatures are not removed, but the unit can no longer use or benefit from any rules on the discarded Upgrade Card. Clarification: For example, if Insatiable Curiosity is used against a Dark Trooper Unit: No Dark Trooper miniature will be defeated if an opposing Ewok unit uses the Insatiable Curiosity upgrade card to discard one of its upgrade cards. The Dark Trooper unit will no longer use or benefit from any rules on the discarded card, such as the weapon it may have granted. [Source]",
     "summary": "",
     "type": "concept",
-    "imgs": [],
+    "imgs": [
+      "card_art/Defeating_Upgrade_Card_and_Discarding_Upgrade_Cards.webp"
+    ],
     "credit": "legion.takras.net",
     "card_source": "",
     "art_credit": "",
@@ -1108,8 +1110,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Deploy_1.jpg",
-      "images/Deploy_2.jpg"
+      "card_art/Deploy.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -1135,8 +1136,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Determine_Blue_Player_1.jpg",
-      "images/Determine_Blue_Player_2.jpg"
+      "card_art/Determine_Blue_Player.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -1148,7 +1148,9 @@
     "definition": "Once players have resolved all relevant Command Card effects, compare the number of pips on the Command Cards that were played this Round. The player whose card has the least number of pips has priority for the Round.",
     "summary": "",
     "type": "concept",
-    "imgs": [],
+    "imgs": [
+      "card_art/Determine_Priority.webp"
+    ],
     "credit": "legion.takras.net",
     "card_source": "",
     "art_credit": "",
@@ -1160,8 +1162,7 @@
     "summary": "",
     "type": "weapon",
     "imgs": [
-      "images/Detonate_X_Charge_Type_1.jpg",
-      "images/Detonate_X_Charge_Type_2.jpg"
+      "card_art/Detonate.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -1187,8 +1188,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Difficult_Terrain_1.jpg",
-      "images/Difficult_Terrain_2.jpg"
+      "card_art/Difficult_Terrain.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -1201,8 +1201,7 @@
     "summary": "",
     "type": "unit",
     "imgs": [
-      "images/Direct_NameType_1.jpg",
-      "images/Direct_NameType_2.jpg"
+      "card_art/Direct_Name.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -1267,8 +1266,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Divulge_1.jpg",
-      "images/Divulge_2.jpg"
+      "card_art/Divulge.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "See: Darth Vader Dark Lord of the Sith",
@@ -1306,7 +1304,9 @@
     "definition": "[DODGE TOKEN] Used when defending to cancel incoming hit results. Dodge tokens are green tokens.",
     "summary": "",
     "type": "concept",
-    "imgs": [],
+    "imgs": [
+      "card_art/Dodge_Token.webp"
+    ],
     "credit": "legion.takras.net",
     "card_source": "",
     "art_credit": "",
@@ -1330,7 +1330,9 @@
     "definition": "DualSided Upgrade Cards Some Upgrade Cards are dual-sided. When building an army, only count the points cost on one of the sides of the card. When a unit with a dual-sided Upgrade Card equipped Deploys, the unit’s controlling player decides which side is faceup. Only the rules on the faceup side of the card can be used.",
     "summary": "",
     "type": "concept",
-    "imgs": [],
+    "imgs": [
+      "card_art/Dual-Sided_Upgrade_Cards.webp"
+    ],
     "credit": "legion.takras.net",
     "card_source": "",
     "art_credit": "",
@@ -1367,7 +1369,9 @@
     "definition": "When a player would reveal a card from a deck that no longer contains any cards, shuffle all of that player’s previously discarded cards of that type, including the card just discarded, to form a new deck. Then reveal the top card of that deck.",
     "summary": "",
     "type": "concept",
-    "imgs": [],
+    "imgs": [
+      "card_art/Empty_Decks.webp"
+    ],
     "credit": "legion.takras.net",
     "card_source": "",
     "art_credit": "",
@@ -1379,8 +1383,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/End_Phase_1.jpg",
-      "images/End_Phase_2.jpg"
+      "card_art/End_Phase.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -1393,8 +1396,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Engaged_1.jpg",
-      "images/Engaged_2.jpg"
+      "card_art/Engaged.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -1446,8 +1448,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Establish_the_Battlefield_and_Prepare_Components_1.jpg",
-      "images/Establish_the_Battlefield_and_Prepare_Components_2.jpg"
+      "card_art/Establish_the_Battlefield_and_Prepare_Components.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -1473,8 +1474,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Exhaust_and_Expend_1.jpg",
-      "images/Exhaust_and_Expend_2.jpg"
+      "card_art/Exhaust_and_Expend.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -1500,8 +1500,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Factions_1.jpg",
-      "images/Factions_2.jpg"
+      "card_art/Factions.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -1539,7 +1538,9 @@
     "definition": "When a trooper miniature’s base is overlapping a piece of obstacle terrain, it must be completely overlapping that terrain. Trooper miniatures cannot end a movement or be placed in a way that would cause their base to only partially overlap a piece of obstacle terrain and may not have any part of part of its base hanging off the terrain. Trooper miniatures cannot be Deployed in a way where any part of their base is only partially overlapping a piece of obstacle terrain. Example: Fitting on Terrain When placing miniatures on obstacle terrain, a miniature’s base must completely overlap the terrain. Because the 2 Clone Troopers are hanging off the balcony and only partially overlapping the piece of obstacle terrain, they cannot be placed there and must be placed in such a way that their bases completely overlap the obstacle terrain like the other 2 Clone Troopers.",
     "summary": "",
     "type": "concept",
-    "imgs": [],
+    "imgs": [
+      "card_art/Fitting_on_Terrain.webp"
+    ],
     "credit": "legion.takras.net",
     "card_source": "",
     "art_credit": "",
@@ -1577,8 +1578,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Form_Attack_Pools_1.jpg",
-      "images/Form_Attack_Pools_2.jpg"
+      "card_art/Form_Attack_Pools.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -1591,8 +1591,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Free_Card_Action_1.jpg",
-      "images/Free_Card_Action_2.jpg"
+      "card_art/Free_Card_Action.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -1618,8 +1617,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Game_Effects_1.jpg",
-      "images/Game_Effects_2.jpg"
+      "card_art/Game_Effects.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -1632,8 +1630,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Game_Overview_1.jpg",
-      "images/Game_Overview_2.jpg"
+      "card_art/Game_Overview.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -1659,8 +1656,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Golden_Rule_of_Terrain_1.jpg",
-      "images/Golden_Rule_of_Terrain_2.jpg"
+      "card_art/Golden_Rule_of_Terrain.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -1672,7 +1668,9 @@
     "definition": "(Upgrade and Command Keyword) [GRAFFITI TOKEN] A Graffiti token (Advantage) represents a striking image or symbol painted onto the terrain of the battlefield. Graffiti tokens affect a unit’s morale. Graffiti tokens have 2 sides. Players should place the Graffiti token flat on a surface so that the side that corresponds to their player color is faceup. During a unit's Rally step, it may roll 1 additional die if it has LOS to and is within [RANGE 2] of an allied Graffiti token. If it has LOS and is within [RANGE 2] of an enemy Graffiti token, it must roll 1 fewer die, to a minumum of 1. Graffiti tokens remain in play until the end of the game. Units may Move through and end a movement overlapping Graffiti tokens.",
     "summary": "",
     "type": "concept",
-    "imgs": [],
+    "imgs": [
+      "card_art/Graffiti_Tokens.webp"
+    ],
     "credit": "legion.takras.net",
     "card_source": "",
     "art_credit": "",
@@ -1684,8 +1682,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Ground_Vehicles_1.jpg",
-      "images/Ground_Vehicles_2.jpg"
+      "card_art/Ground_Vehicles.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -1801,7 +1798,9 @@
     "definition": "Im Part of the Squad Too A unit with the I’m Part of the Squad Too keyword is contesting an Objective token if its unit leader is within [RANGE 1] of that Objective token instead of [RANGE 1/2]",
     "summary": "",
     "type": "unit",
-    "imgs": [],
+    "imgs": [
+      "card_art/Im_Part_of_the_Squad_Too.webp"
+    ],
     "credit": "legion.takras.net",
     "card_source": "",
     "art_credit": "",
@@ -1838,7 +1837,9 @@
     "definition": "Terrain Restricting Movement In addition to being scatter, area, or obstacle terrain, a terrain feature is also open, difficult, or impassable. Open terrain represents parts of the battlefield that are relatively easy to traverse and free from obstacles or obstructions. Open fields, lamp posts, planters, tall grass, or sandy desert are all open terrain. Open terrain does not restrict movement. Difficult terrain restricts but does not completely prevent movement. Craters, ruins, woods, piles of rubble, and swamps are all examples of difficult terrain. Difficult terrain reduces the Speed of a unit moving through or into it by 1 to a minimum of 1. Impassable terrain completely prevents movement. Miniatures cannot Move through or end a movement on impassable terrain unless they have a special rule which allows them to do so. Some larger and more complex pieces of terrain are made up of various parts that each restrict movement differently. For example, the walls of a piece of obstacle terrain may be impassable, but a miniature may be able to Move through a door or window that is open terrain. Players should discuss the parts of terrain and agree on how they are to be played before the Game begins.",
     "summary": "",
     "type": "concept",
-    "imgs": [],
+    "imgs": [
+      "card_art/Impassable_Terrain.webp"
+    ],
     "credit": "legion.takras.net",
     "card_source": "",
     "art_credit": "",
@@ -1871,7 +1872,7 @@
     "units": ""
   },
   {
-    "name": "Inconspicuous",
+    "name": "Inconspicious",
     "definition": "While a unit with the Inconspicuous keyword has 1 or more Suppression tokens, attacking enemy units must target another unit, if able. When a unit with the Inconspicuous keyword Rallies, it may choose to not remove any number of Suppression tokens, including 0.",
     "summary": "",
     "type": "unit",
@@ -1934,8 +1935,21 @@
     "units": ""
   },
   {
+    "name": "Interrogate",
+    "definition": "During the Command Phase, if a player reveals a Command Card that belongs to a unit at of one or more enemy units with the Interrogate keyword and there would be a tie for priority, treat that Command Card as having one more pip.",
+    "summary": "",
+    "type": "unit",
+    "imgs": [
+      "images/Interrogate.webp"
+    ],
+    "credit": "AMG Rulebook v2.6",
+    "card_source": "See: Emperor Palpatine",
+    "art_credit": "",
+    "units": ""
+  },
+  {
     "name": "Ion X",
-    "definition": "[ION TOKEN] When a Vehicle or Droid Trooper unit suffers 1 or more Wounds from an attack that has the Ion X keyword in the Attack Pool, after the attack is resolved, it gains X Ion tokens. When a unit starts its Activation with 1 or more Ion tokens, roll 1 white defense die for each Ion token it has. If any Blank results are rolled, that unit makes 1 fewer action during that Activation. At the end of a unit’s Activation, it removes any Ion tokens that it has. If an Attack Pool includes the Ion X keyword, at the start of the Modify Attack Dice step, before resolving other effects the defending unit must flip up to X active Shield tokens, if able, for each [HIT] [CRIT] result in the attack roll.",
+    "definition": "[ION TOKEN] When a Vehicle or Droid Trooper unit suffers 1 or more Wounds from an attack that has the Ion X keyword in the Attack Pool, after the attack is resolved, it gains X Ion tokens. When a unit starts its Activation with 1 or more Ion tokens, roll 1 white defense die for each Ion token it has. If any Blank results are rolled, that unit makes 1 fewer action during that Activation. At the end of a unit’s Activation, it removes any Ion tokens that it has. If an Attack Pool includes the Ion X keyword, at the start of the Modify Attack Dice step, before resolving other effects the defending unit must flip 1 active Shield token, if able, for each [HIT] [CRIT] result in the attack roll, to a maximum of X tokens flipped.",
     "summary": "",
     "type": "weapon",
     "imgs": [
@@ -1951,7 +1965,9 @@
     "definition": "After determining priority, players nominate Commanders and issue orders to their units. If the played Command Card corresponds to one or more specific units, ofe of those units must be nominated as the Commander. Otherwise, players may nominate any 1 [COMMANDER] unit to be their Commander. Once all players have nominated a Commander, they issue orders to their units, starting with the player who has priority. The number of Orders and the units they can be issued to is listed on each Command Card. For a Commander to issue an Order to a unit, the following must be true: The unit cannot have already received an Order during the current Command Phase. The unit must match the type (if any) listed on the Command Card. When a unit is issued an Order, take an Order token that corresponds to the unit’s Rank and place it faceup next to the unit. A Commander must issue all the Orders allowed by the Command Card, if able. If a Commander cannot issue all the Orders allowed by the Command Card, any excess Orders are lost. Once both players have issued orders, they then proceed to create the Order pool. Other Ways to Issue Orders Some rules or abilities allow units to be issued Orders from sources other than the nominated Commander. These units do not have to follow the above criteria when they are issued Orders in this way, instead following the rules of the effect granting that order. A unit cannot be issued more than 1 Order each Round.",
     "summary": "",
     "type": "concept",
-    "imgs": [],
+    "imgs": [
+      "card_art/Nominate_Commanders_and_Issue_Orders.webp"
+    ],
     "credit": "legion.takras.net",
     "card_source": "",
     "art_credit": "",
@@ -2015,8 +2031,7 @@
     "summary": "",
     "type": "unit",
     "imgs": [
-      "images/Keywords_1.jpg",
-      "images/Keywords_2.jpg"
+      "card_art/Keywords.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -2028,7 +2043,9 @@
     "definition": "At the end of a unit with the Latent Power keyword’s activation, NOIGEL it may gain 1 suppression token to roll 1 red defense die. If e 1 it does, on a result, choose an enemy unit at of this miniature. The chosen unit gains 2 suppression tokens and 2 immobilize tokens. On a blank result, remove 1 wound or 1 poison token from a friendly non-droid trooper unit at of this miniature.",
     "summary": "",
     "type": "unit",
-    "imgs": [],
+    "imgs": [
+      "card_art/Latent_Power.webp"
+    ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: Darth Vader Dark Lord of the Sith",
     "art_credit": "",
@@ -2040,8 +2057,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Leader_1.jpg",
-      "images/Leader_2.jpg"
+      "card_art/Leader.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -2053,7 +2069,9 @@
     "definition": "Units may not voluntarily end a movement with any of its miniature’s bases partially or fully outside the battlefield. A miniature may leave the battlefield temporarily if it ends its movement with its base fully inside the battlefield, such as when a unit with a notched base moves along the Movement Tool. If this is not possible, the miniature stops its movement when it contacts the edge of the battlefield, then it loses any remaining actions and may not perform any free actions.",
     "summary": "",
     "type": "concept",
-    "imgs": [],
+    "imgs": [
+      "card_art/Leaving_the_Battlefield.webp"
+    ],
     "credit": "legion.takras.net",
     "card_source": "",
     "art_credit": "",
@@ -2078,8 +2096,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Line_of_Sight_1.jpg",
-      "images/Line_of_Sight_2.jpg"
+      "card_art/Line_of_Sight.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -2131,8 +2148,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Map_Cards_1.jpg",
-      "images/Map_Cards_2.jpg"
+      "card_art/Map_Cards.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -2184,8 +2200,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Measurement_1.jpg",
-      "images/Measurement_2.jpg"
+      "card_art/Measurement.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -2198,8 +2213,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Measuring_Range_1.jpg",
-      "images/Measuring_Range_2.jpg"
+      "card_art/Measuring_Range.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -2212,8 +2226,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Melee_1.jpg",
-      "images/Melee_2.jpg"
+      "card_art/Melee.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -2225,10 +2238,12 @@
     "definition": "[BLOCK] results on defense dice during the Modify Defense Dice step. While a unit with Immune: Melee Pierce is using the Guardian X keyword during a melee attack, the attacking unit cannot use the Pierce X keyword to cancel [BLOCK] results on defense dice rolled by that unit for the Guardian X keyword.",
     "summary": "",
     "type": "weapon",
-    "imgs": [],
+    "imgs": [
+      "card_art/Melee_Pierce.jpg"
+    ],
     "credit": "legion.takras.net",
     "card_source": "",
-    "art_credit": "",
+    "art_credit": "https://screenrant.com/kylo-ren-han-solo-death-guilty-addiction/",
     "units": ""
   },
   {
@@ -2237,8 +2252,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Mercenaries_1.jpg",
-      "images/Mercenaries_2.jpg"
+      "card_art/Mercenaries.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -2264,8 +2278,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Miniatures_1.jpg",
-      "images/Miniatures_2.jpg"
+      "card_art/Miniatures.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -2291,7 +2304,9 @@
     "definition": "The only way a unit can Move or be placed into base contact with an enemy miniature is to Move into Melee. While a unit that has at least one weapon with a [MELEE] is Moving or being placed, it can Move into Melee by Moving or placing that unit’s unit leader into base contact with an enemy miniature. When a unit Moves into Melee, the following steps must be performed: After the unit leader of the unit Moving into Melee is placed, place the other miniatures in that unit into base contact with enemy miniatures in the unit that their unit leader is now in Melee with. If the opponent’s unit leader is not in base contact with an enemy miniature, that miniature’s controlling player places it into base contact with a miniature in the unit that moved into Melee. The opposing player places the other miniatures in their unit that are not currently in base contact with an enemy miniature or are not in Cohesion into base contact with miniatures from the enemy unit that Moved into Melee. If any miniatures cannot be placed into base contact with enemy miniatures during this process, they must still be placed in Cohesion. Miniatures may never Move or be placed in such a way that they would be in base contact with multiple enemy units, though it is possible for a unit to be in Melee with multiple enemy units if another unit joins the Melee later. Example: Moving Into Melee Will decides that he wants to move his Clone Trooper unit into melee with Tony’s Battle Droids. Because they have a melee weapon, the Clone Troopers may move into base contact with the Battle Droids. To do this, Will performs a move with the Clone Troopers’ unit leader that ends with the Clone Troopers’ unit leader in base contact with 1 of the Battle Droids. Then, ensuring that all of the Clone Troopers remain in Cohesion, Will places the rest of the Clone Troopers so that they are also in base contact with the Battle Droids. The unit leader of the Battle Droids is in base contact with an enemy miniature, so ...",
     "summary": "",
     "type": "concept",
-    "imgs": [],
+    "imgs": [
+      "card_art/Moving_Into_Melee.webp"
+    ],
     "credit": "legion.takras.net",
     "card_source": "",
     "art_credit": "",
@@ -2303,8 +2318,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Moving_Through_Miniatures_1.jpg",
-      "images/Moving_Through_Miniatures_2.jpg"
+      "card_art/Moving_Through_Miniatures.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -2317,8 +2331,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Moving_Through_Terrain_1.jpg",
-      "images/Moving_Through_Terrain_2.jpg"
+      "card_art/Moving_Through_Terrain.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -2356,7 +2369,9 @@
     "definition": "(Upgrade and Command Keyword) A miniature with the Noncombatant keyword cannot add any weapons to Attack Pools, and any Wounds suffered must be assigned to non-unit leader miniatures without the Noncombatant keyword, if able. If a miniature with the Noncombatant keyword already has 1 or more Wound tokens, it must be assigned Wounds before miniatures that do not have Wound tokens. If the unit leader miniature in a unit with the Noncombatant keyword is defeated, a Noncombatant miniature cannot be replaced by a new unit leader miniature unless there are no other miniatures without the Noncombatant keyword.",
     "summary": "",
     "type": "concept",
-    "imgs": [],
+    "imgs": [
+      "card_art/Noncombatant.webp"
+    ],
     "credit": "legion.takras.net",
     "card_source": "",
     "art_credit": "",
@@ -2367,7 +2382,9 @@
     "definition": "Units on notched bases follow all the above rules for movement. Additionally, a unit on a notched base must execute the following steps to make a standard move: The player may rotate the unit leader’s base up to 90° to the left or right, keeping the center of the base in the same place. The player takes a Movement Tool less than or equal to the unit’s Speed characteristic and places it flat on the battlefield so that one end is wholly inside the front notch of the unit leader’s base. The player may adjust the Movement Tool at its joint as they wish. The player decides to make either a full move and step 6 or a partial move and step 5. Unlike normal bases, notched bases cannot be placed anywhere along the Movement Tool and instead move along the tool with different requirements based on this decision. To execute a partial move, pick up the unit leader miniature and move it along the Movement Tool, taking care to keep the Movement Tool lined up with the front and rear notches on the base. The player may choose to stop this movement anywhere along the path created by the Movement Tool, moving the Movement Tool out of the way and placing the miniature on the battlefield. The miniature must be placed in such a way so that the line of the front and back notches on its base are parallel to the section of the Movement Tool the miniature reached at the farthest part of its move. To execute a full move, pick up the unit leader miniature and move it along the Movement Tool, taking care to keep the Movement Tool lined up with the front and rear notches on the base. The player places the miniature so that the other end of the Movement Tool is inserted in the back notch of the miniature’s base. When a miniature makes a full or partial Move, if the base of the miniature is impeded by an object while moving, it must stop its movement prematurely unless it can legally Move through, over, or on top of the obstructing object. Move the Movement Tool out of the way and place the mini...",
     "summary": "",
     "type": "concept",
-    "imgs": [],
+    "imgs": [
+      "card_art/Notched_Base_Movement.webp"
+    ],
     "credit": "legion.takras.net",
     "card_source": "",
     "art_credit": "",
@@ -2378,7 +2395,9 @@
     "definition": "Some miniatures in Star Wars: Legion have notched bases. Units on notched bases follow all of the rules detailed in this section. Moving With Notched Bases Miniatures with notched bases have a number of additional movement options available to them: Pivot Some miniatures that have notched bases can Pivot. If a unit can Pivot, it is noted in the rules for its unit type. When a unit that can Pivot makes a Move action, it may choose to Pivot instead of making another movement. To Pivot, rotate the unit leader’s base up to 90° to the left or right, keeping the center of the base in the same place. If a unit contains multiple miniatures, each miniature in the unit must Pivot so that the directional orientation of its base is the same as the unit leader’s. Reverse Moves Some miniatures on notched bases can Reverse. Only certain unit types may make Reverse Moves. When a unit makes a Move action, it may choose to make a Reverse Move instead of making another movement. A Reverse Move is a normal notched base Standard Move, with the following exceptions: When making a partial Reverse Move, instead of placing the Movement Tool wholly in the front notch of the unit leader’s base at the start of a move, place the Movement Tool wholly in the rear notch. When making a full Reverse Move, instead of placing the Movement Tool in the front notch of the unit leader’s base, place it in the rear notch. Then place the front notch of the unit leader’s base on the other end of the Movement Tool. While making a Reverse Move, a unit reduces its Speed by 1 to a minimum of 1. Attacking With Notched Bases Miniatures with notched bases have four different arcs represented by lines sculpted on their bases: front, two sides, and rear. These arcs are referenced by certain rules, such as the Fixed Weak Point keywords.",
     "summary": "",
     "type": "concept",
-    "imgs": [],
+    "imgs": [
+      "card_art/Notched_Bases.webp"
+    ],
     "credit": "legion.takras.net",
     "card_source": "",
     "art_credit": "",
@@ -2390,8 +2409,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Null_Courage_Value_1.jpg",
-      "images/Null_Courage_Value_2.jpg"
+      "card_art/Null_Courage_Value.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -2404,8 +2422,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Permanent_1.jpg",
-      "images/Permanent_2.jpg"
+      "card_art/Permanent.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -2417,7 +2434,9 @@
     "definition": "Objective Cards contain the card title, setup instructions, special rules, and details on how to score Victory Points (VPs) for that Objective. An Objective Card is paired with a Map Card that has the same Card Title. Card Title: The title of this Objective. Setup: Instructions for setting up this Objective. Scoring: Details for scoring Victory Points. Special Rules: Special rules associated with this Objective.",
     "summary": "",
     "type": "concept",
-    "imgs": [],
+    "imgs": [
+      "card_art/Objective_Cards.webp"
+    ],
     "credit": "legion.takras.net",
     "card_source": "",
     "art_credit": "",
@@ -2428,7 +2447,9 @@
     "definition": "Units in Star Wars: Legion use Objective tokens to score victory points. Objective Cards and Secondary Objective Cards specify which Objective tokens are used and how to score victory points with them. Miniatures can move through Objective tokens. Types of Objective Tokens There are two types of Objective tokens: Asset Tokens: Assets are valuable Objects that can be carried around. Point-of-Interest Tokens: Also referred to as POIs. POIs represent critical locations, vantage points, or particularly interesting areas that armies attempt to secure throughout a battle. When determining the number of obscured miniatures and determining Cover during an attack sequence, treat POIs as a piece of area terrain consisting of the volume of their Silhouette that provides heavy Cover. The Silhouette for a POI is a cylinder as wide as the token and [RANGE 1/2] tall. For all other rules purposes, POIs do not block LOS. Miniatures, Advantage tokens, and other Objective tokens cannot overlap or be overlapped by POIs. POIs can be represented by a miniature on a 2-inch base instead of using a token. A POI represented by a miniature still counts as a token and does not count as a miniature for all rules purposes. Clarification: Here are some examples of Points of Interest (POI) with a top-down view of the battlefield. [Source] Clarification: The POI is treated as area terrain and blocks LOS & provides Cover during the Apply Dodge and Cover step. If an attacking unit leader is touching terrain during this step, it will not provide Cover to miniatures to which LOS is only partially blocked. [Source] [POI-3D TOKEN] Download 3D Printable POI tokens Contesting Objective Tokens A unit is Contesting an Objective token if its unit leader is within [RANGE 1/2] of the Objective token and the unit is not Panicked. Claiming Objective Tokens Battle Cards describe which units are eligible to claim Asset tokens in that mission by granting them a Claim free action. An eligible unit can claim an unc...",
     "summary": "",
     "type": "concept",
-    "imgs": [],
+    "imgs": [
+      "card_art/Objective_Tokens.webp"
+    ],
     "credit": "legion.takras.net",
     "card_source": "",
     "art_credit": "",
@@ -2452,7 +2473,9 @@
     "definition": "Obstacle terrain represents large or tall terrain features such as buildings, cliffs, or high walls. When a Trooper miniature wants to Move through or onto an obstacle terrain feature, it may have to make a Climb based on the obstacle terrain’s height.",
     "summary": "",
     "type": "concept",
-    "imgs": [],
+    "imgs": [
+      "card_art/Obstacle_Terrain.webp"
+    ],
     "credit": "legion.takras.net",
     "card_source": "",
     "art_credit": "",
@@ -2477,8 +2500,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Open_Terrain_1.jpg",
-      "images/Open_Terrain_2.jpg"
+      "card_art/Open_Terrain.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -2503,7 +2525,9 @@
     "definition": "Objects can rest on top of each other only in the following ways: Terrain can be placed resting on top of other terrain but cannot be placed resting on top of tokens or miniatures. Tokens that are on the battlefield can be placed resting on top of terrain and other tokens but cannot be placed resting on top of miniatures. Miniatures can be placed resting on top of both tokens and terrain but cannot be placed resting on top of each other.",
     "summary": "",
     "type": "concept",
-    "imgs": [],
+    "imgs": [
+      "card_art/Overlapping_Objects.webp"
+    ],
     "credit": "legion.takras.net",
     "card_source": "",
     "art_credit": "",
@@ -2541,8 +2565,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Pass_Pool_1.jpg",
-      "images/Pass_Pool_2.jpg"
+      "card_art/Pass_Pool.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -2568,8 +2591,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Pivot_1.jpg",
-      "images/Pivot_2.jpg"
+      "card_art/Pivot.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -2582,8 +2604,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Place_Order_Token_1.jpg",
-      "images/Place_Order_Token_2.jpg"
+      "card_art/Place_Order_Token.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -2596,8 +2617,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Placing_Objectives_1.jpg",
-      "images/Placing_Objectives_2.jpg"
+      "card_art/Placing_Objectives.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -2623,8 +2643,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/POI_Point_of_Interest_1.jpg",
-      "images/POI_Point_of_Interest_2.jpg"
+      "card_art/POI_Point_of_Interest.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -2663,8 +2682,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Prepared_Positions_1.jpg",
-      "images/Prepared_Positions_2.jpg"
+      "card_art/Prepared_Positions.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -2703,8 +2721,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Promote_1.jpg",
-      "images/Promote_2.jpg"
+      "card_art/Promote.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -2743,8 +2760,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Rally_Step_1.jpg",
-      "images/Rally_Step_2.jpg"
+      "card_art/Rally_Step.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -2784,8 +2800,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Ranks_and_Rank_Requirements_1.jpg",
-      "images/Ranks_and_Rank_Requirements_2.jpg"
+      "card_art/Ranks_and_Rank_Requirements.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -2824,8 +2839,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Recover_1.jpg",
-      "images/Recover_2.jpg"
+      "card_art/Recover.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -2890,8 +2904,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Repair_X_Capacity_Y_1.jpg",
-      "images/Repair_X_Capacity_Y_2.jpg"
+      "card_art/Repair.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -2916,7 +2929,9 @@
     "definition": "Repulsor Vehicles have notched bases. Repulsor Vehicles can Pivot. Repulsor Vehicles cannot perform the Standby action or gain or spend Standby tokens. Repulsor Vehicles can end a Move with part of their base partially overlapping terrain. Repulsor Vehicles may Move onto or through impassable terrain and may place the Movement Tool overlapping impassable terrain when doing so. A Repulsor Vehicle may not end a Move or be placed in a position where the miniature would be physically unstable or fall over, or cause the angle of the miniature’s base to be greater than 45°. Repulsor Vehicles can be in Melee but cannot be Engaged. Repulsor Vehicles do not block LOS, do not obscure miniatures, and do not provide Cover. When a Repulsor Vehicle is defending against a Ranged attack, during the Apply Dodge and Cover step, it cannot be obscured and cannot have Cover as a result of being obscured.",
     "summary": "",
     "type": "concept",
-    "imgs": [],
+    "imgs": [
+      "card_art/Repulsor_Vehicles.webp"
+    ],
     "credit": "legion.takras.net",
     "card_source": "",
     "art_credit": "",
@@ -2928,8 +2943,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Resiliency_1.jpg",
-      "images/Resiliency_2.jpg"
+      "card_art/Resiliency.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -2941,7 +2955,9 @@
     "definition": "Starting with the blue player, players resolve any abilities and effects that occur during Setup. See: Bounty See: Cache See: Covert Ops See: Complete the Mission See: Field Commander See: Hunted See: Scouting Party X See: Transport",
     "summary": "",
     "type": "concept",
-    "imgs": [],
+    "imgs": [
+      "card_art/Resolve_Setup_Effects.webp"
+    ],
     "credit": "legion.takras.net",
     "card_source": "",
     "art_credit": "",
@@ -2953,8 +2969,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Restore_1.jpg",
-      "images/Restore_2.jpg"
+      "card_art/Restore.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -2980,8 +2995,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Reverse_Moves_1.jpg",
-      "images/Reverse_Moves_2.jpg"
+      "card_art/Reverse_Moves.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -2993,7 +3007,9 @@
     "definition": "The attacking player chooses an Attack Pool and resolves the following steps in order: Upgrade or Downgrade Attack Dice : Resolve any effects that downgrade 1 or more defense dice in the Attack Pool, starting with the attacker. Then, resolve any effects that upgrade 1 or more Attack dice in the Attack Pool, starting with the attacker. Roll Dice: The attacking player rolls the dice in the Attack Pool. Reroll Dice: The attacking player can resolve any abilities or spend any Aim tokens that allow the attacking unit to reroll attack dice. A unit may spend any number of Aim tokens while it is attacking to reroll up to 2 different attack dice for each Aim token spent. If a unit has multiple Aim tokens, that unit can choose to spend each Aim token after determining the results of any previous rerolls granted by Aim tokens. A unit may reroll the same die multiple times by spending multiple Aim tokens, but each die may only be rerolled once per Aim token. Convert Attack Surges: The attacking player changes any [SURGE: HIT] results to the result indicated on the Unit Card. Additonally, the attacking player may spend any number of Surge tokens on the attacking unit to convert 1 [SURGE: HIT] result to [HIT] a result for every Surge token spent. If no result is indicated, turn the die to a Blank result. Example: Roll Attack Dice Simone has an attacking unit of Snowtroopers with an Attack Pool that consists of 5 white dice. She rolls the dice and gets 1 [CRIT] [HIT] [SURGE: HIT] , and 2 blank results. Having rolled the dice, Simone then resolves any abilities that let her reroll dice. The Snowtroopers do not have any reroll abilities, but they do have an Aim token. Simone chooses to use the Aim token to reroll up to 2 dice of her choice. Both dice must be rerolled at the same time; she cannot reroll 1 and then reroll it again with the same Aim token. Simone chooses to reroll both blank dice, getting 1 [SURGE: HIT] and 1 blank result, bringing the final dice results to 1 [CRIT]...",
     "summary": "",
     "type": "concept",
-    "imgs": [],
+    "imgs": [
+      "card_art/Roll_Attack_Dice.webp"
+    ],
     "credit": "legion.takras.net",
     "card_source": "",
     "art_credit": "",
@@ -3030,7 +3046,9 @@
     "definition": "After a unit performs an attack against a trooper unit on small bases using an attack pool that includes a weapon with the Scatter keyword, it may place any non-unit leader miniatures in the defending unit, following all the rules of cohesion, as if the defending unit leader had just performed a standard move.",
     "summary": "",
     "type": "weapon",
-    "imgs": [],
+    "imgs": [
+      "card_art/Scatter.webp"
+    ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: T-47 Airspeeder",
     "art_credit": "",
@@ -3041,7 +3059,9 @@
     "definition": "After a unit performs an attack against a trooper unit on small bases using an attack pool that includes a weapon with the Scatter keyword, it may place any non-unit leader miniatures in the defending unit, following all the rules of cohesion, as if the defending unit leader had just performed a standard move.",
     "summary": "",
     "type": "concept",
-    "imgs": [],
+    "imgs": [
+      "card_art/Scatter_Terrain.webp"
+    ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "",
     "art_credit": "",
@@ -3078,7 +3098,9 @@
     "definition": "Secondary Objective Cards contain additional rules for scoring Victory Points. Card Title: The title of this Secondary Objective. Setup: Instructions for setting up Secondary Objective. Scoring: Details for scoring Victory Points. Scoring Table: Some Secondary objectives have a scoring table. Scoring tables have a column for blue player and a column for red player. When a space in a player’s column is marked, that player scores the VPs shown there. Special Rules: Special rules associated with this Secondary Objective.",
     "summary": "",
     "type": "concept",
-    "imgs": [],
+    "imgs": [
+      "card_art/Secondary_Objective_Cards.webp"
+    ],
     "credit": "legion.takras.net",
     "card_source": "",
     "art_credit": "",
@@ -3090,8 +3112,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Secret_Information_1.jpg",
-      "images/Secret_Information_2.jpg"
+      "card_art/Secret_Information.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -3155,7 +3176,9 @@
     "definition": "The process of getting ready to play a game of Star Wars : Legion is called Setup. Setup consists of the following steps Build an Army, a Command Hand, and a Battle Deck Establish the Battlefield and Gather Components Declare Terrain Place Terrain Determine Blue Player Build a Mission Resolve Setup Effects Deploy in Prepared Positions Build an Army, a Command Hand, and a Battle Deck See: Army Building Establish the Battlefield and Gather Components See: Battlefield Declare and Place Terrain Players determine what pieces of terrain to use in their game and their rules. Players should be sure to agree with their opponent on the rules for each terrain piece before the game begins. Once players have determined what terrain is being used and any applicable rules, they then cooperatively set up terrain on the battlefield. Determine Blue Player Star Wars : Legion, a player is either the red player or the blue player. Each player rolls 4 black attack dice to determine who will start building a mission as the blue player. The blue player is the player with the most [CRIT] results. If there is a tie, the player with the most [HIT] results is the blue player. If there is still a tie, the player with the most attack [SURGE: HIT] results is the blue player. If there is still a tie at this point, the players reroll the dice and follow the above rules until the tie is broken. Building a Mission Now that the blue player is determined, it is time to build the mission. Place the game dashboard with the mission side face up near the table. Then each player separates their Battle Deck by type—Advantage, Objective, and Secondary Objective— and shuffles each of their three decks, placing them near the Mission Dashboard. Place a token on the Mission Dashboard to indicate which player is the blue player. The blue player then chooses to reveal the top card of either their Objective Deck or Secondary Objective Deck, placing the revealed card in the designated space on the Mission Dashboar...",
     "summary": "",
     "type": "concept",
-    "imgs": [],
+    "imgs": [
+      "card_art/Setup.webp"
+    ],
     "credit": "legion.takras.net",
     "card_source": "",
     "art_credit": "",
@@ -3220,8 +3243,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Silhouettes_1.jpg",
-      "images/Silhouettes_2.jpg"
+      "card_art/Silhouettes.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -3234,8 +3256,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Small_1.jpg",
-      "images/Small_2.jpg"
+      "card_art/Small.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -3248,8 +3269,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Smoke_Tokens_1.jpg",
-      "images/Smoke_Tokens_2.jpg"
+      "card_art/Smoke_Tokens.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -3262,8 +3282,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Smoke_X_1.jpg",
-      "images/Smoke_X_2.jpg"
+      "card_art/Smoke.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "See: Imperial Shoretroopers",
@@ -3328,8 +3347,7 @@
     "summary": "",
     "type": "weapon",
     "imgs": [
-      "images/Spray_1.jpg",
-      "images/Spray_2.jpg"
+      "card_art/Spray.webp"
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "See: AT-RT",
@@ -3394,8 +3412,7 @@
     "summary": "",
     "type": "unit",
     "imgs": [
-      "images/Strafe_Move_1.jpg",
-      "images/Strafe_Move_2.jpg"
+      "card_art/Strafe_Move.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -3421,8 +3438,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Suffering_Wounds_1.jpg",
-      "images/Suffering_Wounds_2.jpg"
+      "card_art/Suffering_Wounds.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -3434,7 +3450,9 @@
     "definition": "[SUPPRESSION TOKEN] Trooper units have a Courage value [COURAGE] on their Unit Card. When a unit has a number of Suppression tokens equal to or greater than its [COURAGE] , it is Suppressed. If a unit has a number of Suppression tokens that is equal to or greater than double its [COURAGE] value, it is Panicked. A Suppressed unit performs 1 less action each Activation, while a Panicked unit suffers additional effects.",
     "summary": "",
     "type": "concept",
-    "imgs": [],
+    "imgs": [
+      "card_art/Suppression.webp"
+    ],
     "credit": "legion.takras.net",
     "card_source": "",
     "art_credit": "",
@@ -3458,7 +3476,9 @@
     "definition": "[SURGE TOKEN] Used when attacking or defending to convert surges to hits or blocks. Surge tokens are green tokens.",
     "summary": "",
     "type": "concept",
-    "imgs": [],
+    "imgs": [
+      "card_art/Surge_Token.webp"
+    ],
     "credit": "legion.takras.net",
     "card_source": "",
     "art_credit": "",
@@ -3535,8 +3555,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Terrain_1.jpg",
-      "images/Terrain_2.jpg"
+      "card_art/Terrain.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -3549,8 +3568,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Terrain_Height_1.jpg",
-      "images/Terrain_Height_2.jpg"
+      "card_art/Terrain_Height.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -3562,7 +3580,9 @@
     "definition": "The main purpose of terrain is to block Line of Sight (LOS) between miniatures and provide them with Cover. Terrain provides either light, heavy, or no Cover. What kind of Cover, if any, a piece of terrain provides is ultimately for players to decide. Before the game begins, players should agree on what kind of Cover each piece of terrain on the battlefield provides.",
     "summary": "",
     "type": "concept",
-    "imgs": [],
+    "imgs": [
+      "card_art/Terrain_Providing_Cover.webp"
+    ],
     "credit": "legion.takras.net",
     "card_source": "",
     "art_credit": "",
@@ -3574,8 +3594,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Terrain_Restricting_Movement_1.jpg",
-      "images/Terrain_Restricting_Movement_2.jpg"
+      "card_art/Terrain_Restricting_Movement.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -3588,8 +3607,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Timing_1.jpg",
-      "images/Timing_2.jpg"
+      "card_art/Timing.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -3602,8 +3620,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Tokens_1.jpg",
-      "images/Tokens_2.jpg"
+      "card_art/Tokens.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -3615,7 +3632,9 @@
     "definition": "After a Vehicle suffers 1 or more Wounds from an attack that has Tow Cable in the Attack Pool, the attacking player makes a Pivot with that Vehicle, then it gains 1 Immobilize token.",
     "summary": "",
     "type": "weapon",
-    "imgs": [],
+    "imgs": [
+      "card_art/Tow_Cable.webp"
+    ],
     "credit": "legion.takras.net",
     "card_source": "See: T-47 Airspeeder",
     "art_credit": "",
@@ -3649,7 +3668,7 @@
   },
   {
     "name": "Trooper",
-    "definition": "Trooper is the most common unit type in Star Wars : Legion. Trooper units may have the following subtypes, each with their own additional rules: Clone Trooper Creature Trooper Droid Trooper Emplacement Trooper Heavy Trooper Heavy Droid Trooper Wookie Trooper Rules that affect a Trooper unit affect all its subtypes. Subtypes must follow all the rules of normal Troopers unless otherwise stated. Clone Trooper While attacking or defending, a Clone Trooper unit may spend 1 Aim, Dodge, or Surge token belonging to another allied Clone Trooper unit within [RANGE 2] and in LOS as if the attacking or defending unit had that token. Creature Trooper Creature troopers have notched bases. Creature troopers can make Reverse Moves. Creature troopers can Pivot, even while they are engaged. Creature troopers do not receive Cover from barricades. Creature troopers can attack and Withdraw during the same Activation. Droid Trooper Droid Troopers do not make 1 less action due to being Suppressed at the start of the Make Actions step. Droid Troopers cannot gain or resolve Poison tokens. Emplacement Trooper Emplacement Troopers have notched bases. Emplacement Troopers can make Reverse Moves. Emplacement Troopers can Pivot, even while they are engaged. Wookiee Trooper Wookiee troopers have no additional special rules, other than being referenced by their unit type for certain rules and abilities.",
+    "definition": "Trooper is the most common unit type in Star Wars : Legion. Trooper units may have the following subtypes, each with their own additional rules: Clone Trooper Creature Trooper Droid Trooper Emplacement Trooper Heavy Trooper Heavy Droid Trooper Wookie Trooper Rules that affect a Trooper unit affect all its subtypes. Subtypes must follow all the rules of normal Troopers unless otherwise stated. Clone Trooper While attacking or defending, a Clone Trooper unit may spend 1 Aim, Dodge, or Surge token belonging to another allied Clone Trooper unit within [RANGE 2] and in LOS as if the attacking or defending unit had that token. Heavy Trooper Heavy Troopers may have notched bases. Heavy Troopers can make Reverse Moves. Heavy Troopers can Pivot, even when they are Engaged. Heavy Troopers do not receive Cover from barricades. Heavy Troopers can attack and Withdraw during the same activation. Creature Trooper Creature troopers have notched bases. Creature troopers can make Reverse Moves. Creature troopers can Pivot, even while they are engaged. Creature troopers do not receive Cover from barricades. Creature troopers can attack and Withdraw during the same Activation. Droid Trooper Droid Troopers do not make 1 less action due to being Suppressed at the start of the Make Actions step. Droid Troopers cannot gain or resolve Poison tokens. Heavy Droid Trooper Heavy Droid Troopers are both Heavy Troopers and Droid Troopers. Emplacement Trooper Emplacement Troopers have notched bases. Emplacement Troopers can make Reverse Moves. Emplacement Troopers can Pivot, even while they are engaged. Wookiee Trooper Wookiee troopers have no additional special rules, other than being referenced by their unit type for certain rules and abilities.",
     "summary": "",
     "type": "concept",
     "imgs": [
@@ -3692,7 +3711,9 @@
     "definition": "If a unit is not on the battlefield because it has not yet Deployed this game, it is undeployed. An undeployed unit is within any distance and in LOS of each allied undeployed unit and is not within any distance and not in LOS of each enemy unit and each unit on the battlefield.",
     "summary": "",
     "type": "concept",
-    "imgs": [],
+    "imgs": [
+      "card_art/Undeployed_Units.webp"
+    ],
     "credit": "legion.takras.net",
     "card_source": "",
     "art_credit": "",
@@ -3717,8 +3738,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Unique_and_Limited_1.jpg",
-      "images/Unique_and_Limited_2.jpg"
+      "card_art/Unique_and_Limited.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -3731,8 +3751,7 @@
     "summary": "",
     "type": "unit",
     "imgs": [
-      "images/Unit_Cards_1.jpg",
-      "images/Unit_Cards_2.jpg"
+      "card_art/Unit_Cards.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -3745,8 +3764,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Unit_Types_1.jpg",
-      "images/Unit_Types_2.jpg"
+      "card_art/Unit_Types.webp"
     ],
     "credit": "AMG Rulebook v2.6",
     "card_source": "",
@@ -3785,7 +3803,9 @@
     "definition": "Upgrade Cards contain additional rules that can be equipped by units during Army Building. Upgrades vary between additional miniatures, weapons, equipment, or even special training or programming. The types of upgrades available for a the unit’s upgrade bar. The types of upgrades are as follows: [BLACK/UPGRADE-HEAVY.PNG] Heavy Weapon [BLACK/UPGRADE-PERSONNEL.PNG] Personnel [BLACK/UPGRADE-FORCE.PNG] Force [BLACK/UPGRADE-COMMAND.PNG] Command [BLACK/UPGRADE-HARDPOINT.PNG] Hardpoint [BLACK/UPGRADE-GEAR.PNG] Gear [BLACK/UPGRADE-GRENADE.PNG] Grenades [BLACK/UPGRADE-PROGRAMMING.PNG] Programming [BLACK/UPGRADE-COMMS.PNG] Comms [BLACK/UPGRADE-PILOT.PNG] Pilot [BLACK/UPGRADE-TRAINING.PNG] Training [BLACK/UPGRADE-GENERATOR.PNG] Generator [BLACK/UPGRADE-ARMAMENT.PNG] Armament [BLACK/UPGRADE-CREW.PNG] Crew [BLACK/UPGRADE-ORDNANCE.PNG] Ordnance [BLACK/UPGRADE-SQUAD-LEADER.PNG] Squad Leader [BLACK/UPGRADE-DOCTRINES.PNG] Doctrine [BLACK/UPGRADE-TOD-COMMENDATION.PNG] Tours of Duty: Commendation * [BLACK/UPGRADE-TOD-SETBACK.PNG] Tours of Duty: Setback * [BLACK/UPGRADE-TOD-DEFINING-TRAIT.PNG] Tours of Duty: Defining Trait * * The Tours of Duty icons are NOT official and NOT upgrade cards, they are made by Legion Helper for use with effects that can be tracked by the function of upgrade-adjacent cards. — Takras For each icon on the unit’s upgrade bar, the unit may equip 1 Upgrade Card with a matching icon. Points listed on the Upgrade Card are counted towards an army’s points total. A unit may not equip the same Upgrade Card twice. Some Upgrade Cards have restrictions on which units may equip them. Any restrictions for an Upgrade Card are listed on the card. Cards with the [BLACK/UPGRADE-SQUAD-LEADER.PNG] [BLACK/UPGRADE-HEAVY.PNG] , or [BLACK/UPGRADE-PERSONNEL.PNG] icons add 1 or more miniatures armed with the weapon shown on the Upgrade Card to the unit in addition to any weapons on the Unit Card. Only the miniatures added to the unit by the Upgrade Card may use the weapon on the U...",
     "summary": "",
     "type": "concept",
-    "imgs": [],
+    "imgs": [
+      "card_art/Upgrade_Cards.webp"
+    ],
     "credit": "legion.takras.net",
     "card_source": "",
     "art_credit": "",
@@ -3810,8 +3830,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Vehicles_1.jpg",
-      "images/Vehicles_2.jpg"
+      "card_art/Vehicles.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -3863,8 +3882,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Weapons_1.jpg",
-      "images/Weapons_2.jpg"
+      "card_art/Weapons.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -3886,7 +3904,7 @@
   },
   {
     "name": "Wheel Mode",
-    "definition": "At the start of its Activation, a unit with the Wheel Mode keyword may change its Speed to 3 until the end of that Activation. If it does, until the end of the Round, it loses the Unconcerned keywod, gains the AI: Move and Cover 2 keywords, and cannot flip its active Shield tokens. To indicate that a unit of Droidekas is using the Wheel Mode keyword, a player may replace their standing Droideka miniatures with ball-form Droideka miniatures, or simply mark the unit with a Wheel Mode token until the end of the Round. Players should use the ball-form Droideka miniatures only when the unit uses the Wheel Mode keyword and only for the duration of that Round. At the end of the Round, any ball- form Droideka miniatures should be replaced with standing Droideka miniatures. Clarification: It it not permissible to use a wheel mode miniature of a Droideka when not in wheel mode. [Source] Wheel Mode token [WHEEL MODE TOKEN] Used to track the effects of the keyword.",
+    "definition": "At the start of its Activation, a unit with the Wheel Mode keyword may change its Speed to 3 until the end of that Activation. If it does, until the end of the Round, it loses the Unconcerned keywod, gains the AI: Move and Cover 2 keywords, and cannot attack or flip its active Shield tokens. To indicate that a unit of Droidekas is using the Wheel Mode keyword, a player may replace their standing Droideka miniatures with ball-form Droideka miniatures, or simply mark the unit with a Wheel Mode token until the end of the Round. Players should use the ball-form Droideka miniatures only when the unit uses the Wheel Mode keyword and only for the duration of that Round. At the end of the Round, any ball- form Droideka miniatures should be replaced with standing Droideka miniatures. Clarification: It it not permissible to use a wheel mode miniature of a Droideka when not in wheel mode. [Source] Wheel Mode token [WHEEL MODE TOKEN] Used to track the effects of the keyword.",
     "summary": "",
     "type": "concept",
     "imgs": [
@@ -3903,8 +3921,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Winning_the_Game_1.jpg",
-      "images/Winning_the_Game_2.jpg"
+      "card_art/Winning_the_Game.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -3917,8 +3934,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Withdraw_1.jpg",
-      "images/Withdraw_2.jpg"
+      "card_art/Withdraw.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
@@ -3930,7 +3946,9 @@
     "definition": "Within Completely Within and Not Within Some abilities require two objects to be within, completely within, or not within a certain distance from each other. An object is within a Range of another object if any portion of it is inside that Range as measured by the Range Tool. For a unit to be within a specified Range, only 1 miniature in the unit must be within the given Range. An object is always within any Range of itself. An object is completely within a Range of another object if it is entirely inside that Range as measured by the Range Tool. For a unit to be completely within a Range, all miniatures in the unit must be completely within the given Range. A unit that is completely within a certain Range is also within that Range An object is not within a Range of another object if it is entirely outside that Range as measured by the Range Tool. For a unit to be not within a Range, all miniatures in the unit must be not within the given Range. Undeployed Units If a unit is not on the battlefield because it has not yet Deployed this game, it is undeployed. An undeployed unit is within any distance and in LOS of each allied undeployed unit and is not within any distance and not in LOS of each enemy unit and each unit on the battlefield. Example: Within, Completely Within, and Not Within The Clone Trooper unit is within [RANGE 1] of Obi-Wan Kenobi because it has at least 1 miniature whose base is at least partially inside the first segment of the Range Tool. The AT-RT is completely within [RANGE 1] of Obi-Wan Kenobi because its base is entirely inside the first segment of the Range Tool. The B1 Battle Droids are not within [RANGE 1] of Obi-Wan Kenobi because all of their miniatures' bases are entirely outside the first segment of the Range Tool.",
     "summary": "",
     "type": "concept",
-    "imgs": [],
+    "imgs": [
+      "card_art/Within_Completely_Within_and_Not_Within.webp"
+    ],
     "credit": "legion.takras.net",
     "card_source": "",
     "art_credit": "",
@@ -3955,8 +3973,7 @@
     "summary": "",
     "type": "concept",
     "imgs": [
-      "images/Wound_Tokens_1.jpg",
-      "images/Wound_Tokens_2.jpg"
+      "card_art/Wound_Tokens.webp"
     ],
     "credit": "legion.takras.net",
     "card_source": "",
