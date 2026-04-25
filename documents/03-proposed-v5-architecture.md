@@ -1,8 +1,8 @@
-# SW Legion Flashcards — v5 Architecture Proposal
+# SW Legion Flashcards — v5 Architecture
 
-*Status: Draft for review · Owner: msleeman*
+*Status: **Implemented** · Completed: 2026-04-25 · Owner: msleeman*
 
-This is a refactor, not a rewrite. The web app behavior stays the same. What changes is how the source is organized, how the build works, and how overrides are layered.
+This was a refactor, not a rewrite. The web app behavior stayed the same. See `01-current-architecture.md` for the live state. This document is preserved as a record of the design decisions made during the migration.
 
 ---
 
@@ -253,11 +253,11 @@ This is a **2-line change** in v5 architecture, not a redesign.
 
 ---
 
-## 8. Migration plan (v4 → v5)
+## 8. Migration log (v4 → v5) ✅ Complete
 
-A weekend's work, in this order. Each step keeps the app working.
+All steps completed as of 2026-04-25.
 
-### Step 1 · Reorganize files (no code changes)
+### Step 1 · Reorganize files ✅
 - Create `dist/`, move `swlegion_flashcards.html` → `dist/index.html`
 - Create `cache/`, move `cards_cache.json` → `cache/card_data.json`, move `images/` → `cache/images/`
 - Add `cache/` to `.gitignore`
@@ -267,7 +267,7 @@ A weekend's work, in this order. Each step keeps the app working.
 - Run build, verify it still works
 - **Commit.**
 
-### Step 2 · Extract front-end from Python
+### Step 2 · Extract front-end from Python ✅
 - Create `template/index.html` containing the HTML_TEMPLATE string (without the Python triple-quote)
 - Replace `/*CARD_JSON*/` etc. with `{{CARD_JSON}}` style placeholders (cosmetic; or keep as-is)
 - Extract embedded `<style>` block to `template/style.css`
@@ -276,27 +276,27 @@ A weekend's work, in this order. Each step keeps the app working.
 - `build_html()` becomes: read 3 files, stamp placeholders, write 1 file
 - **Commit.**
 
-### Step 3 · Split the build script
+### Step 3 · Split the build script ✅
 - Create `src/` package, move chunks of `build_swlegion_v4.py` into focused modules
 - `src/build.py` becomes the orchestrator (~100 lines)
 - Tests still pass (this is mostly file moves with import fixes)
 - Delete `build_swlegion_v4.py` (or leave a one-line shim)
 - **Commit.**
 
-### Step 4 · Switch to git-based versioning
+### Step 4 · Switch to git-based versioning ✅
 - Implement `src/version.py`
 - Tag the current state: `git tag v5.0.0`
 - Delete `version.txt` and `build_number.txt`
 - Build prints version from `git describe`
 - **Commit + push tag.**
 
-### Step 5 · Consolidate manual mappings
+### Step 5 · Consolidate manual mappings ✅
 - Move `KEYWORD_CARDS`, `UNIT_IMAGE_MAP`, the `_manual` aliases dict, the spelling fixes — all into `data/keyword_aliases.json` and `data/unit_keyword_mappings.json`
 - Code reads them at startup
 - A single keyword rename now requires **one JSON edit**, not 4 source edits
 - **Commit.**
 
-### Step 6 · Update the `swlegion-build` skill
+### Step 6 · Update the `swlegion-build` skill ✅
 - Reflect new paths and entry points
 - Keep the "never edit dist/ directly" warning
 - Add "edit `template/*` for front-end changes"
