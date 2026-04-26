@@ -50,7 +50,7 @@
   <div id="fs-topbar">
     <button class="fs-pill active" id="pill-learn" onclick="setMode('learn')">Learn</button>
     <button class="fs-pill" id="pill-quiz" onclick="setMode('quiz')">Quiz</button>
-    <button class="fs-pill" id="pill-stats" onclick="setMode('stats')" style="display:none" disabled>Stats</button>
+    <button class="fs-pill" id="pill-stats" onclick="setMode('stats')">Stats</button>
     <div id="fs-type-filter">
       <button class="fs-pill active" id="pill-all"     onclick="setTypeFilter('all')">All</button>
       <button class="fs-pill"        id="pill-unit"    onclick="setTypeFilter('unit')">Unit</button>
@@ -181,10 +181,10 @@
     </div>
     <!-- CREATE -->
     <div class="list-panel" id="list-create-panel">
-      <h2 class="list-section-title">Import Army List from LegionHQ2</h2>
+      <h2 class="list-section-title">Import Army List</h2>
       <div class="list-input-row">
         <input type="text" id="list-url-input" class="list-url-input"
-               placeholder="Paste LegionHQ2 URL: https://legionhq2.com/list/empire/1000:..."
+               placeholder="Paste LegionHQ2 or Tabletop Admiral URL..."
                autocomplete="off" spellcheck="false">
         <button class="dark-pill" onclick="parseListUrl()">Parse</button>
       </div>
@@ -229,6 +229,9 @@
       <button class="lm-tab" id="lm-tab-edit" onclick="setLmTab('edit')">Edit</button>
     </div>
     <div id="lm-tab-kw-panel">
+      <div style="padding:12px 16px 0;display:flex;justify-content:flex-end">
+        <button class="dark-pill" onclick="printListKeywords(_lmListId)" title="Print keywords as PDF">&#128438; Print PDF</button>
+      </div>
       <div class="list-kw-tags" id="lm-kw-tags" style="padding:16px"></div>
     </div>
     <div id="lm-tab-edit-panel" style="display:none">
@@ -298,6 +301,9 @@
     </div>
   </div>
 </div>
+
+<!-- PRINT TARGET (hidden normally, shown during window.print()) -->
+<div id="print-keywords"></div>
 
 <script>/*APP_JS*/</script>
 </body>

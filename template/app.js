@@ -973,6 +973,9 @@ function modAddToList(listId){
 // ─── UNIT DATABASE (from LegionHQ2) ──────────────────────────────────────────
 /*UNIT_DB_JSON*/
 
+// ─── TABLETOP ADMIRAL UNIT LOOKUP (hex id → name) ────────────────────────────
+/*TTA_DB_JS*/
+
 const UNIT_STATS={
   "at":{"sp":2,"w":20,"cg":null,"dd":"r","ds":false,"as":"c"},
   "au":{"sp":2,"w":5, "cg":3,   "dd":"w","ds":false,"as":null},
@@ -1188,6 +1191,49 @@ function decodeArmy(url){
   return {faction,points,units,keywords:[...allKeywords].sort()};
 }
 
+// ─── TABLETOP ADMIRAL URL PARSER ─────────────────────────────────────────────
+// URL format: https://tabletopadmiral.com/listbuilder/{Faction}/{hash}
+// hash: {version_prefix}-{_hexId_upg1,upg2,..._hexId_upg1,...}-{suffix}
+function parseTtaUrl(url){
+  try{
+    const m=url.match(/tabletopadmiral\.com\/listbuilder\/([^/]+)\/([^/?#]+)/);
+    if(!m) return null;
+    const factionRaw=m[1];
+    const hash=m[2];
+    // Strip version prefix like "N-"
+    const rest=hash.replace(/^[A-Za-z]+-?/,'');
+    // Extract all _hexid_ unit codes
+    const hexIds=[...rest.matchAll(/_([0-9a-f]+)_/gi)].map(x=>x[1].toLowerCase());
+    // Count occurrences per unit
+    const counts={};
+    hexIds.forEach(id=>counts[id]=(counts[id]||0)+1);
+    const units=[];
+    const allKeywords=new Set();
+    for(const [hexId,count] of Object.entries(counts)){
+      const tta=TTA_UNITS[hexId];
+      if(!tta) continue;
+      // Find matching unit in UNIT_DB by name
+      let dbUnit=null;
+      for(const u of Object.values(UNIT_DB)){
+        if(u.n===tta.n){dbUnit=u;break;}
+      }
+      const displayUnit=dbUnit||{n:tta.n,t:'',k:[],i:''};
+      units.push({count,unit:displayUnit,hexId});
+      if(dbUnit){
+        (dbUnit.k||[]).forEach(kw=>{
+          allKeywords.add(kw.replace(/\s+\d+(\s+.*)?$/,'').trim());
+        });
+      }
+    }
+    // Faction name mapping
+    const fLow=factionRaw.toLowerCase().replace(/\s/g,'');
+    const fMap={'empire':'empire','rebel':'rebels','galacticrepublic':'republic',
+                'separatistalliance':'separatist','mercenary':'mercenary'};
+    const faction=fMap[fLow]||fLow;
+    return{faction,points:0,units,keywords:[...allKeywords].sort(),source:'tta'};
+  }catch(e){return null;}
+}
+
 // ─── LIST PERSISTENCE ─────────────────────────────────────────────────────────
 function loadLists(){
   try{ return JSON.parse(localStorage.getItem('swlegion_lists')||'[]'); }
@@ -1206,13 +1252,17 @@ let _parsedArmy=null;
 
 function parseListUrl(){
   const url=document.getElementById('list-url-input').value.trim();
-  if(!url){ showListStatus('Please enter a LegionHQ2 URL','err'); return; }
-  if(!url.includes('legionhq2.com')){
-    showListStatus('URL must be from legionhq2.com','err'); return;
+  if(!url){ showListStatus('Please enter a LegionHQ2 or Tabletop Admiral URL','err'); return; }
+  if(url.includes('legionhq2.com')){
+    _parsedArmy=decodeArmy(url);
+  } else if(url.includes('tabletopadmiral.com')){
+    _parsedArmy=parseTtaUrl(url);
+  } else {
+    showListStatus('Supports LegionHQ2 (legionhq2.com) and Tabletop Admiral (tabletopadmiral.com)','err');
+    return;
   }
-  _parsedArmy=decodeArmy(url);
   if(!_parsedArmy){
-    showListStatus('Could not parse URL. Make sure it includes the list hash.','err'); return;
+    showListStatus('Could not parse URL — check that it includes the list hash.','err'); return;
   }
   renderParseResult(_parsedArmy, url);
 }
@@ -1225,7 +1275,7 @@ function renderParseResult(army, url){
   const fb=document.getElementById('list-parse-faction-badge');
   fb.textContent=army.faction.toUpperCase();
   fb.className='faction-badge faction-'+army.faction.toLowerCase();
-  document.getElementById('list-parse-points').textContent=army.points+' pts';
+  document.getElementById('list-parse-points').textContent=army.points?army.points+' pts':(army.source==='tta'?'Tabletop Admiral':'');
   document.getElementById('list-parse-unit-count').textContent=army.units.length+' unit types';
 
   // Units
@@ -1246,7 +1296,8 @@ function renderParseResult(army, url){
   tagsEl.innerHTML=army.keywords.map(kw=>`<span class="kw-tag">${escHtml(kw)}</span>`).join('');
 
   // Pre-fill list name
-  const defaultName=army.faction.charAt(0).toUpperCase()+army.faction.slice(1)+' '+army.points+'pts';
+  const fCap=army.faction.charAt(0).toUpperCase()+army.faction.slice(1);
+  const defaultName=army.points?fCap+' '+army.points+'pts':fCap+' List';
   document.getElementById('list-name-input').value=defaultName;
   document.getElementById('list-save-status').textContent='';
 }
@@ -1413,6 +1464,46 @@ function lmDeleteList(){
 }
 
 function escHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// ─── PRINT LIST KEYWORDS ─────────────────────────────────────────────────────
+function printListKeywords(listId){
+  const list=getListById(listId);
+  if(!list||!list.keywords||!list.keywords.length){
+    alert('No keywords in this list to print.'); return;
+  }
+  const sorted=[...list.keywords].sort((a,b)=>a.localeCompare(b));
+
+  // Build a name-normalised lookup of cards
+  function normKw(name){
+    return name.replace(/\[\]/g,'').replace(/\s+X$/,'').replace(/:\s*.+$/,'').trim().toLowerCase();
+  }
+  const cardByNorm={};
+  CARDS.forEach(c=>{ cardByNorm[normKw(c.name)]=c; });
+
+  const rows=sorted.map(kw=>{
+    const card=cardByNorm[kw.toLowerCase()]||cardByNorm[normKw(kw)];
+    const def=card?(card.summary||card.definition||''):'';
+    const type=card?((card.type||'').charAt(0).toUpperCase()+(card.type||'').slice(1)):'';
+    const short=def.length>350?def.slice(0,350).replace(/\s\S+$/,'')+'…':def;
+    return `<tr>
+      <td class="pk-kw"><strong>${escHtml(dispName(kw))}</strong>${type?`<br><span class="pk-type">${escHtml(type)}</span>`:''}
+      </td><td class="pk-def">${escHtml(short)}</td></tr>`;
+  }).join('');
+
+  const faction=(list.faction||'').toUpperCase();
+  const pts=list.points?` · ${list.points} pts`:'';
+  const src=list.source==='tta'?' · Tabletop Admiral':'';
+
+  const pane=document.getElementById('print-keywords');
+  pane.innerHTML=`
+    <div class="pk-header">
+      <h1>${escHtml(list.name)}</h1>
+      <p class="pk-meta">${faction}${pts}${src} · ${sorted.length} keywords · Alphabetical</p>
+    </div>
+    <table class="pk-table"><tbody>${rows}</tbody></table>
+    <p class="pk-footer">SW Legion Keywords App — ${new Date().toLocaleDateString()}</p>`;
+  window.print();
+}
 
 // ─── SUPABASE AUTH & CLOUD SYNC ───────────────────────────────────────────────
 const SUPA_URL = 'https://ddpretixfmrvkhyllcbm.supabase.co';

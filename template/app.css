@@ -288,3 +288,21 @@ html,body{width:100%;height:100%;overflow:hidden;
 .acct-item:hover{background:rgba(245,197,24,.1);color:var(--gold)}
 .acct-item.danger{color:#f08080}
 .acct-item.danger:hover{background:rgba(192,57,43,.2);color:#f08080}
+
+/* ── PRINT KEYWORDS ───────────────────────────────────────────────────────── */
+#print-keywords{display:none}
+@media print{
+  body>*:not(#print-keywords){display:none!important}
+  #print-keywords{display:block;font-family:Arial,sans-serif;font-size:11pt;color:#000;margin:0}
+  .pk-header{margin-bottom:12pt;border-bottom:2px solid #333;padding-bottom:8pt}
+  .pk-header h1{font-size:16pt;margin:0 0 4pt}
+  .pk-meta{font-size:9pt;color:#555;margin:0}
+  .pk-table{width:100%;border-collapse:collapse;page-break-inside:auto}
+  .pk-table tr{page-break-inside:avoid;page-break-after:auto}
+  .pk-table td{padding:5pt 7pt;vertical-align:top;border-bottom:1px solid #ddd}
+  .pk-kw{width:28%;font-weight:bold;font-size:10pt}
+  .pk-type{font-size:8pt;color:#777;font-weight:normal;display:block;margin-top:2pt}
+  .pk-def{font-size:9pt;color:#333;line-height:1.4}
+  .pk-footer{margin-top:12pt;font-size:8pt;color:#999;text-align:right}
+  @page{margin:15mm}
+}
