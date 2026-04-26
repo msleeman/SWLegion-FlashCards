@@ -169,7 +169,7 @@ function renderListFilterBadges(){
 let deck=[],cur=0,mode='learn',revealed=false,answered=false,sc=0,sw=0,_quizChoices=[];
 let _stDeck=[],_stCur=0,_stSc=0,_stSw=0,_stQ=null,_stAnswered=false;
 function activeDeck(){ return filteredCards().filter(c=>!s(c.name).learned); }
-function shuffle(a){ for(let i=a.length-1;i>0;i--){const j=0|Math.random()*(i+1);[a[i],a[j]]=[a[j],a[i]];} }
+function shuffle(a){ for(let i=a.length-1;i>0;i--){const j=0|Math.random()*(i+1);[a[i],a[j]]=[a[j],a[i]];} return a; }
 function initDeck(){ deck=[...activeDeck()]; shuffle(deck); cur=0; }
 
 function render(){
@@ -385,9 +385,13 @@ function initStatsDeck(){
 
 function makeStatQuestion(code){
   const st=UNIT_STATS[code];
+  // All questions must produce exactly 4 options.
+  // Movement: only 1/2/3 exist in-game; "4" is always a wrong distractor.
+  // Attack Surge: "Block" is a defense-surge result — good distractor to test knowledge.
+  // Defense Die removed: only 2 real values (Red/White), can't make a fair 4-choice question.
   const qs=[
     {key:'sp', label:'Movement?', ans:String(st.sp),
-      opts:()=>{const s=new Set([1,2,3]);s.add(st.sp);return [...s].map(String);}},
+      opts:()=>shuffle(['1','2','3','4'])},
     {key:'w',  label:'Total Wounds?', ans:String(st.w),
       opts:()=>{
         const pool=[...new Set(Object.values(UNIT_STATS).map(u=>u.w))];
@@ -400,8 +404,6 @@ function makeStatQuestion(code){
     {key:'as', label:'Attack Surge?',
       ans:st.as==='h'?'Hit':st.as==='c'?'Critical':'None',
       opts:()=>shuffle(['Hit','Critical','None','Block'])},
-    {key:'dd', label:'Defense Die?', ans:st.dd==='r'?'Red':'White',
-      opts:()=>shuffle(['Red','White'])},
   ];
   const q=qs[Math.floor(Math.random()*qs.length)];
   const opts=q.opts();
@@ -1606,6 +1608,9 @@ async function loadCloudState(){
     ]);
     console.log('[AUTH] loadCloudState completed in', Date.now()-t0, 'ms',
       data ? 'got data' : 'no data', error || '');
+    // Always clear stale cache first — even if there's no cloud row yet, a new
+    // user must never inherit lists or card states from whoever logged in before them
+    localStorage.removeItem('swlegion_lists');
     if(data){
       if(data.card_states && Object.keys(data.card_states).length){
         let merged = data.card_states;
@@ -1757,6 +1762,9 @@ async function authSignOut(){
 
 function guestMode(){
   _isGuest = true; _currentUser = null;
+  // Guests never see another user's data — wipe any cached state from a previous login
+  localStorage.removeItem('swlegion_lists');
+  localStorage.removeItem('swlegion_v1');
   hideAuthScreen();
   startApp();
 }
