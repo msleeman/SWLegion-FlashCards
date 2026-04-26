@@ -1,7 +1,7 @@
 const CARDS = /*CARD_JSON*/;
 const ST = {};
 function dispName(n){ return n.replace(/\[\]/g,'').trim(); }
-CARDS.forEach(c => { ST[c.name]={idx:0,learned:false,flagged:false,busy:false,notes:'',customDef:'',customSummary:'',pinned:false}; });
+CARDS.forEach(c => { ST[c.name]={idx:0,learned:false,flagged:false,busy:false,notes:'',pinned:false}; });
 
 function loadState(){
   try{
@@ -11,11 +11,11 @@ function loadState(){
 }
 function saveState(){
   const out={};
-  Object.keys(ST).forEach(n=>{ const{idx,learned,flagged,notes,customDef,pinned}=ST[n]; out[n]={idx,learned,flagged,notes:notes||'',customDef:customDef||'',pinned:!!pinned}; });
+  Object.keys(ST).forEach(n=>{ const{idx,learned,flagged,notes,pinned}=ST[n]; out[n]={idx,learned,flagged,notes:notes||'',pinned:!!pinned}; });
   localStorage.setItem('swlegion_v1',JSON.stringify(out));
   scheduleSync();
 }
-function s(n){ return ST[n]||{idx:0,learned:false,flagged:false,busy:false,notes:'',customDef:'',pinned:false}; }
+function s(n){ return ST[n]||{idx:0,learned:false,flagged:false,busy:false,notes:'',pinned:false}; }
 function ci(c){ const st=s(c.name); return (c.imgs&&c.imgs[st.idx])||(c.imgs&&c.imgs[0])||''; }
 function ic(c){ return (c.imgs&&c.imgs.length)||0; }
 
@@ -239,7 +239,7 @@ function autoSummary(def){
 async function badSummary(){
   const c=deck[cur]; if(!c) return;
   const st=s(c.name);
-  const def=(st.customDef||c.definition||'').trim();
+  const def=(c.definition||'').trim();
   if(!def){ setStatus('No definition to summarise','err',2000); return; }
   setStatus('Generating AI summary\u2026','work');
   try {
@@ -259,14 +259,14 @@ async function badSummary(){
     setStatus('AI unavailable — '+e.message,'err',3000);
   }
 }
-function cardSource(c){ const st=s(c.name); return st.customDef ? 'Admin' : (c.credit||'legion.takras.net'); }
+function cardSource(c){ return c._ownerDef ? 'Admin' : (c.credit||'legion.takras.net'); }
 function showBack(c){
   document.getElementById('fs-front-content').style.display='none';
   document.getElementById('fs-back-content').style.display='block';
   document.getElementById('fs-back-name').innerHTML=dispName(c.name)+' '+typeBadgeHTML(c.type);
   const st=s(c.name);
-  const def=st.customDef||c.definition||'';
-  // Notes / Summary
+  const def=c.definition||'';
+  // Notes / Summary — owner's notes are the shared summary visible to all
   const notesEl=document.getElementById('fs-notes');
   if(notesEl){
     notesEl.value=(st.notes!==undefined&&st.notes!=='')?st.notes:(c.summary||autoSummary(def));
@@ -645,7 +645,7 @@ function renderCatalog(){
   g.innerHTML=list.map(c=>{
     const st=s(c.name), src=ci(c);
     const sn=c.name.replace(/'/g,"\\'");
-    const def=st.customDef||c.definition||'';
+    const def=c.definition||'';
     const preview=def.length>90?def.slice(0,90).replace(/\s\S*$/,'')+'\u2026':def;
     const dn=dispName(c.name);
     const th=src
@@ -681,24 +681,24 @@ function renderMod(){
     :`<div class="modal-photo-ph">No image</div>`;
   document.getElementById('mod-name').textContent=dispName(c.name);
   document.getElementById('mod-type').innerHTML=typeBadgeHTML(c.type);
-  const defText=st.customDef||c.definition;
+  const defText=c.definition;
   const modSum=document.getElementById('mod-summary');
   if(modSum){
-    let summary=st.customSummary||c.summary||'';
+    let summary=c.summary||'';
     if(!summary){
       const firstSent=(defText||'').split(/(?<=\.)\s/)[0]||'';
       summary=firstSent.length>20&&(defText||'').length>firstSent.length+30?firstSent:'';
     }
     modSum.textContent=summary;
     modSum.style.display=summary?'':'none';
-    modSum.style.borderColor=st.customSummary?'rgba(245,197,24,.3)':'';
+    modSum.style.borderColor=c._ownerSum?'rgba(245,197,24,.3)':'';
   }
   const sumTA=document.getElementById('mod-summary-edit');
   const sumActs=document.getElementById('mod-summary-edit-acts');
   if(sumTA) sumTA.style.display='none';
   if(sumActs) sumActs.style.display='none';
   document.getElementById('mod-def').textContent=defText;
-  document.getElementById('mod-def').style.borderColor=st.customDef?'rgba(245,197,24,.3)':'';
+  document.getElementById('mod-def').style.borderColor=c._ownerDef?'rgba(245,197,24,.3)':'';
   const modSrc=document.getElementById('mod-src');
   if(modSrc) modSrc.textContent='Source: '+cardSource(c);
   const modArtCredit=document.getElementById('mod-art-credit');
@@ -733,6 +733,14 @@ function modTogglePin(){
   const st=s(mcard.name); st.pinned=!st.pinned;
   saveState(); renderMod(); renderCatalog();
 }
+function _ownerUpsert(cardName, fields){
+  // Write shared content to owner_content table. Only works when signed in as owner.
+  if(!_supa || _currentUser?.email !== 'martinjsleeman@gmail.com') return;
+  _supa.from('owner_content').upsert(
+    {card_name:cardName, ...fields, updated_at:new Date().toISOString()},
+    {onConflict:'card_name'}
+  ).then(({error})=>{ if(error) console.warn('[OWNER] upsert failed:',error.message); });
+}
 function modToggleEditDef(){
   const editTA=document.getElementById('mod-def-edit');
   const editActs=document.getElementById('mod-def-edit-acts');
@@ -744,7 +752,7 @@ function modToggleEditDef(){
     if(editActs) editActs.style.display='none';
     defEl.style.display='block';
   } else {
-    editTA.value=s(mcard.name).customDef||mcard.definition;
+    editTA.value=mcard.definition;
     editTA.style.display='block';
     if(editActs) editActs.style.display='flex';
     defEl.style.display='none';
@@ -753,10 +761,15 @@ function modToggleEditDef(){
 }
 function modSaveDef(){
   const val=document.getElementById('mod-def-edit').value.trim();
-  s(mcard.name).customDef=val||'';
-  saveState();
-  document.getElementById('mod-def').textContent=val||mcard.definition;
-  document.getElementById('mod-def').style.borderColor=val?'rgba(245,197,24,.3)':'';
+  // Update CARDS in memory so all views see the new text immediately
+  if(!mcard._builtinDef) mcard._builtinDef=mcard.definition;
+  mcard.definition=val||mcard._builtinDef;
+  mcard._ownerDef=!!val;
+  // Persist to shared owner_content table
+  _ownerUpsert(mcard.name, {custom_def: val||null});
+  // UI
+  document.getElementById('mod-def').textContent=mcard.definition;
+  document.getElementById('mod-def').style.borderColor=mcard._ownerDef?'rgba(245,197,24,.3)':'';
   document.getElementById('mod-def-edit').style.display='none';
   document.getElementById('mod-def-edit-acts').style.display='none';
   document.getElementById('mod-def').style.display='block';
@@ -764,8 +777,9 @@ function modSaveDef(){
   if(modSrc) modSrc.textContent='Source: '+cardSource(mcard);
 }
 function modResetDef(){
-  s(mcard.name).customDef='';
-  saveState();
+  mcard.definition=mcard._builtinDef||mcard.definition;
+  mcard._ownerDef=false;
+  _ownerUpsert(mcard.name, {custom_def: null});
   document.getElementById('mod-def-edit').value=mcard.definition;
   document.getElementById('mod-def').textContent=mcard.definition;
   document.getElementById('mod-def').style.borderColor='';
@@ -775,14 +789,13 @@ function modResetDef(){
 function modToggleEditSummary(){
   const sumTA=document.getElementById('mod-summary-edit');
   const sumActs=document.getElementById('mod-summary-edit-acts');
-  const sumEl=document.getElementById('mod-summary');
   if(!sumTA) return;
   const isOpen=sumTA.style.display!=='none';
   if(isOpen){
     sumTA.style.display='none';
     if(sumActs) sumActs.style.display='none';
   } else {
-    sumTA.value=s(mcard.name).customSummary||mcard.summary||'';
+    sumTA.value=mcard.summary||'';
     sumTA.style.display='block';
     if(sumActs) sumActs.style.display='flex';
     sumTA.focus();
@@ -790,17 +803,20 @@ function modToggleEditSummary(){
 }
 function modSaveSummary(){
   const val=document.getElementById('mod-summary-edit').value.trim();
-  s(mcard.name).customSummary=val;
-  saveState();
+  if(!mcard._builtinSummary) mcard._builtinSummary=mcard.summary;
+  mcard.summary=val;
+  mcard._ownerSum=!!val;
+  _ownerUpsert(mcard.name, {custom_summary: val||null});
   const modSum=document.getElementById('mod-summary');
-  if(modSum){ modSum.textContent=val||mcard.summary||''; modSum.style.display=(val||mcard.summary)?'':'none'; modSum.style.borderColor=val?'rgba(245,197,24,.3)':''; }
+  if(modSum){ modSum.textContent=val||''; modSum.style.display=val?'':'none'; modSum.style.borderColor=val?'rgba(245,197,24,.3)':''; }
   document.getElementById('mod-summary-edit').style.display='none';
   document.getElementById('mod-summary-edit-acts').style.display='none';
 }
 function modResetSummary(){
-  s(mcard.name).customSummary='';
-  saveState();
-  document.getElementById('mod-summary-edit').value=mcard.summary||'';
+  mcard.summary=mcard._builtinSummary||'';
+  mcard._ownerSum=false;
+  _ownerUpsert(mcard.name, {custom_summary: null});
+  document.getElementById('mod-summary-edit').value='';
   const modSum=document.getElementById('mod-summary');
   if(modSum){ modSum.textContent=mcard.summary||''; modSum.style.display=mcard.summary?'':'none'; modSum.style.borderColor=''; }
 }
@@ -856,7 +872,7 @@ async function submitFeedback(cardName, text){
 async function modRegenSummary(){
   if(!mcard) return;
   const c=mcard, st=s(c.name);
-  const def=(st.customDef||c.definition||'').trim();
+  const def=(c.definition||'').trim();
   const el=document.getElementById('mod-st');
   if(!def){ if(el){ el.textContent='No definition to summarise'; el.className='modal-status err'; } return; }
   if(el){ el.textContent='Generating AI summary\u2026'; el.className='modal-status work'; }
@@ -869,7 +885,9 @@ async function modRegenSummary(){
     if(!resp.ok) throw new Error('HTTP '+resp.status);
     const{summary,error}=await resp.json();
     if(error) throw new Error(error);
-    st.customSummary=summary; saveState();
+    if(!mcard._builtinSummary) mcard._builtinSummary=mcard.summary;
+    mcard.summary=summary; mcard._ownerSum=true;
+    _ownerUpsert(mcard.name, {custom_summary: summary});
     const modSum=document.getElementById('mod-summary');
     if(modSum){ modSum.textContent=summary; modSum.style.display=''; modSum.style.borderColor='rgba(245,197,24,.3)'; }
     if(el){ el.textContent='AI summary updated'; el.className='modal-status ok'; }
@@ -1539,6 +1557,7 @@ async function initAuth(){
       _currentUser = session.user; _isGuest = false;
       console.log('[AUTH] SIGNED_IN — loading cloud state...');
       await loadCloudState();
+      await loadSharedContent();
       hideAuthScreen();
       startApp();
     } else if(event==='SIGNED_OUT'){
@@ -1561,6 +1580,7 @@ async function initAuth(){
     if(data?.session){
       _currentUser = data.session.user; _isGuest = false;
       await loadCloudState();
+      await loadSharedContent();
       hideAuthScreen();
       startApp();
     }
@@ -1595,6 +1615,33 @@ function startApp(){
   const aiBtn=document.getElementById('fs-ai-summary-btn');
   if(aiBtn) aiBtn.style.display=(_currentUser?.email==='martinjsleeman@gmail.com')?'':'none';
   setMode('learn');
+}
+
+async function loadSharedContent(){
+  // Fetch owner's curated definitions and summaries — shared with ALL users including guests.
+  if(!_supa) return;
+  try{
+    const {data} = await Promise.race([
+      _supa.from('owner_content').select('card_name,custom_def,custom_summary'),
+      _timeout(5000,'loadSharedContent')
+    ]);
+    if(data && data.length){
+      const map={};
+      data.forEach(r=>{ map[r.card_name]=r; });
+      CARDS.forEach(c=>{
+        const oc=map[c.name]; if(!oc) return;
+        if(oc.custom_def){
+          if(!c._builtinDef) c._builtinDef=c.definition;
+          c.definition=oc.custom_def; c._ownerDef=true;
+        }
+        if(oc.custom_summary){
+          if(!c._builtinSummary) c._builtinSummary=c.summary;
+          c.summary=oc.custom_summary; c._ownerSum=true;
+        }
+      });
+      console.log('[CONTENT] Shared content loaded:',data.length,'card overrides');
+    }
+  }catch(e){ console.warn('[CONTENT] loadSharedContent failed:',e.message); }
 }
 
 async function loadCloudState(){
@@ -1633,7 +1680,7 @@ async function syncToCloud(){
   if(!_supa || !_currentUser || _isGuest) return;
   try{
     const out={};
-    Object.keys(ST).forEach(n=>{ const{idx,learned,flagged,notes,customDef,pinned}=ST[n]; out[n]={idx,learned,flagged,notes:notes||'',customDef:customDef||'',pinned:!!pinned}; });
+    Object.keys(ST).forEach(n=>{ const{idx,learned,flagged,notes,pinned}=ST[n]; out[n]={idx,learned,flagged,notes:notes||'',pinned:!!pinned}; });
     console.log('[AUTH] syncToCloud starting...');
     const t0 = Date.now();
     const { error } = await Promise.race([
@@ -1760,11 +1807,12 @@ async function authSignOut(){
   showAuthScreen();
 }
 
-function guestMode(){
+async function guestMode(){
   _isGuest = true; _currentUser = null;
   // Guests never see another user's data — wipe any cached state from a previous login
   localStorage.removeItem('swlegion_lists');
   localStorage.removeItem('swlegion_v1');
+  await loadSharedContent();  // guests still see owner's curated content
   hideAuthScreen();
   startApp();
 }
