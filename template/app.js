@@ -190,6 +190,7 @@ function render(){
   document.getElementById('fs-prev').disabled=cur===0;
   document.getElementById('fs-next').disabled=cur===deck.length-1;
   const img=document.getElementById('fs-img');
+  img.onload=null;
   const src=ci(c);
   if(src){ img.src=src; img.style.display='block'; }
   else   { img.style.display='none'; }
@@ -412,6 +413,7 @@ function makeStatQuestion(code){
 }
 
 function positionStatsOverlay(){
+  if(mode!=='stats') return;
   const img=document.getElementById('fs-img');
   const cover=document.getElementById('fs-stats-cover');
   if(!img||!cover||img.style.display==='none') return;
