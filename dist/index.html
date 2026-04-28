@@ -345,7 +345,7 @@ html,body{width:100%;height:100%;overflow:hidden;
       </div>
     </div>
     <p class="auth-footer">Guest progress is saved locally on this device only.</p>
-    <p class="auth-footer">v5.0.0-11-ga445f1d</p>
+    <p class="auth-footer">v5.0.0-13-gda1b869</p>
   </div>
 </div>
 
@@ -393,7 +393,7 @@ html,body{width:100%;height:100%;overflow:hidden;
         <div class="acct-item" id="acct-signin-item" onclick="showAuthFromApp()" style="display:none">Sign in / Switch account</div>
         <div class="acct-item danger" id="acct-signout-item" onclick="authSignOut()" style="display:none">Sign out</div>
         <div class="acct-item" id="acct-guest-label" style="display:none;cursor:default;color:rgba(255,255,255,.3)">Progress saved locally</div>
-        <div style="font-size:10px;color:rgba(255,255,255,.18);padding:4px 14px 8px;text-align:center;letter-spacing:.3px">v5.0.0-11-ga445f1d</div>
+        <div style="font-size:10px;color:rgba(255,255,255,.18);padding:4px 14px 8px;text-align:center;letter-spacing:.3px">v5.0.0-13-gda1b869</div>
       </div>
     </div>
   </div>
@@ -2523,6 +2523,7 @@ const SUPA_URL = 'https://ddpretixfmrvkhyllcbm.supabase.co';
 const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRkcHJldGl4Zm1ydmtoeWxsY2JtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0NDA5NTUsImV4cCI6MjA5MTAxNjk1NX0.VFSG5ybkTu2pUW4Yjw9GN8r4Vl1CQt59w4tXlJ-hwoU';
 let _supa = null, _currentUser = null, _syncTimer = null, _isGuest = false;
 let _authReady = false; // tracks whether initAuth completed
+let _appStarted = false; // guard: prevents startApp() from running twice
 
 function _timeout(ms, label){
   return new Promise((_,rej)=>setTimeout(()=>rej(new Error(label+' timed out after '+ms+'ms')),ms));
@@ -2543,34 +2544,46 @@ async function initAuth(){
   initSupabase();
   if(!_supa){ console.warn('[AUTH] No client, going guest'); guestMode(); return; }
 
-  // Register auth state listener
-  _supa.auth.onAuthStateChange(async (event, session)=>{
+  // Single auth handler — covers both page-reload (INITIAL_SESSION) and
+  // explicit sign-in (SIGNED_IN).  Supabase v2 fires INITIAL_SESSION on load,
+  // NOT SIGNED_IN, so we must handle both to stay logged in across refreshes.
+  async function _handleSession(event, session){
     console.log('[AUTH] onAuthStateChange:', event, session?.user?.email||'no user');
-    if(event==='SIGNED_IN' && session){
+    if((event==='SIGNED_IN' || event==='INITIAL_SESSION') && session){
+      if(_appStarted && _currentUser?.id === session.user.id){
+        // Already running as this user (e.g. TOKEN_REFRESHED fired first); nothing to do.
+        _currentUser = session.user; return;
+      }
       _currentUser = session.user; _isGuest = false;
-      console.log('[AUTH] SIGNED_IN — loading cloud state...');
+      console.log('[AUTH]', event, '— loading state...');
       await loadCloudState();
       await loadSharedContent();
       hideAuthScreen();
       startApp();
+    } else if(event==='TOKEN_REFRESHED' && session){
+      _currentUser = session.user; // keep user data fresh
     } else if(event==='SIGNED_OUT'){
       _currentUser = null;
       console.log('[AUTH] SIGNED_OUT');
     }
-  });
+  }
 
-  // Check for existing session (with timeout so it never blocks forever)
+  _supa.auth.onAuthStateChange(_handleSession);
+
+  // getSession() as belt-and-suspenders: catches cases where onAuthStateChange
+  // fires after a long delay (e.g. slow token refresh on first load).
   try{
     console.log('[AUTH] Calling getSession...');
     const t0 = Date.now();
     const { data, error } = await Promise.race([
       _supa.auth.getSession(),
-      _timeout(5000, 'getSession')
+      _timeout(8000, 'getSession')
     ]);
     console.log('[AUTH] getSession completed in', Date.now()-t0, 'ms',
       data?.session ? 'HAS SESSION ('+data.session.user.email+')' : 'no session',
       error || '');
-    if(data?.session){
+    // Only act if the listener hasn't already started the app
+    if(data?.session && !_appStarted){
       _currentUser = data.session.user; _isGuest = false;
       await loadCloudState();
       await loadSharedContent();
@@ -2578,12 +2591,12 @@ async function initAuth(){
       startApp();
     }
   }catch(e){
-    console.warn('[AUTH] getSession failed:', e.message);
+    console.warn('[AUTH] getSession failed/timed out:', e.message);
   }
   _authReady = true;
   console.log('[AUTH] initAuth complete, _authReady=true');
-  // Always ensure auth screen is visible if no user
-  if(!_currentUser) showAuthScreen();
+  // If neither path started the app, show sign-in screen
+  if(!_appStarted) showAuthScreen();
 }
 
 function savePrefs(){
@@ -2597,6 +2610,8 @@ function loadPrefs(){
   }catch(e){}
 }
 function startApp(){
+  if(_appStarted){ console.log('[AUTH] startApp: already started, skipping'); return; }
+  _appStarted = true;
   console.log('[AUTH] startApp, user:', _currentUser?.email||'guest');
   loadState();
   loadPrefs();
