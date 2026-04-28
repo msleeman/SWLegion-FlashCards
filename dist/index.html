@@ -162,10 +162,11 @@ html,body{width:100%;height:100%;overflow:hidden;
 .modal-box{background:#0d1020;border:1px solid rgba(245,197,24,.2);border-radius:var(--rb);
   max-width:640px;width:100%;overflow:hidden;max-height:90vh;display:flex;flex-direction:column;
   box-shadow:0 0 40px rgba(245,197,24,.1)}
-.modal-photo{width:100%;height:260px;object-fit:contain;display:block;background:#0a1020;opacity:.85;flex-shrink:0}
+#mod-img{flex-shrink:0}
+.modal-photo{width:100%;height:260px;object-fit:contain;display:block;background:#0a1020;opacity:.85}
 .modal-photo-ph{width:100%;height:260px;background:linear-gradient(135deg,#0a1020,#1a1a30);
   display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.2);
-  font-size:13px;text-align:center;padding:1rem;line-height:1.6;flex-shrink:0}
+  font-size:13px;text-align:center;padding:1rem;line-height:1.6}
 .modal-body{padding:1.5rem;overflow-y:auto;flex:1;min-height:0}
 .modal-body::-webkit-scrollbar{width:4px}
 .modal-body::-webkit-scrollbar-track{background:transparent}
@@ -344,7 +345,7 @@ html,body{width:100%;height:100%;overflow:hidden;
       </div>
     </div>
     <p class="auth-footer">Guest progress is saved locally on this device only.</p>
-    <p class="auth-footer">v5.0.0-9-g66c873d-dirty</p>
+    <p class="auth-footer">v5.0.0-11-ga445f1d</p>
   </div>
 </div>
 
@@ -392,6 +393,7 @@ html,body{width:100%;height:100%;overflow:hidden;
         <div class="acct-item" id="acct-signin-item" onclick="showAuthFromApp()" style="display:none">Sign in / Switch account</div>
         <div class="acct-item danger" id="acct-signout-item" onclick="authSignOut()" style="display:none">Sign out</div>
         <div class="acct-item" id="acct-guest-label" style="display:none;cursor:default;color:rgba(255,255,255,.3)">Progress saved locally</div>
+        <div style="font-size:10px;color:rgba(255,255,255,.18);padding:4px 14px 8px;text-align:center;letter-spacing:.3px">v5.0.0-11-ga445f1d</div>
       </div>
     </div>
   </div>
