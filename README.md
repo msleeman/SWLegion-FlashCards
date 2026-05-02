@@ -67,7 +67,7 @@ SWLegion-FlashCards/
 ├── build_swlegion_v4.py          # Legacy shim → delegates to src.build
 ├── rebuild_html_only.py          # Fast HTML-only rebuild (reads cache)
 ├── refresh_definitions.py        # Re-scrape definitions selectively
-└── documents/SWQ_Rulebook_2.6.0-1.pdf  # Official rulebook (optional)
+└── documents/DOC51_SWQ_Rulebook_05-01_Update.pdf  # Official rulebook (optional, see src/config.RULEBOOK_PDFS)
 ```
 
 ---

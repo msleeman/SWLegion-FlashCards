@@ -12,7 +12,7 @@ import json, os, re, sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 
-from src.config import DIST_IMGDIR, CACHE_DIR, DIST_DIR
+from src.config import DIST_IMGDIR, CACHE_DIR, DIST_DIR, RULEBOOK_CREDIT, RULEBOOK_PDFS
 from src.data_tables import KEYWORD_CARD_IMAGES
 from src.overrides import (
     find_card_art, find_card_art_credit,
@@ -77,6 +77,7 @@ if pdf_path:
                             break
                 if match and match.get("definition"):
                     c["definition"] = match["definition"]
+                    c["credit"] = RULEBOOK_CREDIT
                     overlaid += 1
             print(f"  {overlaid}/{len(card_data)} definitions replaced with PDF versions")
         else:
@@ -85,7 +86,7 @@ if pdf_path:
         print(f"  PDF overlay failed: {e} — keeping cached definitions")
 else:
     print("PDF not found — keeping cached definitions")
-    print("  (place SWQ_Rulebook_2.6.0-1.pdf in the project root or documents/ folder)")
+    print(f"  (place {RULEBOOK_PDFS[0]!r} in the project root or documents/ folder)")
 
 # ── 4. Apply manual overrides (always last — they win over everything) ────────
 manual_count = apply_manual_overlays(card_data)

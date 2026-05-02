@@ -7,7 +7,7 @@ Read in this order:
 3. **[03-proposed-v5-architecture.md](03-proposed-v5-architecture.md)** — the redesign plan. A refactor, not a rewrite.
 
 Reference material:
-- `SWQ_Rulebook_2.6.0-1.pdf` — the official rulebook the build extracts definitions from.
+- `DOC51_SWQ_Rulebook_05-01_Update.pdf` — the official rulebook the build extracts definitions from. The build picks the newest entry it finds from the `RULEBOOK_PDFS` list in [`src/config.py`](../src/config.py); to ship a new rulebook drop the PDF here and prepend its filename to that list.
 - `Transcript-4-18-26-Summary.md` — historical work log.
 
 ---

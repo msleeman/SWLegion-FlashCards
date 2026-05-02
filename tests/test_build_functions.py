@@ -117,7 +117,8 @@ class TestFindPdf:
         """The PDF rulebook must be present in the repo (documents/ or root)."""
         path = bld.find_pdf()
         assert path is not None, (
-            "PDF not found — SWQ_Rulebook_2.6.0-1.pdf must be in documents/ or project root"
+            "PDF not found — a rulebook listed in src/config.RULEBOOK_PDFS "
+            "must be in documents/ or project root"
         )
 
     def test_pdf_exists_on_disk(self, bld):
