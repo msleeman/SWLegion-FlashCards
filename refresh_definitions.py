@@ -16,13 +16,15 @@ import requests
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 
-import build_swlegion_v4 as bld
+from src.data_tables import KEYWORD_PAGES
+from src.overrides import has_manual_override, find_manual_summary, apply_manual_overlays
+from src.scrape import scrape_keyword_page
 
 CACHE_PATH = os.path.join(HERE, "cards_cache.json")
 
 # Build slug lookup: normalized name -> slug
 SLUG_BY_NORM = {}
-for slug, name in bld.KEYWORD_PAGES:
+for slug, name in KEYWORD_PAGES:
     bare = name.replace("[]", "").strip()
     norm = re.sub(r'[^a-z0-9]', '', bare.lower())
     SLUG_BY_NORM[norm] = slug
@@ -78,7 +80,7 @@ def main():
     # Filter out manual overrides (unless --force-manual)
     if not args.force_manual:
         before = len(targets)
-        targets = [c for c in targets if not bld.has_manual_override(c["name"])]
+        targets = [c for c in targets if not has_manual_override(c["name"])]
         skipped = before - len(targets)
         if skipped:
             print(f"  Skipping {skipped} card(s) with manual/ overrides (use --force-manual to override)")
@@ -99,13 +101,13 @@ def main():
             still_bad.append(name)
             continue
 
-        result = bld.scrape_keyword_page(slug, name, session)
+        result = scrape_keyword_page(slug, name, session)
         if result and result.get("definition") and not is_garbage(result["definition"], name):
             c["definition"] = result["definition"]
             c["type"]       = result["type"]
             c["credit"]     = "legion.takras.net"
             # Clear stale summary so it gets re-derived from new definition
-            if not bld.find_manual_summary(name):
+            if not find_manual_summary(name):
                 c.pop("summary", None)
             fixed += 1
             print(f"  [{i:3d}/{len(targets)}] {name[:42]:<42} OK ({len(result['definition'])} chars)")
@@ -115,7 +117,7 @@ def main():
         time.sleep(0.25)
 
     # Apply manual overlays so they're in the cache too
-    bld.apply_manual_overlays(cards)
+    apply_manual_overlays(cards)
 
     with open(CACHE_PATH, "w", encoding="utf-8") as f:
         json.dump(cards, f, ensure_ascii=False, indent=2)

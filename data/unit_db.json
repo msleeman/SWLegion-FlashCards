@@ -1,0 +1,2415 @@
+{
+  "ab": {
+    "name": "Leia Organa",
+    "title": "Fearless and Inventive",
+    "faction": "rebels",
+    "rank": "commander",
+    "keywords": [
+      "Take Cover 2",
+      "Exemplar",
+      "Inspire 2",
+      "Nimble",
+      "Sharpshooter 2"
+    ],
+    "imageName": "Leia Organa.webp"
+  },
+  "ac": {
+    "name": "Han Solo",
+    "title": "Unorthodox General",
+    "faction": "rebels",
+    "rank": "commander",
+    "keywords": [
+      "Steady",
+      "Low Profile",
+      "Gunslinger",
+      "Sharpshooter 1",
+      "Uncanny Luck 3"
+    ],
+    "imageName": "Han Solo.webp"
+  },
+  "ad": {
+    "name": "Luke Skywalker",
+    "title": "Hero of the Rebellion",
+    "faction": "rebels",
+    "rank": "commander",
+    "keywords": [
+      "Jump 1",
+      "Block",
+      "Charge",
+      "Immune: Pierce",
+      "Inspire 2",
+      "Sharpshooter 1"
+    ],
+    "imageName": "Luke Skywalker Hero of the Rebellion.webp"
+  },
+  "ae": {
+    "name": "Jyn Erso",
+    "title": "Stardust",
+    "faction": "rebels",
+    "rank": "operative",
+    "keywords": [
+      "Agile 1",
+      "Disengage",
+      "Independent Move",
+      "Infiltrate",
+      "Nimble",
+      "Sharpshooter 1"
+    ],
+    "imageName": "Jyn Erso.webp"
+  },
+  "af": {
+    "name": "Chewbacca",
+    "title": "Walking Carpet",
+    "faction": "rebels",
+    "rank": "operative",
+    "keywords": [
+      "Enrage 4",
+      "Guardian 3",
+      "Teamwork Han Solo",
+      "Scale"
+    ],
+    "imageName": "Chewbacca Walking Carpet.webp"
+  },
+  "ag": {
+    "name": "Sabine Wren",
+    "title": "Explosive Artist",
+    "faction": "rebels",
+    "rank": "operative",
+    "keywords": [
+      "Jump 2",
+      "Gunslinger",
+      "Impervious",
+      "Nimble"
+    ],
+    "imageName": "Sabine Wren.webp"
+  },
+  "ah": {
+    "name": "Rebel Troopers",
+    "title": "",
+    "faction": "rebels",
+    "rank": "corps",
+    "keywords": [
+      "Agile 1",
+      "Nimble"
+    ],
+    "imageName": "Rebel Troopers.webp"
+  },
+  "ai": {
+    "name": "Fleet Troopers",
+    "title": "",
+    "faction": "rebels",
+    "rank": "corps",
+    "keywords": [
+      "Charge"
+    ],
+    "imageName": "Fleet Troopers.webp"
+  },
+  "aj": {
+    "name": "Wookiee Warriors",
+    "title": "Freedom Fighters",
+    "faction": "rebels",
+    "rank": "special",
+    "keywords": [
+      "Charge",
+      "Duelist",
+      "Indomitable",
+      "Scale"
+    ],
+    "imageName": "Wookiee Warriors Freedom Fighters.webp"
+  },
+  "ak": {
+    "name": "Rebel Commandos",
+    "title": "",
+    "faction": "rebels",
+    "rank": "special",
+    "keywords": [
+      "Low Profile",
+      "Scout 2",
+      "Sharpshooter 1"
+    ],
+    "imageName": "Rebel Commandos.webp"
+  },
+  "al": {
+    "name": "Rebel Commandos",
+    "title": "Strike Team",
+    "faction": "rebels",
+    "rank": "special",
+    "keywords": [
+      "Detachment Rebel Commandos",
+      "Heavy Weapon Team",
+      "Low Profile",
+      "Scout 2",
+      "Sharpshooter 1"
+    ],
+    "imageName": "Rebel Commandos Strike Team.webp"
+  },
+  "an": {
+    "name": "1.4 FD Laser Cannon Team",
+    "title": "",
+    "faction": "rebels",
+    "rank": "support",
+    "keywords": [
+      "Full Pivot",
+      "Prepared Position",
+      "Sentinel",
+      "Stationary"
+    ],
+    "imageName": "1.4 FD Laser Cannon Team.webp"
+  },
+  "ao": {
+    "name": "AT-RT",
+    "title": "",
+    "faction": "rebels",
+    "rank": "support",
+    "keywords": [
+      "Armor 2",
+      "Climbing Vehicle",
+      "Expert Climber",
+      "Scout 1"
+    ],
+    "imageName": "AT-RT Reb.webp"
+  },
+  "ap": {
+    "name": "T-47 Airspeeder",
+    "title": "",
+    "faction": "rebels",
+    "rank": "heavy",
+    "keywords": [
+      "Armor 3",
+      "Arsenal 2",
+      "Cover 1",
+      "Immune: Blast",
+      "Immune: Melee",
+      "Immune: Range 1 Weapons",
+      "Speeder 2"
+    ],
+    "imageName": "T-47 Airspeeder.webp"
+  },
+  "aq": {
+    "name": "X-34 Landspeeder",
+    "title": "",
+    "faction": "rebels",
+    "rank": "heavy",
+    "keywords": [
+      "Armor 2",
+      "Arsenal 3",
+      "Cover 1",
+      "Speeder 1"
+    ],
+    "imageName": "X-34 Landspeeder.webp"
+  },
+  "at": {
+    "name": "Darth Vader",
+    "title": "Dark Lord of the Sith",
+    "faction": "empire",
+    "rank": "commander",
+    "keywords": [
+      "Deflect",
+      "Immune: Pierce",
+      "Master of the Force 1",
+      "Relentless",
+      "Compel Corps"
+    ],
+    "imageName": "Darth Vader Dark Lord of the Sith.webp"
+  },
+  "au": {
+    "name": "General Veers",
+    "title": "Master Tactician",
+    "faction": "empire",
+    "rank": "commander",
+    "keywords": [
+      "Guidance Ground Vehicle",
+      "Spotter 2",
+      "Exemplar",
+      "Inspire 1",
+      "Sharpshooter 1"
+    ],
+    "imageName": "General Veers.webp"
+  },
+  "av": {
+    "name": "Director Orson Krennic",
+    "title": "Architect of Terror",
+    "faction": "empire",
+    "rank": "commander",
+    "keywords": [
+      "Spotter 1",
+      "Compel",
+      "Cunning",
+      "Entourage Imperial Death Troopers",
+      "Exemplar"
+    ],
+    "imageName": "Director Orson Krennic.webp"
+  },
+  "aw": {
+    "name": "Boba Fett",
+    "title": "Infamous Bounty Hunter",
+    "faction": "mercenary",
+    "rank": "operative",
+    "keywords": [
+      "Mercenary Empire",
+      "Jump 2",
+      "Arsenal 2",
+      "Bounty",
+      "Impervious",
+      "Independent Aim 1 or Dodge 1",
+      "Sharpshooter 2"
+    ],
+    "imageName": "Boba Fett Infamous Bounty Hunter.webp"
+  },
+  "ax": {
+    "name": "Bossk",
+    "title": "Trandoshan Terror",
+    "faction": "mercenary",
+    "rank": "operative",
+    "keywords": [
+      "Mercenary Empire, Separatists",
+      "Bounty",
+      "Enrage 3",
+      "Independent Surge 2",
+      "Regenerate 3",
+      "Scale"
+    ],
+    "imageName": "Bossk.webp"
+  },
+  "ay": {
+    "name": "Stormtroopers",
+    "title": "",
+    "faction": "empire",
+    "rank": "corps",
+    "keywords": [
+      "Precise 1"
+    ],
+    "imageName": "Stormtroopers.webp"
+  },
+  "az": {
+    "name": "Snowtroopers",
+    "title": "",
+    "faction": "empire",
+    "rank": "corps",
+    "keywords": [
+      "Steady"
+    ],
+    "imageName": "Snowtroopers.webp"
+  },
+  "ba": {
+    "name": "Scout Troopers",
+    "title": "",
+    "faction": "empire",
+    "rank": "special",
+    "keywords": [
+      "Low Profile",
+      "Scout 3",
+      "Sharpshooter 1"
+    ],
+    "imageName": "Scout Troopers.webp"
+  },
+  "bb": {
+    "name": "Scout Troopers",
+    "title": "Strike Team",
+    "faction": "empire",
+    "rank": "special",
+    "keywords": [
+      "Detachment Scout Troopers",
+      "Heavy Weapon Team",
+      "Low Profile",
+      "Scout 3",
+      "Sharpshooter 1"
+    ],
+    "imageName": "Scout Troopers Strike Team.webp"
+  },
+  "bd": {
+    "name": "Imperial Death Troopers",
+    "title": "",
+    "faction": "empire",
+    "rank": "special",
+    "keywords": [
+      "Disciplined 2",
+      "Precise 2",
+      "Ready 1"
+    ],
+    "imageName": "Imperial Death Troopers.webp"
+  },
+  "be": {
+    "name": "E-Web Heavy Blaster Team",
+    "title": "",
+    "faction": "empire",
+    "rank": "support",
+    "keywords": [
+      "Prepared Position",
+      "Reposition",
+      "Sentinel"
+    ],
+    "imageName": "E-Web Heavy Blaster Team.webp"
+  },
+  "bf": {
+    "name": "74-Z Speeder Bikes",
+    "title": "",
+    "faction": "empire",
+    "rank": "support",
+    "keywords": [
+      "Cover 1",
+      "Speeder 1"
+    ],
+    "imageName": "74-Z Speeder Bikes.webp"
+  },
+  "bg": {
+    "name": "AT-ST",
+    "title": "",
+    "faction": "empire",
+    "rank": "heavy",
+    "keywords": [
+      "Armor 5",
+      "Arsenal 2",
+      "Weak Point 1: Rear"
+    ],
+    "imageName": "AT-ST.webp"
+  },
+  "bh": {
+    "name": "TX-225 GAVw Occupier Tank",
+    "title": "",
+    "faction": "empire",
+    "rank": "heavy",
+    "keywords": [
+      "Armor 5",
+      "Arsenal 2",
+      "Reposition",
+      "Transport",
+      "Weak Point 1: Sides"
+    ],
+    "imageName": "TX-225 GAVw Occupier Tank.webp"
+  },
+  "fm": {
+    "name": "Luke Skywalker",
+    "title": "Jedi Knight",
+    "faction": "rebels",
+    "rank": "operative",
+    "keywords": [
+      "Jump 1",
+      "Charge",
+      "Deflect",
+      "Disengage",
+      "Immune: Pierce",
+      "Master of the Force 1"
+    ],
+    "imageName": "Luke Skywalker Jedi Knight.webp"
+  },
+  "fn": {
+    "name": "Darth Vader",
+    "title": "The Emperor's Apprentice",
+    "faction": "empire",
+    "rank": "operative",
+    "keywords": [
+      "Deflect",
+      "Immune: Pierce",
+      "Jedi Hunter",
+      "Master of the Force 1",
+      "Relentless"
+    ],
+    "imageName": "Darth Vader The Emperor's Apprentice.webp"
+  },
+  "ft": {
+    "name": "DF-90 Mortar Trooper",
+    "title": "",
+    "faction": "empire",
+    "rank": "corps",
+    "keywords": [
+      "Detachment Shoretroopers",
+      "Fire Support",
+      "Full Pivot",
+      "Prepared Position",
+      "Reposition",
+      "Sentinel"
+    ],
+    "imageName": "DF-90 Mortar Trooper.webp"
+  },
+  "fx": {
+    "name": "Count Dooku",
+    "title": "Darth Tyranus",
+    "faction": "separatists",
+    "rank": "commander",
+    "keywords": [
+      "Cunning",
+      "Deflect",
+      "Direct Trooper Unit",
+      "Immune: Pierce",
+      "Makashi Mastery",
+      "Master of the Force 2"
+    ],
+    "imageName": "Count Dooku.webp"
+  },
+  "fy": {
+    "name": "Clone Captain Rex",
+    "title": "Honorable Soldier",
+    "faction": "republic",
+    "rank": "commander",
+    "keywords": [
+      "Gunslinger",
+      "Scout 1",
+      "Scouting Party 2",
+      "Sharpshooter 1",
+      "Tactical 1"
+    ],
+    "imageName": "Clone Captain Rex.webp"
+  },
+  "fz": {
+    "name": "Clone Trooper Infantry",
+    "title": "",
+    "faction": "republic",
+    "rank": "corps",
+    "keywords": [
+      "Reliable 1"
+    ],
+    "imageName": "Clone Trooper Infantry.webp"
+  },
+  "ga": {
+    "name": "B2 Super Battle Droids",
+    "title": "",
+    "faction": "separatists",
+    "rank": "corps",
+    "keywords": [
+      "AI Attack"
+    ],
+    "imageName": "B2 Super Battle Droids.webp"
+  },
+  "gb": {
+    "name": "Saber-Class Tank",
+    "title": "",
+    "faction": "republic",
+    "rank": "heavy",
+    "keywords": [
+      "Armor 5",
+      "Arsenal 2",
+      "Hover Ground",
+      "Outmaneuver",
+      "Weak Point 1: Rear, Sides"
+    ],
+    "imageName": "Saber-Class Tank.webp"
+  },
+  "gc": {
+    "name": "AAT Battle Tank",
+    "title": "",
+    "faction": "separatists",
+    "rank": "heavy",
+    "keywords": [
+      "AI Attack",
+      "Armor 5",
+      "Arsenal 2",
+      "Barrage",
+      "Hover Ground",
+      "Weak Point 2: Rear"
+    ],
+    "imageName": "AAT Battle Tank.webp"
+  },
+  "gv": {
+    "name": "Rebel Veterans",
+    "title": "",
+    "faction": "rebels",
+    "rank": "corps",
+    "keywords": [
+      "Coordinate Emplacement Trooper",
+      "Low Profile",
+      "Prepared Position"
+    ],
+    "imageName": "Rebel Veterans.webp"
+  },
+  "gw": {
+    "name": "Obi-Wan Kenobi",
+    "title": "Civilized Warrior",
+    "faction": "republic",
+    "rank": "commander",
+    "keywords": [
+      "Jump 1",
+      "Charge",
+      "Deflect",
+      "Guardian 3",
+      "Immune: Pierce",
+      "Master of the Force 1",
+      "Soresu Mastery"
+    ],
+    "imageName": "Obi-Wan Kenobi.webp"
+  },
+  "gx": {
+    "name": "B1 Battle Droids",
+    "title": "",
+    "faction": "separatists",
+    "rank": "corps",
+    "keywords": [
+      "AI Attack",
+      "Coordinate Droid Trooper"
+    ],
+    "imageName": "B1 Battle Droids.webp"
+  },
+  "he": {
+    "name": "Tauntaun Riders",
+    "title": "",
+    "faction": "rebels",
+    "rank": "support",
+    "keywords": [
+      "Agile 1",
+      "Relentless",
+      "Reposition",
+      "Sharpshooter 1",
+      "Unhindered"
+    ],
+    "imageName": "Tauntaun Riders.webp"
+  },
+  "hf": {
+    "name": "Dewback Rider",
+    "title": "",
+    "faction": "empire",
+    "rank": "support",
+    "keywords": [
+      "Armor 1",
+      "Relentless",
+      "Reposition",
+      "Spur",
+      "Unhindered"
+    ],
+    "imageName": "Dewback Rider.webp"
+  },
+  "hg": {
+    "name": "Shoretroopers",
+    "title": "",
+    "faction": "empire",
+    "rank": "corps",
+    "keywords": [
+      "Coordinate Emplacement Trooper",
+      "Prepared Position"
+    ],
+    "imageName": "Shoretroopers.webp"
+  },
+  "ia": {
+    "name": "General Grievous",
+    "title": "Sinister Cyborg",
+    "faction": "separatists",
+    "rank": "commander",
+    "keywords": [
+      "Block",
+      "Entourage IG-100 MagnaGuard",
+      "Immune: Pierce",
+      "Jedi Hunter",
+      "Relentless",
+      "Scale"
+    ],
+    "imageName": "General Grievous Sinister Cyborg.webp"
+  },
+  "ic": {
+    "name": "BARC Speeder",
+    "title": "",
+    "faction": "republic",
+    "rank": "support",
+    "keywords": [
+      "Arsenal 2",
+      "Cover 1",
+      "Speeder 1"
+    ],
+    "imageName": "BARC Speeder.webp"
+  },
+  "ie": {
+    "name": "Droidekas",
+    "title": "",
+    "faction": "separatists",
+    "rank": "support",
+    "keywords": [
+      "AI Attack, Move",
+      "Generator 1",
+      "Shielded 4",
+      "Wheel Mode"
+    ],
+    "imageName": "Droidekas.webp"
+  },
+  "if": {
+    "name": "Mark II Medium Blaster Trooper",
+    "title": "",
+    "faction": "rebels",
+    "rank": "corps",
+    "keywords": [
+      "Detachment Rebel Veterans",
+      "Fire Support",
+      "Full Pivot",
+      "Reposition",
+      "Sentinel",
+      "Prepared Position"
+    ],
+    "imageName": "Mark II Medium Blaster Trooper.webp"
+  },
+  "jg": {
+    "name": "R2-D2",
+    "title": "Hero of a Thousand Devices",
+    "faction": "rebels",
+    "rank": "operative",
+    "keywords": [
+      "Repair 2: Capacity 2",
+      "Inconspicuous",
+      "Infiltrate",
+      "Secret Mission",
+      "Suppressive"
+    ],
+    "imageName": "R2-D2 Hero of a Thousand Devices.webp"
+  },
+  "jh": {
+    "name": "R2-D2",
+    "title": "Independent Astromech",
+    "faction": "republic",
+    "rank": "operative",
+    "keywords": [
+      "Repair 2: Capacity 2",
+      "Secret Mission",
+      "Inconspicuous",
+      "Suppressive"
+    ],
+    "imageName": "R2-D2 Independent Astromech.webp"
+  },
+  "kf": {
+    "name": "Cassian Andor",
+    "title": "Capable Intelligence Agent",
+    "faction": "rebels",
+    "rank": "operative",
+    "keywords": [
+      "Danger Sense 3",
+      "Equip A280",
+      "Field Commander",
+      "Infiltrate",
+      "Marksman",
+      "Sharpshooter 1",
+      "Tactical 1"
+    ],
+    "imageName": "Cassian Andor.webp"
+  },
+  "kg": {
+    "name": "Iden Versio",
+    "title": "Inferno Squad Leader",
+    "faction": "empire",
+    "rank": "commander",
+    "keywords": [
+      "Quick Thinking",
+      "Infiltrate",
+      "Marksman",
+      "Nimble"
+    ],
+    "imageName": "Iden Versio.webp"
+  },
+  "kw": {
+    "name": "Padme Amidala",
+    "title": "Spirited Senator",
+    "faction": "republic",
+    "rank": "operative",
+    "keywords": [
+      "Bolster 2",
+      "Agile 1",
+      "Inspire 2",
+      "Nimble",
+      "Sharpshooter 2"
+    ],
+    "imageName": "Padme Amidala.webp"
+  },
+  "kx": {
+    "name": "Cad Bane",
+    "title": "Needs No Introduction",
+    "faction": "mercenary",
+    "rank": "operative",
+    "keywords": [
+      "Mercenary Empire, Separatists",
+      "Jump 1",
+      "Bounty",
+      "Danger Sense 3",
+      "Independent Dodge 2",
+      "Sharpshooter 1",
+      "Steady"
+    ],
+    "imageName": "Cad Bane.webp"
+  },
+  "ky": {
+    "name": "ARC Troopers",
+    "title": "Strike Team",
+    "faction": "republic",
+    "rank": "special",
+    "keywords": [
+      "Charge",
+      "Detachment ARC Troopers",
+      "Heavy Weapon Team",
+      "Impervious",
+      "Scale",
+      "Scout 2",
+      "Sharpshooter 1",
+      "Tactical 1"
+    ],
+    "imageName": "ARC Trooper Strike Team.webp"
+  },
+  "kz": {
+    "name": "ARC Troopers",
+    "title": "",
+    "faction": "republic",
+    "rank": "special",
+    "keywords": [
+      "Charge",
+      "Impervious",
+      "Scale",
+      "Scout 2",
+      "Sharpshooter 1",
+      "Tactical 1"
+    ],
+    "imageName": "ARC Troopers.webp"
+  },
+  "la": {
+    "name": "BX-Series Droid Commandos",
+    "title": "",
+    "faction": "separatists",
+    "rank": "special",
+    "keywords": [
+      "Jump 1",
+      "AI Dodge, Move",
+      "Impervious",
+      "Scale",
+      "Scout 3",
+      "Sharpshooter 1"
+    ],
+    "imageName": "BX-Series Droid Commandos.webp"
+  },
+  "lb": {
+    "name": "BX-Series Droid Commandos",
+    "title": "Strike Team",
+    "faction": "separatists",
+    "rank": "special",
+    "keywords": [
+      "Jump 1",
+      "AI Dodge, Move",
+      "Detachment BX-Series Droid Commandos",
+      "Heavy Weapon Team",
+      "Impervious",
+      "Scale",
+      "Scout 3",
+      "Sharpshooter 1"
+    ],
+    "imageName": "BX-Series Droid Commandos Strike Team.webp"
+  },
+  "lv": {
+    "name": "K-2SO",
+    "title": "Sardonic Security Droid",
+    "faction": "rebels",
+    "rank": "operative",
+    "keywords": [
+      "Calculate Odds",
+      "Armor 1",
+      "Detachment Cassian Andor",
+      "Incognito",
+      "Infiltrate",
+      "Teamwork Cassian Andor"
+    ],
+    "imageName": "K-2SO.webp"
+  },
+  "mb": {
+    "name": "AT-RT",
+    "title": "",
+    "faction": "republic",
+    "rank": "support",
+    "keywords": [
+      "Armor 2",
+      "Climbing Vehicle",
+      "Expert Climber",
+      "Scout 1"
+    ],
+    "imageName": "AT-RT Rep.webp"
+  },
+  "mc": {
+    "name": "STAP Riders",
+    "title": "",
+    "faction": "separatists",
+    "rank": "support",
+    "keywords": [
+      "Agile 1",
+      "AI Move",
+      "Coordinate Droid Trooper, Vehicle",
+      "Cover 1",
+      "Speeder 1"
+    ],
+    "imageName": "STAP Riders.webp"
+  },
+  "mk": {
+    "name": "Mandalorian Resistance",
+    "title": "",
+    "faction": "rebels",
+    "rank": "special",
+    "keywords": [
+      "Jump 2",
+      "Impervious",
+      "Nimble"
+    ],
+    "imageName": "Mandalorian Resistance.webp"
+  },
+  "ml": {
+    "name": "Mandalorian Resistance",
+    "title": "Clan Wren",
+    "faction": "rebels",
+    "rank": "special",
+    "keywords": [
+      "Jump 2",
+      "Equip Tristan Wren, Ursa Wren",
+      "Impervious",
+      "Nimble",
+      "Retinue Sabine Wren"
+    ],
+    "imageName": "Mandalorian Resistance Clan Wren.webp"
+  },
+  "mx": {
+    "name": "Imperial Special Forces",
+    "title": "",
+    "faction": "empire",
+    "rank": "special",
+    "keywords": [
+      "Infiltrate",
+      "Marksman",
+      "Reliable 1"
+    ],
+    "imageName": "Imperial Special Forces.webp"
+  },
+  "my": {
+    "name": "Imperial Special Forces",
+    "title": "Inferno Squad",
+    "faction": "empire",
+    "rank": "special",
+    "keywords": [
+      "Equip Del Meeko, Gideon Hask",
+      "Infiltrate",
+      "Marksman",
+      "Reliable 1",
+      "Retinue Iden Versio"
+    ],
+    "imageName": "Imperial Special Forces Inferno Squad.webp"
+  },
+  "na": {
+    "name": "Anakin Skywalker",
+    "title": "The Chosen One",
+    "faction": "republic",
+    "rank": "commander",
+    "keywords": [
+      "Jump 1",
+      "Charge",
+      "Deflect",
+      "Djem So Mastery",
+      "Immune: Pierce",
+      "Master of the Force 1",
+      "Tempted"
+    ],
+    "imageName": "Anakin Skywalker.webp"
+  },
+  "nb": {
+    "name": "Maul",
+    "title": "Impatient Apprentice",
+    "faction": "separatists",
+    "rank": "operative",
+    "keywords": [
+      "Jump 1",
+      "Deflect",
+      "Immune: Pierce",
+      "Juyo Mastery"
+    ],
+    "imageName": "Maul Impatient Apprentice.webp"
+  },
+  "nk": {
+    "name": "DRK-1 Sith Probe Droids",
+    "title": "",
+    "faction": "separatists",
+    "rank": "special",
+    "keywords": [
+      "Observe 3",
+      "Detachment Maul",
+      "Hover Air 1",
+      "Incognito"
+    ],
+    "imageName": "DRK-1 Sith Probe Droids.webp"
+  },
+  "nl": {
+    "name": "Lando Calrissian",
+    "title": "Canny General",
+    "faction": "rebels",
+    "rank": "commander",
+    "keywords": [
+      "Guidance Corps Trooper Unit",
+      "Allies of Convenience",
+      "Steady",
+      "Uncanny Luck 2",
+      "One Step Ahead"
+    ],
+    "imageName": "Lando Calrissian.webp"
+  },
+  "nm": {
+    "name": "Agent Kallus",
+    "title": "Hunter of Spectres",
+    "faction": "empire",
+    "rank": "operative",
+    "keywords": [
+      "Observe 2",
+      "Bounty",
+      "Charge",
+      "Direct Corps Trooper Unit",
+      "Immune: Melee Pierce",
+      "Interrogate"
+    ],
+    "imageName": "Agent Kallus.webp"
+  },
+  "nr": {
+    "name": "T-Series Tactical Droid",
+    "title": "Programmed for Strategy",
+    "faction": "separatists",
+    "rank": "commander",
+    "keywords": [
+      "Bolster 2",
+      "Direct Corps Droid Trooper Unit",
+      "Exemplar"
+    ],
+    "imageName": "T-Series Tactical Droid.webp"
+  },
+  "ns": {
+    "name": "Clone Commander",
+    "title": "Trained For Leadership",
+    "faction": "republic",
+    "rank": "commander",
+    "keywords": [
+      "Bolster 2",
+      "Direct Corps Clone Trooper Unit",
+      "Sharpshooter 1"
+    ],
+    "imageName": "Clone Commander.webp"
+  },
+  "ol": {
+    "name": "Yoda",
+    "title": "Grand Master of the Jedi Order",
+    "faction": "republic",
+    "rank": "commander",
+    "keywords": [
+      "Guidance Trooper",
+      "Ataru Mastery",
+      "Deflect",
+      "Immune: Pierce",
+      "Master of the Force 2"
+    ],
+    "imageName": "Yoda.webp"
+  },
+  "om": {
+    "name": "A-A5 Speeder Truck",
+    "title": "",
+    "faction": "rebels",
+    "rank": "heavy",
+    "keywords": [
+      "Armor 5",
+      "Hover Ground",
+      "Reposition",
+      "Transport",
+      "Weak Point 2: Rear"
+    ],
+    "imageName": "A-A5 Speeder Truck R.webp"
+  },
+  "on": {
+    "name": "LAAT/le Patrol Transport",
+    "title": "",
+    "faction": "empire",
+    "rank": "heavy",
+    "keywords": [
+      "Armor 5",
+      "Arsenal 2",
+      "Cover 1",
+      "Hover Air 2",
+      "Immune: Blast",
+      "Immune: Melee",
+      "Immune: Range 1 Weapons",
+      "Transport"
+    ],
+    "imageName": "LAAT Patrol Transport E.webp"
+  },
+  "oo": {
+    "name": "LAAT/le Patrol Transport",
+    "title": "",
+    "faction": "republic",
+    "rank": "heavy",
+    "keywords": [
+      "Armor 5",
+      "Arsenal 2",
+      "Cover 1",
+      "Hover Air 2",
+      "Strafe",
+      "Immune: Blast",
+      "Immune: Melee",
+      "Immune: Range 1 Weapons",
+      "Transport",
+      "Fixed Front",
+      "Impact 1"
+    ],
+    "imageName": "LAAT Patrol Transport R.webp"
+  },
+  "pg": {
+    "name": "Wookiee Warriors",
+    "title": "Kashyyyk Defenders",
+    "faction": "republic",
+    "rank": "special",
+    "keywords": [
+      "Indomitable",
+      "Scale",
+      "Sharpshooter 1"
+    ],
+    "imageName": "Wookiee Warriors Kashyyyk Defenders.webp"
+  },
+  "ph": {
+    "name": "Wookiee Chieftain",
+    "title": "Clan Leader",
+    "faction": "republic",
+    "rank": "commander",
+    "keywords": [
+      "Agile 1",
+      "Charge",
+      "Duelist",
+      "Indomitable",
+      "Scale"
+    ],
+    "imageName": "Wookiee Chieftain.webp"
+  },
+  "pl": {
+    "name": "Wookiee Warriors",
+    "title": "Kashyyyk Resistance",
+    "faction": "rebels",
+    "rank": "special",
+    "keywords": [
+      "Indomitable",
+      "Scale",
+      "Sharpshooter 1"
+    ],
+    "imageName": "Wookiee Warriors Kashyyyk Resistance.webp"
+  },
+  "pm": {
+    "name": "Wookiee Warriors",
+    "title": "Noble Fighters",
+    "faction": "republic",
+    "rank": "special",
+    "keywords": [
+      "Charge",
+      "Duelist",
+      "Indomitable",
+      "Scale"
+    ],
+    "imageName": "Wookiee Warriors Noble Fighters.webp"
+  },
+  "po": {
+    "name": "Chewbacca",
+    "title": "Hero of Kashyyyk",
+    "faction": "republic",
+    "rank": "commander",
+    "keywords": [
+      "Enrage 4",
+      "Guardian 2: Commander",
+      "Reliable 2",
+      "Scale"
+    ],
+    "imageName": "Chewbacca Hero of Kashyyyk.webp"
+  },
+  "px": {
+    "name": "IG-100 MagnaGuard",
+    "title": "",
+    "faction": "separatists",
+    "rank": "special",
+    "keywords": [
+      "AI Dodge, Move",
+      "Charge",
+      "Guardian 2: Commander",
+      "Immune: Melee Pierce",
+      "Retinue Commander",
+      "Unhindered"
+    ],
+    "imageName": "IG-100 MagnaGuard.webp"
+  },
+  "pz": {
+    "name": "Kraken",
+    "title": "Super Tactical Droid",
+    "faction": "separatists",
+    "rank": "commander",
+    "keywords": [
+      "Strategize 1",
+      "Charge",
+      "Exemplar",
+      "Override",
+      "Sharpshooter 1"
+    ],
+    "imageName": "Kraken.webp"
+  },
+  "qa": {
+    "name": "Kalani",
+    "title": "Super Tactical Droid",
+    "faction": "separatists",
+    "rank": "commander",
+    "keywords": [
+      "Strategize 2",
+      "Direct AI Unit",
+      "Exemplar",
+      "Reinforcements",
+      "Sharpshooter 1"
+    ],
+    "imageName": "Kalani.webp"
+  },
+  "qh": {
+    "name": "Raddaugh Gnasp Fluttercraft",
+    "title": "",
+    "faction": "republic",
+    "rank": "support",
+    "keywords": [
+      "Cover 2",
+      "Immune: Blast",
+      "Immune: Melee",
+      "Immune: Range 1 Weapons",
+      "Reposition",
+      "Speeder 2"
+    ],
+    "imageName": "Raddaugh Gnasp Fluttercraft.webp"
+  },
+  "qk": {
+    "name": "DSD1 Dwarf Spider Droid",
+    "title": "",
+    "faction": "separatists",
+    "rank": "support",
+    "keywords": [
+      "Self-Destruct 3",
+      "Armor 3",
+      "Climbing Vehicle",
+      "Expert Climber",
+      "Programmed",
+      "Blast"
+    ],
+    "imageName": "DSD1 Dwarf Spider Droid.webp"
+  },
+  "qs": {
+    "name": "Infantry Support Platform",
+    "title": "",
+    "faction": "republic",
+    "rank": "heavy",
+    "keywords": [
+      "Armor 3",
+      "Cover 1",
+      "Hover Ground",
+      "Weak Point 1: Rear, Sides"
+    ],
+    "imageName": "Infantry Support Platform.webp"
+  },
+  "qt": {
+    "name": "Persuader-Class Tank Droid",
+    "title": "",
+    "faction": "separatists",
+    "rank": "heavy",
+    "keywords": [
+      "Armor 5",
+      "Arsenal 2",
+      "Programmed",
+      "Reposition",
+      "Transport",
+      "Weak Point 1: Sides",
+      "Fixed Front"
+    ],
+    "imageName": "Persuader-Class Tank Droid.webp"
+  },
+  "qy": {
+    "name": "Pyke Syndicate Capo",
+    "title": "",
+    "faction": "mercenary",
+    "rank": "commander",
+    "keywords": [
+      "Mercenary All",
+      "Aid Pyke",
+      "Independent Dodge 1",
+      "Danger Sense 2"
+    ],
+    "imageName": "Pyke Syndicate Capo.webp"
+  },
+  "qz": {
+    "name": "Pyke Syndicate Foot Soldiers",
+    "title": "",
+    "faction": "mercenary",
+    "rank": "corps",
+    "keywords": [
+      "Mercenary All",
+      "Self-Preservation",
+      "Danger Sense 2",
+      "Outmaneuver",
+      "Independent Dodge 1"
+    ],
+    "imageName": "Pyke Syndicate Foot Soldiers.webp"
+  },
+  "ra": {
+    "name": "Black Sun Vigo",
+    "title": "",
+    "faction": "mercenary",
+    "rank": "commander",
+    "keywords": [
+      "Mercenary Empire, Separatists",
+      "Aid Black Sun",
+      "Dauntless",
+      "Independent Aim 1"
+    ],
+    "imageName": "Black Sun Vigo.webp"
+  },
+  "rb": {
+    "name": "Black Sun Enforcers",
+    "title": "",
+    "faction": "mercenary",
+    "rank": "corps",
+    "keywords": [
+      "Mercenary Empire, Separatists",
+      "Dauntless",
+      "Precise 1",
+      "Self-Preservation",
+      "Independent Aim 1"
+    ],
+    "imageName": "Black Sun Enforcers.webp"
+  },
+  "rc": {
+    "name": "Maul",
+    "title": "A Rival",
+    "faction": "mercenary",
+    "rank": "operative",
+    "keywords": [
+      "Jump 1",
+      "Allies of Convenience",
+      "Deflect",
+      "Immune: Pierce",
+      "Juyo Mastery",
+      "Wound 1"
+    ],
+    "imageName": "Maul A Rival.webp"
+  },
+  "rd": {
+    "name": "Gar Saxon",
+    "title": "Militant Commando",
+    "faction": "mercenary",
+    "rank": "commander",
+    "keywords": [
+      "Jump 2",
+      "Allies of Convenience",
+      "Compel",
+      "Impervious",
+      "Sharpshooter 1"
+    ],
+    "imageName": "Gar Saxon.webp"
+  },
+  "re": {
+    "name": "Mandalorian Super Commandos",
+    "title": "",
+    "faction": "mercenary",
+    "rank": "special",
+    "keywords": [
+      "Jump 2",
+      "Defend 1",
+      "Impervious",
+      "Independent Aim 1"
+    ],
+    "imageName": "Mandalorian Super Commandos.webp"
+  },
+  "sm": {
+    "name": "A-A5 Speeder Truck",
+    "title": "",
+    "faction": "mercenary",
+    "rank": "heavy",
+    "keywords": [
+      "Armor 5",
+      "Hover Ground",
+      "Reposition",
+      "Transport",
+      "Weak Point 2: Rear"
+    ],
+    "imageName": "A-A5 Speeder Truck M.webp"
+  },
+  "sq": {
+    "name": "Swoop Bike Riders",
+    "title": "",
+    "faction": "mercenary",
+    "rank": "support",
+    "keywords": [
+      "Mercenary Rebel, Republic",
+      "Cover 1",
+      "Independent Aim 1 or Dodge 1",
+      "Reinforcements",
+      "Speeder 1"
+    ],
+    "imageName": "Swoop Bike Riders.webp"
+  },
+  "sr": {
+    "name": "Stormtroopers",
+    "title": "Heavy Response Unit",
+    "faction": "empire",
+    "rank": "corps",
+    "keywords": [
+      "Flexible Response 2",
+      "Precise 1",
+      "Special Issue Blizzard Force",
+      "Unhindered"
+    ],
+    "imageName": "Stormtroopers Heavy Response Unit.webp"
+  },
+  "ti": {
+    "name": "IG-88",
+    "title": "Notorious Assassin Droid",
+    "faction": "mercenary",
+    "rank": "operative",
+    "keywords": [
+      "Mercenary Empire",
+      "Armor 1",
+      "Bounty",
+      "Impervious",
+      "Sharpshooter 1"
+    ],
+    "imageName": "IG-88.webp"
+  },
+  "tj": {
+    "name": "IG-11",
+    "title": "Nurse and Protect",
+    "faction": "mercenary",
+    "rank": "operative",
+    "keywords": [
+      "Mercenary Empire, Rebels",
+      "Armor 1",
+      "Gunslinger",
+      "Impervious",
+      "Programmed",
+      "Sharpshooter 1"
+    ],
+    "imageName": "IG-11.webp"
+  },
+  "tk": {
+    "name": "Din Djarin",
+    "title": "The Mandalorian",
+    "faction": "mercenary",
+    "rank": "operative",
+    "keywords": [
+      "Mercenary Empire, Rebels",
+      "Arsenal 2",
+      "Bounty",
+      "Impervious",
+      "Independent Aim 1 and Dodge 1",
+      "Tactical 1"
+    ],
+    "imageName": "Din Djarin.webp"
+  },
+  "tl": {
+    "name": "Boba Fett",
+    "title": "Daimyo of Mos Espa",
+    "faction": "mercenary",
+    "rank": "operative",
+    "keywords": [
+      "Mercenary Rebels",
+      "Jump 1",
+      "Arsenal 2",
+      "Impervious",
+      "Independent Standby",
+      "Sentinel",
+      "Sharpshooter 1",
+      "Tactical 1"
+    ],
+    "imageName": "Boba Fett Daimyo of Mos Espa.webp"
+  },
+  "tm": {
+    "name": "Imperial Dark Troopers",
+    "title": "",
+    "faction": "empire",
+    "rank": "heavy",
+    "keywords": [
+      "Armor 3",
+      "Plodding",
+      "Unconcerned",
+      "Unstoppable"
+    ],
+    "imageName": "Imperial Dark Troopers.webp"
+  },
+  "ue": {
+    "name": "Clone Commander Cody",
+    "title": "Leader of the 212th",
+    "faction": "republic",
+    "rank": "commander",
+    "keywords": [
+      "Observe 2",
+      "Jump 1",
+      "Take Cover 1",
+      "Direct Vehicle",
+      "Target 1"
+    ],
+    "imageName": "Clone Commander Cody.webp"
+  },
+  "ui": {
+    "name": "Moff Gideon",
+    "title": "Long Live the Empire",
+    "faction": "empire",
+    "rank": "commander",
+    "keywords": [
+      "Observe 1",
+      "Entourage Imperial Dark Troopers",
+      "Ruthless",
+      "Sharpshooter 1",
+      "Tactical 1"
+    ],
+    "imageName": "Moff Gideon.webp"
+  },
+  "ut": {
+    "name": "Asajj Ventress",
+    "title": "Separatist Assassin",
+    "faction": "separatists",
+    "rank": "operative",
+    "keywords": [
+      "Jump 2",
+      "Deflect",
+      "Independent Dodge 1",
+      "Indomitable",
+      "Immune: Pierce",
+      "Jar'Kai Mastery",
+      "Relentless"
+    ],
+    "imageName": "Asajj Ventress.webp"
+  },
+  "vd": {
+    "name": "Ahsoka Tano",
+    "title": "Fulcrum",
+    "faction": "rebels",
+    "rank": "operative",
+    "keywords": [
+      "Jump 2",
+      "Charge",
+      "Defend 1",
+      "Deflect",
+      "Immune: Pierce",
+      "Jar'Kai Mastery"
+    ],
+    "imageName": "Ahsoka Tano Fulcrum.webp"
+  },
+  "ve": {
+    "name": "Wicket",
+    "title": "Hero of Bright Tree",
+    "faction": "mercenary",
+    "rank": "commander",
+    "keywords": [
+      "Mercenary Rebels",
+      "Independent Dodge 1",
+      "Low Profile",
+      "Nimble",
+      "Relentless",
+      "Scout 1",
+      "Scouting Party 2",
+      "Unhindered"
+    ],
+    "imageName": "Wicket.webp"
+  },
+  "vj": {
+    "name": "Chewbacca",
+    "title": "Let the Wookiee Win",
+    "faction": "mercenary",
+    "rank": "heavy",
+    "keywords": [
+      "Armor 5",
+      "Arsenal 2",
+      "Inspire 3",
+      "Incognito",
+      "Weak Point 1: Rear"
+    ],
+    "imageName": "Chewbacca Let the Wookiee Win.webp"
+  },
+  "vk": {
+    "name": "Ewok Skirmishers",
+    "title": "",
+    "faction": "mercenary",
+    "rank": "corps",
+    "keywords": [
+      "Mercenary Rebels",
+      "Low Profile",
+      "Unhindered"
+    ],
+    "imageName": "Ewok Skirmishers.webp"
+  },
+  "vu": {
+    "name": "Ewok Slingers",
+    "title": "",
+    "faction": "mercenary",
+    "rank": "special",
+    "keywords": [
+      "Mercenary Rebels",
+      "Independent Surge 1",
+      "Low Profile",
+      "Target 1"
+    ],
+    "imageName": "Ewok Slingers.webp"
+  },
+  "vv": {
+    "name": "C-3P0",
+    "title": "Golden God",
+    "faction": "mercenary",
+    "rank": "commander",
+    "keywords": [
+      "Master Storyteller",
+      "Compel Ewok Trooper",
+      "Infiltrate",
+      "Divine Influence"
+    ],
+    "imageName": "C-3PO Golden God.webp"
+  },
+  "wd": {
+    "name": "Logray",
+    "title": "Superstitious Shaman",
+    "faction": "mercenary",
+    "rank": "commander",
+    "keywords": [
+      "Aid Ewok",
+      "Independent Aim or Dodge 1",
+      "Inspire 2",
+      "Low Profile",
+      "Nimble"
+    ],
+    "imageName": "Logray.webp"
+  },
+  "we": {
+    "name": "Major Marquand",
+    "title": "Tempest Scout 2",
+    "faction": "empire",
+    "rank": "heavy",
+    "keywords": [
+      "Armor 5",
+      "Arsenal 2",
+      "Direct Vehicle",
+      "Field Commander",
+      "Weak Point 1: Rear",
+      "Special Issue Tempest Force"
+    ],
+    "imageName": "Major Marquand.webp"
+  },
+  "wl": {
+    "name": "Fifth Brother",
+    "title": "The Kill is Mine",
+    "faction": "empire",
+    "rank": "operative",
+    "keywords": [
+      "Dauntless",
+      "Block",
+      "Enrage 2",
+      "Immune: Pierce"
+    ],
+    "imageName": "Fifth Brother.webp"
+  },
+  "wm": {
+    "name": "Seventh Sister",
+    "title": "Compelled to Inflict Pain",
+    "faction": "empire",
+    "rank": "operative",
+    "keywords": [
+      "Jump 1",
+      "Associate Fifth Brother",
+      "Block",
+      "Charge",
+      "Disciplined 1",
+      "Immune: Pierce",
+      "Interrogate"
+    ],
+    "imageName": "Seventh Sister.webp"
+  },
+  "wn": {
+    "name": "Poggle the Lesser",
+    "title": "Public Leader of the Geonosians",
+    "faction": "separatists",
+    "rank": "commander",
+    "keywords": [
+      "Jump 2",
+      "Compel Corps Separatist Trooper",
+      "Entourage B2 Super Battle Droids",
+      "Override",
+      "Weighed Down"
+    ],
+    "imageName": "Poggle the Lesser.webp"
+  },
+  "wo": {
+    "name": "Sun Fac",
+    "title": "Ruthless Lieutenant",
+    "faction": "separatists",
+    "rank": "operative",
+    "keywords": [
+      "Jump 3",
+      "Cover 1",
+      "Death from Above",
+      "Direct Geonosian Warriors",
+      "Retinue Poggle the Lesser",
+      "Scale",
+      "Weighed Down"
+    ],
+    "imageName": "Sun Fac.webp"
+  },
+  "wp": {
+    "name": "Geonosian Warriors",
+    "title": "Soldiers of the Hive",
+    "faction": "separatists",
+    "rank": "corps",
+    "keywords": [
+      "Jump 3",
+      "Scale",
+      "Death from Above",
+      "Weighed Down"
+    ],
+    "imageName": "Geonosian Warriors.webp"
+  },
+  "xd": {
+    "name": "IG-100 MagnaGuard",
+    "title": "Prototype Assassin Droids",
+    "faction": "separatists",
+    "rank": "special",
+    "keywords": [
+      "AI Dodge",
+      "Charge",
+      "Immune: Melee Pierce",
+      "Special Issue Experimental Droids",
+      "Unhindered"
+    ],
+    "imageName": "IG-100 MagnaGuard Prototype Assassin Droids.webp"
+  },
+  "xe": {
+    "name": "Persuader-Class Tank Droid",
+    "title": "Prototype Tank Droid",
+    "faction": "separatists",
+    "rank": "heavy",
+    "keywords": [
+      "Armor 5",
+      "Arsenal 3",
+      "Direct Corps Trooper Unit",
+      "Programmed",
+      "Reposition",
+      "Special Issue Experimental Droids",
+      "Weak Point 1: Sides"
+    ],
+    "imageName": "Persuader-Class Tank Droid Prototype Tank Droid.webp"
+  },
+  "xf": {
+    "name": "Raddaugh Gnasp Fluttercraft",
+    "title": "Attack Craft",
+    "faction": "republic",
+    "rank": "support",
+    "keywords": [
+      "Attack Run",
+      "Cover 2",
+      "Immune: Blast",
+      "Immune: Melee",
+      "Immune: Range 1 Weapons",
+      "Reposition",
+      "Speeder 2",
+      "Special Issue Wookiee Defenders"
+    ],
+    "imageName": "Raddaugh Gnasp Fluttercraft Attack Craft.webp"
+  },
+  "xh": {
+    "name": "Range Troopers",
+    "title": "",
+    "faction": "empire",
+    "rank": "support",
+    "keywords": [
+      "Advanced Targeting Trooper 1",
+      "Armor 1",
+      "Indomitable",
+      "Scale",
+      "Spur"
+    ],
+    "imageName": "Range Troopers.webp"
+  },
+  "xi": {
+    "name": "The Bad Batch",
+    "title": "Clone Force 99",
+    "faction": "republic",
+    "rank": "operative",
+    "keywords": [
+      "Equip Hunter, Wrecker, Echo, Tech, Crosshair",
+      "Impervious",
+      "Scale",
+      "Steady",
+      "Sharpshooter 1",
+      "We're Not Regs"
+    ],
+    "imageName": "The Bad Batch Rep.webp"
+  },
+  "xj": {
+    "name": "Clone Commandos",
+    "title": "",
+    "faction": "republic",
+    "rank": "support",
+    "keywords": [
+      "Complete the Mission",
+      "Equip Katarn Pattern Armor",
+      "Infiltrate",
+      "Recharge 1",
+      "Target 1",
+      "Shielded 1"
+    ],
+    "imageName": "Clone Commandos.webp"
+  },
+  "xp": {
+    "name": "Clone Commandos",
+    "title": "Delta Squad",
+    "faction": "republic",
+    "rank": "support",
+    "keywords": [
+      "Complete the Mission",
+      "Equip Katarn Pattern Armor",
+      "Infiltrate",
+      "Independent Recover",
+      "Recharge 1",
+      "Target 2",
+      "Shielded 1"
+    ],
+    "imageName": "Delta Squad.webp"
+  },
+  "xv": {
+    "name": "The Bad Batch",
+    "title": "Clone Force 99",
+    "faction": "mercenary",
+    "rank": "operative",
+    "keywords": [
+      "Mercenary Rebels",
+      "Equip Hunter, Wrecker, Echo, Tech",
+      "Impervious",
+      "Scale",
+      "Steady",
+      "Sharpshooter 1",
+      "We're Not Regs"
+    ],
+    "imageName": "The Bad Batch Reb.webp"
+  },
+  "xy": {
+    "name": "Rebel Sleeper Cell",
+    "title": "Ready to Strike",
+    "faction": "rebels",
+    "rank": "special",
+    "keywords": [
+      "Nimble",
+      "Scout 2",
+      "Tactical 1"
+    ],
+    "imageName": "Rebel Sleeper Cell.webp"
+  },
+  "xz": {
+    "name": "Stormtrooper Riot Squad",
+    "title": "",
+    "faction": "empire",
+    "rank": "corps",
+    "keywords": [
+      "Charge",
+      "Hold the Line",
+      "Suppressive"
+    ],
+    "imageName": "Riot Control Squad.webp"
+  },
+  "ya": {
+    "name": "LM-432 Crab Droid",
+    "title": "",
+    "faction": "separatists",
+    "rank": "support",
+    "keywords": [
+      "Armor 2",
+      "Climbing Vehicle",
+      "Programmed",
+      "Reposition",
+      "Scale",
+      "Scout 1",
+      "Scouting Party 1"
+    ],
+    "imageName": "LM-432 Crab Droid.webp"
+  },
+  "Aw": {
+    "name": "Aqua Droids",
+    "title": "",
+    "faction": "separatists",
+    "rank": "heavy",
+    "keywords": [
+      "AI Attack, Move",
+      "Armor 2",
+      "Infiltrate"
+    ],
+    "imageName": "Aqua Droids.webp"
+  },
+  "Ay": {
+    "name": "ARF Troopers",
+    "title": "",
+    "faction": "republic",
+    "rank": "special",
+    "keywords": [
+      "Observe 2",
+      "Scout 1",
+      "Low Profile",
+      "Unhindered"
+    ],
+    "imageName": "ARF Troopers.webp"
+  },
+  "Bc": {
+    "name": "Ahsoka Tano",
+    "title": "Padawan Commander",
+    "faction": "republic",
+    "rank": "commander",
+    "keywords": [
+      "Jump 2",
+      "Associate Anakin Skywalker",
+      "Deflect",
+      "Immune: Pierce",
+      "Independent Recover",
+      "Scout 1",
+      "Shien Mastery"
+    ],
+    "imageName": "Ahsoka Tano Padawan Commander.webp"
+  },
+  "Bi": {
+    "name": "Clone Trooper Marksmen",
+    "title": "",
+    "faction": "republic",
+    "rank": "corps",
+    "keywords": [
+      "Prepared Position",
+      "Marksman"
+    ],
+    "imageName": "Clone Trooper Marksmen.webp"
+  },
+  "Bj": {
+    "name": "Hondo Ohnaka",
+    "title": "Trustworthy Compatriot",
+    "faction": "mercenary",
+    "rank": "operative",
+    "keywords": [
+      "Mercenary Empire, Rebels, Republic, Separatists",
+      "Arsenal X",
+      "Disengage",
+      "Independent Dodge X",
+      "My Mood Is Based On Profit",
+      "Nimble",
+      "Reliable X",
+      "Uncanny Luck X"
+    ],
+    "imageName": "Hondo Ohnaka.webp"
+  },
+  "By": {
+    "name": "Rebel Agent",
+    "title": "Defender of Democracy",
+    "faction": "rebels",
+    "rank": "operative",
+    "keywords": [
+      "Nimble",
+      "Independent Dodge 1",
+      "Equip Doctrine"
+    ],
+    "imageName": "Rebel Agent.webp"
+  },
+  "Bz": {
+    "name": "Rebel Officer",
+    "title": "Fighting for Freedom",
+    "faction": "rebels",
+    "rank": "commander",
+    "keywords": [
+      "Inspire 1",
+      "Equip Doctrine"
+    ],
+    "imageName": "Rebel Officer.webp"
+  },
+  "Ca": {
+    "name": "Imperial Agent",
+    "title": "Bringing Order to the Galaxy",
+    "faction": "empire",
+    "rank": "operative",
+    "keywords": [
+      "Relentless",
+      "Equip Doctrine"
+    ],
+    "imageName": "Imperial Agent.webp"
+  },
+  "Cb": {
+    "name": "Imperial Officer",
+    "title": "Ruthless Efficiency",
+    "faction": "empire",
+    "rank": "commander",
+    "keywords": [
+      "Inspire 1",
+      "Equip Doctrine"
+    ],
+    "imageName": "Imperial Officer.webp"
+  },
+  "Cz": {
+    "name": "Jedi Knight General",
+    "title": "Strong in the Force",
+    "faction": "republic",
+    "rank": "commander",
+    "keywords": [
+      "Deflect",
+      "Equip Doctrine, Armament",
+      "Immune: Pierce",
+      "Master of the Force 1"
+    ],
+    "imageName": "Jedi Knight General.webp"
+  },
+  "Da": {
+    "name": "Jedi Knight",
+    "title": "Keeper of the Peace",
+    "faction": "republic",
+    "rank": "operative",
+    "keywords": [
+      "Deflect",
+      "Equip Doctrine, Armament",
+      "Immune: Pierce"
+    ],
+    "imageName": "Jedi Knight.webp"
+  },
+  "Do": {
+    "name": "Super Tactical Command Droid",
+    "title": "Command and Control Droid",
+    "faction": "separatists",
+    "rank": "commander",
+    "keywords": [
+      "Override",
+      "Equip Doctrine"
+    ],
+    "imageName": "Command and Control Droid.webp"
+  },
+  "Dp": {
+    "name": "Super Tactical Command Droid",
+    "title": "Auxiliary Command Droid",
+    "faction": "separatists",
+    "rank": "operative",
+    "keywords": [
+      "Override",
+      "Equip Doctrine",
+      "Aid Droid Trooper"
+    ],
+    "imageName": "Auxiliary Command Droid.webp"
+  },
+  "Ef": {
+    "name": "General Grievous",
+    "title": "Wheel Bike Warlord",
+    "faction": "separatists",
+    "rank": "commander",
+    "keywords": [
+      "Armor 1",
+      "Climbing Vehicle",
+      "Command Vehicle 2",
+      "Entourage TSMEU-6 Wheel Bikes",
+      "Immune: Melee Pierce",
+      "Mobile"
+    ],
+    "imageName": "General Grievous Wheel Bike Warlord.webp"
+  },
+  "Eg": {
+    "name": "TSMEU-6 Wheel Bikes",
+    "title": "",
+    "faction": "separatists",
+    "rank": "special",
+    "keywords": [
+      "AI Dodge",
+      "Armor 1",
+      "Climbing Vehicle",
+      "Mobile"
+    ],
+    "imageName": "TSMEU-6 Wheel Bikes.webp"
+  },
+  "Fa": {
+    "name": "Imperial Probe Droid",
+    "title": "",
+    "faction": "empire",
+    "rank": "special",
+    "keywords": [
+      "Observe 3",
+      "Self-Destruct 3",
+      "Detachment special",
+      "Disengage",
+      "Infiltrate",
+      "Hover Air 1"
+    ],
+    "imageName": "Imperial Probe Droid.webp"
+  },
+  "Fb": {
+    "name": "Luke Skywalker",
+    "title": "Commander Skywalker",
+    "faction": "rebels",
+    "rank": "commander",
+    "keywords": [
+      "Spotter 1",
+      "Take Cover 1",
+      "Immune: Pierce",
+      "Inspire 2",
+      "Relentless",
+      "Reposition",
+      "Spur",
+      "Unhindered"
+    ],
+    "imageName": "Luke Skywalker Commander Skywalker.webp"
+  },
+  "Fc": {
+    "name": "Han Solo",
+    "title": "Reluctant Hero",
+    "faction": "rebels",
+    "rank": "operative",
+    "keywords": [
+      "Arsenal 2",
+      "Charge",
+      "Independent Aim 1 and Dodge 1",
+      "Reposition",
+      "Spur",
+      "Uncanny Luck 3",
+      "Unhindered"
+    ],
+    "imageName": "Han Solo Reluctant Hero.webp"
+  },
+  "Fd": {
+    "name": "Weequay Pirates",
+    "title": "",
+    "faction": "mercenary",
+    "rank": "corps",
+    "keywords": [
+      "Mercenary Empire, Rebels, Republics, Separatists",
+      "Charge",
+      "Independent Aim 1",
+      "Self-Preservation",
+      "Swashbuckler"
+    ],
+    "imageName": "Weequay Pirates.webp"
+  },
+  "Fe": {
+    "name": "WLO-5 Speeder Tank",
+    "title": "",
+    "faction": "mercenary",
+    "rank": "heavy",
+    "keywords": [
+      "Mercenary Empire, Rebels, Republics, Separatists",
+      "Armor 5",
+      "Arsenal 2",
+      "Hover Ground",
+      "Transport",
+      "Weak Point 2: Rear"
+    ],
+    "imageName": "WLO-5 Speeder Tank.webp"
+  },
+  "Ff": {
+    "name": "Grand Admiral Thrawn",
+    "title": "Imperial High Command",
+    "faction": "empire",
+    "rank": "commander",
+    "keywords": [
+      "Strategize 2",
+      "Cunning",
+      "Direct Empire Unit",
+      "Duelist",
+      "Exemplar",
+      "One Step Ahead",
+      "Tactical 1"
+    ],
+    "imageName": "Grand Admiral Thrawn.webp"
+  },
+  "Fg": {
+    "name": "Grand Moff Tarkin",
+    "title": "Imperial High Command",
+    "faction": "empire",
+    "rank": "commander",
+    "keywords": [
+      "Pull The Strings Empire Trooper",
+      "Entourage Darth Vader"
+    ],
+    "imageName": "Grand Moff Tarkin.webp"
+  },
+  "Fp": {
+    "name": "Mace Windu",
+    "title": "Jedi Council",
+    "faction": "republic",
+    "rank": "commander",
+    "keywords": [
+      "Jump 1",
+      "Charge",
+      "Compel Core Trooper",
+      "Deflect",
+      "Immune: Pierce",
+      "Master of the Force 1",
+      "Vaapad Mastery"
+    ],
+    "imageName": "Mace Windu.webp"
+  },
+  "Fq": {
+    "name": "General Tagge",
+    "title": "Imperial High Command",
+    "faction": "empire",
+    "rank": "commander",
+    "keywords": [
+      "Equip Logistical Prowess",
+      "Calculate Odds",
+      "Exemplar",
+      "Inspire 1"
+    ],
+    "imageName": "General Tagge.webp"
+  },
+  "Gs": {
+    "name": "Shaak Ti",
+    "title": "Jedi Council",
+    "faction": "republic",
+    "rank": "operative",
+    "keywords": [
+      "Jump 1",
+      "Quick Thinking",
+      "Aid Non-Republic Unit",
+      "Allies of Convenience",
+      "Charge",
+      "Deflect",
+      "Immune: Pierce",
+      "Makashi Mastery"
+    ],
+    "imageName": "Shaak Ti.webp"
+  },
+  "Gu": {
+    "name": "Ki-Adi-Mundi",
+    "title": "Jedi Council",
+    "faction": "republic",
+    "rank": "commander",
+    "keywords": [
+      "Jump 2",
+      "Ataru Mastery",
+      "Charge",
+      "Danger Sense 1",
+      "Deflect",
+      "Immune: Pierce",
+      "Master of the Force 1"
+    ],
+    "imageName": "Ki-Adi-Mundi.webp"
+  },
+  "Gw": {
+    "name": "Plo Koon",
+    "title": "Jedi Council",
+    "faction": "republic",
+    "rank": "operative",
+    "keywords": [
+      "Jump 1",
+      "Distract",
+      "Charge",
+      "Defend 1",
+      "Deflect",
+      "Direct Clone Trooper Infantry",
+      "Immune: Pierce",
+      "Inspire 2",
+      "Shien Mastery"
+    ],
+    "imageName": "Plo Koon.webp"
+  },
+  "Hb": {
+    "name": "Savage Opress",
+    "title": "Maul's Enforcer",
+    "faction": "mercenary",
+    "rank": "operative",
+    "keywords": [
+      "Jump 1",
+      "Demoralize 1",
+      "Enrage 2",
+      "Immune: Pierce",
+      "Retinue Maul"
+    ],
+    "imageName": "Savage Opress Maul's Enforcer.webp"
+  },
+  "Hc": {
+    "name": "Savage Opress",
+    "title": "Dooku's Apprentice",
+    "faction": "separatists",
+    "rank": "operative",
+    "keywords": [
+      "Jump 1",
+      "Demoralize 1",
+      "Enrage 2",
+      "Immune: Pierce",
+      "Retinue Count Dooku"
+    ],
+    "imageName": "Savage Opress Dooku's Apprentice.webp"
+  },
+  "Hj": {
+    "name": "Anakin Skywalker",
+    "title": "Mounted Jedi General",
+    "faction": "republic",
+    "rank": "operative",
+    "keywords": [
+      "Cover 2",
+      "Independent Aim 2 or Surge 2",
+      "Immune: Pierce",
+      "Reposition",
+      "Speeder 1"
+    ],
+    "imageName": "Anakin Skywalker Mounted Jedi General.webp"
+  },
+  "Hk": {
+    "name": "Jedi Knight",
+    "title": "Mounted Jedi General",
+    "faction": "republic",
+    "rank": "commander",
+    "keywords": [
+      "Aid Clone Trooper",
+      "Command Vehicle 2",
+      "Cover 1",
+      "Defend 1",
+      "Immune: Pierce",
+      "Speeder 1"
+    ],
+    "imageName": "Jedi Knight Mounted Jedi General.webp"
+  },
+  "Hm": {
+    "name": "Guerilla Troopers",
+    "title": "",
+    "faction": "rebels",
+    "rank": "special",
+    "keywords": [
+      "Flexible Response 2",
+      "Independent Aim 1",
+      "Infiltrate"
+    ],
+    "imageName": "Guerilla Troopers.webp"
+  },
+  "Hq": {
+    "name": "Mandalorian Initiates",
+    "title": "",
+    "faction": "mercenary",
+    "rank": "corps",
+    "keywords": [],
+    "imageName": "Mandalorian Initiates.webp"
+  },
+  "Hr": {
+    "name": "Mandalorian Warriors",
+    "title": "",
+    "faction": "mercenary",
+    "rank": "corps",
+    "keywords": [
+      "Jump 2",
+      "Duelist",
+      "Impervious"
+    ],
+    "imageName": "Mandalorian Warriors.webp"
+  },
+  "Hs": {
+    "name": "Mandalorian Warriors",
+    "title": "Fire Support",
+    "faction": "mercenary",
+    "rank": "support",
+    "keywords": [
+      "Jump 2",
+      "Detachment Mandalorian Warriors",
+      "Heavy Weapon Team",
+      "Duelist",
+      "Impervious",
+      "Sharpshooter 1"
+    ],
+    "imageName": "Mandalorian Warriors Fire Support.webp"
+  },
+  "Ht": {
+    "name": "Clan Kryze Veterans",
+    "title": "",
+    "faction": "mercenary",
+    "rank": "special",
+    "keywords": [
+      "Mercenary Rebels, Republic",
+      "Jump 2",
+      "Impervious",
+      "Mandalorians Are Stronger Together",
+      "Tactical 1"
+    ],
+    "imageName": "Clan Kryze Veterans.webp"
+  },
+  "Hu": {
+    "name": "Mandalorian Leader",
+    "title": "",
+    "faction": "mercenary",
+    "rank": "commander",
+    "keywords": [
+      "Jump 2",
+      "Equip: Armament, Doctrine (No cards yet)",
+      "Impervious",
+      "Retinue Mandalorian Warriors"
+    ],
+    "imageName": "Mandalorian Leader.webp"
+  },
+  "Hv": {
+    "name": "Mandalorian Hunter",
+    "title": "",
+    "faction": "mercenary",
+    "rank": "operative",
+    "keywords": [
+      "Mercenary All",
+      "Jump 2",
+      "Equip: Armament, Doctrine (No cards yet)",
+      "Impervious"
+    ],
+    "imageName": "Mandalorian Hunter.webp"
+  },
+  "Hw": {
+    "name": "Bo-Katan Kryze",
+    "title": "Savior of Mandalore",
+    "faction": "mercenary",
+    "rank": "commander",
+    "keywords": [
+      "Mercenary Rebels, Republic",
+      "Jump 2",
+      "Death from Above",
+      "Impervious",
+      "Mandalorians Are Stronger Together",
+      "Tactical 1"
+    ],
+    "imageName": "Bo-Katan Kryze.webp"
+  },
+  "Hx": {
+    "name": "Axe Woves",
+    "title": "Cunning Warrior",
+    "faction": "mercenary",
+    "rank": "operative",
+    "keywords": [
+      "Mercenary Rebels, Republic",
+      "Jump 2",
+      "Charge",
+      "Coordinate Clan Kryze Unit",
+      "Impervious",
+      "Mandalorians Are Stronger Together",
+      "Tactical 1"
+    ],
+    "imageName": "Axe Woves.webp"
+  },
+  "Hy": {
+    "name": "The Armorer",
+    "title": "Forging the Future",
+    "faction": "mercenary",
+    "rank": "commander",
+    "keywords": [
+      "Jump 2",
+      "Aid Children of the Watch",
+      "Charge",
+      "Impervious",
+      "Reliable 1",
+      "This Is the Way Move 1 or Recover 2"
+    ],
+    "imageName": "The Armorer.webp"
+  },
+  "Hz": {
+    "name": "Paz Vizsla",
+    "title": "Proud Warrior",
+    "faction": "mercenary",
+    "rank": "operative",
+    "keywords": [
+      "Jump 2",
+      "Field Commander",
+      "Impervious",
+      "Steady",
+      "This Is the Way Aim 2"
+    ],
+    "imageName": "Paz Vizsla.webp"
+  },
+  "Ia": {
+    "name": "Clan Wren Veterans",
+    "title": "",
+    "faction": "mercenary",
+    "rank": "special",
+    "keywords": [
+      "Mercenary Rebels",
+      "Jump 2",
+      "Dauntless",
+      "Impervious",
+      "Nimble",
+      "We Fight for Our Family"
+    ],
+    "imageName": "Clan Wren Veterans.webp"
+  },
+  "Id": {
+    "name": "Han & Chewie",
+    "title": "Notorious Scoundrels",
+    "faction": "mercenary",
+    "rank": "operative",
+    "keywords": [
+      "Mercenary Rebels",
+      "Eyes on the Prize Steady",
+      "Self-Preservation",
+      "Uncanny Luck 2"
+    ],
+    "imageName": "Han & Chewie.webp"
+  }
+}

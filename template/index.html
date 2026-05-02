@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SW Legion Keywords</title>
+<link rel="icon" type="image/png" href="EmpireCrest.png">
+<style>/*STYLE_CSS*/</style>
+</head>
+<body>
+
+<!-- AUTH SCREEN -->
+<div id="auth-screen">
+  <div class="auth-box">
+    <div class="auth-logo">
+      <div class="auth-logo-icon">&#9876;</div>
+      <h1>SW Legion Keywords</h1>
+      <p>Master every keyword in v2.6</p>
+    </div>
+    <div class="auth-card">
+      <div class="auth-tabs">
+        <button id="auth-tab-login"  class="auth-tab active" onclick="setAuthMode('login')">Sign In</button>
+        <button id="auth-tab-signup" class="auth-tab"        onclick="setAuthMode('signup')">Create Account</button>
+      </div>
+      <div class="auth-fields">
+        <input type="email"    id="auth-email" class="list-url-input" placeholder="Email address"
+               autocomplete="email" onkeydown="if(event.key==='Enter')document.getElementById('auth-pwd').focus()">
+        <input type="password" id="auth-pwd"   class="list-url-input" placeholder="Password (min 6 characters)"
+               autocomplete="current-password" onkeydown="if(event.key==='Enter')authSubmit()">
+        <div id="auth-status" class="auth-status"></div>
+        <button id="auth-submit" class="big-btn gold" style="width:100%" onclick="authSubmit()">Sign In</button>
+        <div class="auth-divider">&#9472;&#9472; or &#9472;&#9472;</div>
+        <button class="big-btn ghost" style="width:100%" onclick="guestMode()">Play as Guest</button>
+      </div>
+    </div>
+    <p class="auth-footer">Guest progress is saved locally on this device only.</p>
+    <p class="auth-footer">{{VERSION}}</p>
+  </div>
+</div>
+
+<!-- FLASHCARD SCREEN -->
+<div class="screen on" id="flashcard-screen">
+  <div id="fs-bg">
+    <img id="fs-img" src="" alt="">
+    <div id="fs-stats-cover" style="display:none;position:absolute;background:#0a0a0f;border:2px solid rgba(245,197,24,.5);border-radius:6px;pointer-events:none;"></div>
+    <div id="fs-scan"></div>
+    <div id="fs-top-grad"></div>
+    <div id="fs-bot-grad"></div>
+  </div>
+  <div id="fs-flip-zone" onclick="handleTap()"></div>
+  <div id="fs-topbar">
+    <button class="fs-pill active" id="pill-learn" onclick="setMode('learn')">Learn</button>
+    <button class="fs-pill" id="pill-quiz" onclick="setMode('quiz')">Quiz</button>
+    <button class="fs-pill" id="pill-stats" onclick="setMode('stats')">Stats</button>
+    <div id="fs-type-filter">
+      <button class="fs-pill active" id="pill-all"     onclick="setTypeFilter('all')">All</button>
+      <button class="fs-pill"        id="pill-unit"    onclick="setTypeFilter('unit')">Unit</button>
+      <button class="fs-pill"        id="pill-weapon"  onclick="setTypeFilter('weapon')">Weapon</button>
+      <button class="fs-pill"        id="pill-concept" onclick="setTypeFilter('noconcept')">No Concepts</button>
+      <div id="list-dropdown-wrap">
+        <button class="fs-pill" id="pill-list" onclick="toggleListDropdown()">List: None &#9660;</button>
+        <div id="list-dropdown"></div>
+      </div>
+    </div>
+    <div id="fs-progress"><div id="fs-pfill" style="width:0%"></div><span id="fs-ctr"></span></div>
+    <div id="fs-quiz-stats">
+      <div class="fs-stat ok">&#10003;<span id="sc">0</span></div>
+      <div class="fs-stat wr">&#10007;<span id="sw">0</span></div>
+    </div>
+    <div id="fs-stats-score" style="display:none;gap:12px;align-items:center">
+      <div class="fs-stat ok">&#10003;<span id="ss">0</span></div>
+      <div class="fs-stat wr">&#10007;<span id="se">0</span></div>
+    </div>
+  </div>
+  <div id="fs-nav-btns">
+    <button class="fs-pill" onclick="showScreen('catalog-screen')">Catalog</button>
+    <button class="fs-pill" id="pill-lists" onclick="showScreen('lists-screen')">Lists</button>
+    <div id="acct-dropdown-wrap">
+      <button class="fs-pill" id="acct-btn" onclick="toggleAcctDropdown()">&#128100;</button>
+      <div id="acct-dropdown">
+        <div class="acct-email" id="acct-email-label">Guest mode</div>
+        <div class="acct-item" id="acct-signin-item" onclick="showAuthFromApp()" style="display:none">Sign in / Switch account</div>
+        <div class="acct-item danger" id="acct-signout-item" onclick="authSignOut()" style="display:none">Sign out</div>
+        <div class="acct-item" id="acct-guest-label" style="display:none;cursor:default;color:rgba(255,255,255,.3)">Progress saved locally</div>
+        <div style="font-size:10px;color:rgba(255,255,255,.18);padding:4px 14px 8px;text-align:center;letter-spacing:.3px">{{VERSION}}</div>
+      </div>
+    </div>
+  </div>
+  <button id="fs-prev" onclick="go(-1)">&#8592;</button>
+  <button id="fs-next" onclick="go(1)">&#8594;</button>
+  <div id="fs-bottom">
+    <div id="fs-status"></div>
+    <div id="fs-qres"></div>
+    <div id="fs-opts"></div>
+    <div id="fs-front-content">
+      <div id="fs-keyword-name"></div>
+      <div id="fs-keyword-subtext"></div>
+      <div id="fs-tap-hint">Tap anywhere to reveal definition</div>
+    </div>
+    <div id="fs-back-content">
+      <div id="fs-back-name"></div>
+      <div id="fs-notes-col">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+          <div class="fs-notes-label">Summary / Notes</div>
+          <button id="fs-ai-summary-btn" class="fs-btn" style="font-size:11px;padding:3px 10px;line-height:1.4;display:none" onclick="badSummary()">Bad Summary</button>
+        </div>
+        <textarea id="fs-notes" placeholder="Add your notes..." maxlength="2000"></textarea>
+      </div>
+      <div id="fs-rules-section">
+        <div id="fs-rules-header" onclick="toggleRulesSection()">
+          <span class="fs-notes-label">Rules</span>
+          <span id="fs-rules-preview"></span>
+          <span id="fs-rules-caret">&#9660;</span>
+        </div>
+        <div id="fs-definition"></div>
+      </div>
+      <div id="fs-source"></div>
+      <div id="fs-units"></div>
+      <div id="fs-actions"></div>
+      <div id="fs-feedback-area" style="display:none;margin-top:8px">
+        <textarea id="fs-feedback-input" placeholder="Send feedback about this card (max 1000 chars)..." maxlength="1000" style="width:100%;min-height:70px;box-sizing:border-box;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.2);border-radius:8px;color:#fff;font-size:13px;padding:8px 10px;font-family:inherit;resize:vertical;outline:none"></textarea>
+        <div style="display:flex;gap:8px;margin-top:4px">
+          <button class="fs-btn" onclick="submitFsFeedback()">Submit</button>
+          <button class="fs-btn" onclick="toggleFsFeedback()">Cancel</button>
+        </div>
+      </div>
+      <div id="fs-owner-feedback" style="display:none;margin-top:8px;background:rgba(245,197,24,.06);border:1px solid rgba(245,197,24,.2);border-radius:8px;padding:10px;font-size:12px;line-height:1.6;color:rgba(255,255,255,.7)"></div>
+    </div>
+  </div>
+  <div id="fs-alldone">
+    <div style="font-size:56px">&#9889;</div>
+    <h2>All keywords learned!</h2>
+    <p>You've mastered all active keywords.<br>Reset or change your filter to continue.</p>
+    <button class="big-btn gold" onclick="resetLearned()">Start Over</button>
+    <button class="big-btn ghost" onclick="showScreen('catalog-screen')">View Catalog</button>
+  </div>
+</div>
+
+<!-- CATALOG SCREEN -->
+<div class="screen" id="catalog-screen" style="background:#0a0a0f;overflow-y:auto">
+  <div class="cat-wrap">
+    <div class="cat-top">
+      <h1>SW Legion Keywords (v2.6)</h1>
+      <div class="cat-top-btns">
+        <button class="dark-pill" onclick="showScreen('flashcard-screen')">&#8592; Back</button>
+      </div>
+    </div>
+    <div class="cat-filters" id="cat-filters">
+      <button class="dark-pill active" onclick="setCF('all',this)">All</button>
+      <button class="dark-pill" onclick="setCF('learned',this)">Learned</button>
+      <button class="dark-pill" onclick="setCF('unlearned',this)">Unlearned</button>
+      <button class="dark-pill" onclick="setCF('unit',this)">Unit Keywords</button>
+      <button class="dark-pill" onclick="setCF('weapon',this)">Weapon Keywords</button>
+      <button class="dark-pill" onclick="setCF('concept',this)">Concepts Only</button>
+      <button class="dark-pill" onclick="setCF('noconcept',this)">No Concepts</button>
+      <button class="dark-pill" id="cat-pill-feedback" onclick="setCF('feedback',this)" style="display:none">Feedback</button>
+      <div id="cat-list-dropdown-wrap">
+        <button class="dark-pill" id="cat-pill-list" onclick="toggleCatListDropdown()">List: None &#9660;</button>
+        <div id="cat-list-dropdown"></div>
+      </div>
+    </div>
+    <div id="cat-add-row">
+      <span class="add-label">Also include:</span>
+      <button class="dark-pill" id="cat-add-unit" onclick="toggleCatExtra('unit',this)">+ Unit</button>
+      <button class="dark-pill" id="cat-add-weapon" onclick="toggleCatExtra('weapon',this)">+ Weapon</button>
+      <button class="dark-pill" id="cat-add-concept" onclick="toggleCatExtra('concept',this)">+ Concept</button>
+      <button class="dark-pill" id="cat-add-pinned" onclick="toggleCatExtra('pinned',this)">&#128204; Pinned</button>
+    </div>
+    <input type="text" id="cat-search" placeholder="&#128269; Search keywords..." oninput="renderCatalog()">
+    <div class="cat-count" id="cat-count"></div>
+    <div class="cat-grid" id="cat-grid"></div>
+  </div>
+</div>
+
+<!-- LISTS SCREEN -->
+<div class="screen" id="lists-screen" style="background:#0a0a0f;overflow-y:auto">
+  <div class="cat-wrap">
+    <div class="cat-top">
+      <h1>&#9935; Army Lists</h1>
+      <div class="cat-top-btns">
+        <button class="dark-pill" onclick="showScreen('flashcard-screen')">&#8592; Back</button>
+      </div>
+    </div>
+    <!-- CREATE -->
+    <div class="list-panel" id="list-create-panel">
+      <h2 class="list-section-title">Import Army List</h2>
+      <div class="list-input-row">
+        <input type="text" id="list-url-input" class="list-url-input"
+               placeholder="Paste LegionHQ2 or Tabletop Admiral URL..."
+               autocomplete="off" spellcheck="false">
+        <button class="dark-pill" onclick="parseListUrl()">Parse</button>
+      </div>
+      <div id="list-parse-result" style="display:none">
+        <div class="list-parse-header">
+          <span id="list-parse-faction-badge" class="faction-badge"></span>
+          <span id="list-parse-points" class="list-pts"></span>
+          <span id="list-parse-unit-count"></span>
+        </div>
+        <div id="list-parse-units"></div>
+        <div class="list-kw-section">
+          <div class="list-kw-title">Keywords in this list (<span id="list-kw-count">0</span>):</div>
+          <div id="list-kw-tags" class="list-kw-tags"></div>
+        </div>
+        <div class="list-save-row">
+          <input type="text" id="list-name-input" class="list-name-input" placeholder="List name (e.g. Vader Empire 1000pts)" maxlength="60">
+          <button class="big-btn gold" onclick="saveList()">Save List</button>
+        </div>
+        <div id="list-save-status"></div>
+      </div>
+    </div>
+    <!-- SAVED LISTS -->
+    <div class="list-panel" id="list-saved-panel">
+      <h2 class="list-section-title">Saved Lists</h2>
+      <div id="lists-container"></div>
+    </div>
+  </div>
+</div>
+
+<!-- LIST DETAIL MODAL -->
+<div id="list-modal-bg" class="list-modal-bg" onclick="closeListModal(event)">
+  <div class="list-modal-box" onclick="event.stopPropagation()">
+    <div class="list-modal-header">
+      <div>
+        <div class="list-modal-name" id="lm-name"></div>
+        <div id="lm-meta" class="list-modal-meta"></div>
+      </div>
+      <button class="dark-pill" onclick="closeListModal()">Close</button>
+    </div>
+    <div class="list-modal-tabs">
+      <button class="lm-tab active" id="lm-tab-kw" onclick="setLmTab('kw')">Keywords</button>
+      <button class="lm-tab" id="lm-tab-edit" onclick="setLmTab('edit')">Edit</button>
+    </div>
+    <div id="lm-tab-kw-panel">
+      <div style="padding:12px 16px 0;display:flex;justify-content:flex-end">
+        <button class="dark-pill" onclick="printListKeywords(_lmListId)" title="Print keywords as PDF">&#128438; Print PDF</button>
+      </div>
+      <div class="list-kw-tags" id="lm-kw-tags" style="padding:16px"></div>
+    </div>
+    <div id="lm-tab-edit-panel" style="display:none">
+      <div style="padding:16px">
+        <div style="font-size:13px;color:rgba(255,255,255,.5);margin-bottom:12px">
+          Click keywords to remove them, or add new ones below.
+        </div>
+        <div class="list-kw-tags" id="lm-edit-tags"></div>
+        <div class="list-add-kw-row">
+          <input type="text" id="lm-add-kw-input" class="list-url-input" style="flex:1"
+                 placeholder="Add keyword (type to search)..." autocomplete="off" list="kw-datalist">
+          <datalist id="kw-datalist"></datalist>
+          <button class="dark-pill" onclick="lmAddKeyword()">Add</button>
+        </div>
+        <div class="list-save-row" style="margin-top:16px">
+          <button class="big-btn gold" onclick="lmSaveEdit()">Save Changes</button>
+          <button class="big-btn ghost" style="background:rgba(192,57,43,.2);border-color:#c0392b;color:#f08080" onclick="lmDeleteList()">Delete List</button>
+        </div>
+        <div id="lm-edit-status" style="margin-top:8px;font-size:13px"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div id="modal-bg" onclick="closeMod(event)">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div id="mod-img"></div>
+    <div class="modal-body">
+      <div class="modal-name" id="mod-name"></div>
+      <div class="modal-type" id="mod-type"></div>
+      <div class="modal-summary" id="mod-summary" style="display:none"></div>
+      <button class="modal-btn" id="mod-edit-summary" onclick="modToggleEditSummary()" style="display:none;font-size:11px;padding:3px 10px;margin-top:4px">Edit Summary</button>
+      <button class="modal-btn" id="mod-regen-summary" onclick="modRegenSummary()" style="display:none;font-size:11px;padding:3px 10px;margin-top:4px">Regen AI Summary</button>
+      <textarea id="mod-summary-edit" placeholder="Edit summary..." maxlength="500" style="display:none"></textarea>
+      <div id="mod-summary-edit-acts" style="display:none;gap:8px;flex-wrap:wrap;margin-top:4px">
+        <button class="modal-btn" onclick="modSaveSummary()">Save</button>
+        <button class="modal-btn" onclick="modResetSummary()">Reset</button>
+      </div>
+      <div class="modal-def"  id="mod-def"></div>
+      <div class="modal-src" id="mod-src"></div>
+      <div class="modal-art-credit" id="mod-art-credit" style="display:none"></div>
+      <div class="modal-art-credit" id="mod-units" style="display:none"></div>
+      <div class="modal-status" id="mod-st"></div>
+      <div class="modal-acts">
+        <button class="modal-btn" id="mod-lrnd"  onclick="modToggleLearned()"></button>
+        <button class="modal-btn" id="mod-pin"   onclick="modTogglePin()">&#128204; Pin</button>
+        <button class="modal-btn" id="mod-add-list" onclick="modShowAddToList()">+ List</button>
+        <button class="modal-btn" id="mod-edit"     onclick="modToggleEditDef()">Edit Rules</button>
+        <button class="modal-btn" id="mod-feedback" onclick="modToggleFeedback()">Feedback</button>
+        <button class="modal-btn cls"               onclick="closeMod()">Close</button>
+      </div>
+      <div id="mod-list-picker" style="display:none;margin-top:8px;background:#0d1020;border:1px solid rgba(245,197,24,.3);border-radius:10px;overflow:hidden"></div>
+      <div id="mod-owner-feedback" style="display:none;margin-top:10px;background:rgba(245,197,24,.06);border:1px solid rgba(245,197,24,.2);border-radius:8px;padding:10px;font-size:12px;line-height:1.6;color:rgba(255,255,255,.7)"></div>
+      <div id="mod-feedback-area" style="display:none;margin-top:8px">
+        <textarea id="mod-feedback-input" placeholder="Send feedback about this card (max 1000 chars)..." maxlength="1000" style="width:100%;min-height:80px;box-sizing:border-box;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.2);border-radius:8px;color:#fff;font-size:13px;padding:8px 10px;font-family:inherit;resize:vertical;outline:none"></textarea>
+        <div style="display:flex;gap:8px;margin-top:4px">
+          <button class="modal-btn" onclick="submitModFeedback()">Submit</button>
+          <button class="modal-btn" onclick="modToggleFeedback()">Cancel</button>
+        </div>
+      </div>
+      <textarea id="mod-def-edit" placeholder="Edit the rules text..." maxlength="2000"></textarea>
+      <div id="mod-def-edit-acts" style="display:none;gap:8px;flex-wrap:wrap;margin-top:6px">
+        <button class="modal-btn" onclick="modSaveDef()">Save</button>
+        <button class="modal-btn" onclick="modResetDef()">Reset to Original</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PRINT TARGET (hidden normally, shown during window.print()) -->
+<div id="print-keywords"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>/*APP_JS*/</script>
+</body>
+</html>
