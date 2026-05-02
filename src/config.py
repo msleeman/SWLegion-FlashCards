@@ -20,6 +20,20 @@ OUT           = os.path.join(DIST_DIR, 'index.html')
 CARD_ART_DIR  = OVERRIDES_DIR
 MANUAL_DIR    = OVERRIDES_DIR
 
+# ── Rulebook PDF (update this list when a new rulebook drops) ────────────────
+# Order matters: NEWEST first. find_pdf() picks the first one it finds on disk
+# in documents/ or the project root. To switch to a new rulebook, drop the PDF
+# into documents/ and prepend its filename here. Old entries can stay as
+# fallbacks until the file is removed.
+RULEBOOK_PDFS = [
+    "DOC51_SWQ_Rulebook_05-01_Update.pdf",   # 2026-05-01 update
+    "SWQ_Rulebook_2.6.0-1.pdf",              # 2.6.0-1
+    "SWQ_Rulebook_2_6_0-1.pdf",              # alternate spelling
+]
+# Credit shown on cards whose definition came from the PDF.
+# Change this when bumping rulebooks so card credits track the source.
+RULEBOOK_CREDIT = "AMG Rulebook 2026-05-01"
+
 BASE             = 'https://legion.takras.net'
 CDN              = 'https://d2maxvwz12z6fm.cloudfront.net'
 LEGIONHQ_CDN     = 'https://d2maxvwz12z6fm.cloudfront.net/unitCards/'
