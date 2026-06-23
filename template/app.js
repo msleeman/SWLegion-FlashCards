@@ -1154,16 +1154,19 @@ function parseUnitCode(code){
 
 function parseLegionHQUrl(url){
   // URL format: https://legionhq2.com/list/{faction}/{points}:{codes}
+  //         or: https://legionhq2.com/list/{faction}/{points}:{subfaction}:{codes}
   // codes = comma-separated unit codes and card IDs
   try{
     const m=url.match(/legionhq2\.com\/list\/([^/]+)\/([^/?#]+)/);
     if(!m) return null;
     const faction=m[1];
     const hashPart=m[2];
-    const colonIdx=hashPart.indexOf(':');
-    if(colonIdx<0) return null;
-    const points=parseInt(hashPart.slice(0,colonIdx))||0;
-    const codes=hashPart.slice(colonIdx+1).split(',');
+    const parts=hashPart.split(':');
+    if(parts.length<2) return null;
+    const points=parseInt(parts[0])||0;
+    // parts[1] is either the codes string (old format) or a subfaction code (new format)
+    const codesStr=parts.length>=3 ? parts.slice(2).join(':') : parts[1];
+    const codes=codesStr.split(',');
     return {faction,points,codes};
   }catch(e){ return null; }
 }
