@@ -1185,6 +1185,33 @@ function kwBase(kw){
   }).trim();
 }
 
+// Normalize a card name to a lookup key (strips [], trailing X, and colon subtypes)
+function normKw(name){
+  return name.replace(/\[\]/g,'').replace(/\s+X$/,'').replace(/:\s*.+$/,'').trim().toLowerCase();
+}
+
+// Normalize a LegionHQ2 keyword to its canonical card name.
+// LegionHQ2 encodes parametric keywords differently:
+//   "Weak Point 1: Rear"      → "Weak Point"  (number+colon suffix stripped)
+//   "Compel Corps"            → "Compel"       (unit-type suffix matched against card DB)
+//   "Teamwork Han Solo"       → "Teamwork"
+//   "Immune: Pierce"          → "Immune: Pierce" (already canonical — preserved)
+let _cardNormSet=null;
+function kwNormalize(kw){
+  // Strip trailing number and everything after it (handles "Weak Point 1: Rear")
+  let base=kw.replace(/\s+\d+.*$/,'').trim();
+  // For colon-free keywords, try progressive word truncation against the card DB
+  if(!base.includes(':')){
+    if(!_cardNormSet) _cardNormSet=new Set(CARDS.map(c=>normKw(c.name)));
+    const words=base.split(/\s+/);
+    for(let i=words.length;i>=1;i--){
+      const candidate=words.slice(0,i).join(' ');
+      if(_cardNormSet.has(candidate.toLowerCase())) return candidate;
+    }
+  }
+  return base;
+}
+
 function decodeArmy(url){
   const parsed=parseLegionHQUrl(url);
   if(!parsed) return null;
@@ -1207,10 +1234,7 @@ function decodeArmy(url){
     if(!unit) continue;
     units.push({count,unit,unitId,upgrades});
     // Collect keywords
-    (unit.k||[]).forEach(kw=>{
-      const base=kw.replace(/\s+\d+(\s+.*)?$/,'').trim();
-      allKeywords.add(base);
-    });
+    (unit.k||[]).forEach(kw=>{ allKeywords.add(kwNormalize(kw)); });
   }
 
   return {faction,points,units,keywords:[...allKeywords].sort()};
@@ -1245,9 +1269,7 @@ function parseTtaUrl(url){
       const displayUnit=dbUnit||{n:tta.n,t:'',k:[],i:''};
       units.push({count,unit:displayUnit,hexId});
       if(dbUnit){
-        (dbUnit.k||[]).forEach(kw=>{
-          allKeywords.add(kw.replace(/\s+\d+(\s+.*)?$/,'').trim());
-        });
+        (dbUnit.k||[]).forEach(kw=>{ allKeywords.add(kwNormalize(kw)); });
       }
     }
     // Faction name mapping
@@ -1498,15 +1520,21 @@ function printListKeywords(listId){
   }
   const sorted=[...list.keywords].sort((a,b)=>a.localeCompare(b));
 
-  // Build a name-normalised lookup of cards
-  function normKw(name){
-    return name.replace(/\[\]/g,'').replace(/\s+X$/,'').replace(/:\s*.+$/,'').trim().toLowerCase();
-  }
   const cardByNorm={};
   CARDS.forEach(c=>{ cardByNorm[normKw(c.name)]=c; });
 
   const rows=sorted.map(kw=>{
-    const card=cardByNorm[kw.toLowerCase()]||cardByNorm[normKw(kw)];
+    // Try direct match, then normalized, then progressive word truncation for old-format keywords
+    let card=cardByNorm[kw.toLowerCase()]||cardByNorm[normKw(kw)];
+    if(!card){
+      const stripped=kw.replace(/\s+\d+.*$/,'').trim();
+      card=cardByNorm[normKw(stripped)];
+      if(!card&&!stripped.includes(':')){
+        const words=stripped.split(/\s+/);
+        for(let i=words.length-1;i>=1&&!card;i--)
+          card=cardByNorm[words.slice(0,i).join(' ').toLowerCase()];
+      }
+    }
     const def=card?(card.summary||card.definition||''):'';
     const type=card?((card.type||'').charAt(0).toUpperCase()+(card.type||'').slice(1)):'';
     const short=def.length>350?def.slice(0,350).replace(/\s\S+$/,'')+'…':def;

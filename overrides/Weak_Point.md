@@ -1,0 +1,2 @@
+While a unit with the Weak Point X: Front/Rear/Sides keyword defends, if the attacking unit's unit leader is at least partially inside the specified firing arc of the defending unit, the Attack Pool gains the Impact X keyword where X is equal to the value of Weak Point X.
+While a unit with the Weak Point X keyword defends against a Ranged attack made by an area weapon, treat the Charge token or Advantage token as the attacking unit leader.
