@@ -207,6 +207,9 @@ def build_html(card_data):
     html = html.replace("/*APP_JS*/", js)
 
     ver = get_version()
+    from datetime import datetime, timezone
+    build_date = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
     html = html.replace("{{VERSION}}", ver)
-    print(f"  Version: {ver}")
+    html = html.replace("{{BUILD_DATE}}", build_date)
+    print(f"  Version: {ver}  Built: {build_date}")
     return html
