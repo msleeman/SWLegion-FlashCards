@@ -1,8 +1,7 @@
 # SWLegion FlashCards — Rebuild
 
-Run `py rebuild_html_only.py` to regenerate `dist/index.html` from cached data.
-This updates the version number and build timestamp. Always do this after editing
-`template/app.js`, `template/index.html`, or `template/app.css` — and before committing.
+Run this after any change to `template/` or `overrides/` to regenerate `dist/index.html`
+with an updated version number and build timestamp. Always rebuild before committing.
 
 ```bash
 py rebuild_html_only.py
@@ -10,84 +9,80 @@ py rebuild_html_only.py
 
 ---
 
-## Project structure
+## Project reference
 
-| Path | Purpose |
-|------|---------|
-| `template/app.js` | Main JS source — **edit this, never `dist/`** |
-| `template/index.html` | HTML template with `{{VERSION}}` and `{{BUILD_DATE}}` placeholders |
-| `template/app.css` | Stylesheet |
-| `src/render.py` | Build engine — `get_version()` runs `git describe`, `build_html()` injects placeholders |
-| `rebuild_html_only.py` | Fast rebuild from cache (no scraping) — use this for JS/template changes |
-| `dist/index.html` | Built output — **never edit directly** |
-| `overrides/<Stem>.md` | Manual keyword definition overrides — win over everything including PDF |
-| `overrides/<Stem>.webp/png/jpg` | Manual keyword card art |
-| `legionhq2_units.json` | Cached unit DB from LegionHQ2 (root of project) |
-| `cards_cache.json` | Cached keyword card data (root of project) |
-| `cache/card_data.json` | Processed card data used by rebuild |
+**Read `README.md` first** — it is the authoritative reference for:
+- Quick-start commands (`py -m src.build`, `py rebuild_html_only.py`, `py refresh_definitions.py`)
+- Full folder structure and what each file does
+- The golden rule: never edit `dist/` directly — always edit `template/` or `overrides/`
+- Override system: stem rules, file types, survival guarantee
+- Image priority chain
+- Versioning (`git describe --tags --always --dirty`)
+- Multi-PC workflow
 
-Full rebuild (re-scrapes everything): `py -m src.build`
+Key things to remember from the README:
 
-Python executable: `C:\Program Files\Python314\python.exe` — use the `py` command.
+| Need to… | Do this |
+|-----------|---------|
+| Change JS/CSS/HTML | Edit `template/`, then `/rebuild` |
+| Override a keyword definition | Create `overrides/<Stem>.md` |
+| Override a summary | Create `overrides/<Stem>.summary.md` |
+| Override card art | Drop `overrides/<Stem>.webp\|png\|jpg` |
+| Full rescrape | `py -m src.build` |
+| Fix one bad definition | `py refresh_definitions.py` |
+| Tag a release | `git tag v5.x.y && git push origin v5.x.y` |
+
+Python executable on this machine: `C:\Program Files\Python314\python.exe` (use `py`).
 
 ---
 
-## Keyword system
+## Keyword normalization (not in README)
 
-### Card definitions
-- Scraped from `legion.takras.net`, cached in `cards_cache.json`
-- PDF rulebook overlays the cache (`pdfplumber` required — `pip install pdfplumber`)
-- **Manual overrides always win**: create `overrides/<Stem>.md` for a definition,
-  `overrides/<Stem>.summary.md` for a short summary
-- Stem is computed by `_keyword_stem()` in `src/overrides.py`:
-  strips `X`, `[]`, colon subtypes, converts spaces to `_`
-  e.g. `"Weak Point X"` → `"Weak_Point"` → file is `overrides/Weak_Point.md`
-
-### Unit DB (LegionHQ2)
-- Built from LegionHQ2's JS bundle, cached in `legionhq2_units.json`
-- Injected into `dist/index.html` at build time as `const UNIT_DB = {...}`
-- Each unit entry: `{ n, t, f, r, k[], i }` (name, title, faction, rank, keywords, image)
+This section covers implementation details Claude needs when working on the keyword/list system.
 
 ### LegionHQ2 URL format
 ```
 https://legionhq2.com/list/{faction}/{points}:{subfaction}:{codes}
 ```
-- Old format omits subfaction: `{points}:{codes}`
-- `parseLegionHQUrl()` in `app.js` handles both by splitting on `:` and checking for 2 vs 3 parts
-- `codes` is comma-separated — unit codes start with a count digit (e.g. `1at0pqdydv`)
-- Command/battle card codes are 2 chars with no count prefix and get skipped
+Old format omits subfaction: `{points}:{codes}`. `parseLegionHQUrl()` in `app.js`
+handles both by splitting on `:` and checking part count.
 
-### Parametric keyword normalization
-LegionHQ2 encodes parametric keywords differently from the card DB:
+Unit codes in `{codes}` are comma-separated. Each unit code starts with a count digit
+(`1at0pqdydv` = 1× unit "at" with upgrades). 2-char codes with no count prefix are
+command/battle cards and are skipped.
 
-| LegionHQ2 stores | Card DB name |
-|-----------------|--------------|
+### Parametric keyword encoding
+
+LegionHQ2 stores parametric keywords differently from the card database:
+
+| LegionHQ2 stores | Canonical card name |
+|-----------------|---------------------|
 | `"Compel Corps"` | `"Compel"` |
 | `"Weak Point 1: Rear"` | `"Weak Point X"` |
 | `"Teamwork Han Solo"` | `"Teamwork"` |
 | `"Entourage Imperial Death Troopers"` | `"Entourage"` |
-| `"Immune: Pierce"` | `"Immune: Pierce"` (already canonical) |
+| `"Immune: Pierce"` | `"Immune: Pierce"` (already canonical — preserved) |
 
-**`kwNormalize(kw)`** in `app.js` fixes this:
-1. Strips trailing `\d+.*` (handles `"Weak Point 1: Rear"` → `"Weak Point"`)
-2. For colon-free keywords, progressively truncates words from the right until
-   a prefix matches a known card name (handles `"Compel Corps"` → `"Compel"`)
+**`kwNormalize(kw)`** (module-level in `app.js`) fixes this at parse time:
+1. Strip trailing `\d+.*` → `"Weak Point 1: Rear"` → `"Weak Point"`
+2. For colon-free keywords only, progressively truncate words from the right until
+   a prefix matches a known card name → `"Compel Corps"` → `"Compel"`
 
-**`normKw(name)`** (module-level in `app.js`) normalises a card name for lookup:
-strips `[]`, trailing ` X`, and everything after `:` → lowercase.
+**`normKw(name)`** (module-level in `app.js`) normalises a card name for DB lookup:
+strips `[]`, trailing ` X`, and everything after `:`, then lowercases.
 e.g. `"Compel: Rank/Unit Type[]"` → `"compel"`
 
-**`printListKeywords()`** uses the same progressive truncation as a fallback so
-already-saved lists with old-format keywords still find their card definitions.
+**`printListKeywords()`** applies the same progressive truncation as a fallback so
+already-saved lists with old-format keywords still resolve to the right card definition.
 
----
+### Override stem examples
 
-## Git / deploy workflow
+`_keyword_stem()` in `src/overrides.py` strips `X`, `[]`, colon subtypes, and
+converts spaces to underscores:
 
-1. Edit `template/app.js` or `template/index.html`
-2. Run `/rebuild` (this command) — confirms build succeeds and updates `dist/`
-3. `git add template/app.js dist/index.html` (and any new `overrides/` files)
-4. `git commit` with a clear message
-5. `git push` — remote is `git@github.com:msleeman/SWLegion-FlashCards.git`
-
-Test locally by opening `dist/index.html` directly in a browser — no server needed.
+| Keyword name | File to create |
+|-------------|----------------|
+| `Weak Point X` | `overrides/Weak_Point.md` |
+| `Compel: Rank/Unit Type[]` | `overrides/Compel.md` |
+| `Immune: Pierce` | `overrides/Immune.md` |
+| `Master of the Force X` | `overrides/Master_of_the_Force.md` |
