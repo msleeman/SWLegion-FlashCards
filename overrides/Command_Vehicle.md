@@ -1,0 +1,1 @@
+When an allied unit within of a unit that has the Command Vehicle X keyword checks for Panic, if both units have the same Affiliation or Faction, the allied unit treats the unit that has the Command Vehicle X keyword as a with a value of X.

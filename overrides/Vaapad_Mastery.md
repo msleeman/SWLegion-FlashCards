@@ -1,0 +1,1 @@
+When a unit with the Vaapad Mastery keyword attacks, before rolling dice, it adds 1 white attack die to the pool for each Wound token it has, to a maximum of 3. When a unit with the Vaapad Mastery keyword defends, before rolling dice it adds 1 white defense die to the pool for each Wound token it has, to a maximum of 3.

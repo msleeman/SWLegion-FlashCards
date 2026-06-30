@@ -1,0 +1,1 @@
+When a unit with the We Fight for Our Family keyword makes an attack action, after the effect is resolved, choose another allied unit with the We Fight for Our family keyword within , if able. The chosen unit gains 1 Dodge token.

@@ -1,0 +1,1 @@
+Keywords and stats that have an X value on the Unit Card of a unit with the My Mood is Based on Profit keyword have an X value equal to the number of pips on the Command Card that unit's controlling player most recently played and revealed that Game, to a minimum of 1. If a player has not yet played and revealed a Command Card this Game, treat X as 1 instead.

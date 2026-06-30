@@ -1,0 +1,1 @@
+When a unit equipped with an Upgrade Card that has the Reconfigure keyword makes a Recover action, that unit's controlling player may flip that Upgrade Card to a different side in addition to any other effects of that Recover action. If an Upgrade Card has the exhaust icon, using the Reconfigure ability does not cause that Upgrade Card to be exhausted.

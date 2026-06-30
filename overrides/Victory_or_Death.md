@@ -1,0 +1,1 @@
+When an allied unit with the Victory or Death keyword suffers 1 or more Wounds from an enemy attack, after the attack is resolved, the allied unit may gain 1 Suppression token. If it does, it may gains 1 Aim token or 1 Dodge token

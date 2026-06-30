@@ -1,0 +1,1 @@
+At the start of the Activation Phase, each unit with the Mechanized Infantry keyword may choose a different allied vehicle unit within [RANGE 2]. If they do, the unit with the Mechanized Infantry keyword and each chosen unit gain 1 Aim token or 1 Dodge token.
