@@ -99,6 +99,19 @@ def build_unit_db_js():
                         names.append(f"{n} {v}" if v is not None else n)
                 return names
 
+            def all_kw_names(card):
+                """Collect keywords from both the card level and all weapon entries."""
+                seen = set()
+                result = []
+                for kw in extract_kw_names(card.get('keywords', [])):
+                    if kw not in seen:
+                        seen.add(kw); result.append(kw)
+                for weapon in card.get('weapons', []):
+                    for kw in extract_kw_names(weapon.get('keywords', [])):
+                        if kw not in seen:
+                            seen.add(kw); result.append(kw)
+                return result
+
             unit_db = {}
             for uid, card in data.items():
                 if card.get('cardType') != 'unit':
@@ -108,7 +121,7 @@ def build_unit_db_js():
                     't': card.get('title', ''),
                     'f': card.get('faction', ''),
                     'r': card.get('rank', ''),
-                    'k': extract_kw_names(card.get('keywords', [])),
+                    'k': all_kw_names(card),
                     'i': card.get('imageName', ''),
                 }
 
@@ -214,11 +227,23 @@ def build_upgrade_db_js():
                         names.append(f"{n} {v}" if v is not None else n)
                 return names
 
+            def all_upgrade_kw_names(card):
+                seen = set()
+                result = []
+                for kw in extract_kw_names(card.get('keywords', [])):
+                    if kw not in seen:
+                        seen.add(kw); result.append(kw)
+                for weapon in card.get('weapons', []):
+                    for kw in extract_kw_names(weapon.get('keywords', [])):
+                        if kw not in seen:
+                            seen.add(kw); result.append(kw)
+                return result
+
             upgrade_db = {}
             for uid, card in data.items():
                 if card.get('cardType') != 'upgrade':
                     continue
-                kws = extract_kw_names(card.get('keywords', []))
+                kws = all_upgrade_kw_names(card)
                 if not kws:
                     continue  # skip upgrades with no keywords (nothing to contribute)
                 upgrade_db[uid] = {
