@@ -302,6 +302,7 @@ html,body{width:100%;height:100%;overflow:hidden;
 /* ── PRINT KEYWORDS ───────────────────────────────────────────────────────── */
 #print-keywords{display:none}
 @media print{
+  html,body{height:auto!important;overflow:visible!important}
   body>*:not(#print-keywords){display:none!important}
   #print-keywords{display:block;font-family:Arial,sans-serif;font-size:11pt;color:#000;margin:0}
   .pk-header{margin-bottom:12pt;border-bottom:2px solid #333;padding-bottom:8pt}
@@ -345,7 +346,7 @@ html,body{width:100%;height:100%;overflow:hidden;
       </div>
     </div>
     <p class="auth-footer">Guest progress is saved locally on this device only.</p>
-    <p class="auth-footer">v5.0.0-30-ge75e362-dirty · 2026-06-30 05:00 UTC</p>
+    <p class="auth-footer">v5.0.0-31-g745387a-dirty · 2026-06-30 05:05 UTC</p>
   </div>
 </div>
 
@@ -393,7 +394,7 @@ html,body{width:100%;height:100%;overflow:hidden;
         <div class="acct-item" id="acct-signin-item" onclick="showAuthFromApp()" style="display:none">Sign in / Switch account</div>
         <div class="acct-item danger" id="acct-signout-item" onclick="authSignOut()" style="display:none">Sign out</div>
         <div class="acct-item" id="acct-guest-label" style="display:none;cursor:default;color:rgba(255,255,255,.3)">Progress saved locally</div>
-        <div style="font-size:10px;color:rgba(255,255,255,.18);padding:4px 14px 8px;text-align:center;letter-spacing:.3px">v5.0.0-30-ge75e362-dirty · 2026-06-30 05:00 UTC</div>
+        <div style="font-size:10px;color:rgba(255,255,255,.18);padding:4px 14px 8px;text-align:center;letter-spacing:.3px">v5.0.0-31-g745387a-dirty · 2026-06-30 05:05 UTC</div>
       </div>
     </div>
   </div>

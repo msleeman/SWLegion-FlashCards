@@ -296,6 +296,7 @@ html,body{width:100%;height:100%;overflow:hidden;
 /* ── PRINT KEYWORDS ───────────────────────────────────────────────────────── */
 #print-keywords{display:none}
 @media print{
+  html,body{height:auto!important;overflow:visible!important}
   body>*:not(#print-keywords){display:none!important}
   #print-keywords{display:block;font-family:Arial,sans-serif;font-size:11pt;color:#000;margin:0}
   .pk-header{margin-bottom:12pt;border-bottom:2px solid #333;padding-bottom:8pt}
