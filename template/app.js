@@ -995,6 +995,9 @@ function modAddToList(listId){
 // ─── UNIT DATABASE (from LegionHQ2) ──────────────────────────────────────────
 /*UNIT_DB_JSON*/
 
+// ─── UPGRADE DATABASE (from LegionHQ2) — only upgrades that grant keywords ───
+/*UPGRADE_DB_JSON*/
+
 // ─── TABLETOP ADMIRAL UNIT LOOKUP (hex id → name) ────────────────────────────
 /*TTA_DB_JS*/
 
@@ -1233,8 +1236,14 @@ function decodeArmy(url){
     const unit=UNIT_DB[unitId];
     if(!unit) continue;
     units.push({count,unit,unitId,upgrades});
-    // Collect keywords
+    // Collect unit keywords
     (unit.k||[]).forEach(kw=>{ allKeywords.add(kwNormalize(kw)); });
+    // Collect upgrade keywords
+    upgrades.forEach(upg=>{
+      if(!upg) return;
+      const upgCard=UPGRADE_DB[upg];
+      if(upgCard) (upgCard.k||[]).forEach(kw=>{ allKeywords.add(kwNormalize(kw)); });
+    });
   }
 
   return {faction,points,units,keywords:[...allKeywords].sort()};
