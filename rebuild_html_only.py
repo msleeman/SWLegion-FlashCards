@@ -17,6 +17,7 @@ from src.data_tables import KEYWORD_CARD_IMAGES
 from src.overrides import (
     find_card_art, find_card_art_credit,
     _kw_lookup_key, _get_ext, safe_filename,
+    _keyword_stem, find_manual_definition, find_manual_summary,
     apply_manual_overlays,
 )
 from src.scrape import find_pdf, extract_keywords_from_pdf
@@ -87,6 +88,34 @@ if pdf_path:
 else:
     print("PDF not found — keeping cached definitions")
     print(f"  (place {RULEBOOK_PDFS[0]!r} in the project root or documents/ folder)")
+
+# ── 4a. Inject cards for keywords that were never scraped but have an override ─
+kw_map_path = os.path.join(HERE, 'data', 'unit_keyword_mappings.json')
+if os.path.exists(kw_map_path):
+    with open(kw_map_path, encoding='utf-8') as _f:
+        kw_map = json.load(_f)
+    existing_stems = {_keyword_stem(c['name']).lower() for c in card_data}
+    injected = 0
+    for canonical_name in kw_map.values():
+        stem = _keyword_stem(canonical_name).lower()
+        if stem not in existing_stems:
+            defn = find_manual_definition(canonical_name)
+            if defn:
+                card_data.append({
+                    'name': canonical_name,
+                    'definition': defn,
+                    'summary': find_manual_summary(canonical_name) or '',
+                    'type': 'unit',
+                    'imgs': [],
+                    'credit': 'Manual',
+                    'card_source': '',
+                    'art_credit': '',
+                    'units': '',
+                })
+                existing_stems.add(stem)
+                injected += 1
+    if injected:
+        print(f"  {injected} new cards injected from overrides (no scraped data existed)")
 
 # ── 4. Apply manual overrides (always last — they win over everything) ────────
 manual_count = apply_manual_overlays(card_data)
