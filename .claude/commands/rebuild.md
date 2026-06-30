@@ -86,3 +86,75 @@ converts spaces to underscores:
 | `Compel: Rank/Unit Type[]` | `overrides/Compel.md` |
 | `Immune: Pierce` | `overrides/Immune.md` |
 | `Master of the Force X` | `overrides/Master_of_the_Force.md` |
+
+### Checking for missing keyword definitions
+
+After any change that expands keyword coverage (e.g. adding upgrade weapons, new unit
+data), run this to find keywords in the UNIT_DB/UPGRADE_DB that have no flashcard:
+
+```python
+import re, json
+
+with open('dist/index.html', encoding='utf-8') as f:
+    html = f.read()
+
+# Extract CARDS normset
+idx = html.find('const CARDS =')
+start = html.index('[', idx)
+depth = 0
+for i, c in enumerate(html[start:], start):
+    if c=='[': depth+=1
+    elif c==']':
+        depth-=1
+        if depth==0: end=i+1; break
+cards = json.loads(html[start:end])
+
+def normKw(n):
+    n = re.sub(r'\[\]','',n); n = re.sub(r'\s+X$','',n)
+    n = re.sub(r':\s*.+$','',n); return n.strip().lower()
+
+card_norms = {normKw(c['name']) for c in cards}
+
+# Collect all unit+upgrade keywords and check against CARDS
+with open('cache/legionhq2_units.json') as f: units = json.load(f)
+with open('cache/legionhq2_upgrades.json') as f: upgrades = json.load(f)
+
+missing = set()
+for db in [units, upgrades]:
+    for entry in db.values():
+        for kw in entry.get('k', []):
+            base = re.sub(r'\s+\d+.*$', '', str(kw)).strip()
+            base = re.sub(r'\s*:\s*.+$', '', base).strip()
+            if base.lower() not in card_norms:
+                missing.add(base)
+
+print(sorted(missing))
+```
+
+Any keyword in `missing` needs either a scraped definition or an `overrides/<Stem>.md`
+file. **Never write definitions from memory.**
+
+### Fetching definitions from legion.takras.net
+
+URL pattern: `https://legion.takras.net/<keyword>/` (lowercase, spaces → hyphens)
+
+The site is a Next.js SPA. Two extraction methods:
+1. **BeautifulSoup** — works when the page has static HTML content (most keywords)
+2. **RSC meta description fallback** — for JS-rendered pages, extract from the RSC payload:
+   ```python
+   import requests, re, json
+   r = requests.get('https://legion.takras.net/<keyword>/', timeout=10)
+   for chunk in re.findall(r'self\.__next_f\.push\(\[1,(.+?)\]\)\s*</script>', r.text, re.DOTALL):
+       try:
+           payload = json.loads(chunk)
+           m = re.search(r'"description","content":"([^"]{20,})"', payload)
+           if m: print(m.group(1)); break
+       except: pass
+   ```
+   This is already implemented as a fallback in `src/scrape.py`.
+
+If both fail (404 or empty), ask the user for the correct rule text.
+
+Also ensure `data/unit_keyword_mappings.json` has an entry for each missing keyword
+(key = lowercase, value = canonical card name). Without it the injection system won't
+pick up the override file.

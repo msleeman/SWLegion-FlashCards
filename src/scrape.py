@@ -493,6 +493,19 @@ def scrape_keyword_page(slug, display_name, session):
         definition = definition[:1997] + "..."
 
     if len(definition) < 15:
+        # Fallback: try meta description from Next.js RSC payload (page is JS-rendered)
+        for chunk in re.findall(r'self\.__next_f\.push\(\[1,(.+?)\]\)\s*</script>', r.text, re.DOTALL):
+            try:
+                payload = __import__('json').loads(chunk)
+                m2 = re.search(r'"description","content":"([^"]{20,})"', payload)
+                if m2:
+                    definition = m2.group(1).strip()
+                    print(f"  INFO: used RSC meta description for {display_name!r}")
+                    break
+            except Exception:
+                pass
+
+    if len(definition) < 15:
         print(f"  WARN: short definition for {display_name!r}")
 
     return {"name": display_name, "definition": definition, "type": ktype}
