@@ -505,6 +505,15 @@ def scrape_keyword_page(slug, display_name, session):
             except Exception:
                 pass
 
+    if len(definition) < 15 and not slug.endswith("_x"):
+        # Fallback: parametric keywords (e.g. "strategize") may live at slug+"_x"
+        # (e.g. https://legion.takras.net/strategize_x/). Try that URL.
+        alt_slug = slug + "_x"
+        alt_result = scrape_keyword_page(alt_slug, display_name, session)
+        if alt_result and len(alt_result.get("definition", "")) >= 15:
+            print(f"  INFO: used _x slug fallback for {display_name!r}")
+            return alt_result
+
     if len(definition) < 15:
         print(f"  WARN: short definition for {display_name!r}")
 
