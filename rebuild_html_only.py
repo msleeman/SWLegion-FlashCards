@@ -101,15 +101,16 @@ if os.path.exists(kw_map_path):
         if stem not in existing_stems:
             defn = find_manual_definition(canonical_name)
             if defn:
+                art = find_card_art(canonical_name)
                 card_data.append({
                     'name': canonical_name,
                     'definition': defn,
                     'summary': find_manual_summary(canonical_name) or '',
                     'type': 'unit',
-                    'imgs': [],
+                    'imgs': [art] if art else [],
                     'credit': 'Manual',
                     'card_source': '',
-                    'art_credit': '',
+                    'art_credit': find_card_art_credit(canonical_name) or '',
                     'units': '',
                 })
                 existing_stems.add(stem)
