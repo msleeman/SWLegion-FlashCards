@@ -285,6 +285,7 @@ KEYWORD_PAGES = [
     ("small",                     "Small"),
     ("smoke_tokens",              "Smoke Tokens[]"),
     ("smoke_x",                   "Smoke X[]"),
+    ("sniper_team",               "Sniper Team"),
     ("soresu_mastery",            "Soresu Mastery"),
     ("special_issue",             "Special Issue: Battle Force"),
     ("speeder_x",                 "Speeder X"),
