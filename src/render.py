@@ -290,9 +290,14 @@ def build_tta_db_js():
                            '4': 'republic', '5': 'separatist', '6': 'mercenary'}
             data = {}
             for u in units:
-                uid = int(u['id'])
-                hex_id = format(uid, 'x')
-                entry = {'n': u.get('name', '')}
+                pub_id = u.get('public_id')
+                if pub_id is None:
+                    continue  # no public_id means this unit can't appear in a listbuilder URL
+                hex_id = format(int(pub_id), 'x')
+                cost = u.get('current_cost')
+                if cost is None:
+                    cost = u.get('original_cost', 0)
+                entry = {'n': u.get('name', ''), 'c': cost}
                 fkey = str(u.get('faction_fkey') or '')
                 if fkey in faction_map:
                     entry['f'] = faction_map[fkey]
@@ -305,6 +310,56 @@ def build_tta_db_js():
             return "const TTA_UNITS = {};"
 
     lines = ['const TTA_UNITS = {']
+    for hex_id, u in sorted(data.items(), key=lambda x: int(x[0], 16)):
+        entry = json.dumps(u, ensure_ascii=False)
+        lines.append(f'  {json.dumps(hex_id)}:{entry},')
+    lines.append('};')
+    return '\n'.join(lines)
+
+
+def build_tta_upgrades_db_js():
+    """Return a compact JS const TTA_UPGRADES = {...}; mapping hex upgrade ID -> {n} from TTA API.
+
+    Mirrors build_tta_db_js() but for /api/upgrades. Tabletop Admiral listbuilder URLs encode
+    both units and upgrades using each card's `public_id` field (NOT the database `id` field --
+    those only coincide by chance for a handful of early/base-game cards, which is why only
+    Stormtroopers/Scout Troopers used to resolve while everything else silently vanished).
+    """
+    cache_path = os.path.join(CACHE_DIR, "tta_upgrades.json")
+    data = None
+
+    if os.path.exists(cache_path):
+        try:
+            with open(cache_path, encoding='utf-8') as f:
+                data = json.load(f)
+            print(f"  (TTA upgrades loaded from cache: {len(data)} upgrades)")
+        except Exception:
+            data = None
+
+    if data is None:
+        print("  Fetching TTA upgrade database...")
+        try:
+            r = requests.get('https://tabletopadmiral.com/api/upgrades', headers=HEADERS, timeout=30)
+            r.raise_for_status()
+            upgrades = r.json()
+            data = {}
+            for u in upgrades:
+                pub_id = u.get('public_id')
+                if pub_id is None:
+                    continue
+                hex_id = format(int(pub_id), 'x')
+                cost = u.get('current_cost')
+                if cost is None:
+                    cost = u.get('original_cost', 0)
+                data[hex_id] = {'n': u.get('name', ''), 'c': cost}
+            with open(cache_path, 'w', encoding='utf-8') as f:
+                json.dump(data, f, ensure_ascii=False)
+            print(f"  TTA upgrade DB: {len(data)} upgrades cached to tta_upgrades.json")
+        except Exception as e:
+            print(f"  WARN: could not build TTA upgrade DB: {e}")
+            return "const TTA_UPGRADES = {};"
+
+    lines = ['const TTA_UPGRADES = {']
     for hex_id, u in sorted(data.items(), key=lambda x: int(x[0], 16)):
         entry = json.dumps(u, ensure_ascii=False)
         lines.append(f'  {json.dumps(hex_id)}:{entry},')
@@ -335,14 +390,16 @@ def build_html(card_data):
 
     fish_js    = json.dumps(card_data, ensure_ascii=False)
     base_names = json.dumps([c["name"] for c in card_data], ensure_ascii=False)
-    unit_db_js    = build_unit_db_js()
-    upgrade_db_js = build_upgrade_db_js()
-    tta_db_js     = build_tta_db_js()
+    unit_db_js       = build_unit_db_js()
+    upgrade_db_js    = build_upgrade_db_js()
+    tta_db_js        = build_tta_db_js()
+    tta_upgrades_js  = build_tta_upgrades_db_js()
     js = js.replace("/*CARD_JSON*/", fish_js)
     js = js.replace("/*BASE_NAMES*/", base_names)
     js = js.replace("/*UNIT_DB_JSON*/", unit_db_js)
     js = js.replace("/*UPGRADE_DB_JSON*/", upgrade_db_js)
     js = js.replace("/*TTA_DB_JS*/", tta_db_js)
+    js = js.replace("/*TTA_UPGRADES_JSON*/", tta_upgrades_js)
 
     html = html.replace("/*STYLE_CSS*/", css)
     html = html.replace("/*APP_JS*/", js)

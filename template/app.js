@@ -1001,6 +1001,9 @@ function modAddToList(listId){
 // ─── TABLETOP ADMIRAL UNIT LOOKUP (hex id → name) ────────────────────────────
 /*TTA_DB_JS*/
 
+// ─── TABLETOP ADMIRAL UPGRADE LOOKUP (hex id → name) ─────────────────────────
+/*TTA_UPGRADES_JSON*/
+
 const UNIT_STATS={
   "at":{"sp":2,"w":20,"cg":null,"dd":"r","ds":false,"as":"c"},
   "au":{"sp":2,"w":5, "cg":3,   "dd":"w","ds":false,"as":null},
@@ -1251,7 +1254,11 @@ function decodeArmy(url){
 
 // ─── TABLETOP ADMIRAL URL PARSER ─────────────────────────────────────────────
 // URL format: https://tabletopadmiral.com/listbuilder/{Faction}/{hash}
-// hash: {version_prefix}-{_hexId_upg1,upg2,..._hexId_upg1,...}-{suffix}
+// hash: {version_prefix}-{_hexId_upg1,upg2,..._hexId_upg1,...}-{battle-deck cards, "-"-delimited}
+//
+// IMPORTANT: hexId codes are each card's `public_id` field, NOT its database `id` --
+// those only coincide by chance for a handful of early/base-game cards. TTA_UNITS and
+// TTA_UPGRADES (built in src/render.py) are keyed by public_id-in-hex to match.
 function parseTtaUrl(url){
   try{
     const m=url.match(/tabletopadmiral\.com\/listbuilder\/([^/]+)\/([^/?#]+)/);
@@ -1260,33 +1267,62 @@ function parseTtaUrl(url){
     const hash=m[2];
     // Strip version prefix like "N-"
     const rest=hash.replace(/^[A-Za-z]+-?/,'');
-    // Extract all _hexid_ unit codes
-    const hexIds=[...rest.matchAll(/_([0-9a-f]+)_/gi)].map(x=>x[1].toLowerCase());
-    // Count occurrences per unit
-    const counts={};
-    hexIds.forEach(id=>counts[id]=(counts[id]||0)+1);
-    const units=[];
+    // The unit/upgrade section ends at the first bare "-" (the battle-deck card
+    // section that follows uses "-" as its own delimiter, not "_", and would
+    // otherwise get swallowed into the last unit's upgrade list).
+    const unitSection=rest.split('-')[0];
+
+    // Walk each "_hexId_content" block, where content is a comma-separated list
+    // of upgrade hexIds (or "EM"/blank for an empty slot) up to the next "_".
+    const blocks=[...unitSection.matchAll(/_([0-9a-f]+)_([^_]*)/gi)]
+      .map(x=>({hexId:x[1].toLowerCase(), codes:x[2].split(',').filter(c=>c&&c!=='EM')}));
+
+    const groups={}; // key: hexId + sorted upgrade codes -> {count,unit,hexId,upgrades}
     const allKeywords=new Set();
-    for(const [hexId,count] of Object.entries(counts)){
+    let points=0;
+
+    for(const {hexId,codes} of blocks){
       const tta=TTA_UNITS[hexId];
       if(!tta) continue;
-      // Find matching unit in UNIT_DB by name
+      // Find matching unit in UNIT_DB by name (TTA_UNITS only has name/faction/cost,
+      // UNIT_DB carries the full keyword list scraped from LegionHQ2).
       let dbUnit=null;
       for(const u of Object.values(UNIT_DB)){
         if(u.n===tta.n){dbUnit=u;break;}
       }
       const displayUnit=dbUnit||{n:tta.n,t:'',k:[],i:''};
-      units.push({count,unit:displayUnit,hexId});
-      if(dbUnit){
-        (dbUnit.k||[]).forEach(kw=>{ allKeywords.add(kwNormalize(kw)); });
+      (dbUnit?.k||[]).forEach(kw=>{ allKeywords.add(kwNormalize(kw)); });
+      points+=tta.c||0;
+
+      const upgradeNames=[];
+      for(const code of codes){
+        const ttaUpg=TTA_UPGRADES[code];
+        if(!ttaUpg) continue;
+        upgradeNames.push(ttaUpg.n);
+        points+=ttaUpg.c||0;
+        // Find matching upgrade in UPGRADE_DB by name to pull its keywords in too.
+        let dbUpg=null;
+        for(const u of Object.values(UPGRADE_DB)){
+          if(u.n===ttaUpg.n){dbUpg=u;break;}
+        }
+        (dbUpg?.k||[]).forEach(kw=>{ allKeywords.add(kwNormalize(kw)); });
+      }
+
+      const groupKey=hexId+'|'+upgradeNames.slice().sort().join(',');
+      if(groups[groupKey]){
+        groups[groupKey].count++;
+      } else {
+        groups[groupKey]={count:1,unit:displayUnit,unitId:hexId,upgrades:upgradeNames};
       }
     }
+
+    const units=Object.values(groups);
     // Faction name mapping
     const fLow=factionRaw.toLowerCase().replace(/\s/g,'');
     const fMap={'empire':'empire','rebel':'rebels','galacticrepublic':'republic',
                 'separatistalliance':'separatist','mercenary':'mercenary'};
     const faction=fMap[fLow]||fLow;
-    return{faction,points:0,units,keywords:[...allKeywords].sort(),source:'tta'};
+    return{faction,points,units,keywords:[...allKeywords].sort(),source:'tta'};
   }catch(e){return null;}
 }
 
