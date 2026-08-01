@@ -141,12 +141,27 @@ def build_unit_db_js():
     return '\n'.join(lines)
 
 
-def build_upgrade_db_js():
+def _norm_card_name(name):
+    """Mirror app.js's normKw(): strip [], trailing ' X', colon-suffix, lowercase."""
+    name = re.sub(r'\[\]', '', name)
+    name = re.sub(r'\s+X$', '', name)
+    name = re.sub(r':\s*.+$', '', name)
+    return name.strip().lower()
+
+
+def build_upgrade_db_js(card_data=None):
     """Return a compact JS const UPGRADE_DB = {...}; mapping 2-char upgrade ID -> {n, k}.
 
     Reuses the LegionHQ2 bundle cache (legionhq2_units.json stores only units, so we
     fetch the full raw bundle and pull upgrade cardType entries separately, cached to
     legionhq2_upgrades.json).
+
+    card_data (the CARDS list being built for this run) lets a keyword-less upgrade
+    still get included when its own NAME matches a flashcard -- e.g. "Fire Control"
+    and "Hit the Dirt" have no keyword mechanic (freeform rules text), so they'd
+    otherwise be silently dropped and never show up when a parsed army list equips
+    them. Pass None to skip that check (keeps old behavior: only upgrades with a
+    listed keyword are included).
     """
     cache_path = os.path.join(CACHE_DIR, "legionhq2_upgrades.json")
     upgrade_db = None
@@ -239,15 +254,20 @@ def build_upgrade_db_js():
                             seen.add(kw); result.append(kw)
                 return result
 
+            known_names = {_norm_card_name(c['name']) for c in (card_data or [])}
             upgrade_db = {}
             for uid, card in data.items():
                 if card.get('cardType') != 'upgrade':
                     continue
                 kws = all_upgrade_kw_names(card)
-                if not kws:
-                    continue  # skip upgrades with no keywords (nothing to contribute)
+                card_name = card.get('cardName', '')
+                # Skip upgrades with no listed keywords UNLESS the upgrade's own
+                # name is itself a flashcard (e.g. "Fire Control", "Hit the Dirt" --
+                # freeform-text upgrades with no keyword mechanic to key off of).
+                if not kws and _norm_card_name(card_name) not in known_names:
+                    continue
                 upgrade_db[uid] = {
-                    'n': card.get('cardName', ''),
+                    'n': card_name,
                     'k': kws,
                 }
 
@@ -391,7 +411,7 @@ def build_html(card_data):
     fish_js    = json.dumps(card_data, ensure_ascii=False)
     base_names = json.dumps([c["name"] for c in card_data], ensure_ascii=False)
     unit_db_js       = build_unit_db_js()
-    upgrade_db_js    = build_upgrade_db_js()
+    upgrade_db_js    = build_upgrade_db_js(card_data)
     tta_db_js        = build_tta_db_js()
     tta_upgrades_js  = build_tta_upgrades_db_js()
     js = js.replace("/*CARD_JSON*/", fish_js)

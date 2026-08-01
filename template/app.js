@@ -1218,6 +1218,17 @@ function kwNormalize(kw){
   return base;
 }
 
+// Some upgrades (e.g. "Fire Control", "Hit the Dirt") have no keyword mechanic --
+// their whole ability is freeform rules text under the upgrade's own name. Those
+// never show up via kwNormalize() since there's no keyword string to normalize,
+// so equipping one is only detectable by checking the upgrade's NAME directly
+// against the flashcard catalog.
+function matchesKnownCard(name){
+  if(!name) return false;
+  if(!_cardNormSet) _cardNormSet=new Set(CARDS.map(c=>normKw(c.name)));
+  return _cardNormSet.has(normKw(name));
+}
+
 function decodeArmy(url){
   const parsed=parseLegionHQUrl(url);
   if(!parsed) return null;
@@ -1245,7 +1256,9 @@ function decodeArmy(url){
     upgrades.forEach(upg=>{
       if(!upg) return;
       const upgCard=UPGRADE_DB[upg];
-      if(upgCard) (upgCard.k||[]).forEach(kw=>{ allKeywords.add(kwNormalize(kw)); });
+      if(!upgCard) return;
+      (upgCard.k||[]).forEach(kw=>{ allKeywords.add(kwNormalize(kw)); });
+      if(matchesKnownCard(upgCard.n)) allKeywords.add(upgCard.n);
     });
   }
 
@@ -1306,6 +1319,9 @@ function parseTtaUrl(url){
           if(u.n===ttaUpg.n){dbUpg=u;break;}
         }
         (dbUpg?.k||[]).forEach(kw=>{ allKeywords.add(kwNormalize(kw)); });
+        // Freeform-text upgrades (Fire Control, Hit the Dirt, ...) have no keyword
+        // mechanic -- check the upgrade's own name directly against the catalog.
+        if(matchesKnownCard(ttaUpg.n)) allKeywords.add(ttaUpg.n);
       }
 
       const groupKey=hexId+'|'+upgradeNames.slice().sort().join(',');

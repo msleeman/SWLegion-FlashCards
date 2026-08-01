@@ -346,7 +346,7 @@ html,body{width:100%;height:100%;overflow:hidden;
       </div>
     </div>
     <p class="auth-footer">Guest progress is saved locally on this device only.</p>
-    <p class="auth-footer">v5.0.0-39-g8525e76-dirty · 2026-08-01 22:15 UTC</p>
+    <p class="auth-footer">v5.0.0-40-gbc62045-dirty · 2026-08-01 22:27 UTC</p>
   </div>
 </div>
 
@@ -394,7 +394,7 @@ html,body{width:100%;height:100%;overflow:hidden;
         <div class="acct-item" id="acct-signin-item" onclick="showAuthFromApp()" style="display:none">Sign in / Switch account</div>
         <div class="acct-item danger" id="acct-signout-item" onclick="authSignOut()" style="display:none">Sign out</div>
         <div class="acct-item" id="acct-guest-label" style="display:none;cursor:default;color:rgba(255,255,255,.3)">Progress saved locally</div>
-        <div style="font-size:10px;color:rgba(255,255,255,.18);padding:4px 14px 8px;text-align:center;letter-spacing:.3px">v5.0.0-39-g8525e76-dirty · 2026-08-01 22:15 UTC</div>
+        <div style="font-size:10px;color:rgba(255,255,255,.18);padding:4px 14px 8px;text-align:center;letter-spacing:.3px">v5.0.0-40-gbc62045-dirty · 2026-08-01 22:27 UTC</div>
       </div>
     </div>
   </div>
@@ -1902,10 +1902,26 @@ const UPGRADE_DB = {
   "Kx":{"n": "Dual Armaments", "k": ["Charge", "Gunslinger", "High Velocity", "Pierce 1"]},
   "Ky":{"n": "EE-3 Carbine Rifle", "k": ["Overwhelm"]},
   "Lc":{"n": "War Party Leader", "k": ["Direct Mercenary Trooper", "Inspire 1"]},
+  "Le":{"n": "Flame Projector", "k": ["Blast", "Spray", "Suppressive"]},
+  "Lf":{"n": "Tools of the Trade, Jetpack Rockets", "k": ["Anti-Material 4", "Impact 4"]},
+  "Li":{"n": "Force Enhanced Defense", "k": ["Shielded 1"]},
+  "Lj":{"n": "Force Agility", "k": ["Disengage"]},
+  "Lm":{"n": "Helping Hand", "k": ["Jump 1"]},
+  "Lr":{"n": "Strong in the Force", "k": ["Independent Aim or Dodge 1"]},
+  "Ls":{"n": "Hit the Dirt", "k": []},
+  "Lt":{"n": "Lying In Wait", "k": ["Low Profile"]},
+  "Ma":{"n": "High Speed Tracking", "k": ["Blast"]},
+  "Mb":{"n": "Tank Hunting Munitions", "k": ["Anti-Material 2", "Impact 2"]},
+  "Mc":{"n": "Overcharged Blaster Packs", "k": ["Anti-Personnel 2", "Overwhelm"]},
+  "Me":{"n": "Fire Control", "k": []},
+  "Mg":{"n": "Mace Windu", "k": ["Leader", "Sidearm Melee, Ranged", "Compel Core Trooper", "Immune: Melee Pierce", "Impact 2", "Pierce 1"]},
+  "Mh":{"n": "Plo Koon", "k": ["Leader", "Sidearm Melee, Ranged", "Immune: Melee Pierce", "Impact 2", "Pierce 1"]},
+  "Mi":{"n": "Ki-Adi-Mundi", "k": ["Leader", "Sidearm Melee, Ranged", "Immune: Melee Pierce", "Impact 2", "Pierce 1"]},
   "da":{"n": "Recon Intel", "k": ["Scout"]},
   "dc":{"n": "Targeting Scopes", "k": ["Precise"]},
   "dd":{"n": "Grappling Hooks", "k": ["Expert Climber"]},
   "de":{"n": "Environmental Gear", "k": ["Unhindered"]},
+  "df":{"n": "Tenacity", "k": []},
   "dk":{"n": "Impact Grenades", "k": ["Impact", "Impact 4"]},
   "dl":{"n": "Concussion Grenades", "k": ["Blast"]},
   "dq":{"n": "Overcharged Generator", "k": ["Fixed", "Impact", "Impact 1", "Fixed Front"]},
@@ -3027,6 +3043,17 @@ function kwNormalize(kw){
   return base;
 }
 
+// Some upgrades (e.g. "Fire Control", "Hit the Dirt") have no keyword mechanic --
+// their whole ability is freeform rules text under the upgrade's own name. Those
+// never show up via kwNormalize() since there's no keyword string to normalize,
+// so equipping one is only detectable by checking the upgrade's NAME directly
+// against the flashcard catalog.
+function matchesKnownCard(name){
+  if(!name) return false;
+  if(!_cardNormSet) _cardNormSet=new Set(CARDS.map(c=>normKw(c.name)));
+  return _cardNormSet.has(normKw(name));
+}
+
 function decodeArmy(url){
   const parsed=parseLegionHQUrl(url);
   if(!parsed) return null;
@@ -3054,7 +3081,9 @@ function decodeArmy(url){
     upgrades.forEach(upg=>{
       if(!upg) return;
       const upgCard=UPGRADE_DB[upg];
-      if(upgCard) (upgCard.k||[]).forEach(kw=>{ allKeywords.add(kwNormalize(kw)); });
+      if(!upgCard) return;
+      (upgCard.k||[]).forEach(kw=>{ allKeywords.add(kwNormalize(kw)); });
+      if(matchesKnownCard(upgCard.n)) allKeywords.add(upgCard.n);
     });
   }
 
@@ -3115,6 +3144,9 @@ function parseTtaUrl(url){
           if(u.n===ttaUpg.n){dbUpg=u;break;}
         }
         (dbUpg?.k||[]).forEach(kw=>{ allKeywords.add(kwNormalize(kw)); });
+        // Freeform-text upgrades (Fire Control, Hit the Dirt, ...) have no keyword
+        // mechanic -- check the upgrade's own name directly against the catalog.
+        if(matchesKnownCard(ttaUpg.n)) allKeywords.add(ttaUpg.n);
       }
 
       const groupKey=hexId+'|'+upgradeNames.slice().sort().join(',');
