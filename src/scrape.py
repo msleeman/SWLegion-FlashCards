@@ -489,6 +489,11 @@ def scrape_keyword_page(slug, display_name, session):
 
     definition = " ".join(definition_parts).strip()
     definition = re.sub(r"\s+", " ", definition)
+    # takras.net's own content occasionally uses a stray acute accent (´ U+00B4)
+    # where a possessive apostrophe was meant (e.g. "unit´s Speed") -- this is a
+    # valid-but-wrong character in the source, not a decoding error on our end,
+    # so normalize it to a real apostrophe rather than printing it verbatim.
+    definition = definition.replace("´", "'")
     if len(definition) > 2000:
         definition = definition[:1997] + "..."
 
