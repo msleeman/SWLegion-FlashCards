@@ -1,0 +1,1 @@
+When this unit defends against a Ranged attack, during the Apply Dodge and Cover step you may exhaust this card. If you do, this unit rolls red defense dice instead of white defense dice when rolling its Cover pool for this attack.
