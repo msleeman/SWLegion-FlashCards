@@ -377,10 +377,15 @@ def build_commands_db_js():
             if c.get('cardType') != 'command':
                 continue
             pips = c.get('cardSubtype') or ''
+            # commander is a list on cards shared by several commanders
+            # (e.g. Flow of the Force -> Jedi Knight / Jedi Knight General).
+            commander = c.get('commander') or ''
+            if isinstance(commander, list):
+                commander = ' / '.join(str(x) for x in commander if x)
             cards.append({
                 'n': c.get('cardName', ''),
                 'p': int(pips) if str(pips).isdigit() else 0,
-                'c': c.get('commander', '') or '',
+                'c': commander,
                 'f': c.get('faction', '') or '',
                 'i': c.get('imageName', '') or '',
                 'd': '',
@@ -413,6 +418,24 @@ def build_commands_db_js():
         print(f"  Command cards: {len(cards)} total, {merged} with rules text")
     except Exception as e:
         print(f"  WARN: could not merge TTA command text: {e}")
+
+    # Fill the remaining gaps from OCR of the card art (see ocr_commands.py).
+    # Flagged with o=1 so the UI can mark it as machine-read rather than
+    # sourced, since OCR drops inline icons and can garble small-caps.
+    ocr_path = os.path.join(HERE, 'data', 'command_ocr.json')
+    if os.path.exists(ocr_path):
+        try:
+            with open(ocr_path, encoding='utf-8') as f:
+                ocr_text = json.load(f)
+            filled = 0
+            for card in cards:
+                if not card['d'] and ocr_text.get(card['n']):
+                    card['d'] = ocr_text[card['n']]
+                    card['o'] = 1
+                    filled += 1
+            print(f"  Command cards: {filled} descriptions filled from OCR")
+        except Exception as e:
+            print(f"  WARN: could not merge command OCR text: {e}")
 
     cards.sort(key=lambda c: (c['p'], c['n'].lower()))
     with open(cache_path, 'w', encoding='utf-8') as f:

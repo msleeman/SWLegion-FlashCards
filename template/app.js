@@ -1941,7 +1941,13 @@ function openCmdModal(idx){
          onerror="this.parentNode.innerHTML='<div class=\\'cmd-noimg\\'>No card image</div>'">`
     : '<div class="cmd-noimg">No card image</div>';
   const t=document.getElementById('cmd-mod-text');
-  t.textContent=c.d||'';
+  // c.o marks text read off the card art by OCR rather than supplied by a
+  // data source: it can drop inline icons and garble small-caps keywords, so
+  // say so and keep the card image above it as the authority.
+  t.innerHTML=c.d
+    ? (c.o?'<div class="cmd-ocr-note">Read from the card image — check against the card above.</div>':'')
+      +escHtml(c.d)
+    : '';
   t.style.display=c.d?'':'none';
   document.getElementById('cmd-modal-bg').classList.add('on');
 }
