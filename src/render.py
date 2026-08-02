@@ -295,6 +295,140 @@ def _tta_cost(rec):
     return 0
 
 
+def _js_unescape(s):
+    out = []
+    i = 0
+    while i < len(s):
+        if s[i] == '\\' and i + 1 < len(s):
+            nc = s[i + 1]
+            out.append({'\\': '\\', "'": "'", '"': '"', 'n': '\n',
+                        'r': '\r', 't': '\t', '/': '/'}.get(nc, '\\' + nc))
+            i += 2
+        else:
+            out.append(s[i])
+            i += 1
+    return ''.join(out)
+
+
+def _fetch_legionhq2_bundle():
+    """Return the whole LegionHQ2 card dictionary (units, upgrades, commands).
+
+    Cached raw so the several builders that need it only download once.
+    """
+    cache_path = os.path.join(CACHE_DIR, "legionhq2_raw.json")
+    if os.path.exists(cache_path):
+        with open(cache_path, encoding='utf-8') as f:
+            return json.load(f)
+
+    r = requests.get("https://legionhq2.com/list/empire", headers=HEADERS, timeout=15)
+    m = re.search(r'src="(/static/js/main\.[^"]+\.js)"', r.text)
+    if not m:
+        raise RuntimeError("could not find LegionHQ2 JS bundle URL")
+    rb = requests.get("https://legionhq2.com" + m.group(1), headers=HEADERS, timeout=60)
+    rb.raise_for_status()
+    content = rb.text
+
+    marker = "JSON.parse('"
+    start = content.find(marker)
+    if start < 0:
+        raise RuntimeError("could not find card JSON in LegionHQ2 bundle")
+    start += len(marker)
+    i = start
+    while i < len(content):
+        c = content[i]
+        if c == '\\':
+            i += 2
+            continue
+        if c == "'":
+            break
+        i += 1
+    data = json.loads(_js_unescape(content[start:i]))
+    with open(cache_path, 'w', encoding='utf-8') as f:
+        json.dump(data, f, ensure_ascii=False)
+    return data
+
+
+def build_commands_db_js():
+    """const COMMANDS = [{n,p,c,f,i,d}]; -- every Command Card, all factions.
+
+    Roster and card art come from the LegionHQ2 bundle, which lists all ~236
+    cards with an imageName, commander and pip count. Rules text comes from
+    Tabletop Admiral, which has a description for only about half of them --
+    for the rest the card image carries the text, which is why art matters here.
+
+    n=name, p=pips, c=commander ('' = generic), f=faction ('' = generic),
+    i=image filename, d=description (may be missing).
+    """
+    cache_path = os.path.join(CACHE_DIR, "commands.json")
+    if os.path.exists(cache_path):
+        try:
+            with open(cache_path, encoding='utf-8') as f:
+                cards = json.load(f)
+            print(f"  (command cards loaded from cache: {len(cards)})")
+            return _commands_to_js(cards)
+        except Exception:
+            pass
+
+    print("  Building command card database...")
+    cards = []
+    try:
+        data = _fetch_legionhq2_bundle()
+        for c in data.values():
+            if c.get('cardType') != 'command':
+                continue
+            pips = c.get('cardSubtype') or ''
+            cards.append({
+                'n': c.get('cardName', ''),
+                'p': int(pips) if str(pips).isdigit() else 0,
+                'c': c.get('commander', '') or '',
+                'f': c.get('faction', '') or '',
+                'i': c.get('imageName', '') or '',
+                'd': '',
+            })
+    except Exception as e:
+        print(f"  WARN: could not read LegionHQ2 command cards: {e}")
+        return "const COMMANDS = [];"
+
+    # Merge in Tabletop Admiral rules text where it exists.
+    try:
+        seen = {}
+        for fid in range(1, 8):
+            r = requests.get(f'https://tabletopadmiral.com/api/commands/{fid}',
+                             headers=HEADERS, timeout=30)
+            if r.status_code != 200:
+                continue
+            for c in r.json():
+                seen.setdefault(c['id'], c)
+        by_name = {}
+        for c in seen.values():
+            desc = (c.get('description') or '').strip()
+            if desc:
+                by_name[c.get('name', '').strip().lower()] = desc
+        merged = 0
+        for card in cards:
+            desc = by_name.get(card['n'].strip().lower())
+            if desc:
+                card['d'] = desc
+                merged += 1
+        print(f"  Command cards: {len(cards)} total, {merged} with rules text")
+    except Exception as e:
+        print(f"  WARN: could not merge TTA command text: {e}")
+
+    cards.sort(key=lambda c: (c['p'], c['n'].lower()))
+    with open(cache_path, 'w', encoding='utf-8') as f:
+        json.dump(cards, f, ensure_ascii=False)
+    return _commands_to_js(cards)
+
+
+def _commands_to_js(cards):
+    lines = ['const COMMANDS = [']
+    for c in cards:
+        lines.append('  ' + json.dumps({k: v for k, v in c.items() if v not in ('', None)},
+                                       ensure_ascii=False) + ',')
+    lines.append('];')
+    return '\n'.join(lines)
+
+
 def fetch_tta_keywords():
     """Return Tabletop Admiral's keyword table as {id: record}, cached to disk.
 
@@ -483,6 +617,7 @@ def build_html(card_data):
     tta_db_js        = build_tta_db_js()
     tta_upgrades_js  = build_tta_upgrades_db_js()
     tta_keywords_js  = build_tta_keywords_db_js()
+    commands_js      = build_commands_db_js()
     js = js.replace("/*CARD_JSON*/", fish_js)
     js = js.replace("/*BASE_NAMES*/", base_names)
     js = js.replace("/*UNIT_DB_JSON*/", unit_db_js)
@@ -490,6 +625,7 @@ def build_html(card_data):
     js = js.replace("/*TTA_DB_JS*/", tta_db_js)
     js = js.replace("/*TTA_UPGRADES_JSON*/", tta_upgrades_js)
     js = js.replace("/*TTA_KEYWORDS_JSON*/", tta_keywords_js)
+    js = js.replace("/*COMMANDS_JSON*/", commands_js)
 
     html = html.replace("/*STYLE_CSS*/", css)
     html = html.replace("/*APP_JS*/", js)

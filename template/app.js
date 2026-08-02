@@ -32,6 +32,7 @@ function showScreen(id){
   document.getElementById(id).classList.add('on');
   if(id==='catalog-screen') renderCatalog();
   if(id==='lists-screen'){ renderSavedLists(); }
+  if(id==='commands-screen') initCommands();
 }
 
 let typeFilter='all';
@@ -1008,6 +1009,9 @@ function modAddToList(listId){
 // Authoritative: units/upgrades reference keywords by id, so no name matching.
 /*TTA_KEYWORDS_JSON*/
 
+// ─── COMMAND CARDS (all factions) ────────────────────────────────────────────
+/*COMMANDS_JSON*/
+
 const UNIT_STATS={
   "at":{"sp":2,"w":20,"cg":null,"dd":"r","ds":false,"as":"c"},
   "au":{"sp":2,"w":5, "cg":3,   "dd":"w","ds":false,"as":null},
@@ -1854,6 +1858,96 @@ function printListUnits(listId){
     <table class="pu-table"><tbody>${rows}</tbody></table>
     <p class="pk-footer">SW Legion Keywords App — ${new Date().toLocaleDateString()}</p>`;
   whenImagesReady(pane).then(()=>window.print());
+}
+
+// ─── COMMAND CARD BROWSER ────────────────────────────────────────────────────
+// COMMANDS is every Command Card across all factions. Roster + art come from
+// LegionHQ2; rules text from Tabletop Admiral, which only covers about half of
+// them -- for the rest the card image is the reference, so it's always shown.
+let _cmdFaction='all', _cmdPip='all', _cmdInit=false;
+
+const CMD_FACTION_LABELS={all:'All Factions',empire:'Empire',rebels:'Rebels',
+  republic:'Republic',separatists:'Separatists',mandalorians:'Mandalorians',
+  mercenary:'Mercenary','':'Generic'};
+
+function initCommands(){
+  if(_cmdInit){ renderCommands(); return; }
+  _cmdInit=true;
+  const factions=[...new Set(COMMANDS.map(c=>c.f||''))].sort((a,b)=>{
+    if(a==='') return 1; if(b==='') return -1; return a.localeCompare(b);
+  });
+  const fWrap=document.getElementById('cmd-faction-filters');
+  fWrap.innerHTML=['all',...factions].map((f,i)=>
+    `<button class="dark-pill${i===0?' active':''}" data-f="${escHtml(f)}"
+       onclick="setCmdFaction(this)">${escHtml(CMD_FACTION_LABELS[f]||f)}</button>`).join('');
+  const pips=[...new Set(COMMANDS.map(c=>c.p||0))].sort((a,b)=>a-b);
+  const pWrap=document.getElementById('cmd-pip-filters');
+  pWrap.innerHTML=`<button class="dark-pill active" data-p="all" onclick="setCmdPip(this)">All Pips</button>`+
+    pips.map(p=>`<button class="dark-pill" data-p="${p}" onclick="setCmdPip(this)">${
+      p?('●'.repeat(p)):'Flaw'}</button>`).join('');
+  renderCommands();
+}
+
+function setCmdFaction(btn){
+  _cmdFaction=btn.dataset.f;
+  [...btn.parentNode.children].forEach(b=>b.classList.toggle('active',b===btn));
+  renderCommands();
+}
+function setCmdPip(btn){
+  _cmdPip=btn.dataset.p;
+  [...btn.parentNode.children].forEach(b=>b.classList.toggle('active',b===btn));
+  renderCommands();
+}
+
+function commandMatches(c,q){
+  if(_cmdFaction!=='all'&&(c.f||'')!==_cmdFaction) return false;
+  if(_cmdPip!=='all'&&String(c.p||0)!==_cmdPip) return false;
+  if(!q) return true;
+  return (c.n||'').toLowerCase().includes(q)
+      || (c.c||'').toLowerCase().includes(q)
+      || (c.d||'').toLowerCase().includes(q);
+}
+
+function renderCommands(){
+  const q=(document.getElementById('cmd-search').value||'').trim().toLowerCase();
+  const list=COMMANDS.filter(c=>commandMatches(c,q));
+  document.getElementById('cmd-count').textContent=
+    `${list.length} card${list.length===1?'':'s'}`+
+    (list.length!==COMMANDS.length?` of ${COMMANDS.length}`:'');
+  document.getElementById('cmd-grid').innerHTML=list.map(c=>{
+    const idx=COMMANDS.indexOf(c);
+    const pip=c.p?'●'.repeat(c.p):'—';
+    const img=c.i?`<img loading="lazy" src="images/commands/${encodeURIComponent(c.i)}" alt=""
+                     onerror="this.style.display='none'">`:'';
+    return `<div class="cmd-card" onclick="openCmdModal(${idx})">
+      <div class="cmd-thumb">${img}<span class="cmd-pip">${pip}</span></div>
+      <div class="cmd-lbl">
+        <div class="cmd-name">${escHtml(c.n)}</div>
+        <div class="cmd-sub">${escHtml(c.c||CMD_FACTION_LABELS[c.f||'']||'Generic')}</div>
+      </div></div>`;
+  }).join('')||'<div class="cat-count">No command cards match.</div>';
+}
+
+function openCmdModal(idx){
+  const c=COMMANDS[idx];
+  if(!c) return;
+  document.getElementById('cmd-mod-name').textContent=c.n;
+  const bits=[c.p?('●'.repeat(c.p)+` (${c.p} pip${c.p===1?'':'s'})`):'Flaw card'];
+  if(c.c) bits.push(c.c);
+  bits.push(CMD_FACTION_LABELS[c.f||'']||c.f);
+  document.getElementById('cmd-mod-meta').textContent=bits.join(' · ');
+  document.getElementById('cmd-mod-img').innerHTML=c.i
+    ? `<img src="images/commands/${encodeURIComponent(c.i)}" alt=""
+         onerror="this.parentNode.innerHTML='<div class=\\'cmd-noimg\\'>No card image</div>'">`
+    : '<div class="cmd-noimg">No card image</div>';
+  const t=document.getElementById('cmd-mod-text');
+  t.textContent=c.d||'';
+  t.style.display=c.d?'':'none';
+  document.getElementById('cmd-modal-bg').classList.add('on');
+}
+function closeCmdModal(e){
+  if(e&&e.target.id!=='cmd-modal-bg') return;
+  document.getElementById('cmd-modal-bg').classList.remove('on');
 }
 
 // ─── SUPABASE AUTH & CLOUD SYNC ───────────────────────────────────────────────

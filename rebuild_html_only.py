@@ -22,7 +22,7 @@ from src.overrides import (
 )
 from src.scrape import find_pdf, extract_keywords_from_pdf
 from src.images import (download_images, download_upgrade_card_images,
-                        download_tta_upgrade_images)
+                        download_tta_upgrade_images, download_command_card_images)
 from src.render import build_html
 
 # ── 1. Load cached card data ──────────────────────────────────────────────────
@@ -184,6 +184,9 @@ try:
     dl, sk, fl = download_tta_upgrade_images(DIST_IMGDIR)
     if dl or fl:
         print(f"  Upgrade art (Tabletop Admiral): {dl} downloaded, {sk} cached, {fl} failed")
+    dl, sk, fl = download_command_card_images(DIST_IMGDIR)
+    if dl or fl:
+        print(f"  Command card art: {dl} downloaded, {sk} cached, {fl} failed")
 except Exception as e:
     print(f"  WARN: upgrade art download failed: {e}")
 out = os.path.join(DIST_DIR, "index.html")

@@ -73,6 +73,7 @@
   </div>
   <div id="fs-nav-btns">
     <button class="fs-pill" onclick="showScreen('catalog-screen')">Catalog</button>
+    <button class="fs-pill" onclick="showScreen('commands-screen')">Commands</button>
     <button class="fs-pill" id="pill-lists" onclick="showScreen('lists-screen')">Lists</button>
     <div id="acct-dropdown-wrap">
       <button class="fs-pill" id="acct-btn" onclick="toggleAcctDropdown()">&#128100;</button>
@@ -168,6 +169,40 @@
     <input type="text" id="cat-search" placeholder="&#128269; Search keywords..." oninput="renderCatalog()">
     <div class="cat-count" id="cat-count"></div>
     <div class="cat-grid" id="cat-grid"></div>
+  </div>
+</div>
+
+<!-- COMMAND CARDS SCREEN -->
+<div class="screen" id="commands-screen" style="background:#0a0a0f;overflow-y:auto">
+  <div class="cat-wrap">
+    <div class="cat-top">
+      <h1>&#9878; Command Cards</h1>
+      <div class="cat-top-btns">
+        <button class="dark-pill" onclick="showScreen('flashcard-screen')">&#8592; Back</button>
+      </div>
+    </div>
+    <div class="cat-filters" id="cmd-faction-filters"></div>
+    <div class="cat-filters" id="cmd-pip-filters"></div>
+    <input type="text" id="cmd-search" placeholder="&#128269; Search command cards, commanders..." oninput="renderCommands()">
+    <div class="cat-count" id="cmd-count"></div>
+    <div class="cmd-grid" id="cmd-grid"></div>
+  </div>
+</div>
+
+<!-- COMMAND CARD MODAL -->
+<div id="cmd-modal-bg" onclick="closeCmdModal(event)">
+  <div class="cmd-modal-box" onclick="event.stopPropagation()">
+    <div class="cmd-modal-head">
+      <div>
+        <div class="cmd-modal-name" id="cmd-mod-name"></div>
+        <div class="cmd-modal-meta" id="cmd-mod-meta"></div>
+      </div>
+      <button class="dark-pill" onclick="closeCmdModal()">Close</button>
+    </div>
+    <div class="cmd-modal-body">
+      <div id="cmd-mod-img"></div>
+      <div id="cmd-mod-text"></div>
+    </div>
   </div>
 </div>
 

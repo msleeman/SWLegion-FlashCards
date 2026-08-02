@@ -228,3 +228,46 @@ def download_tta_upgrade_images(imgdir):
             failed += 1
 
     return downloaded, skipped, failed
+
+
+def download_command_card_images(imgdir):
+    """Download Command Card art from the LegionHQ CDN into images/commands/.
+
+    Command cards matter more than most art here: Tabletop Admiral only has
+    rules text for about half of them, so for the rest the card image IS the
+    rules reference.
+
+    Returns (downloaded, skipped, failed).
+    """
+    from src.config import CACHE_DIR
+
+    cache_path = os.path.join(CACHE_DIR, "commands.json")
+    if not os.path.exists(cache_path):
+        return 0, 0, 0
+    import json
+    with open(cache_path, encoding="utf-8") as f:
+        cards = json.load(f)
+
+    outdir = os.path.join(imgdir, "commands")
+    os.makedirs(outdir, exist_ok=True)
+    cdn = LEGIONHQ_CDN.replace("/unitCards/", "/commandCards/")
+
+    downloaded = skipped = failed = 0
+    for c in cards:
+        img = c.get("i")
+        if not img:
+            continue
+        dest = os.path.join(outdir, img)
+        if os.path.exists(dest) and os.path.getsize(dest) > 1000:
+            skipped += 1
+            continue
+        try:
+            r = requests.get(cdn + img, headers=HEADERS, timeout=20)
+            r.raise_for_status()
+            with open(dest, "wb") as f:
+                f.write(r.content)
+            downloaded += 1
+        except Exception:
+            failed += 1
+
+    return downloaded, skipped, failed

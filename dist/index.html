@@ -299,6 +299,36 @@ html,body{width:100%;height:100%;overflow:hidden;
 .acct-item.danger{color:#f08080}
 .acct-item.danger:hover{background:rgba(192,57,43,.2);color:#f08080}
 
+/* ── COMMAND CARD BROWSER ─────────────────────────────────────────────────── */
+.cmd-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(158px,1fr));gap:12px}
+.cmd-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
+  border-radius:var(--rs);overflow:hidden;cursor:pointer;transition:all .15s}
+.cmd-card:hover{background:rgba(255,255,255,.08);border-color:rgba(245,197,24,.35);
+  transform:translateY(-2px)}
+.cmd-thumb{position:relative;aspect-ratio:1/1.4;background:rgba(0,0,0,.35);
+  display:flex;align-items:center;justify-content:center;overflow:hidden}
+.cmd-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.cmd-pip{position:absolute;top:6px;left:6px;font-size:10px;letter-spacing:1px;
+  background:rgba(0,0,0,.75);color:var(--gold);border-radius:10px;padding:2px 7px}
+.cmd-lbl{padding:8px 10px}
+.cmd-name{font-size:12.5px;font-weight:600;color:var(--white);line-height:1.25}
+.cmd-sub{font-size:10.5px;color:rgba(255,255,255,.4);margin-top:3px}
+#cmd-modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.82);backdrop-filter:blur(4px);
+  z-index:60;display:none;align-items:center;justify-content:center;padding:20px}
+#cmd-modal-bg.on{display:flex}
+.cmd-modal-box{background:#12121a;border:1px solid rgba(245,197,24,.2);
+  border-radius:var(--rb);max-width:620px;width:100%;max-height:92vh;
+  display:flex;flex-direction:column;overflow:hidden}
+.cmd-modal-head{display:flex;align-items:flex-start;justify-content:space-between;
+  gap:12px;padding:18px 18px 10px}
+.cmd-modal-name{font-size:19px;font-weight:800;color:var(--gold)}
+.cmd-modal-meta{font-size:12px;color:rgba(255,255,255,.45);margin-top:3px}
+.cmd-modal-body{padding:0 18px 18px;overflow-y:auto}
+#cmd-mod-img img{width:100%;height:auto;border-radius:6px;display:block}
+.cmd-noimg{padding:36px;text-align:center;color:rgba(255,255,255,.3);font-size:13px;
+  border:1px dashed rgba(255,255,255,.15);border-radius:6px}
+#cmd-mod-text{font-size:13.5px;line-height:1.65;color:rgba(255,255,255,.8);margin-top:12px}
+
 /* ── PRINT KEYWORDS ───────────────────────────────────────────────────────── */
 #print-keywords{display:none}
 @media print{
@@ -392,7 +422,7 @@ html,body{width:100%;height:100%;overflow:hidden;
       </div>
     </div>
     <p class="auth-footer">Guest progress is saved locally on this device only.</p>
-    <p class="auth-footer">v5.0.0-52-g683b135-dirty · 2026-08-02 06:22 UTC</p>
+    <p class="auth-footer">v5.0.0-53-g3ef0a3e-dirty · 2026-08-02 06:31 UTC</p>
   </div>
 </div>
 
@@ -432,6 +462,7 @@ html,body{width:100%;height:100%;overflow:hidden;
   </div>
   <div id="fs-nav-btns">
     <button class="fs-pill" onclick="showScreen('catalog-screen')">Catalog</button>
+    <button class="fs-pill" onclick="showScreen('commands-screen')">Commands</button>
     <button class="fs-pill" id="pill-lists" onclick="showScreen('lists-screen')">Lists</button>
     <div id="acct-dropdown-wrap">
       <button class="fs-pill" id="acct-btn" onclick="toggleAcctDropdown()">&#128100;</button>
@@ -440,7 +471,7 @@ html,body{width:100%;height:100%;overflow:hidden;
         <div class="acct-item" id="acct-signin-item" onclick="showAuthFromApp()" style="display:none">Sign in / Switch account</div>
         <div class="acct-item danger" id="acct-signout-item" onclick="authSignOut()" style="display:none">Sign out</div>
         <div class="acct-item" id="acct-guest-label" style="display:none;cursor:default;color:rgba(255,255,255,.3)">Progress saved locally</div>
-        <div style="font-size:10px;color:rgba(255,255,255,.18);padding:4px 14px 8px;text-align:center;letter-spacing:.3px">v5.0.0-52-g683b135-dirty · 2026-08-02 06:22 UTC</div>
+        <div style="font-size:10px;color:rgba(255,255,255,.18);padding:4px 14px 8px;text-align:center;letter-spacing:.3px">v5.0.0-53-g3ef0a3e-dirty · 2026-08-02 06:31 UTC</div>
       </div>
     </div>
   </div>
@@ -527,6 +558,40 @@ html,body{width:100%;height:100%;overflow:hidden;
     <input type="text" id="cat-search" placeholder="&#128269; Search keywords..." oninput="renderCatalog()">
     <div class="cat-count" id="cat-count"></div>
     <div class="cat-grid" id="cat-grid"></div>
+  </div>
+</div>
+
+<!-- COMMAND CARDS SCREEN -->
+<div class="screen" id="commands-screen" style="background:#0a0a0f;overflow-y:auto">
+  <div class="cat-wrap">
+    <div class="cat-top">
+      <h1>&#9878; Command Cards</h1>
+      <div class="cat-top-btns">
+        <button class="dark-pill" onclick="showScreen('flashcard-screen')">&#8592; Back</button>
+      </div>
+    </div>
+    <div class="cat-filters" id="cmd-faction-filters"></div>
+    <div class="cat-filters" id="cmd-pip-filters"></div>
+    <input type="text" id="cmd-search" placeholder="&#128269; Search command cards, commanders..." oninput="renderCommands()">
+    <div class="cat-count" id="cmd-count"></div>
+    <div class="cmd-grid" id="cmd-grid"></div>
+  </div>
+</div>
+
+<!-- COMMAND CARD MODAL -->
+<div id="cmd-modal-bg" onclick="closeCmdModal(event)">
+  <div class="cmd-modal-box" onclick="event.stopPropagation()">
+    <div class="cmd-modal-head">
+      <div>
+        <div class="cmd-modal-name" id="cmd-mod-name"></div>
+        <div class="cmd-modal-meta" id="cmd-mod-meta"></div>
+      </div>
+      <button class="dark-pill" onclick="closeCmdModal()">Close</button>
+    </div>
+    <div class="cmd-modal-body">
+      <div id="cmd-mod-img"></div>
+      <div id="cmd-mod-text"></div>
+    </div>
   </div>
 </div>
 
@@ -701,6 +766,7 @@ function showScreen(id){
   document.getElementById(id).classList.add('on');
   if(id==='catalog-screen') renderCatalog();
   if(id==='lists-screen'){ renderSavedLists(); }
+  if(id==='commands-screen') initCommands();
 }
 
 let typeFilter='all';
@@ -3218,6 +3284,246 @@ const TTA_KEYWORDS = {
   "234":"Anti-Personnel",
 };
 
+// ─── COMMAND CARDS (all factions) ────────────────────────────────────────────
+const COMMANDS = [
+  {"n": "A Higher Purpose", "p": 1, "c": "Bo-Katan Kryze", "i": "A Higher Purpose.webp"},
+  {"n": "A Simple Man", "p": 1, "c": "Boba Fett", "i": "A Simple Man.webp", "d": "asd"},
+  {"n": "AI Coordination", "p": 1, "f": "separatists", "i": "AI Coordination.webp", "d": "asdf"},
+  {"n": "Ambush", "p": 1, "i": "Ambush.webp"},
+  {"n": "Arboreal Assault", "p": 1, "f": "rebels", "i": "Arboreal Assault.webp"},
+  {"n": "Architects of Their Own Destruction", "p": 1, "c": "Grand Admiral Thrawn", "f": "empire", "i": "Architects of Their Own Destruction.webp"},
+  {"n": "Blast Off!", "p": 1, "c": "R2-D2", "i": "Blast Off!.webp", "d": "R2-D2 increases his maximum speed by 1 and gains 1 dodge token, 1 supperssion token, Disengage, and Jump 1"},
+  {"n": "Bring It Down!", "p": 1, "c": "Clone Commander Cody", "f": "republic", "i": "Bring It Down!.webp", "d": "asdf"},
+  {"n": "Brutal Enforcer", "p": 1, "c": "Sun Fac", "f": "separatists", "i": "Brutal Enforcer.webp"},
+  {"n": "Call Me Captain", "p": 1, "c": "Clone Captain Rex", "f": "republic", "i": "Call Me Captain.webp", "d": "Clone Captain Rex gains Fire Support. When he uses Fire Support, he does not flip his order token facedown. While a friendly unit performs a melee attack, Clone Captain Rex can use Fire Support to add a ranged weapon to the attack pool."},
+  {"n": "Close Call", "p": 1, "c": "Wicket", "f": "rebels", "i": "Close Call.webp"},
+  {"n": "Come and Prove It", "p": 1, "c": "Seventh Sister", "f": "empire", "i": "Come and Prove It.webp"},
+  {"n": "Common Cause", "p": 1, "c": "Chewbacca", "f": "rebels", "i": "Common Cause.webp", "d": "After Chewbacca activates, if Luke Skywalker has a faceup order token, he may activate. After Luke Skywalker activates, if Chewbacca has a faceup order token, he may activate."},
+  {"n": "Coordinated Bombardment", "p": 1, "c": "Leia Organa", "f": "rebels", "i": "Coordinated Bombardment.webp", "d": "At the end of Leia Organas activation, she may perform up to 3 attacks against different enemy units using the following weapon: Range 4-Infinity, 2 red dice Immune: Deflect"},
+  {"n": "Corellian Spike", "p": 1, "c": "Lando Calrissian", "f": "rebels", "i": "Corellian Spike.webp"},
+  {"n": "Covert Observation", "p": 1, "f": "empire", "i": "Covert Observation.webp", "d": "Look at up to 2 random command cards from an opponents hand."},
+  {"n": "Crack Shot", "p": 1, "c": "Cassian Andor", "f": "rebels", "i": "Crack Shot.webp", "d": "Cassian Andor gains Gunslinger and 1 aim token. At the end of his activation, he may gain 1 suppression token and he gains 1 standby token."},
+  {"n": "Defiance", "p": 1, "f": "republic", "i": "Defiance.webp"},
+  {"n": "Delaying Tactics", "p": 1, "f": "rebels", "i": "Delaying Tactics.webp"},
+  {"n": "Die at My Hand", "p": 1, "c": "Moff Gideon", "f": "empire", "i": "Die at My Hand.webp"},
+  {"n": "Drive Them Out", "p": 1, "f": "empire", "i": "Drive Them Out.webp"},
+  {"n": "Duel of the Fates", "p": 1, "c": "Maul", "i": "Duel of the Fates.webp", "d": "Maul gains 1 dodge token and Disengate. While maul is engaged with an enemy unit, that unit cannot spend aim, dodge, standby, or surge tokens."},
+  {"n": "Explosions!", "p": 1, "c": "Sabine Wren", "i": "Explosions!.webp", "d": "During the round this card is played, Sabine Wren gains [Action] Arm 2: Thermal Charge. After she performs this action, she may perform a speed-1 move. Until the end of the game, Sabine Wren gains Detonate 2: Thermal Charge. Do not discard this card from play."},
+  {"n": "Exterminate", "p": 1, "c": "Super Tactical Command Droid", "f": "separatists", "i": "Exterminate.webp"},
+  {"n": "Face Me!", "p": 1, "c": "Agent Kallus", "f": "empire", "i": "Face Me!.webp"},
+  {"n": "Fear, Surprise, Intimidation", "p": 1, "c": "Count Dooku", "f": "separatists", "i": "Fear, Surprise, Intimidation.webp", "d": "Count Dooku gains Arsenal 2 and Relentless, and each of his ranged weapons gains Versatile. After he performs an attack, each defender gains 2 suppression tokens."},
+  {"n": "Fearsome Oration", "p": 1, "c": "Imperial Agent", "f": "empire", "i": "Fearsome Oration.webp"},
+  {"n": "Flow of the Force", "p": 1, "c": ["Jedi Knight", "Jedi Knight General"], "f": "republic", "i": "Flow of the Force.webp"},
+  {"n": "Focused on the Kill", "p": 1, "c": "IG-88", "i": "Focused on the Kill.webp"},
+  {"n": "For the Cause", "p": 1, "f": "separatists", "i": "For the Cause.webp"},
+  {"n": "Go, There Are Too Many...", "p": 1, "c": "Paz Vizsla", "i": "Go, There Are Too Many.webp"},
+  {"n": "Gunner, Infantry!", "p": 1, "c": "Major Marquand", "f": "empire", "i": "Gunner, Infantry!.webp"},
+  {"n": "Hello There!", "p": 1, "c": "Obi-Wan Kenobi", "f": "republic", "i": "Hello There!.webp", "d": "Obi-Wan Kenobi gains Nimble. At the start of the activation phase, Obi-Wan Kenobi games 1 aim, 1 dodge, 1 standby, or 1 surge token for each enemy unit at range 1-2."},
+  {"n": "I Am No Jedi", "p": 1, "c": "Ahsoka Tano", "f": "rebels", "i": "I Am No Jedi.webp"},
+  {"n": "I Have Graphs AND the Command", "p": 1, "c": "General Tagge", "f": "empire", "i": "I Have Graphs AND the Command.webp"},
+  {"n": "I Rebel", "p": 1, "c": "Jyn Erso", "f": "rebels", "i": "I Rebel.webp"},
+  {"n": "I'll Do it Myself!", "p": 1, "c": "General Grievous", "f": "separatists", "i": "I'll Do it Myself.webp"},
+  {"n": "I'm Your Worst Nightmare", "p": 1, "c": "Cad Bane", "i": "I'm Your Worst Nightmare.webp", "d": "Cad Bane gains Uncanny Luck 2. During Cad Banes activation, he can perform up to 2 attack actions."},
+  {"n": "Implacable", "p": 1, "c": "Darth Vader", "f": "empire", "i": "Implacable.webp", "d": "At the end of Darth Vader's first activation, he may suffer 1 wound to shuffle his order token into the order pool. During Darth Vader's second activation, he performs 1 fewer action."},
+  {"n": "Insolence?! We are Pirates!", "p": 1, "i": "Insolence! We are Pirates!.webp"},
+  {"n": "Let the Executions Begin!", "p": 1, "c": "Poggle the Lesser", "f": "separatists", "i": "Let the Executions Begin!.webp"},
+  {"n": "Log Traps", "p": 1, "f": "rebels", "i": "Log Traps.webp"},
+  {"n": "Marked For Elimination", "p": 1, "c": "Gar Saxon", "i": "Marked for Elimination.webp", "d": "asdf"},
+  {"n": "Maximum Firepower", "p": 1, "c": "General Veers", "f": "empire", "i": "Maximum Firepower.webp", "d": "At the end of General Veers activation, he may perform an attack using the following weapon.\\\r\nRange 4-something 4 red dice, Impact 2, Immune: Deflect"},
+  {"n": "Mechanical Carnage", "p": 1, "c": "IG-11", "i": "Mechanical Carnage.webp"},
+  {"n": "Mechanized Incursion", "p": 1, "f": "separatists", "i": "Mechanized Incursion.webp", "d": "dfals"},
+  {"n": "Merciless Munitions", "p": 1, "c": "Bossk", "i": "Merciless Munitions.webp", "d": "During the round this card is played, Bossk gains [Action] Arm 1: Dioxis Charge. After he performs this action, he may perform a speed-1 move. Until the end of the game, Bossk gains Detonate 1: Dioxis Charge. After a trooper unit defends against an attack made by your dioxis charge, it gains 1 poiso"},
+  {"n": "Moment of Triumph", "p": 1, "c": "Grand Moff Tarkin", "f": "empire", "i": "Moment of Triumph.webp"},
+  {"n": "No Escape", "p": 1, "c": "Mandalorian Hunter", "i": "No Escape.webp"},
+  {"n": "No One Threatens Our Family", "p": 1, "c": "Ursa Wren", "i": "No One Threatens Our Family.webp"},
+  {"n": "Our Fate is in Your Hands", "p": 1, "c": "Padme Amidala", "f": "republic", "i": "Our Fate is in Your Hands.webp", "d": "Padme Amidala gains Danger Sense 2. At the start of the Activation Phase, Padme Amidala"},
+  {"n": "Ploy", "p": 1, "i": "Ploy.webp"},
+  {"n": "Pulse Scan", "p": 1, "c": "Iden Versio", "f": "empire", "i": "Pulse Scan.webp", "d": "Iden Versio gains Sharpshooter 2 and 1 aim token. At the end of her activation, she gains 1 dodge token and 1 standby token."},
+  {"n": "Sabotaged Communications", "p": 1, "f": "rebels", "i": "Sabotaged Communications.webp", "d": "Your opponent must issue orders to 1 fewer unit than is indicated on their command card to a minimum of 1."},
+  {"n": "See You in Hell", "p": 1, "c": "Han Solo", "f": "rebels", "i": "See You in Hell.webp"},
+  {"n": "Size Matters Not", "p": 1, "c": "Yoda", "f": "republic", "i": "Size Matters Not.webp"},
+  {"n": "Sneak Attack", "p": 1, "f": "republic", "i": "Sneak Attack.webp"},
+  {"n": "Son of Skywalker", "p": 1, "c": "Luke Skywalker", "f": "rebels", "i": "Son of Skywalker.webp", "d": "After Luke Skywalker performs his first attack, he may perform 1 additional attack."},
+  {"n": "Sorry About the Mess", "p": 1, "c": "Han Solo", "f": "rebels", "i": "Sorry About the Mess.webp", "d": "While building a command hand, treat this card as though it has 1 pip. When Han Solo is issued an order, he gains 1 aim token and 1 dodge token."},
+  {"n": "Synchronized Offensive", "p": 1, "f": "republic", "i": "Synchronized Offensive.webp", "d": "After a friendly vehicle unit is issued an order, choose a friendly clone trooper unit at range 1-2 of it and issue that unit an order."},
+  {"n": "The Jedi Shall Fall", "p": 1, "c": "Asajj Ventress", "f": "separatists", "i": "The Jedi Shall Fall.webp"},
+  {"n": "They Too Will Suffer", "p": 1, "c": ["Kalani", "Kraken"], "f": "separatists", "i": "They Too Will Suffer.webp"},
+  {"n": "This is the Way", "p": 1, "c": "Din Djarin", "i": "This is the Way.webp", "d": "asdf"},
+  {"n": "This is Where the Fun Begins", "p": 1, "c": "Anakin Skywalker", "f": "republic", "i": "This is Where the Fun Begins.webp", "d": "Blah blah"},
+  {"n": "This Party's Over", "p": 1, "c": "Mace Windu", "f": "republic", "i": "This Party's Over.webp"},
+  {"n": "Trained In Your Jedi Arts", "p": 1, "c": "General Grievous", "f": "separatists", "i": "Trained in Your Jedi Arts.webp", "d": "General Grievous gains Disengage and 1 dodge token. At the end of his activation, he may perform an attack against each enemy unit at range 1 using the following weapons: Melee or range 1, 1 red, 2 black, 1 white. Suppressive, Versatile."},
+  {"n": "Unrelenting Fire", "p": 1, "f": "empire", "i": "Unrelenting Fire.webp", "d": "asdf"},
+  {"n": "Vader's Might", "p": 1, "c": "Darth Vader", "f": "empire", "i": "Vader's Might.webp", "d": "Choose another non-heavy unit at range 1 and place that unit on the battlefield within range 1 and height 1 of its current position. Then, if it is an enemy unit, roll 1 white defense die for each mini in the unit. That unit suffers 1 wound for each defense and surge result."},
+  {"n": "Voracious Ambition", "p": 1, "c": "Director Orson Krennic", "f": "empire", "i": "Voracious Ambition.webp", "d": "At the start of the Activation Phase, place 3 random orders tokens from your order pool  ahdggad this card. You may hkadhglasd these order tokens at any time. When you would draw an order token from your order pool, you may asdhg 1 of the order tokens on this card and use that order token instead."},
+  {"n": "We Are Mandalorians", "p": 1, "f": "mandalorians", "i": "We Are Mandalorians.webp"},
+  {"n": "We Shall Start with Revenge", "p": 1, "c": "Savage Opress", "i": "We Shall Start with Revenge.webp"},
+  {"n": "Whipcord Launcher", "p": 1, "c": "Boba Fett", "i": "Whipcord Launcher.webp", "d": "Boba Fett can perform moves while engaged with a unit that has 1 or more immobilized tokens. During Boba Fett's activation, he gains: [Action] Choose an enemy trooper unit at range 1 and in line of sight. It gains 2 immobilized tokens and 2 suppression tokens."},
+  {"n": "Wisdom of the Council", "p": 1, "f": "republic", "i": "Wisdom of the Council.webp"},
+  {"n": "Witch Magick", "p": 1, "c": "Maul", "f": "mercenary", "i": "Witch Magick.webp"},
+  {"n": "You Are Beaten", "p": 1, "c": "Ahsoka Tano", "f": "republic", "i": "You Are Beaten.webp"},
+  {"n": "You Serve Your Master Well", "p": 1, "c": "Luke Skywalker", "f": "rebels", "i": "You Serve Your Master Well.webp", "d": "Choose a friendly non-leader, non-operative trooper unit at range 1, or a suppressed enemy non-leader, non-operative trooper at range 1. Perform 1 free move or attack action with that unit. If it is an enemy unit, it can attack and start a melee with other enemy units."},
+  {"n": "A Beautiful Friendship", "p": 2, "c": "Leia Organa", "f": "rebels", "i": "A Beautiful Friendship.webp"},
+  {"n": "A Disturbance in the Force", "p": 2, "f": "republic", "i": "A Disturbance in the Force.webp"},
+  {"n": "A Machine Made For Killing", "p": 2, "c": ["IG-11", "IG-88"], "i": "A Machine Made for Killing.webp"},
+  {"n": "Ace Up His Sleeve", "p": 2, "c": "Lando Calrissian", "f": "rebels", "i": "Ace Up His Sleeve.webp"},
+  {"n": "Aerial Assault", "p": 2, "f": "mandalorians", "i": "Aerial Assault.webp"},
+  {"n": "Aggression", "p": 2, "i": "Aggression.webp"},
+  {"n": "Aggressive Negotiations", "p": 2, "c": "Padme Amidala", "f": "republic", "i": "Aggressive Negotiations.webp", "d": "When Padme Amidala issues an order to a trooper unit, it may either perform a speed-1 move or gain 1 aim, dodge, or surge token."},
+  {"n": "Air Support", "p": 2, "f": "republic", "i": "Air Support.webp", "d": "l"},
+  {"n": "Battlefield Reconnaissance", "p": 2, "c": "Rebel Agent", "f": "rebels", "i": "Battlefield Reconnaissance.webp"},
+  {"n": "Both Hunter and Prey", "p": 2, "c": "The Armorer", "i": "Both Hunter and Prey.webp"},
+  {"n": "Brains and Brawn", "p": 2, "c": "Chewbacca", "f": "rebels", "i": "Brains and Brawn.webp", "d": "While Leia Organa is performing a ranged attack, if Chewbacca is not engaged and has line of sight to and is at range 1-3 of the defender, add one of his ranged weapons to the attack pool."},
+  {"n": "Close Formation", "p": 2, "i": "Close Formation.webp"},
+  {"n": "Concussive Blast", "p": 2, "c": "Iden Versio", "f": "empire", "i": "Concussive Blast.webp", "d": "When Iden Versio activates, she recovers. During Iden Versios activation, she gains the following weapon blast scatter suppressive"},
+  {"n": "Courage of the Rebellion", "p": 2, "f": "rebels", "i": "Courage of the Rebellion.webp", "d": "asdf"},
+  {"n": "Deploy the Garrison", "p": 2, "c": "Director Orson Krennic", "f": "empire", "i": "Deploy the Garrison.webp", "d": "At the start of the Activation Phase, choose up to 2 friendly trooper units that have faceup order tokens. Each chosen unit may perform a free standby action."},
+  {"n": "Double the Fall", "p": 2, "c": "Count Dooku", "f": "separatists", "i": "Double the Fall.webp", "d": "At the start of the Activation Phase, if Count Dooku has a faceup order token, he may return it to his order pool to choose up to 2 enemy units at range 1-2 and return their order tokens to their order pool."},
+  {"n": "Evasive Action", "p": 2, "f": "republic", "i": "Evasive Action.webp"},
+  {"n": "Evasive Maneuvers", "p": 2, "c": "General Veers", "f": "empire", "i": "Evasive Maneuvers.webp", "d": "When a friendly vehicle unit is issued an order, it gains 1 dodge token. Friendly vehicle units can spend dodge tokens to cancel crit results."},
+  {"n": "Family Reunion", "p": 2, "c": "Ahsoka Tano", "f": "rebels", "i": "Family Reunion.webp"},
+  {"n": "Fear and Dead Men", "p": 2, "c": "Darth Vader", "f": "empire", "i": "Fear and Dead Men.webp", "d": "While Darth Vader uses Deflect, the attacker suffers 1 wound for each blank result, instead of surge result. When an enemy unit at range 1-2 and in line of sight of Darth Vader activates, Darth Vader gains 1 dodge token."},
+  {"n": "Fight Another Day", "p": 2, "c": "Gar Saxon", "i": "Fight Another Day.webp", "d": "asdf"},
+  {"n": "Full of Surprises", "p": 2, "c": "Luke Skywalker", "f": "rebels", "i": "Full of Surprises.webp", "d": "Luke Skywalker gains 1 dodge token. When defending, he rolls a number of additional defense dice equal to his courage value minus the number of suppression tokens he has."},
+  {"n": "Get In Position", "p": 2, "f": "republic", "i": "Get In Position.webp"},
+  {"n": "Have I Ever Let You Down?", "p": 2, "c": "Clone Commander Cody", "f": "republic", "i": "Have I Ever Let You Down.webp", "d": "asdf"},
+  {"n": "Hiding in Plain Sight", "p": 2, "f": "rebels", "i": "Hiding in Plain Sight.webp"},
+  {"n": "His Eminence", "p": 2, "c": "Maul", "f": "mercenary", "i": "His Eminence.webp"},
+  {"n": "I Am Fear", "p": 2, "c": "Asajj Ventress", "f": "separatists", "i": "I am Fear.webp", "d": "asdf"},
+  {"n": "I Don't Believe in Chance", "p": 2, "c": "Plo Koon", "f": "republic", "i": "I Don't Believe in Chance.webp"},
+  {"n": "I Like Those Odds", "p": 2, "c": "Din Djarin", "i": "I Like Those Odds.webp", "d": "asdf"},
+  {"n": "I Smell Fear... and it Smells Good", "p": 2, "c": "Admiral Trench", "i": "I Smell Fear... and it Smells Good.webp"},
+  {"n": "I'm in Control", "p": 2, "c": "Cad Bane", "i": "I'm in Control.webp", "d": "At the start and end of Cad Banes activation, he may transfer any number of his suppression tokens to any number of trooper units at range 1-2. Each enemy trooper unit that gains at least 1 suppression token in this way also gains 1 immobilize token."},
+  {"n": "Impromptu Immolation", "p": 2, "c": "R2-D2", "i": "Impromptu Immolation.webp", "d": "After R2-D2 performs an attack, he may perform a free move action. During R2-D2s activation, he gains the following weapon blast, spray, suppressive"},
+  {"n": "Incapacitate", "p": 2, "c": "Iden Versio", "f": "empire", "i": "Incapacitate.webp", "d": "During Iden"},
+  {"n": "Independent Programming", "p": 2, "c": "IG-88", "i": "Independent Programming.webp"},
+  {"n": "ISB Investigation", "p": 2, "c": "Agent Kallus", "f": "empire", "i": "ISB Investigation.webp"},
+  {"n": "Knowledge and Defense", "p": 2, "c": "Obi-Wan Kenobi", "f": "republic", "i": "Knowledge and Defense.webp", "d": "Obi-Wan Kenobi gains 1 dodge token for each other friendly trooper unit at range 1. Obi-Wan Kenobi can use Guardian during a melee attack."},
+  {"n": "Last Stand", "p": 2, "c": "Cassian Andor", "f": "rebels", "i": "Last Stand.webp", "d": "When Cassian Andor issues an order to a Commander or Operative unit, that unit gains Indomitable and gains 1 aim, 1 dodge, or 1 suppression token for each wound token that unit has up to 3."},
+  {"n": "Lead From the Front", "p": 2, "f": "republic", "i": "Lead From the Front.webp", "d": "asdf"},
+  {"n": "Make the Impossible Possible", "p": 2, "c": "Sabine Wren", "i": "Make the Impossible Possible.webp"},
+  {"n": "Making His Way in the Galaxy", "p": 2, "c": "Boba Fett", "i": "Making His Way In the Galaxy.webp", "d": "asdf"},
+  {"n": "My Ally is the Force", "p": 2, "c": "Luke Skywalker", "f": "rebels", "i": "My Ally is the Force.webp", "d": "When a friendly trooper unit is issued an order, it gains 1 dodge token."},
+  {"n": "New Ways to Motivate Them", "p": 2, "c": "Darth Vader", "f": "empire", "i": "New Ways to Motivate Them.webp", "d": "When a friendly non-Darth Vader trooper unit with a faceup order token activates, it may suffer 1 wound to perform 1 free action."},
+  {"n": "No Time for Sorrows", "p": 2, "c": "Leia Organa", "f": "rebels", "i": "No Time for Sorrows.webp", "d": "When a friendly trooper unit is issued an order, it may perform a speed-1 move."},
+  {"n": "On Patrol", "p": 2, "c": "Luke Skywalker", "f": "rebels", "i": "On Patrol.webp"},
+  {"n": "Orbital Strike", "p": 2, "f": "separatists", "i": "Orbital Strike.webp", "d": "dlkghlsg"},
+  {"n": "Out of the Shadows", "p": 2, "i": "Out of the Shadows.webp"},
+  {"n": "Overwhelming Barrage", "p": 2, "f": "empire", "i": "Overwhelming Barrage.webp", "d": "asdf"},
+  {"n": "Pincer Attack", "p": 2, "c": "General Grievous", "f": "separatists", "i": "Pincer Attack.webp"},
+  {"n": "Pinned Down", "p": 2, "f": "empire", "i": "Pinned Down.webp", "d": "After a friendly support or heavy unit performs an attack against a unit with a faceup order token, shuffle that token back into its order pool."},
+  {"n": "Preservation Protocols", "p": 2, "c": ["Kalani", "Kraken"], "f": "separatists", "i": "Preservation Protocols.webp"},
+  {"n": "Push", "p": 2, "i": "Push.webp"},
+  {"n": "Reckless Diversion", "p": 2, "c": "Han Solo", "f": "rebels", "i": "Reckless Diversion.webp", "d": "When an enemy unit performs an attack, it must attack a trooper unit with a faceup order token, if able."},
+  {"n": "Recon Division", "p": 2, "f": "republic", "i": "Recon Division.webp"},
+  {"n": "Reptilian Rampage", "p": 2, "c": "Bossk", "i": "Reptilian Rampage.webp", "d": "During Bossks activation, he can perform up to 2 attack actions and he may suffer 1 wound to perform a free move action."},
+  {"n": "Revenge Is Not the Jedi Way", "p": 2, "c": "Ahsoka Tano", "f": "republic", "i": "Revenge Is Not the Jedi Way.webp"},
+  {"n": "Size Matters Sometimes", "p": 2, "c": "Chewbacca", "f": "republic", "i": "Size Matters Sometimes.webp", "d": "If"},
+  {"n": "Sneaky Scouting", "p": 2, "c": "Wicket", "f": "rebels", "i": "Sneaky Scouting.webp"},
+  {"n": "Speak Softly and Drive a Big Tank", "p": 2, "i": "Speak Softly and Drive a Big Tank.webp"},
+  {"n": "Squadron, On Me", "p": 2, "c": "Major Marquand", "f": "empire", "i": "Squadron, On Me.webp"},
+  {"n": "Supreme Commander", "p": 2, "c": "General Grievous", "f": "separatists", "i": "Supreme Commander.webp", "d": "General Grievous gains 1 surge token for each other friendly trooper unit at range 1. While another friendly trooper unit has a faceup order token, it gains Guardian 2 and can use Guardian during a melee attack."},
+  {"n": "Swift Protector", "p": 2, "c": "Ahsoka Tano", "f": "rebels", "i": "Swift Protector.webp"},
+  {"n": "Symbol of Rebellion", "p": 2, "c": "Sabine Wren", "i": "Symbol of Rebellion.webp", "d": "When Sabine Wren activates, she recovers. During Sabine Wrens activation, you may place 1 graffiti token at range 1 and in line of sight of her, touching a piece of non-area terrain."},
+  {"n": "Tactical Planning", "p": 2, "f": "republic", "i": "Tactical Planning.webp", "d": "asdf"},
+  {"n": "Take That, Clankers!", "p": 2, "c": "Clone Captain Rex", "f": "republic", "i": "Take That, Clankers!.webp", "d": "While a friendly trooper unit with a faceup order token and an aim token performs a ranged attack, during the Form Attack Pool step, it may increase the maximum range of each of its ranged weapons by 1, to a maximum of 4."},
+  {"n": "That's Just Good Business", "p": 2, "c": "Hondo Ohnaka", "i": "That's Just Good Business.webp"},
+  {"n": "The Empire Does Not Tolerate Failure", "p": 2, "f": "empire", "i": "The Empire Does Not Tolerate Failure.webp"},
+  {"n": "The Hand Thing", "p": 2, "c": "Grogu", "i": "The Hand Thing.webp", "d": "asdf"},
+  {"n": "The Phantom Menace", "p": 2, "c": "Maul", "i": "The Phantom Menace.webp", "d": "adsf"},
+  {"n": "The Sith Will Rule", "p": 2, "c": "Count Dooku", "f": "separatists", "i": "The Sith Will Rule.webp"},
+  {"n": "There Is No Try", "p": 2, "c": "Yoda", "f": "republic", "i": "There Is No Try.webp"},
+  {"n": "Trust Goes Both Ways", "p": 2, "c": "Jyn Erso", "f": "rebels", "i": "Trust Goes Both Ways.webp", "d": "Jyn Erso gains Inspire 2. When Jyn erso issues an order to another friendly trooper unit, that unit gains Teamwork: Jyn Erso"},
+  {"n": "Turning the Tide", "p": 2, "f": "rebels", "i": "Turning the Tide.webp", "d": "Each friendly support and heavy unit gains Inspire 2."},
+  {"n": "Unexpected, But Not Unwelcome", "p": 2, "c": "Seventh Sister", "f": "empire", "i": "Unexpected, But Not Unwelcome.webp"},
+  {"n": "Unrelenting Assault", "p": 2, "f": "separatists", "i": "Unrelenting Assault.webp", "d": "asdf"},
+  {"n": "Vengeful Strike", "p": 2, "c": "Rook Kast", "i": "Vengeful Strike.webp"},
+  {"n": "We Must Wait and Watch", "p": 2, "c": "Grand Admiral Thrawn", "f": "empire", "i": "We Must Wait and Watch.webp"},
+  {"n": "We Need Reinforcements", "p": 2, "f": "empire", "i": "We Need Reinforcements.webp"},
+  {"n": "We Serve the Queen", "p": 2, "c": "Poggle the Lesser", "f": "separatists", "i": "We Serve the Queen.webp"},
+  {"n": "You Have Something I Want", "p": 2, "c": "Moff Gideon", "f": "empire", "i": "You Have Something I Want.webp"},
+  {"n": "You Underestimate My Power", "p": 2, "c": "Anakin Skywalker", "f": "republic", "i": "You Underestimate My Power.webp", "d": "blah blah"},
+  {"n": "You Would Question Me?", "p": 2, "c": "Fifth Brother", "f": "empire", "i": "You Would Question Me.webp"},
+  {"n": "A New Beginning", "p": 3, "c": "Ahsoka Tano", "f": "rebels", "i": "A New Beginning.webp"},
+  {"n": "Affirmative, General!", "p": 3, "c": ["Jedi Knight", "Jedi Knight General"], "f": "republic", "i": "Affirmative, General.webp"},
+  {"n": "Annihilation Looms", "p": 3, "c": "Director Orson Krennic", "f": "empire", "i": "Annihilation Looms.webp", "d": "Each trooper unit gains 1 suppression token. If it is round 5 or 6, each trooper unit gains 1 additional suppression token."},
+  {"n": "Anti-Capture Protocols", "p": 3, "c": "IG-11", "i": "Anti-Capture Protocols.webp"},
+  {"n": "Armored Cavalry", "p": 3, "c": "Major Marquand", "f": "empire", "i": "Armored Cavalry.webp"},
+  {"n": "Assault", "p": 3, "i": "Assault.webp"},
+  {"n": "At Last", "p": 3, "c": "Maul", "i": "At Last.webp", "d": "lgkadh"},
+  {"n": "Attack of the Clones", "p": 3, "f": "republic", "i": "Attack of the Clones.webp", "d": "dfas"},
+  {"n": "Canny Adversary", "p": 3, "c": "General Tagge", "f": "empire", "i": "Canny Adversary.webp"},
+  {"n": "Change of Plans", "p": 3, "c": "Han Solo", "f": "rebels", "i": "Change of Plans.webp", "d": "When this card is revealed, you may discard it to return an opponent's command card to their hand. If you do, return to the Select Command Card step. That opponent cannot select the command card that was returned to their hand."},
+  {"n": "Combined Arms", "p": 3, "c": "Clone Commander Cody", "f": "republic", "i": "Combined Arms.webp", "d": "aSDF"},
+  {"n": "Constantly Alert", "p": 3, "f": "empire", "i": "Constantly Alert.webp"},
+  {"n": "Coordinated Fire", "p": 3, "f": "empire", "i": "Coordinated Fire.webp", "d": "After a friendly corps unit spends an aim token, another friendly unit at range 1-2 may gain 1 aim token."},
+  {"n": "Courageous Counterattack", "p": 3, "c": "Wicket", "f": "rebels", "i": "Courageous Counterattack.webp"},
+  {"n": "Covering Fire", "p": 3, "f": "rebels", "i": "Covering Fire.webp", "d": "After a friendly corps unit performs a ranged attack, another friendly unit at range 1-2 may gain 1 dodge token."},
+  {"n": "Crush Them!", "p": 3, "c": "General Grievous", "f": "separatists", "i": "Crush Them!.webp", "d": "When General Grievous issues an order to a unit, that unit gains 1 surge token for each defeated enemy unit."},
+  {"n": "Daring Defense", "p": 3, "f": "republic", "i": "Daring Defense.webp"},
+  {"n": "Darkness Descends", "p": 3, "c": "Darth Vader", "f": "empire", "i": "Darkness Descends.webp", "d": "When Darth Vader is issued an order, he gains 3 surge tokens. This card may be revealed at the start of the Deploy Units step. If it is, it must be"},
+  {"n": "Death Before Defeat", "p": 3, "i": "Death Before Defeat.webp"},
+  {"n": "Debark for Ground Assault", "p": 3, "f": "empire", "i": "Debark for Ground Assault.webp", "d": "asdf"},
+  {"n": "Diplomatic Cover", "p": 3, "c": "Padme Amidala", "f": "republic", "i": "Diplomatic Cover.webp", "d": "Permanent. If"},
+  {"n": "Discretion", "p": 3, "i": "Discretion.webp"},
+  {"n": "Diversionary Tactics", "p": 3, "c": "Rebel Officer", "f": "rebels", "i": "Diversionary Tactics.webp"},
+  {"n": "Do Not Underestimate Our Means", "p": 3, "c": ["Kalani", "Kraken"], "f": "separatists", "i": "Do Not Underestimate Our Means.webp"},
+  {"n": "Fear Will Keep Them in Line", "p": 3, "c": "Grand Moff Tarkin", "f": "empire", "i": "Fear Will Keep Them in Line.webp"},
+  {"n": "Flexible Strategy", "p": 3, "f": "republic", "i": "Flexible Strategy.webp"},
+  {"n": "For the Tribe", "p": 3, "f": "rebels", "i": "For the Tribe.webp"},
+  {"n": "Force of Will", "p": 3, "c": "Ki-Adi-Mundi", "f": "republic", "i": "Force of Will.webp"},
+  {"n": "Full Throttle", "p": 3, "c": "General Grievous", "f": "separatists", "i": "Full Throttle.webp"},
+  {"n": "General Kenobi", "p": 3, "c": "Obi-Wan Kenobi", "f": "republic", "i": "General Kenobi.webp", "d": "When Obi-Wan Kenobi issues an order to a unit, that unit gains 1 surge token for each other friendly unit at range 1 of it."},
+  {"n": "General Skywalker", "p": 3, "c": "Anakin Skywalker", "f": "republic", "i": "General Skywalker.webp"},
+  {"n": "Hold at Any Cost", "p": 3, "f": "rebels", "i": "Hold at Any Cost.webp"},
+  {"n": "Honor and Strength", "p": 3, "c": "Mandalorian Leader", "i": "Honor and Strength.webp"},
+  {"n": "I am a Jedi", "p": 3, "c": "Luke Skywalker", "f": "rebels", "i": "I Am a Jedi.webp", "d": "Luke Skywalker gains crit defense defense and cannot perform attacks. When he is issued an order, he may choose up to 2 enemy trooper units at range 1. Those units cannot perform attacks."},
+  {"n": "I Care Not For Your Struggles", "p": 3, "c": "Fifth Brother", "f": "empire", "i": "I Care Not For Your Struggles.webp"},
+  {"n": "I Go Where I'm Needed", "p": 3, "c": "Ahsoka Tano", "f": "republic", "i": "I Go Where I'm Needed.webp"},
+  {"n": "I Make the Rules Now", "p": 3, "c": "Cad Bane", "i": "I Make the Rules Now.webp", "d": "Ift his card was not"},
+  {"n": "I Smell Profit", "p": 3, "i": "I Smell Profit.webp"},
+  {"n": "I Want You to Know Failure", "p": 3, "c": "Grand Admiral Thrawn", "f": "empire", "i": "I Want You to Know Failure.webp"},
+  {"n": "Idiot's Array", "p": 3, "c": "Lando Calrissian", "f": "rebels", "i": "Idiot's Array.webp"},
+  {"n": "Imperial Discipline", "p": 3, "c": "General Veers", "f": "empire", "i": "Imperial Discipline.webp", "d": "When a friendly unit is issued an order, it may recover."},
+  {"n": "Inexorable Advance", "p": 3, "c": "Imperial Officer", "f": "empire", "i": "Inexorable Advance.webp"},
+  {"n": "Leaders of the 501st", "p": 3, "f": "republic", "i": "Leaders of the 501st.webp", "d": "asdf"},
+  {"n": "Legacy of Mandalore", "p": 3, "c": "Sabine Wren", "i": "Legacy of Mandalore.webp", "d": "Sabine Wren gains Inspire 1. When Sabine Wren issues an order to a Commander, Operative, or Special Forces unit, she gains either 1 aim token or 1 dodge token."},
+  {"n": "Luminous Beings Are We", "p": 3, "c": "Yoda", "f": "republic", "i": "Luminous Beings Are We.webp"},
+  {"n": "Lying In Wait", "p": 3, "c": "Bossk", "i": "Lying in Wait.webp", "d": "Bossk gains Sharpshooter 1. After an enemy unit activates, Bossk gains 1 aim token."},
+  {"n": "Mandalore Will Survive", "p": 3, "c": "Bo-Katan Kryze", "i": "Mandalore Will Survive.webp"},
+  {"n": "Master of Evil", "p": 3, "c": "Darth Vader", "f": "empire", "i": "Master of Evil.webp", "d": "When Darth Vader is issued an order, he gains 1 dodge token. When Darth Vader activates, each enemy trooper unit at range 1-2 of him gains 3 suppression tokens."},
+  {"n": "Moment of Consideration", "p": 3, "c": "Moff Gideon", "f": "empire", "i": "Moment of Consideration.webp"},
+  {"n": "Not Out of it Yet", "p": 3, "c": ["AND", "Han Solo", "Luke Skywalker"], "f": "rebels", "i": "Not Out of it Yet.webp"},
+  {"n": "Notorious Scoundrels", "p": 3, "c": "Chewbacca", "f": "rebels", "i": "Notorious Scoundrels.webp", "d": "Choose one of Han Solos command cards in your discard pile. Return that card to your hand."},
+  {"n": "Rebellions Are Built on Hope", "p": 3, "c": "Jyn Erso", "f": "rebels", "i": "Rebellions Are Built on Hope.webp"},
+  {"n": "Return of the Jedi", "p": 3, "c": "Luke Skywalker", "f": "rebels", "i": "Return of the Jedi.webp", "d": "When Luke Skywalker is issued an order, he gains 1 dodge token. When Luke Skywalker activates, each friendly trooper unit at range 1-3 of him may remove 1 suppression token."},
+  {"n": "Roger, Roger!", "p": 3, "f": "separatists", "i": "Roger, Roger!.webp", "d": "ldth"},
+  {"n": "Rule With Respect", "p": 3, "c": "Boba Fett", "i": "Rule With Respect.webp", "d": "asdf"},
+  {"n": "Ruthless Tactics", "p": 3, "c": "Agent Kallus", "f": "empire", "i": "Ruthless Tactics.webp", "d": "asdf"},
+  {"n": "Sacrifice", "p": 3, "c": "K-2SO", "f": "rebels", "i": "Sacrifice.webp", "d": "K-2SO gains Guardian 4. At the end of K-2SOs activation, you may choose another friendly Commander or Operative unit at range 1 and in line of sight of K-2SO. If you do, defeat K-2SO and enemy units cannot perform ranged attacks against the chosen unit until the end of the rount."},
+  {"n": "Seize What Power We Can", "p": 3, "c": "Maul", "f": "mercenary", "i": "Seize What Power We Can.webp"},
+  {"n": "Smoke Screen", "p": 3, "c": "R2-D2", "i": "Smoke Screen.webp", "d": "When R2-D2 Issues an order to another friendly trooper unit, it may perform a speed-1 move. At the start of the Activation phase, R2-D2 may perform the following: Smoke 1 (Place 1 smoke token within range 1 and in line of sight of your unit leader.)"},
+  {"n": "Somebody Has to Save Our Skins", "p": 3, "c": "Leia Organa", "f": "rebels", "i": "Somebody Has to Save Our Skins.webp", "d": "After Leia Organa's activation, you may choose a friendly unit at range 1-2 with a faceup order token and activate it."},
+  {"n": "Stories, So Many of Them True", "p": 3, "c": "Hondo Ohnaka", "i": "Stories, So Many of Them True.webp"},
+  {"n": "Tactical Download", "p": 3, "c": "Super Tactical Command Droid", "f": "separatists", "i": "Tactical Download.webp"},
+  {"n": "Tactical Strike", "p": 3, "c": "Iden Versio", "f": "empire", "i": "Tactical Strike.webp", "d": "When Iden"},
+  {"n": "Unity Wins Wars", "p": 3, "c": "Shaak Ti", "f": "republic", "i": "Unity Wins Wars.webp"},
+  {"n": "Unstoppable Advance", "p": 3, "f": "separatists", "i": "Unstoppable Advance.webp", "d": "asdf"},
+  {"n": "Victory or Death!", "p": 3, "c": "Gar Saxon", "i": "Victory or Death!.webp", "d": "asdf"},
+  {"n": "Volunteer Mission", "p": 3, "c": "Cassian Andor", "f": "rebels", "i": "Volunteer Mission.webp", "d": "When Cassian Andor issues an order to a Commander, Operative, or Special Forces unit, that unit recovers, gains Danger Sense 1, and may gain 1 suppression token."},
+  {"n": "We Do What We Do", "p": 3, "c": "The Bad Batch", "i": "We Do What We Do.webp"},
+  {"n": "We Make Weapons", "p": 3, "c": "Poggle the Lesser", "f": "separatists", "i": "We Make Weapons.webp"},
+  {"n": "We Protect Our Own", "p": 3, "i": "We Protect Our Own.webp"},
+  {"n": "We Shape Ourselves", "p": 3, "c": "The Armorer", "i": "We Shape Ourselves.webp"},
+  {"n": "We're Not Programmed", "p": 3, "c": "Clone Captain Rex", "f": "republic", "i": "We're Not Programmed.webp", "d": "Clone Captain rex gains Inspire 2 and 2 surge tokens. When Clone Captain Rex activates, he recovers."},
+  {"n": "Weapons Are Our Religion", "p": 3, "f": "mandalorians", "i": "Weapons Are Our Religion.webp"},
+  {"n": "Whistling Birds", "p": 3, "c": "Din Djarin", "i": "Whistling Birds.webp", "d": "asdf"},
+  {"n": "Yes, My Master", "p": 3, "c": "Asajj Ventress", "f": "separatists", "i": "Yes, My Master.webp"},
+  {"n": "You Disappoint Me", "p": 3, "c": "Count Dooku", "f": "separatists", "i": "You Disappoint Me.webp", "d": "When Count Dooku issues an order to a unit, that unit gains 1 dodge token. After Count Dooku performs a ranged attack against a trooper unit, he may perform a speed-2 move with that unit."},
+  {"n": "You Hide Your Fear Well", "p": 3, "c": "Seventh Sister", "f": "empire", "i": "You Hide Your Fear Well.webp"},
+  {"n": "Z-6 Jetpack Rocket", "p": 3, "c": "Boba Fett", "i": "Z-6 Jetpack Rocket.webp", "d": "During Boba Fetts activation he gains the following weapon: 3-4 Range 3 red Blast 2 Impact 2"},
+  {"n": "Standing Orders", "p": 4, "i": "Standing Orders.webp", "d": "At the end of the Command Phase, return this card to your hand."},
+];
+
 const UNIT_STATS={
   "at":{"sp":2,"w":20,"cg":null,"dd":"r","ds":false,"as":"c"},
   "au":{"sp":2,"w":5, "cg":3,   "dd":"w","ds":false,"as":null},
@@ -4064,6 +4370,96 @@ function printListUnits(listId){
     <table class="pu-table"><tbody>${rows}</tbody></table>
     <p class="pk-footer">SW Legion Keywords App — ${new Date().toLocaleDateString()}</p>`;
   whenImagesReady(pane).then(()=>window.print());
+}
+
+// ─── COMMAND CARD BROWSER ────────────────────────────────────────────────────
+// COMMANDS is every Command Card across all factions. Roster + art come from
+// LegionHQ2; rules text from Tabletop Admiral, which only covers about half of
+// them -- for the rest the card image is the reference, so it's always shown.
+let _cmdFaction='all', _cmdPip='all', _cmdInit=false;
+
+const CMD_FACTION_LABELS={all:'All Factions',empire:'Empire',rebels:'Rebels',
+  republic:'Republic',separatists:'Separatists',mandalorians:'Mandalorians',
+  mercenary:'Mercenary','':'Generic'};
+
+function initCommands(){
+  if(_cmdInit){ renderCommands(); return; }
+  _cmdInit=true;
+  const factions=[...new Set(COMMANDS.map(c=>c.f||''))].sort((a,b)=>{
+    if(a==='') return 1; if(b==='') return -1; return a.localeCompare(b);
+  });
+  const fWrap=document.getElementById('cmd-faction-filters');
+  fWrap.innerHTML=['all',...factions].map((f,i)=>
+    `<button class="dark-pill${i===0?' active':''}" data-f="${escHtml(f)}"
+       onclick="setCmdFaction(this)">${escHtml(CMD_FACTION_LABELS[f]||f)}</button>`).join('');
+  const pips=[...new Set(COMMANDS.map(c=>c.p||0))].sort((a,b)=>a-b);
+  const pWrap=document.getElementById('cmd-pip-filters');
+  pWrap.innerHTML=`<button class="dark-pill active" data-p="all" onclick="setCmdPip(this)">All Pips</button>`+
+    pips.map(p=>`<button class="dark-pill" data-p="${p}" onclick="setCmdPip(this)">${
+      p?('●'.repeat(p)):'Flaw'}</button>`).join('');
+  renderCommands();
+}
+
+function setCmdFaction(btn){
+  _cmdFaction=btn.dataset.f;
+  [...btn.parentNode.children].forEach(b=>b.classList.toggle('active',b===btn));
+  renderCommands();
+}
+function setCmdPip(btn){
+  _cmdPip=btn.dataset.p;
+  [...btn.parentNode.children].forEach(b=>b.classList.toggle('active',b===btn));
+  renderCommands();
+}
+
+function commandMatches(c,q){
+  if(_cmdFaction!=='all'&&(c.f||'')!==_cmdFaction) return false;
+  if(_cmdPip!=='all'&&String(c.p||0)!==_cmdPip) return false;
+  if(!q) return true;
+  return (c.n||'').toLowerCase().includes(q)
+      || (c.c||'').toLowerCase().includes(q)
+      || (c.d||'').toLowerCase().includes(q);
+}
+
+function renderCommands(){
+  const q=(document.getElementById('cmd-search').value||'').trim().toLowerCase();
+  const list=COMMANDS.filter(c=>commandMatches(c,q));
+  document.getElementById('cmd-count').textContent=
+    `${list.length} card${list.length===1?'':'s'}`+
+    (list.length!==COMMANDS.length?` of ${COMMANDS.length}`:'');
+  document.getElementById('cmd-grid').innerHTML=list.map(c=>{
+    const idx=COMMANDS.indexOf(c);
+    const pip=c.p?'●'.repeat(c.p):'—';
+    const img=c.i?`<img loading="lazy" src="images/commands/${encodeURIComponent(c.i)}" alt=""
+                     onerror="this.style.display='none'">`:'';
+    return `<div class="cmd-card" onclick="openCmdModal(${idx})">
+      <div class="cmd-thumb">${img}<span class="cmd-pip">${pip}</span></div>
+      <div class="cmd-lbl">
+        <div class="cmd-name">${escHtml(c.n)}</div>
+        <div class="cmd-sub">${escHtml(c.c||CMD_FACTION_LABELS[c.f||'']||'Generic')}</div>
+      </div></div>`;
+  }).join('')||'<div class="cat-count">No command cards match.</div>';
+}
+
+function openCmdModal(idx){
+  const c=COMMANDS[idx];
+  if(!c) return;
+  document.getElementById('cmd-mod-name').textContent=c.n;
+  const bits=[c.p?('●'.repeat(c.p)+` (${c.p} pip${c.p===1?'':'s'})`):'Flaw card'];
+  if(c.c) bits.push(c.c);
+  bits.push(CMD_FACTION_LABELS[c.f||'']||c.f);
+  document.getElementById('cmd-mod-meta').textContent=bits.join(' · ');
+  document.getElementById('cmd-mod-img').innerHTML=c.i
+    ? `<img src="images/commands/${encodeURIComponent(c.i)}" alt=""
+         onerror="this.parentNode.innerHTML='<div class=\\'cmd-noimg\\'>No card image</div>'">`
+    : '<div class="cmd-noimg">No card image</div>';
+  const t=document.getElementById('cmd-mod-text');
+  t.textContent=c.d||'';
+  t.style.display=c.d?'':'none';
+  document.getElementById('cmd-modal-bg').classList.add('on');
+}
+function closeCmdModal(e){
+  if(e&&e.target.id!=='cmd-modal-bg') return;
+  document.getElementById('cmd-modal-bg').classList.remove('on');
 }
 
 // ─── SUPABASE AUTH & CLOUD SYNC ───────────────────────────────────────────────
