@@ -121,6 +121,7 @@ def build_unit_db_js():
                     't': card.get('title', ''),
                     'f': card.get('faction', ''),
                     'r': card.get('rank', ''),
+                    'c': card.get('cost', 0),
                     'k': all_kw_names(card),
                     'i': card.get('imageName', ''),
                 }
@@ -141,27 +142,13 @@ def build_unit_db_js():
     return '\n'.join(lines)
 
 
-def _norm_card_name(name):
-    """Mirror app.js's normKw(): strip [], trailing ' X', colon-suffix, lowercase."""
-    name = re.sub(r'\[\]', '', name)
-    name = re.sub(r'\s+X$', '', name)
-    name = re.sub(r':\s*.+$', '', name)
-    return name.strip().lower()
-
-
-def build_upgrade_db_js(card_data=None):
-    """Return a compact JS const UPGRADE_DB = {...}; mapping 2-char upgrade ID -> {n, k}.
+def build_upgrade_db_js():
+    """Return a compact JS const UPGRADE_DB = {...}; mapping 2-char upgrade ID ->
+    {n, c, k, i} (name, cost, keywords, card-art filename).
 
     Reuses the LegionHQ2 bundle cache (legionhq2_units.json stores only units, so we
     fetch the full raw bundle and pull upgrade cardType entries separately, cached to
     legionhq2_upgrades.json).
-
-    card_data (the CARDS list being built for this run) lets a keyword-less upgrade
-    still get included when its own NAME matches a flashcard -- e.g. "Fire Control"
-    and "Hit the Dirt" have no keyword mechanic (freeform rules text), so they'd
-    otherwise be silently dropped and never show up when a parsed army list equips
-    them. Pass None to skip that check (keeps old behavior: only upgrades with a
-    listed keyword are included).
     """
     cache_path = os.path.join(CACHE_DIR, "legionhq2_upgrades.json")
     upgrade_db = None
@@ -254,21 +241,20 @@ def build_upgrade_db_js(card_data=None):
                             seen.add(kw); result.append(kw)
                 return result
 
-            known_names = {_norm_card_name(c['name']) for c in (card_data or [])}
             upgrade_db = {}
             for uid, card in data.items():
                 if card.get('cardType') != 'upgrade':
                     continue
-                kws = all_upgrade_kw_names(card)
-                card_name = card.get('cardName', '')
-                # Skip upgrades with no listed keywords UNLESS the upgrade's own
-                # name is itself a flashcard (e.g. "Fire Control", "Hit the Dirt" --
-                # freeform-text upgrades with no keyword mechanic to key off of).
-                if not kws and _norm_card_name(card_name) not in known_names:
-                    continue
+                # Include EVERY upgrade, even keyword-less ones. Two reasons:
+                #  - freeform-text upgrades (Fire Control, Hit the Dirt) are
+                #    themselves flashcards and must be name-matchable
+                #  - the print-by-unit sheet needs cost + card art for whatever
+                #    is actually equipped, keywords or not (Improvised Orders...)
                 upgrade_db[uid] = {
-                    'n': card_name,
-                    'k': kws,
+                    'n': card.get('cardName', ''),
+                    'c': card.get('cost', 0),
+                    'k': all_upgrade_kw_names(card),
+                    'i': card.get('imageName', ''),
                 }
 
             with open(cache_path, "w", encoding="utf-8") as f:
@@ -308,6 +294,9 @@ def build_tta_db_js():
             units = r.json()
             faction_map = {'1': 'rebels', '2': 'empire', '3': 'neutral',
                            '4': 'republic', '5': 'separatist', '6': 'mercenary'}
+            # TTA's rank enum, decoded by sampling known units per value.
+            rank_map = {1: 'commander', 2: 'corps', 3: 'special',
+                        4: 'support', 5: 'heavy', 6: 'operative'}
             data = {}
             for u in units:
                 pub_id = u.get('public_id')
@@ -321,6 +310,9 @@ def build_tta_db_js():
                 fkey = str(u.get('faction_fkey') or '')
                 if fkey in faction_map:
                     entry['f'] = faction_map[fkey]
+                rank = rank_map.get(u.get('rank_fkey'))
+                if rank:
+                    entry['r'] = rank
                 data[hex_id] = entry
             with open(cache_path, 'w', encoding='utf-8') as f:
                 json.dump(data, f, ensure_ascii=False)
@@ -411,7 +403,7 @@ def build_html(card_data):
     fish_js    = json.dumps(card_data, ensure_ascii=False)
     base_names = json.dumps([c["name"] for c in card_data], ensure_ascii=False)
     unit_db_js       = build_unit_db_js()
-    upgrade_db_js    = build_upgrade_db_js(card_data)
+    upgrade_db_js    = build_upgrade_db_js()
     tta_db_js        = build_tta_db_js()
     tta_upgrades_js  = build_tta_upgrades_db_js()
     js = js.replace("/*CARD_JSON*/", fish_js)

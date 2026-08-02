@@ -1246,6 +1246,25 @@ function collectUnitKeywords(dbUnit, upgradeCards){
   return [...out].sort((a,b)=>a.localeCompare(b));
 }
 
+// Standard Legion army-list rank order, used to sort the print-by-unit sheet
+// so commanders lead and heavies bring up the rear.
+const RANK_ORDER={commander:0,operative:1,corps:2,special:3,'special forces':3,
+                  support:4,heavy:5};
+function rankIndex(rank){
+  const r=(rank||'').toLowerCase();
+  return RANK_ORDER[r]!==undefined?RANK_ORDER[r]:99;
+}
+function sortUnitsByRank(units){
+  return units.slice().sort((a,b)=>{
+    const d=rankIndex(a.rank)-rankIndex(b.rank);
+    if(d) return d;
+    // Within a rank, most expensive first, then alphabetical for stability.
+    const c=(b.cost||0)-(a.cost||0);
+    if(c) return c;
+    return String(a.name||'').localeCompare(String(b.name||''));
+  });
+}
+
 function decodeArmy(url){
   const parsed=parseLegionHQUrl(url);
   if(!parsed) return null;
@@ -1268,7 +1287,11 @@ function decodeArmy(url){
     if(!unit) continue;
     const upgCards=(upgrades||[]).map(u=>u?UPGRADE_DB[u]:null).filter(Boolean);
     const kws=collectUnitKeywords(unit,upgCards);
-    units.push({count,unit,unitId,upgrades,upgradeNames:upgCards.map(u=>u.n),kws});
+    units.push({count,unit,unitId,upgrades,kws,
+                rank:unit.r||'',
+                cost:unit.c||0,
+                upgradeNames:upgCards.map(u=>u.n),
+                upgradeCards:upgCards.map(u=>({n:u.n,c:u.c||0,i:u.i||''}))});
     // The army-wide keyword set is just the union of the per-unit sets.
     kws.forEach(kw=>allKeywords.add(kw));
   }
@@ -1319,6 +1342,7 @@ function parseTtaUrl(url){
 
       const upgradeNames=[];
       const upgCards=[];
+      const upgDetails=[];
       for(const code of codes){
         const ttaUpg=TTA_UPGRADES[code];
         if(!ttaUpg) continue;
@@ -1332,6 +1356,9 @@ function parseTtaUrl(url){
           if(u.n===ttaUpg.n){dbUpg=u;break;}
         }
         upgCards.push(dbUpg||{n:ttaUpg.n,k:[]});
+        // Prefer TTA's cost (it reflects current points) but take card art from
+        // the LegionHQ2 record, which is the only side that carries a filename.
+        upgDetails.push({n:ttaUpg.n,c:ttaUpg.c||0,i:(dbUpg&&dbUpg.i)||''});
       }
 
       const kws=collectUnitKeywords(dbUnit,upgCards);
@@ -1342,7 +1369,10 @@ function parseTtaUrl(url){
         groups[groupKey].count++;
       } else {
         groups[groupKey]={count:1,unit:displayUnit,unitId:hexId,
-                          upgrades:upgradeNames,upgradeNames,kws};
+                          rank:(dbUnit&&dbUnit.r)||tta.r||'',
+                          cost:tta.c||0,
+                          upgrades:upgradeNames,upgradeNames,kws,
+                          upgradeCards:upgDetails};
       }
     }
 
@@ -1444,7 +1474,10 @@ function saveList(){
       name:(u.unit&&u.unit.n)||'',
       title:(u.unit&&u.unit.t)||'',
       img:(u.unit&&u.unit.i)||'',
+      rank:u.rank||'',
+      cost:u.cost||0,
       upgrades:u.upgradeNames||[],
+      upgradeCards:u.upgradeCards||[],
       kws:u.kws||[]
     })),
     armyUrl:url,
@@ -1681,20 +1714,54 @@ function printListUnits(listId){
            `${short?` — ${escHtml(short)}`:''}</li>`;
   };
 
-  let rows=units.map(u=>{
+  let rows=sortUnitsByRank(units).map(u=>{
     const kws=(u.kws||[]).filter(k=>!active||active.has(k.toLowerCase()));
     kws.forEach(k=>covered.add(k.toLowerCase()));
+
     const img=u.img
-      ? `<img src="images/${encodeURIComponent(u.img)}" alt="" onerror="this.style.display='none'">`
+      ? `<img class="pu-unitcard" src="images/${encodeURIComponent(u.img)}" alt="" onerror="this.style.display='none'">`
       : `<div class="pu-noimg">${escHtml(u.name)}</div>`;
+
+    // Upgrade cards under the unit card: real art where we have it, a named
+    // placeholder box where we don't (unreleased cards, art fetch failures).
+    const upgCards=u.upgradeCards&&u.upgradeCards.length
+      ? u.upgradeCards
+      : (u.upgrades||[]).map(n=>({n,c:0,i:''}));
+    const upgThumbs=upgCards.map(up=>{
+      const cost=up.c?`<span class="pu-upgcost">${escHtml(up.c)}</span>`:'';
+      const inner=up.i
+        ? `<img src="images/upgrades/${encodeURIComponent(up.i)}" alt=""
+             onerror="this.parentNode.classList.add('pu-upgfallback');this.remove()">`
+        : '';
+      return `<div class="pu-upgcard${up.i?'':' pu-upgfallback'}">${inner}`+
+             `<span class="pu-upgname">${escHtml(up.n)}${cost}</span></div>`;
+    }).join('');
+
+    const upgSum=upgCards.reduce((n,up)=>n+(up.c||0),0);
+    const each=(u.cost||0)+upgSum;
+    const costLine=each
+      ? `<div class="pu-cost"><strong>${escHtml(each)}</strong> pts`+
+        `${u.count>1?' each':''}`+
+        `<span class="pu-costbits"> (${escHtml(u.cost||0)} base`+
+        `${upgSum?` + ${escHtml(upgSum)} upg`:''})`+
+        `${u.count>1?` · ${escHtml(each*u.count)} total`:''}</span></div>`
+      : '';
+
     const title=u.title?` <span class="pu-title">${escHtml(u.title)}</span>`:'';
-    const upg=(u.upgrades&&u.upgrades.length)
+    const rank=u.rank?`<span class="pu-rank">${escHtml(u.rank)}</span>`:'';
+    const upgNames=(u.upgrades&&u.upgrades.length)
       ? `<div class="pu-upg">Upgrades: ${escHtml(u.upgrades.join(', '))}</div>` : '';
+
     return `<tr class="pu-row">
-      <td class="pu-img">${img}</td>
+      <td class="pu-img">
+        ${img}
+        ${costLine}
+        ${upgThumbs?`<div class="pu-upgrow">${upgThumbs}</div>`:''}
+      </td>
       <td class="pu-cell">
         <div class="pu-name">${u.count>1?escHtml(u.count)+'× ':''}${escHtml(u.name)}${title}</div>
-        ${upg}
+        ${rank}
+        ${upgNames}
         <ul class="pu-kwlist">${kws.map(kwItem).join('')||'<li class="pu-none">No keywords</li>'}</ul>
       </td></tr>`;
   }).join('');

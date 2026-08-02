@@ -316,13 +316,35 @@ html,body{width:100%;height:100%;overflow:hidden;
   .pu-table{width:100%;border-collapse:collapse;page-break-inside:auto}
   .pu-row{page-break-inside:avoid;page-break-after:auto}
   .pu-table td{vertical-align:top;padding:8pt 0;border-bottom:1px solid #ddd}
-  .pu-img{width:1.9in;padding-right:10pt!important}
-  .pu-img img{width:100%;max-width:1.9in;height:auto;display:block;border-radius:3pt}
-  .pu-noimg{width:100%;height:1.1in;border:1px dashed #bbb;border-radius:3pt;
+  .pu-img{width:2.9in;padding-right:12pt!important}
+  .pu-unitcard{width:100%;max-width:2.9in;height:auto;display:block;border-radius:3pt}
+  .pu-noimg{width:100%;height:1.3in;border:1px dashed #bbb;border-radius:3pt;
     display:flex;align-items:center;justify-content:center;
     font-size:8pt;color:#999;text-align:center;padding:4pt}
-  .pu-name{font-size:11.5pt;font-weight:bold;margin-bottom:2pt}
+  .pu-cost{font-size:9pt;color:#000;margin-top:3pt;text-align:center}
+  .pu-costbits{color:#777;font-size:8pt}
+  /* Upgrade cards tucked under the unit card, wrapping as needed */
+  .pu-upgrow{display:flex;flex-wrap:wrap;gap:4pt;margin-top:5pt}
+  /* Exactly two portrait upgrade cards per row, filling the column width so
+     their dice/stat icons stay legible. Uses a percentage rather than a fixed
+     inch value because the column's box-sizing makes its usable width depend on
+     padding -- hardcoding inches overflows and drops them to one per row. */
+  .pu-upgcard{flex:0 0 calc(50% - 2pt);display:flex;flex-direction:column;
+    align-items:center}
+  .pu-upgcard img{width:100%;height:auto;display:block;border-radius:2pt;
+    border:1px solid #ddd}
+  .pu-upgname{display:none;font-size:6.5pt;line-height:1.15;color:#444;
+    text-align:center;margin-top:1pt}
+  .pu-upgcost{color:#888}
+  .pu-upgcost::before{content:" · "}
+  /* No art for this upgrade: show a named box instead of an empty gap */
+  .pu-upgfallback{border:1px dashed #bbb;border-radius:2pt;min-height:.6in;
+    justify-content:center;padding:3pt}
+  .pu-upgfallback .pu-upgname{display:block;font-size:7pt;color:#666}
+  .pu-name{font-size:11.5pt;font-weight:bold;margin-bottom:1pt}
   .pu-title{font-size:9pt;font-weight:normal;color:#666;font-style:italic}
+  .pu-rank{display:block;font-size:7.5pt;color:#888;text-transform:uppercase;
+    letter-spacing:.4pt;margin-bottom:3pt}
   .pu-upg{font-size:8.5pt;color:#555;margin-bottom:4pt}
   .pu-kwlist{list-style:none;margin:0;padding:0}
   .pu-kwlist li{font-size:8.5pt;line-height:1.35;color:#333;

@@ -114,3 +114,48 @@ def download_images(keyword_name, imgdir, max_imgs=2):
         except Exception:
             pass
     return saved, False
+
+
+def download_upgrade_card_images(imgdir):
+    """Download upgrade card art for every upgrade in the LegionHQ2 upgrade cache.
+
+    Upgrade art lives at a different CDN path than unit art (/upgradeCards/ vs
+    /unitCards/) and is saved under images/upgrades/ rather than alongside unit
+    art, because some names collide -- e.g. "Shaak Ti" is both a unit card and a
+    personnel upgrade card.
+
+    Returns (downloaded, skipped, failed).
+    """
+    from src.config import CACHE_DIR
+
+    cache_path = os.path.join(CACHE_DIR, "legionhq2_upgrades.json")
+    if not os.path.exists(cache_path):
+        return 0, 0, 0
+    import json
+    with open(cache_path, encoding="utf-8") as f:
+        upgrade_db = json.load(f)
+
+    outdir = os.path.join(imgdir, "upgrades")
+    os.makedirs(outdir, exist_ok=True)
+
+    cdn = LEGIONHQ_CDN.replace("/unitCards/", "/upgradeCards/")
+    downloaded = skipped = failed = 0
+
+    for u in upgrade_db.values():
+        img = u.get("i")
+        if not img:
+            continue
+        dest = os.path.join(outdir, img)
+        if os.path.exists(dest) and os.path.getsize(dest) > 1000:
+            skipped += 1
+            continue
+        try:
+            r = requests.get(cdn + img, headers=HEADERS, timeout=20)
+            r.raise_for_status()
+            with open(dest, "wb") as f:
+                f.write(r.content)
+            downloaded += 1
+        except Exception:
+            failed += 1
+
+    return downloaded, skipped, failed

@@ -21,7 +21,7 @@ from src.overrides import (
     apply_manual_overlays,
 )
 from src.scrape import find_pdf, extract_keywords_from_pdf
-from src.images import download_images
+from src.images import download_images, download_upgrade_card_images
 from src.render import build_html
 
 # ── 1. Load cached card data ──────────────────────────────────────────────────
@@ -126,6 +126,15 @@ if manual_count:
 # ── 5. Build HTML ─────────────────────────────────────────────────────────────
 print("Building HTML...")
 html = build_html(card_data)
+
+# ── 5a. Upgrade card art for the print-by-unit sheet ──────────────────────────
+# Runs after build_html() because that's what populates the upgrade cache.
+try:
+    dl, sk, fl = download_upgrade_card_images(DIST_IMGDIR)
+    if dl or fl:
+        print(f"  Upgrade art: {dl} downloaded, {sk} cached, {fl} failed")
+except Exception as e:
+    print(f"  WARN: upgrade art download failed: {e}")
 out = os.path.join(DIST_DIR, "index.html")
 os.makedirs(DIST_DIR, exist_ok=True)
 with open(out, "w", encoding="utf-8") as f:
