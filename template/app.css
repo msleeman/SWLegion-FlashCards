@@ -297,6 +297,9 @@ html,body{width:100%;height:100%;overflow:hidden;
 #print-keywords{display:none}
 @media print{
   html,body{height:auto!important;overflow:visible!important}
+  /* Force a white sheet: the app's dark theme would otherwise print as
+     black-on-black whenever the user ticks "Background graphics". */
+  html,body{background:#fff!important;color:#000!important}
   body>*:not(#print-keywords){display:none!important}
   #print-keywords{display:block;font-family:Arial,sans-serif;font-size:11pt;color:#000;margin:0;padding:.75in}
   .pk-header{margin-bottom:12pt;border-bottom:2px solid #333;padding-bottom:8pt}
@@ -309,5 +312,23 @@ html,body{width:100%;height:100%;overflow:hidden;
   .pk-type{font-size:8pt;color:#777;font-weight:normal;display:block;margin-top:2pt}
   .pk-def{font-size:9pt;color:#333;line-height:1.4}
   .pk-footer{margin-top:12pt;font-size:8pt;color:#999;text-align:right}
+  /* Unit printout: card image left column, that unit's keywords right column */
+  .pu-table{width:100%;border-collapse:collapse;page-break-inside:auto}
+  .pu-row{page-break-inside:avoid;page-break-after:auto}
+  .pu-table td{vertical-align:top;padding:8pt 0;border-bottom:1px solid #ddd}
+  .pu-img{width:1.9in;padding-right:10pt!important}
+  .pu-img img{width:100%;max-width:1.9in;height:auto;display:block;border-radius:3pt}
+  .pu-noimg{width:100%;height:1.1in;border:1px dashed #bbb;border-radius:3pt;
+    display:flex;align-items:center;justify-content:center;
+    font-size:8pt;color:#999;text-align:center;padding:4pt}
+  .pu-name{font-size:11.5pt;font-weight:bold;margin-bottom:2pt}
+  .pu-title{font-size:9pt;font-weight:normal;color:#666;font-style:italic}
+  .pu-upg{font-size:8.5pt;color:#555;margin-bottom:4pt}
+  .pu-kwlist{list-style:none;margin:0;padding:0}
+  .pu-kwlist li{font-size:8.5pt;line-height:1.35;color:#333;
+    padding:1.5pt 0;border-bottom:1px dotted #eee}
+  .pu-kwlist li:last-child{border-bottom:none}
+  .pu-kwname{font-weight:bold;color:#000}
+  .pu-none{color:#999;font-style:italic}
   @page{margin:0}
 }

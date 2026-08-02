@@ -1229,6 +1229,23 @@ function matchesKnownCard(name){
   return _cardNormSet.has(normKw(name));
 }
 
+// Build the complete keyword list for ONE unit: the unit's own keywords (which
+// already include its weapon keywords, since build_unit_db_js() folds
+// card.weapons[].keywords into UNIT_DB's k field), plus every keyword granted by
+// its equipped upgrades, plus any upgrade whose own NAME is a flashcard
+// (Fire Control, Hit the Dirt -- freeform-text upgrades with no keyword mechanic).
+// upgradeCards is an array of UPGRADE_DB-shaped {n,k} objects.
+function collectUnitKeywords(dbUnit, upgradeCards){
+  const out=new Set();
+  ((dbUnit&&dbUnit.k)||[]).forEach(kw=>out.add(kwNormalize(kw)));
+  (upgradeCards||[]).forEach(u=>{
+    if(!u) return;
+    (u.k||[]).forEach(kw=>out.add(kwNormalize(kw)));
+    if(matchesKnownCard(u.n)) out.add(u.n);
+  });
+  return [...out].sort((a,b)=>a.localeCompare(b));
+}
+
 function decodeArmy(url){
   const parsed=parseLegionHQUrl(url);
   if(!parsed) return null;
@@ -1249,17 +1266,11 @@ function decodeArmy(url){
     const {count,unitId,upgrades}=parseUnitCode(code);
     const unit=UNIT_DB[unitId];
     if(!unit) continue;
-    units.push({count,unit,unitId,upgrades});
-    // Collect unit keywords
-    (unit.k||[]).forEach(kw=>{ allKeywords.add(kwNormalize(kw)); });
-    // Collect upgrade keywords
-    upgrades.forEach(upg=>{
-      if(!upg) return;
-      const upgCard=UPGRADE_DB[upg];
-      if(!upgCard) return;
-      (upgCard.k||[]).forEach(kw=>{ allKeywords.add(kwNormalize(kw)); });
-      if(matchesKnownCard(upgCard.n)) allKeywords.add(upgCard.n);
-    });
+    const upgCards=(upgrades||[]).map(u=>u?UPGRADE_DB[u]:null).filter(Boolean);
+    const kws=collectUnitKeywords(unit,upgCards);
+    units.push({count,unit,unitId,upgrades,upgradeNames:upgCards.map(u=>u.n),kws});
+    // The army-wide keyword set is just the union of the per-unit sets.
+    kws.forEach(kw=>allKeywords.add(kw));
   }
 
   return {faction,points,units,keywords:[...allKeywords].sort()};
@@ -1304,31 +1315,34 @@ function parseTtaUrl(url){
         if(u.n===tta.n){dbUnit=u;break;}
       }
       const displayUnit=dbUnit||{n:tta.n,t:'',k:[],i:''};
-      (dbUnit?.k||[]).forEach(kw=>{ allKeywords.add(kwNormalize(kw)); });
       points+=tta.c||0;
 
       const upgradeNames=[];
+      const upgCards=[];
       for(const code of codes){
         const ttaUpg=TTA_UPGRADES[code];
         if(!ttaUpg) continue;
         upgradeNames.push(ttaUpg.n);
         points+=ttaUpg.c||0;
         // Find matching upgrade in UPGRADE_DB by name to pull its keywords in too.
+        // Fall back to a keyword-less stub so freeform-text upgrades (Fire Control,
+        // Hit the Dirt, ...) still get name-matched against the catalog.
         let dbUpg=null;
         for(const u of Object.values(UPGRADE_DB)){
           if(u.n===ttaUpg.n){dbUpg=u;break;}
         }
-        (dbUpg?.k||[]).forEach(kw=>{ allKeywords.add(kwNormalize(kw)); });
-        // Freeform-text upgrades (Fire Control, Hit the Dirt, ...) have no keyword
-        // mechanic -- check the upgrade's own name directly against the catalog.
-        if(matchesKnownCard(ttaUpg.n)) allKeywords.add(ttaUpg.n);
+        upgCards.push(dbUpg||{n:ttaUpg.n,k:[]});
       }
+
+      const kws=collectUnitKeywords(dbUnit,upgCards);
+      kws.forEach(kw=>allKeywords.add(kw));
 
       const groupKey=hexId+'|'+upgradeNames.slice().sort().join(',');
       if(groups[groupKey]){
         groups[groupKey].count++;
       } else {
-        groups[groupKey]={count:1,unit:displayUnit,unitId:hexId,upgrades:upgradeNames};
+        groups[groupKey]={count:1,unit:displayUnit,unitId:hexId,
+                          upgrades:upgradeNames,upgradeNames,kws};
       }
     }
 
@@ -1423,6 +1437,16 @@ function saveList(){
     faction:_parsedArmy.faction,
     points:_parsedArmy.points,
     keywords:_parsedArmy.keywords,
+    // Slim per-unit snapshot for the unit-card printout. Stored at parse time so
+    // the printout doesn't need to re-resolve UNIT_DB/UPGRADE_DB later.
+    units:(_parsedArmy.units||[]).map(u=>({
+      count:u.count,
+      name:(u.unit&&u.unit.n)||'',
+      title:(u.unit&&u.unit.t)||'',
+      img:(u.unit&&u.unit.i)||'',
+      upgrades:u.upgradeNames||[],
+      kws:u.kws||[]
+    })),
     armyUrl:url,
     createdAt:new Date().toISOString()
   });
@@ -1574,6 +1598,27 @@ function lmDeleteList(){
 function escHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
 // ─── PRINT LIST KEYWORDS ─────────────────────────────────────────────────────
+// Resolve a keyword name to its flashcard. Tries direct match, then normalized,
+// then progressive word truncation so old-format/parametric names still land.
+function _cardIndexByNorm(){
+  const cardByNorm={};
+  CARDS.forEach(c=>{ cardByNorm[normKw(c.name)]=c; });
+  return cardByNorm;
+}
+function findCardForKeyword(kw, cardByNorm){
+  let card=cardByNorm[kw.toLowerCase()]||cardByNorm[normKw(kw)];
+  if(!card){
+    const stripped=kw.replace(/\s+\d+.*$/,'').trim();
+    card=cardByNorm[normKw(stripped)];
+    if(!card&&!stripped.includes(':')){
+      const words=stripped.split(/\s+/);
+      for(let i=words.length-1;i>=1&&!card;i--)
+        card=cardByNorm[words.slice(0,i).join(' ').toLowerCase()];
+    }
+  }
+  return card||null;
+}
+
 function printListKeywords(listId){
   const list=getListById(listId);
   if(!list||!list.keywords||!list.keywords.length){
@@ -1581,21 +1626,10 @@ function printListKeywords(listId){
   }
   const sorted=[...list.keywords].sort((a,b)=>a.localeCompare(b));
 
-  const cardByNorm={};
-  CARDS.forEach(c=>{ cardByNorm[normKw(c.name)]=c; });
+  const cardByNorm=_cardIndexByNorm();
 
   const rows=sorted.map(kw=>{
-    // Try direct match, then normalized, then progressive word truncation for old-format keywords
-    let card=cardByNorm[kw.toLowerCase()]||cardByNorm[normKw(kw)];
-    if(!card){
-      const stripped=kw.replace(/\s+\d+.*$/,'').trim();
-      card=cardByNorm[normKw(stripped)];
-      if(!card&&!stripped.includes(':')){
-        const words=stripped.split(/\s+/);
-        for(let i=words.length-1;i>=1&&!card;i--)
-          card=cardByNorm[words.slice(0,i).join(' ').toLowerCase()];
-      }
-    }
+    const card=findCardForKeyword(kw,cardByNorm);
     const def=card?(card.summary||card.definition||''):'';
     const type=card?((card.type||'').charAt(0).toUpperCase()+(card.type||'').slice(1)):'';
     const short=def.length>350?def.slice(0,350).replace(/\s\S+$/,'')+'…':def;
@@ -1615,6 +1649,80 @@ function printListKeywords(listId){
       <p class="pk-meta">${faction}${pts}${src} · ${sorted.length} keywords · Alphabetical</p>
     </div>
     <table class="pk-table"><tbody>${rows}</tbody></table>
+    <p class="pk-footer">SW Legion Keywords App — ${new Date().toLocaleDateString()}</p>`;
+  window.print();
+}
+
+// ─── PRINT UNIT CARDS + KEYWORDS (2-column) ──────────────────────────────────
+// One row per unit loadout: card image on the left, that unit's full keyword
+// list on the right. Keywords include the unit's own, its weapons' (already
+// folded into UNIT_DB's k field), and every keyword granted by its upgrades.
+function printListUnits(listId){
+  const list=getListById(listId);
+  if(!list){ alert('List not found.'); return; }
+  const units=list.units||[];
+  if(!units.length){
+    alert('This list was saved before per-unit details were captured.\n\n'+
+          'Re-parse its army URL and save it again to use this printout.');
+    return;
+  }
+
+  const cardByNorm=_cardIndexByNorm();
+  // Keywords removed via the Edit tab shouldn't reappear on the printout.
+  const active=(list.keywords&&list.keywords.length)
+    ? new Set(list.keywords.map(k=>k.toLowerCase())) : null;
+  const covered=new Set();
+
+  const kwItem=kw=>{
+    const card=findCardForKeyword(kw,cardByNorm);
+    const def=card?(card.summary||card.definition||''):'';
+    const short=def.length>160?def.slice(0,160).replace(/\s\S+$/,'')+'…':def;
+    return `<li><span class="pu-kwname">${escHtml(dispName(kw))}</span>`+
+           `${short?` — ${escHtml(short)}`:''}</li>`;
+  };
+
+  let rows=units.map(u=>{
+    const kws=(u.kws||[]).filter(k=>!active||active.has(k.toLowerCase()));
+    kws.forEach(k=>covered.add(k.toLowerCase()));
+    const img=u.img
+      ? `<img src="images/${encodeURIComponent(u.img)}" alt="" onerror="this.style.display='none'">`
+      : `<div class="pu-noimg">${escHtml(u.name)}</div>`;
+    const title=u.title?` <span class="pu-title">${escHtml(u.title)}</span>`:'';
+    const upg=(u.upgrades&&u.upgrades.length)
+      ? `<div class="pu-upg">Upgrades: ${escHtml(u.upgrades.join(', '))}</div>` : '';
+    return `<tr class="pu-row">
+      <td class="pu-img">${img}</td>
+      <td class="pu-cell">
+        <div class="pu-name">${u.count>1?escHtml(u.count)+'× ':''}${escHtml(u.name)}${title}</div>
+        ${upg}
+        <ul class="pu-kwlist">${kws.map(kwItem).join('')||'<li class="pu-none">No keywords</li>'}</ul>
+      </td></tr>`;
+  }).join('');
+
+  // Keywords added by hand in the Edit tab don't belong to any unit — list them
+  // separately rather than dropping them silently.
+  const extra=(list.keywords||[]).filter(k=>!covered.has(k.toLowerCase()))
+                                 .sort((a,b)=>a.localeCompare(b));
+  if(extra.length){
+    rows+=`<tr class="pu-row">
+      <td class="pu-img"><div class="pu-noimg">+</div></td>
+      <td class="pu-cell">
+        <div class="pu-name">Additional keywords</div>
+        <ul class="pu-kwlist">${extra.map(kwItem).join('')}</ul>
+      </td></tr>`;
+  }
+
+  const faction=(list.faction||'').toUpperCase();
+  const pts=list.points?` · ${list.points} pts`:'';
+  const totalMinis=units.reduce((n,u)=>n+(u.count||1),0);
+
+  const pane=document.getElementById('print-keywords');
+  pane.innerHTML=`
+    <div class="pk-header">
+      <h1>${escHtml(list.name)}</h1>
+      <p class="pk-meta">${faction}${pts} · ${totalMinis} units · By unit</p>
+    </div>
+    <table class="pu-table"><tbody>${rows}</tbody></table>
     <p class="pk-footer">SW Legion Keywords App — ${new Date().toLocaleDateString()}</p>`;
   window.print();
 }

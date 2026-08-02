@@ -230,7 +230,8 @@
       <button class="lm-tab" id="lm-tab-edit" onclick="setLmTab('edit')">Edit</button>
     </div>
     <div id="lm-tab-kw-panel">
-      <div style="padding:12px 16px 0;display:flex;justify-content:flex-end">
+      <div style="padding:12px 16px 0;display:flex;justify-content:flex-end;gap:8px">
+        <button class="dark-pill" onclick="printListUnits(_lmListId)" title="Print unit cards with their keywords (2-column)">&#128444; Print by Unit</button>
         <button class="dark-pill" onclick="printListKeywords(_lmListId)" title="Print keywords as PDF">&#128438; Print PDF</button>
       </div>
       <div class="list-kw-tags" id="lm-kw-tags" style="padding:16px"></div>
