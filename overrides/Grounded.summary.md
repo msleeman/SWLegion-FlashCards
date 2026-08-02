@@ -1,0 +1,1 @@
+Cannot climb or clamber.
