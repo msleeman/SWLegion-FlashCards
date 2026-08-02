@@ -325,7 +325,11 @@ def build_tta_db_js():
                 if pub_id is None:
                     continue  # no public_id means this unit can't appear in a listbuilder URL
                 hex_id = format(int(pub_id), 'x')
-                entry = {'n': u.get('name', ''), 'c': _tta_cost(u)}
+                # Title is needed to tell same-named variants apart when matching
+                # across to UNIT_DB (e.g. Stormtroopers vs Stormtroopers "Heavy
+                # Response Unit"). 32 unit names are shared by 2+ cards.
+                entry = {'n': u.get('name', ''), 'c': _tta_cost(u),
+                         't': u.get('title') or ''}
                 fkey = str(u.get('faction_fkey') or '')
                 if fkey in faction_map:
                     entry['f'] = faction_map[fkey]

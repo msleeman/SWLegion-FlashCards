@@ -392,7 +392,7 @@ html,body{width:100%;height:100%;overflow:hidden;
       </div>
     </div>
     <p class="auth-footer">Guest progress is saved locally on this device only.</p>
-    <p class="auth-footer">v5.0.0-48-g22bfb29-dirty · 2026-08-02 01:30 UTC</p>
+    <p class="auth-footer">v5.0.0-49-g3f5c5e9-dirty · 2026-08-02 01:52 UTC</p>
   </div>
 </div>
 
@@ -440,7 +440,7 @@ html,body{width:100%;height:100%;overflow:hidden;
         <div class="acct-item" id="acct-signin-item" onclick="showAuthFromApp()" style="display:none">Sign in / Switch account</div>
         <div class="acct-item danger" id="acct-signout-item" onclick="authSignOut()" style="display:none">Sign out</div>
         <div class="acct-item" id="acct-guest-label" style="display:none;cursor:default;color:rgba(255,255,255,.3)">Progress saved locally</div>
-        <div style="font-size:10px;color:rgba(255,255,255,.18);padding:4px 14px 8px;text-align:center;letter-spacing:.3px">v5.0.0-48-g22bfb29-dirty · 2026-08-02 01:30 UTC</div>
+        <div style="font-size:10px;color:rgba(255,255,255,.18);padding:4px 14px 8px;text-align:center;letter-spacing:.3px">v5.0.0-49-g3f5c5e9-dirty · 2026-08-02 01:52 UTC</div>
       </div>
     </div>
   </div>
@@ -2283,206 +2283,206 @@ const UPGRADE_DB = {
 
 // ─── TABLETOP ADMIRAL UNIT LOOKUP (hex id → name) ────────────────────────────
 const TTA_UNITS = {
-  "1":{"n": "AT-RT", "c": 54, "f": "rebels", "r": "support"},
-  "2":{"n": "74-Z Speeder Bikes", "c": 70, "f": "empire", "r": "support"},
-  "3":{"n": "Darth Vader", "c": 170, "f": "empire", "r": "commander"},
-  "4":{"n": "Luke Skywalker", "c": 120, "f": "rebels", "r": "commander"},
-  "5":{"n": "Stormtroopers", "c": 42, "f": "empire", "r": "corps"},
-  "6":{"n": "Rebel Troopers", "c": 40, "f": "rebels", "r": "corps"},
-  "7":{"n": "Snowtroopers", "c": 42, "f": "empire", "r": "corps"},
-  "8":{"n": "General Veers", "c": 75, "f": "empire", "r": "commander"},
-  "9":{"n": "AT-ST", "c": 145, "f": "empire", "r": "heavy"},
-  "a":{"n": "T-47 Airspeeder", "c": 125, "f": "rebels", "r": "heavy"},
-  "b":{"n": "Leia Organa", "c": 75, "f": "rebels", "r": "commander"},
-  "c":{"n": "Fleet Troopers", "c": 40, "f": "rebels", "r": "corps"},
-  "d":{"n": "Rebel Commandos", "c": 42, "f": "rebels", "r": "special"},
-  "e":{"n": "Rebel Commandos", "c": 20, "f": "rebels", "r": "special"},
-  "f":{"n": "Han Solo", "c": 100, "f": "rebels", "r": "commander"},
-  "10":{"n": "Boba Fett", "c": 120, "f": "empire", "r": "operative"},
-  "11":{"n": "Scout Troopers", "c": 48, "f": "empire", "r": "special"},
-  "12":{"n": "1.4 FD Laser Cannon Team", "c": 65, "f": "rebels", "r": "support"},
-  "13":{"n": "E-Web Heavy Blaster Team", "c": 60, "f": "empire", "r": "support"},
-  "14":{"n": "Emperor Palpatine", "c": 170, "f": "empire", "r": "commander"},
-  "15":{"n": "Imperial Royal Guards", "c": 69, "f": "empire", "r": "special"},
-  "16":{"n": "Rebel Officer", "c": 50, "f": "rebels", "r": "commander"},
-  "17":{"n": "Imperial Officer", "c": 55, "f": "empire", "r": "commander"},
-  "18":{"n": "Wookiee Warriors", "c": 62, "f": "rebels", "r": "special"},
-  "19":{"n": "Chewbacca", "c": 90, "f": "rebels", "r": "operative"},
-  "1a":{"n": "Scout Troopers", "c": 22, "f": "empire", "r": "special"},
-  "1b":{"n": "Jyn Erso", "c": 90, "f": "rebels", "r": "commander"},
-  "1c":{"n": "Rebel Pathfinders", "c": 56, "f": "rebels", "r": "special"},
-  "1d":{"n": "Director Orson Krennic", "c": 65, "f": "empire", "r": "commander"},
-  "1e":{"n": "Imperial Death Troopers", "c": 66, "f": "empire", "r": "special"},
-  "1f":{"n": "TX-225 GAVw Occupier Tank", "c": 125, "f": "empire", "r": "heavy"},
-  "20":{"n": "X-34 Landspeeder", "c": 55, "f": "rebels", "r": "heavy"},
-  "21":{"n": "Sabine Wren", "c": 105, "f": "rebels", "r": "operative"},
-  "22":{"n": "Bossk", "c": 115, "f": "empire", "r": "operative"},
-  "23":{"n": "Tauntaun Riders", "c": 95, "f": "rebels", "r": "support"},
-  "24":{"n": "Rebel Veterans", "c": 48, "f": "rebels", "r": "corps"},
-  "25":{"n": "Phase I Clone Troopers", "c": 52, "f": "republic", "r": "corps"},
-  "26":{"n": "B1 Battle Droids", "c": 38, "f": "separatist", "r": "corps"},
-  "27":{"n": "Shoretroopers", "c": 46, "f": "empire", "r": "corps"},
-  "28":{"n": "Dewback Rider", "c": 70, "f": "empire", "r": "support"},
-  "29":{"n": "Obi-Wan Kenobi", "c": 150, "f": "republic", "r": "commander"},
-  "2a":{"n": "Mark II Medium Blaster Trooper", "c": 40, "f": "rebels", "r": "corps"},
-  "2b":{"n": "Droidekas", "c": 67, "f": "separatist", "r": "support"},
-  "2c":{"n": "BARC Speeder", "c": 59, "f": "republic", "r": "support"},
-  "2d":{"n": "General Grievous", "c": 130, "f": "separatist", "r": "commander"},
-  "2e":{"n": "Luke Skywalker", "c": 165, "f": "rebels", "r": "operative"},
-  "2f":{"n": "Darth Vader", "c": 155, "f": "empire", "r": "operative"},
-  "30":{"n": "DF-90 Mortar Trooper", "c": 40, "f": "empire", "r": "corps"},
-  "31":{"n": "Count Dooku", "c": 165, "f": "separatist", "r": "commander"},
-  "32":{"n": "Clone Captain Rex", "c": 95, "f": "republic", "r": "commander"},
-  "33":{"n": "Phase II Clone Troopers", "c": 60, "f": "republic", "r": "corps"},
-  "34":{"n": "B2 Super Battle Droids", "c": 64, "f": "separatist", "r": "corps"},
-  "35":{"n": "Saber-Class Tank", "c": 145, "f": "republic", "r": "heavy"},
-  "36":{"n": "AAT Battle Tank", "c": 150, "f": "separatist", "r": "heavy"},
-  "37":{"n": "R2-D2", "c": 55, "f": "rebels", "r": "operative"},
-  "38":{"n": "R2-D2", "c": 55, "f": "republic", "r": "operative"},
-  "39":{"n": "Cassian Andor", "c": 90, "f": "rebels", "r": "commander"},
-  "3a":{"n": "Iden Versio", "c": 115, "f": "empire", "r": "commander"},
-  "3b":{"n": "Cad Bane", "c": 120, "f": "separatist", "r": "operative"},
-  "3c":{"n": "Padme Amidala", "c": 52, "f": "republic", "r": "operative"},
-  "3d":{"n": "Arc Troopers", "c": 23, "f": "republic", "r": "special"},
-  "3e":{"n": "Arc Troopers", "c": 70, "f": "republic", "r": "special"},
-  "3f":{"n": "BX-Series Droid Commandos", "c": 20, "f": "separatist", "r": "special"},
-  "40":{"n": "BX-Series Droid Commandos", "c": 60, "f": "separatist", "r": "special"},
-  "44":{"n": "K-2SO", "c": 70, "f": "rebels", "r": "operative"},
-  "45":{"n": "STAP Riders", "c": 70, "f": "separatist", "r": "support"},
-  "46":{"n": "AT-RT", "c": 60, "f": "republic", "r": "support"},
-  "47":{"n": "Mandalorian Resistance", "c": 62, "f": "rebels", "r": "special"},
-  "48":{"n": "Mandalorian Resistance", "c": 30, "f": "rebels", "r": "special"},
-  "49":{"n": "Anakin Skywalker", "c": 170, "f": "republic", "r": "commander"},
-  "4a":{"n": "Maul", "c": 115, "f": "separatist", "r": "operative"},
-  "4b":{"n": "Clone Commander", "c": 60, "f": "republic", "r": "commander"},
-  "4c":{"n": "T-series Tactical Droid", "c": 60, "f": "separatist", "r": "commander"},
-  "4d":{"n": "DRK-1 Sith Probe Droids", "c": 35, "f": "separatist", "r": "special"},
-  "4e":{"n": "Imperial Special Forces", "c": 54, "f": "empire", "r": "special"},
-  "4f":{"n": "Imperial Special Forces", "c": 34, "f": "empire", "r": "special"},
-  "50":{"n": "Lando Calrissian", "c": 105, "f": "rebels", "r": "commander"},
-  "51":{"n": "Agent Kallus", "c": 70, "f": "empire", "r": "commander"},
-  "52":{"n": "Yoda", "c": 150, "f": "republic", "r": "commander"},
-  "54":{"n": "LAAT/LE Patrol Transport", "c": 90, "f": "republic", "r": "heavy"},
-  "55":{"n": "A-A5 Speeder Truck", "c": 75, "f": "rebels", "r": "heavy"},
-  "56":{"n": "LAAT/LE Patrol Transport", "c": 90, "f": "empire", "r": "heavy"},
-  "57":{"n": "Wookiee Warriors", "c": 62, "f": "republic", "r": "special"},
-  "58":{"n": "Wookiee Chieftain", "c": 100, "f": "republic", "r": "commander"},
-  "59":{"n": "Wookiee Warriors", "c": 62, "f": "rebels", "r": "special"},
-  "5a":{"n": "Wookiee Warriors", "c": 62, "f": "republic", "r": "special"},
-  "5b":{"n": "Chewbacca", "c": 90, "f": "republic", "r": "commander"},
-  "5c":{"n": "IG-100 MagnaGuard", "c": 72, "f": "separatist", "r": "special"},
-  "5d":{"n": "Kraken", "c": 80, "f": "separatist", "r": "commander"},
-  "5e":{"n": "Super Tactical Droid", "c": 75, "f": "separatist", "r": "commander"},
-  "5f":{"n": "Kalani", "c": 85, "f": "separatist", "r": "commander"},
-  "60":{"n": "Raddaugh Gnasp Fluttercraft", "c": 55, "f": "republic", "r": "support"},
-  "61":{"n": "DSD1 Dwarf Spider Droid", "c": 50, "f": "separatist", "r": "support"},
-  "62":{"n": "Infantry Support Platform", "c": 65, "f": "republic", "r": "heavy"},
-  "63":{"n": "Persuader-class Tank Droid", "c": 130, "f": "separatist", "r": "heavy"},
-  "64":{"n": "Pyke Syndicate Foot Soldiers", "c": 42, "f": "mercenary", "r": "corps"},
-  "65":{"n": "Pyke Syndicate Capo", "c": 42, "f": "mercenary", "r": "commander"},
-  "66":{"n": "Black Sun Enforcers", "c": 50, "f": "mercenary", "r": "corps"},
-  "67":{"n": "Maul", "c": 130, "f": "mercenary", "r": "operative"},
-  "68":{"n": "Black Sun Vigo", "c": 50, "f": "mercenary", "r": "commander"},
-  "69":{"n": "Mandalorian Super Commandos", "c": 66, "f": "mercenary", "r": "special"},
-  "6a":{"n": "Gar Saxon", "c": 90, "f": "mercenary", "r": "commander"},
-  "6b":{"n": "A-A5 Speeder Truck", "c": 75, "f": "mercenary", "r": "heavy"},
-  "6c":{"n": "Bossk", "c": 105, "f": "mercenary", "r": "operative"},
-  "6d":{"n": "Boba Fett", "c": 130, "f": "mercenary", "r": "operative"},
-  "6e":{"n": "Cad Bane", "c": 105, "f": "mercenary", "r": "operative"},
-  "6f":{"n": "Swoop Bike Riders", "c": 70, "f": "mercenary", "r": "support"},
-  "70":{"n": "Stormtroopers", "c": 36, "f": "empire", "r": "corps"},
-  "71":{"n": "Boba Fett", "c": 120, "f": "mercenary", "r": "operative"},
-  "72":{"n": "IG-88", "c": 110, "f": "mercenary", "r": "operative"},
-  "73":{"n": "IG-11", "c": 105, "f": "mercenary", "r": "operative"},
-  "74":{"n": "Din Djarin", "c": 95, "f": "mercenary", "r": "operative"},
-  "75":{"n": "Imperial Dark Troopers", "c": 95, "f": "empire", "r": "heavy"},
-  "76":{"n": "Clone Commander Cody", "c": 95, "f": "republic", "r": "commander"},
-  "77":{"n": "Moff Gideon", "c": 80, "f": "empire", "r": "commander"},
-  "78":{"n": "Asajj Ventress", "c": 115, "f": "separatist", "r": "operative"},
-  "79":{"n": "Ahsoka Tano", "c": 115, "f": "rebels", "r": "operative"},
-  "7a":{"n": "Wicket", "c": 64, "f": "mercenary", "r": "commander"},
-  "7b":{"n": "C-3P0", "c": 40, "f": "mercenary", "r": "commander"},
-  "7c":{"n": "Ewok Skirmishers", "c": 40, "f": "mercenary", "r": "corps"},
-  "7d":{"n": "Chewbacca", "c": 180, "f": "mercenary", "r": "heavy"},
-  "7e":{"n": "Ewok Slingers", "c": 38, "f": "mercenary", "r": "special"},
-  "7f":{"n": "Logray", "c": 45, "f": "mercenary", "r": "commander"},
-  "80":{"n": "Major Marquand", "c": 180, "f": "empire", "r": "heavy"},
-  "81":{"n": "Persuader-class Tank Droid", "c": 130, "f": "separatist", "r": "heavy"},
-  "82":{"n": "IG-100 MagnaGuard", "c": 56, "f": "separatist", "r": "special"},
-  "83":{"n": "Raddaugh Gnasp Fluttercraft", "c": 57, "f": "republic", "r": "support"},
-  "84":{"n": "Geonosian Warriors", "c": 45, "f": "separatist", "r": "corps"},
-  "85":{"n": "Sun Fac", "c": 55, "f": "separatist", "r": "operative"},
-  "86":{"n": "Poggle the Lesser", "c": 55, "f": "separatist", "r": "commander"},
-  "87":{"n": "Fifth Brother", "c": 97, "f": "empire", "r": "operative"},
-  "88":{"n": "Seventh Sister", "c": 102, "f": "empire", "r": "operative"},
-  "89":{"n": "The Bad Batch", "c": 170, "f": "republic", "r": "operative"},
-  "8a":{"n": "Clone Commandos", "c": 90, "f": "republic", "r": "support"},
-  "8b":{"n": "Range Troopers", "c": 60, "f": "empire", "r": "support"},
-  "8c":{"n": "Clone Commandos (DS)", "c": 105, "f": "republic", "r": "support"},
-  "8d":{"n": "The Bad Batch", "c": 150, "f": "mercenary", "r": "operative"},
-  "8e":{"n": "Clone Trooper Infantry", "c": 56, "f": "republic", "r": "corps"},
-  "8f":{"n": "LM-432 Crab Droid", "c": 70, "f": "separatist", "r": "support"},
-  "90":{"n": "Stormtrooper Riot Squad", "c": 44, "f": "empire", "r": "corps"},
-  "91":{"n": "Rebel Sleeper Cell", "c": 77, "f": "rebels", "r": "special"},
-  "92":{"n": "Rebel Commandos", "c": 20, "f": "rebels", "r": "support"},
-  "93":{"n": "Arc Troopers", "c": 23, "f": "republic", "r": "support"},
-  "94":{"n": "Scout Troopers", "c": 22, "f": "empire", "r": "support"},
-  "95":{"n": "BX-Series Droid Commandos", "c": 20, "f": "separatist", "r": "support"},
-  "96":{"n": "Aqua Droids", "c": 78, "f": "separatist", "r": "heavy"},
-  "97":{"n": "ARF Troopers", "c": 66, "f": "republic", "r": "special"},
-  "98":{"n": "Ahsoka Tano", "c": 110, "f": "republic", "r": "commander"},
-  "99":{"n": "Hondo Ohnaka", "c": 85, "f": "neutral", "r": "operative"},
-  "9a":{"n": "Jyn Erso", "c": 75, "f": "rebels", "r": "operative"},
-  "9b":{"n": "Cassian Andor", "c": 90, "f": "rebels", "r": "operative"},
-  "9c":{"n": "K-2SO", "c": 70, "f": "rebels", "r": "operative"},
-  "9d":{"n": "Agent Kallus", "c": 70, "f": "empire", "r": "operative"},
-  "9e":{"n": "Imperial Agent", "c": 50, "f": "empire", "r": "operative"},
-  "9f":{"n": "Imperial Officer", "c": 55, "f": "empire", "r": "commander"},
-  "a0":{"n": "Rebel Officer", "c": 55, "f": "rebels", "r": "commander"},
-  "a1":{"n": "Rebel Agent", "c": 50, "f": "rebels", "r": "operative"},
-  "a2":{"n": "Jedi Knight General", "c": 105, "f": "republic", "r": "commander"},
-  "a3":{"n": "Jedi Knight", "c": 85, "f": "republic", "r": "operative"},
-  "a4":{"n": "Super Tactical Command Droid", "c": 70, "f": "separatist", "r": "commander"},
-  "a5":{"n": "Super Tactical Command Droid", "c": 60, "f": "separatist", "r": "operative"},
-  "a6":{"n": "General Grievous", "c": 150, "f": "separatist", "r": "commander"},
-  "a7":{"n": "Clone Trooper Marksmen", "c": 50, "f": "republic", "r": "corps"},
-  "a8":{"n": "Grand Admiral Thrawn", "c": 110, "f": "empire", "r": "commander"},
-  "a9":{"n": "Grand Moff Tarkin", "c": 95, "f": "empire", "r": "commander"},
-  "aa":{"n": "Imperial Probe Droid", "c": 35, "f": "empire", "r": "special"},
-  "ab":{"n": "TSMEU-6 Wheel Bikes", "c": 90, "f": "separatist", "r": "special"},
-  "ac":{"n": "Weequay Pirates", "c": 40, "f": "mercenary", "r": "corps"},
-  "ad":{"n": "WLO-5 Speeder Tank", "c": 100, "f": "mercenary", "r": "heavy"},
-  "ae":{"n": "Luke Skywalker", "c": 110, "f": "rebels", "r": "commander"},
-  "af":{"n": "Han Solo", "c": 90, "f": "rebels", "r": "operative"},
-  "b0":{"n": "Mace Windu", "c": 165, "f": "republic", "r": "commander"},
-  "b1":{"n": "General Tagge", "c": 85, "f": "empire", "r": "commander"},
-  "b2":{"n": "Anakin Skywalker", "c": 0, "f": "republic", "r": "operative"},
-  "b3":{"n": "Axe Woves", "c": 90, "f": "mercenary", "r": "operative"},
-  "b4":{"n": "Bo-Katan Kryze", "c": 110, "f": "mercenary", "r": "commander"},
-  "b5":{"n": "Clan Kryze Veterans", "c": 120, "f": "mercenary", "r": "special"},
-  "b6":{"n": "Clan Wren Veterans", "c": 92, "f": "mercenary", "r": "special"},
-  "b7":{"n": "Guerilla Troopers", "c": 0, "f": "rebels", "r": "special"},
-  "b8":{"n": "Han & Chewie", "c": 0, "f": "mercenary", "r": "operative"},
-  "b9":{"n": "Jedi Knight", "c": 0, "f": "republic", "r": "commander"},
-  "ba":{"n": "Ki-Adi-Mundi", "c": 155, "f": "republic", "r": "commander"},
-  "bb":{"n": "Mandalorian Hunter", "c": 75, "f": "mercenary", "r": "operative"},
-  "bc":{"n": "Mandalorian Initiates", "c": 56, "f": "mercenary", "r": "corps"},
-  "bd":{"n": "Mandalorian Leader", "c": 90, "f": "mercenary", "r": "commander"},
-  "be":{"n": "Paz Viszla", "c": 105, "f": "mercenary", "r": "operative"},
-  "bf":{"n": "Plo Koon", "c": 105, "f": "republic", "r": "operative"},
-  "c0":{"n": "Savage Opress", "c": 0, "f": "separatist", "r": "operative"},
-  "c1":{"n": "Savage Opress", "c": 0, "f": "mercenary", "r": "operative"},
-  "c2":{"n": "Shaak Ti", "c": 120, "f": "republic", "r": "operative"},
-  "c3":{"n": "The Armorer", "c": 120, "f": "mercenary", "r": "commander"},
-  "c4":{"n": "Mandalorian Warriors", "c": 55, "f": "mercenary", "r": "support"},
-  "c5":{"n": "Mandalorian Warriors", "c": 64, "f": "mercenary", "r": "corps"},
-  "c6":{"n": "Geonosian Warriors", "c": 55, "f": "separatist", "r": "corps"},
-  "c7":{"n": "Din Djarin", "c": 95, "f": "mercenary", "r": "operative"},
-  "c8":{"n": "Rook Kast", "c": 85, "f": "mercenary", "r": "operative"},
-  "c9":{"n": "Sabine Wren", "c": 110, "f": "mercenary", "r": "operative"},
-  "ca":{"n": "Gar Saxon", "c": 115, "f": "mercenary", "r": "commander"},
-  "cb":{"n": "Ursa Wren", "c": 75, "f": "mercenary", "r": "commander"},
-  "cc":{"n": "Super Commandos", "c": 92, "f": "mercenary", "r": "special"},
+  "1":{"n": "AT-RT", "c": 54, "t": "", "f": "rebels", "r": "support"},
+  "2":{"n": "74-Z Speeder Bikes", "c": 70, "t": "", "f": "empire", "r": "support"},
+  "3":{"n": "Darth Vader", "c": 170, "t": "Dark Lord of the Sith", "f": "empire", "r": "commander"},
+  "4":{"n": "Luke Skywalker", "c": 120, "t": "Hero of the Rebellion", "f": "rebels", "r": "commander"},
+  "5":{"n": "Stormtroopers", "c": 42, "t": "", "f": "empire", "r": "corps"},
+  "6":{"n": "Rebel Troopers", "c": 40, "t": "", "f": "rebels", "r": "corps"},
+  "7":{"n": "Snowtroopers", "c": 42, "t": "", "f": "empire", "r": "corps"},
+  "8":{"n": "General Veers", "c": 75, "t": "Master Tactician", "f": "empire", "r": "commander"},
+  "9":{"n": "AT-ST", "c": 145, "t": "", "f": "empire", "r": "heavy"},
+  "a":{"n": "T-47 Airspeeder", "c": 125, "t": "", "f": "rebels", "r": "heavy"},
+  "b":{"n": "Leia Organa", "c": 75, "t": "Fearless and Inventive", "f": "rebels", "r": "commander"},
+  "c":{"n": "Fleet Troopers", "c": 40, "t": "", "f": "rebels", "r": "corps"},
+  "d":{"n": "Rebel Commandos", "c": 42, "t": "", "f": "rebels", "r": "special"},
+  "e":{"n": "Rebel Commandos", "c": 20, "t": "Strike Team", "f": "rebels", "r": "special"},
+  "f":{"n": "Han Solo", "c": 100, "t": "Unorthodox General", "f": "rebels", "r": "commander"},
+  "10":{"n": "Boba Fett", "c": 120, "t": "Infamous Bounty Hunter", "f": "empire", "r": "operative"},
+  "11":{"n": "Scout Troopers", "c": 48, "t": "", "f": "empire", "r": "special"},
+  "12":{"n": "1.4 FD Laser Cannon Team", "c": 65, "t": "", "f": "rebels", "r": "support"},
+  "13":{"n": "E-Web Heavy Blaster Team", "c": 60, "t": "", "f": "empire", "r": "support"},
+  "14":{"n": "Emperor Palpatine", "c": 170, "t": "Ruler of the Galactic Empire", "f": "empire", "r": "commander"},
+  "15":{"n": "Imperial Royal Guards", "c": 69, "t": "", "f": "empire", "r": "special"},
+  "16":{"n": "Rebel Officer", "c": 50, "t": "Resolute Commander", "f": "rebels", "r": "commander"},
+  "17":{"n": "Imperial Officer", "c": 55, "t": "Ruthless Commander", "f": "empire", "r": "commander"},
+  "18":{"n": "Wookiee Warriors", "c": 62, "t": "Freedom Fighters", "f": "rebels", "r": "special"},
+  "19":{"n": "Chewbacca", "c": 90, "t": "Walking Carpet", "f": "rebels", "r": "operative"},
+  "1a":{"n": "Scout Troopers", "c": 22, "t": "Strike Team", "f": "empire", "r": "special"},
+  "1b":{"n": "Jyn Erso", "c": 90, "t": "Stardust", "f": "rebels", "r": "commander"},
+  "1c":{"n": "Rebel Pathfinders", "c": 56, "t": "", "f": "rebels", "r": "special"},
+  "1d":{"n": "Director Orson Krennic", "c": 65, "t": "Architect of Terror", "f": "empire", "r": "commander"},
+  "1e":{"n": "Imperial Death Troopers", "c": 66, "t": "", "f": "empire", "r": "special"},
+  "1f":{"n": "TX-225 GAVw Occupier Tank", "c": 125, "t": "", "f": "empire", "r": "heavy"},
+  "20":{"n": "X-34 Landspeeder", "c": 55, "t": "", "f": "rebels", "r": "heavy"},
+  "21":{"n": "Sabine Wren", "c": 105, "t": "Explosive Artist", "f": "rebels", "r": "operative"},
+  "22":{"n": "Bossk", "c": 115, "t": "Trandoshan Terror", "f": "empire", "r": "operative"},
+  "23":{"n": "Tauntaun Riders", "c": 95, "t": "", "f": "rebels", "r": "support"},
+  "24":{"n": "Rebel Veterans", "c": 48, "t": "", "f": "rebels", "r": "corps"},
+  "25":{"n": "Phase I Clone Troopers", "c": 52, "t": "", "f": "republic", "r": "corps"},
+  "26":{"n": "B1 Battle Droids", "c": 38, "t": "", "f": "separatist", "r": "corps"},
+  "27":{"n": "Shoretroopers", "c": 46, "t": "", "f": "empire", "r": "corps"},
+  "28":{"n": "Dewback Rider", "c": 70, "t": "", "f": "empire", "r": "support"},
+  "29":{"n": "Obi-Wan Kenobi", "c": 150, "t": "Civilized Warrior", "f": "republic", "r": "commander"},
+  "2a":{"n": "Mark II Medium Blaster Trooper", "c": 40, "t": "", "f": "rebels", "r": "corps"},
+  "2b":{"n": "Droidekas", "c": 67, "t": "", "f": "separatist", "r": "support"},
+  "2c":{"n": "BARC Speeder", "c": 59, "t": "", "f": "republic", "r": "support"},
+  "2d":{"n": "General Grievous", "c": 130, "t": "Sinister Cyborg", "f": "separatist", "r": "commander"},
+  "2e":{"n": "Luke Skywalker", "c": 165, "t": "Jedi Knight", "f": "rebels", "r": "operative"},
+  "2f":{"n": "Darth Vader", "c": 155, "t": "The Emperor's Apprentice", "f": "empire", "r": "operative"},
+  "30":{"n": "DF-90 Mortar Trooper", "c": 40, "t": "", "f": "empire", "r": "corps"},
+  "31":{"n": "Count Dooku", "c": 165, "t": "Darth Tyranus", "f": "separatist", "r": "commander"},
+  "32":{"n": "Clone Captain Rex", "c": 95, "t": "Honorable Soldier", "f": "republic", "r": "commander"},
+  "33":{"n": "Phase II Clone Troopers", "c": 60, "t": "", "f": "republic", "r": "corps"},
+  "34":{"n": "B2 Super Battle Droids", "c": 64, "t": "", "f": "separatist", "r": "corps"},
+  "35":{"n": "Saber-Class Tank", "c": 145, "t": "", "f": "republic", "r": "heavy"},
+  "36":{"n": "AAT Battle Tank", "c": 150, "t": "", "f": "separatist", "r": "heavy"},
+  "37":{"n": "R2-D2", "c": 55, "t": "Hero of a Thousand Devices", "f": "rebels", "r": "operative"},
+  "38":{"n": "R2-D2", "c": 55, "t": "Independent Astromech", "f": "republic", "r": "operative"},
+  "39":{"n": "Cassian Andor", "c": 90, "t": "Capable Intelligence Agent", "f": "rebels", "r": "commander"},
+  "3a":{"n": "Iden Versio", "c": 115, "t": "Inferno Squad Leader", "f": "empire", "r": "commander"},
+  "3b":{"n": "Cad Bane", "c": 120, "t": "Needs No Introduction", "f": "separatist", "r": "operative"},
+  "3c":{"n": "Padme Amidala", "c": 52, "t": "Spirited Senator", "f": "republic", "r": "operative"},
+  "3d":{"n": "Arc Troopers", "c": 23, "t": "Strike Team", "f": "republic", "r": "special"},
+  "3e":{"n": "Arc Troopers", "c": 70, "t": "", "f": "republic", "r": "special"},
+  "3f":{"n": "BX-Series Droid Commandos", "c": 20, "t": "Strike Team", "f": "separatist", "r": "special"},
+  "40":{"n": "BX-Series Droid Commandos", "c": 60, "t": "", "f": "separatist", "r": "special"},
+  "44":{"n": "K-2SO", "c": 70, "t": "Sardonic Security Droid", "f": "rebels", "r": "operative"},
+  "45":{"n": "STAP Riders", "c": 70, "t": "", "f": "separatist", "r": "support"},
+  "46":{"n": "AT-RT", "c": 60, "t": "", "f": "republic", "r": "support"},
+  "47":{"n": "Mandalorian Resistance", "c": 62, "t": "", "f": "rebels", "r": "special"},
+  "48":{"n": "Mandalorian Resistance", "c": 30, "t": "Clan Wren", "f": "rebels", "r": "special"},
+  "49":{"n": "Anakin Skywalker", "c": 170, "t": "The Chosen One", "f": "republic", "r": "commander"},
+  "4a":{"n": "Maul", "c": 115, "t": "Impatient Apprentice", "f": "separatist", "r": "operative"},
+  "4b":{"n": "Clone Commander", "c": 60, "t": "Trained For Leadership", "f": "republic", "r": "commander"},
+  "4c":{"n": "T-series Tactical Droid", "c": 60, "t": "Programmed For Strategy", "f": "separatist", "r": "commander"},
+  "4d":{"n": "DRK-1 Sith Probe Droids", "c": 35, "t": "", "f": "separatist", "r": "special"},
+  "4e":{"n": "Imperial Special Forces", "c": 54, "t": "", "f": "empire", "r": "special"},
+  "4f":{"n": "Imperial Special Forces", "c": 34, "t": "Inferno Squad", "f": "empire", "r": "special"},
+  "50":{"n": "Lando Calrissian", "c": 105, "t": "Canny General", "f": "rebels", "r": "commander"},
+  "51":{"n": "Agent Kallus", "c": 70, "t": "Hunter of Spectres", "f": "empire", "r": "commander"},
+  "52":{"n": "Yoda", "c": 150, "t": "Grand Master of the Jedi Order", "f": "republic", "r": "commander"},
+  "54":{"n": "LAAT/LE Patrol Transport", "c": 90, "t": "", "f": "republic", "r": "heavy"},
+  "55":{"n": "A-A5 Speeder Truck", "c": 75, "t": "", "f": "rebels", "r": "heavy"},
+  "56":{"n": "LAAT/LE Patrol Transport", "c": 90, "t": "", "f": "empire", "r": "heavy"},
+  "57":{"n": "Wookiee Warriors", "c": 62, "t": "Kashyyyk Defenders", "f": "republic", "r": "special"},
+  "58":{"n": "Wookiee Chieftain", "c": 100, "t": "Clan Leader", "f": "republic", "r": "commander"},
+  "59":{"n": "Wookiee Warriors", "c": 62, "t": "Kashyyyk Resistance", "f": "rebels", "r": "special"},
+  "5a":{"n": "Wookiee Warriors", "c": 62, "t": "Noble Fighters", "f": "republic", "r": "special"},
+  "5b":{"n": "Chewbacca", "c": 90, "t": "Hero of Kashyyyk", "f": "republic", "r": "commander"},
+  "5c":{"n": "IG-100 MagnaGuard", "c": 72, "t": "", "f": "separatist", "r": "special"},
+  "5d":{"n": "Kraken", "c": 80, "t": "Super Tactical Droid", "f": "separatist", "r": "commander"},
+  "5e":{"n": "Super Tactical Droid", "c": 75, "t": "", "f": "separatist", "r": "commander"},
+  "5f":{"n": "Kalani", "c": 85, "t": "Super Tactical Droid", "f": "separatist", "r": "commander"},
+  "60":{"n": "Raddaugh Gnasp Fluttercraft", "c": 55, "t": "", "f": "republic", "r": "support"},
+  "61":{"n": "DSD1 Dwarf Spider Droid", "c": 50, "t": "", "f": "separatist", "r": "support"},
+  "62":{"n": "Infantry Support Platform", "c": 65, "t": "", "f": "republic", "r": "heavy"},
+  "63":{"n": "Persuader-class Tank Droid", "c": 130, "t": "", "f": "separatist", "r": "heavy"},
+  "64":{"n": "Pyke Syndicate Foot Soldiers", "c": 42, "t": "", "f": "mercenary", "r": "corps"},
+  "65":{"n": "Pyke Syndicate Capo", "c": 42, "t": "", "f": "mercenary", "r": "commander"},
+  "66":{"n": "Black Sun Enforcers", "c": 50, "t": "", "f": "mercenary", "r": "corps"},
+  "67":{"n": "Maul", "c": 130, "t": "A Rival", "f": "mercenary", "r": "operative"},
+  "68":{"n": "Black Sun Vigo", "c": 50, "t": "", "f": "mercenary", "r": "commander"},
+  "69":{"n": "Mandalorian Super Commandos", "c": 66, "t": "", "f": "mercenary", "r": "special"},
+  "6a":{"n": "Gar Saxon", "c": 90, "t": "Militant Commando", "f": "mercenary", "r": "commander"},
+  "6b":{"n": "A-A5 Speeder Truck", "c": 75, "t": "", "f": "mercenary", "r": "heavy"},
+  "6c":{"n": "Bossk", "c": 105, "t": "Trandoshan Terror", "f": "mercenary", "r": "operative"},
+  "6d":{"n": "Boba Fett", "c": 130, "t": "Infamous Bounty Hunter", "f": "mercenary", "r": "operative"},
+  "6e":{"n": "Cad Bane", "c": 105, "t": "Needs No Introduction", "f": "mercenary", "r": "operative"},
+  "6f":{"n": "Swoop Bike Riders", "c": 70, "t": "", "f": "mercenary", "r": "support"},
+  "70":{"n": "Stormtroopers", "c": 36, "t": "Heavy Response Unit", "f": "empire", "r": "corps"},
+  "71":{"n": "Boba Fett", "c": 120, "t": "Daimyo of Mos Espa", "f": "mercenary", "r": "operative"},
+  "72":{"n": "IG-88", "c": 110, "t": "Notorious Assassin Droid", "f": "mercenary", "r": "operative"},
+  "73":{"n": "IG-11", "c": 105, "t": "Nurse and Protect", "f": "mercenary", "r": "operative"},
+  "74":{"n": "Din Djarin", "c": 95, "t": "The Mandalorian", "f": "mercenary", "r": "operative"},
+  "75":{"n": "Imperial Dark Troopers", "c": 95, "t": "", "f": "empire", "r": "heavy"},
+  "76":{"n": "Clone Commander Cody", "c": 95, "t": "Leader of the 212th", "f": "republic", "r": "commander"},
+  "77":{"n": "Moff Gideon", "c": 80, "t": "Long Live the Empire", "f": "empire", "r": "commander"},
+  "78":{"n": "Asajj Ventress", "c": 115, "t": "Separatist Assassin", "f": "separatist", "r": "operative"},
+  "79":{"n": "Ahsoka Tano", "c": 115, "t": "Fulcrum", "f": "rebels", "r": "operative"},
+  "7a":{"n": "Wicket", "c": 64, "t": "Hero of Bright Tree", "f": "mercenary", "r": "commander"},
+  "7b":{"n": "C-3P0", "c": 40, "t": "Golden God", "f": "mercenary", "r": "commander"},
+  "7c":{"n": "Ewok Skirmishers", "c": 40, "t": "", "f": "mercenary", "r": "corps"},
+  "7d":{"n": "Chewbacca", "c": 180, "t": "Let the Wookiee Win", "f": "mercenary", "r": "heavy"},
+  "7e":{"n": "Ewok Slingers", "c": 38, "t": "", "f": "mercenary", "r": "special"},
+  "7f":{"n": "Logray", "c": 45, "t": "Superstitious Shaman", "f": "mercenary", "r": "commander"},
+  "80":{"n": "Major Marquand", "c": 180, "t": "Tempest Scout 2", "f": "empire", "r": "heavy"},
+  "81":{"n": "Persuader-class Tank Droid", "c": 130, "t": "Prototype Tank Droid", "f": "separatist", "r": "heavy"},
+  "82":{"n": "IG-100 MagnaGuard", "c": 56, "t": "Prototype Assassin Droids", "f": "separatist", "r": "special"},
+  "83":{"n": "Raddaugh Gnasp Fluttercraft", "c": 57, "t": "Attack Craft", "f": "republic", "r": "support"},
+  "84":{"n": "Geonosian Warriors", "c": 45, "t": "Soldiers of the Hive", "f": "separatist", "r": "corps"},
+  "85":{"n": "Sun Fac", "c": 55, "t": "Ruthless Lieutenant", "f": "separatist", "r": "operative"},
+  "86":{"n": "Poggle the Lesser", "c": 55, "t": "Public Leader of the Geonosians", "f": "separatist", "r": "commander"},
+  "87":{"n": "Fifth Brother", "c": 97, "t": "The Kill is Mine", "f": "empire", "r": "operative"},
+  "88":{"n": "Seventh Sister", "c": 102, "t": "Compelled to Inflict Pain", "f": "empire", "r": "operative"},
+  "89":{"n": "The Bad Batch", "c": 170, "t": "Clone Force 99", "f": "republic", "r": "operative"},
+  "8a":{"n": "Clone Commandos", "c": 90, "t": "", "f": "republic", "r": "support"},
+  "8b":{"n": "Range Troopers", "c": 60, "t": "", "f": "empire", "r": "support"},
+  "8c":{"n": "Clone Commandos (DS)", "c": 105, "t": "Delta Squad", "f": "republic", "r": "support"},
+  "8d":{"n": "The Bad Batch", "c": 150, "t": "Clone Force 99", "f": "mercenary", "r": "operative"},
+  "8e":{"n": "Clone Trooper Infantry", "c": 56, "t": "", "f": "republic", "r": "corps"},
+  "8f":{"n": "LM-432 Crab Droid", "c": 70, "t": "", "f": "separatist", "r": "support"},
+  "90":{"n": "Stormtrooper Riot Squad", "c": 44, "t": "", "f": "empire", "r": "corps"},
+  "91":{"n": "Rebel Sleeper Cell", "c": 77, "t": "Ready to Strike", "f": "rebels", "r": "special"},
+  "92":{"n": "Rebel Commandos", "c": 20, "t": "Strike Team", "f": "rebels", "r": "support"},
+  "93":{"n": "Arc Troopers", "c": 23, "t": "Strike Team", "f": "republic", "r": "support"},
+  "94":{"n": "Scout Troopers", "c": 22, "t": "Strike Team", "f": "empire", "r": "support"},
+  "95":{"n": "BX-Series Droid Commandos", "c": 20, "t": "Strike Team", "f": "separatist", "r": "support"},
+  "96":{"n": "Aqua Droids", "c": 78, "t": "", "f": "separatist", "r": "heavy"},
+  "97":{"n": "ARF Troopers", "c": 66, "t": "", "f": "republic", "r": "special"},
+  "98":{"n": "Ahsoka Tano", "c": 110, "t": "Padawan Commander", "f": "republic", "r": "commander"},
+  "99":{"n": "Hondo Ohnaka", "c": 85, "t": "Trustworthy Compatriot", "f": "neutral", "r": "operative"},
+  "9a":{"n": "Jyn Erso", "c": 75, "t": "Stardust", "f": "rebels", "r": "operative"},
+  "9b":{"n": "Cassian Andor", "c": 90, "t": "Capable Intelligence Agent", "f": "rebels", "r": "operative"},
+  "9c":{"n": "K-2SO", "c": 70, "t": "Sardonic Security Droid", "f": "rebels", "r": "operative"},
+  "9d":{"n": "Agent Kallus", "c": 70, "t": "Hunter of Spectres", "f": "empire", "r": "operative"},
+  "9e":{"n": "Imperial Agent", "c": 50, "t": "Bringing Order to the Galaxy", "f": "empire", "r": "operative"},
+  "9f":{"n": "Imperial Officer", "c": 55, "t": "Ruthless Efficiency", "f": "empire", "r": "commander"},
+  "a0":{"n": "Rebel Officer", "c": 55, "t": "Fighting for Freedom", "f": "rebels", "r": "commander"},
+  "a1":{"n": "Rebel Agent", "c": 50, "t": "Defender of Democracy", "f": "rebels", "r": "operative"},
+  "a2":{"n": "Jedi Knight General", "c": 105, "t": "Strong in the Force", "f": "republic", "r": "commander"},
+  "a3":{"n": "Jedi Knight", "c": 85, "t": "Keeper of the Peace", "f": "republic", "r": "operative"},
+  "a4":{"n": "Super Tactical Command Droid", "c": 70, "t": "Command and Control Droid", "f": "separatist", "r": "commander"},
+  "a5":{"n": "Super Tactical Command Droid", "c": 60, "t": "Auxiliary Command Droid", "f": "separatist", "r": "operative"},
+  "a6":{"n": "General Grievous", "c": 150, "t": "Wheel Bike Warlord", "f": "separatist", "r": "commander"},
+  "a7":{"n": "Clone Trooper Marksmen", "c": 50, "t": "", "f": "republic", "r": "corps"},
+  "a8":{"n": "Grand Admiral Thrawn", "c": 110, "t": "Imperial High Command", "f": "empire", "r": "commander"},
+  "a9":{"n": "Grand Moff Tarkin", "c": 95, "t": "Imperial High Command", "f": "empire", "r": "commander"},
+  "aa":{"n": "Imperial Probe Droid", "c": 35, "t": "", "f": "empire", "r": "special"},
+  "ab":{"n": "TSMEU-6 Wheel Bikes", "c": 90, "t": "", "f": "separatist", "r": "special"},
+  "ac":{"n": "Weequay Pirates", "c": 40, "t": "", "f": "mercenary", "r": "corps"},
+  "ad":{"n": "WLO-5 Speeder Tank", "c": 100, "t": "", "f": "mercenary", "r": "heavy"},
+  "ae":{"n": "Luke Skywalker", "c": 110, "t": "Commander Skywalker", "f": "rebels", "r": "commander"},
+  "af":{"n": "Han Solo", "c": 90, "t": "Reluctant Hero", "f": "rebels", "r": "operative"},
+  "b0":{"n": "Mace Windu", "c": 165, "t": "Jedi Council", "f": "republic", "r": "commander"},
+  "b1":{"n": "General Tagge", "c": 85, "t": "Imperial High Command", "f": "empire", "r": "commander"},
+  "b2":{"n": "Anakin Skywalker", "c": 0, "t": "Mounted Jedi General", "f": "republic", "r": "operative"},
+  "b3":{"n": "Axe Woves", "c": 90, "t": "Cunning Warrior", "f": "mercenary", "r": "operative"},
+  "b4":{"n": "Bo-Katan Kryze", "c": 110, "t": "Savior of Mandalore", "f": "mercenary", "r": "commander"},
+  "b5":{"n": "Clan Kryze Veterans", "c": 120, "t": "", "f": "mercenary", "r": "special"},
+  "b6":{"n": "Clan Wren Veterans", "c": 92, "t": "", "f": "mercenary", "r": "special"},
+  "b7":{"n": "Guerilla Troopers", "c": 0, "t": "", "f": "rebels", "r": "special"},
+  "b8":{"n": "Han & Chewie", "c": 0, "t": "Notorious Scoundrels", "f": "mercenary", "r": "operative"},
+  "b9":{"n": "Jedi Knight", "c": 0, "t": "Mounted Jedi General", "f": "republic", "r": "commander"},
+  "ba":{"n": "Ki-Adi-Mundi", "c": 155, "t": "Jedi Council", "f": "republic", "r": "commander"},
+  "bb":{"n": "Mandalorian Hunter", "c": 75, "t": "", "f": "mercenary", "r": "operative"},
+  "bc":{"n": "Mandalorian Initiates", "c": 56, "t": "", "f": "mercenary", "r": "corps"},
+  "bd":{"n": "Mandalorian Leader", "c": 90, "t": "", "f": "mercenary", "r": "commander"},
+  "be":{"n": "Paz Viszla", "c": 105, "t": "Proud Warrior", "f": "mercenary", "r": "operative"},
+  "bf":{"n": "Plo Koon", "c": 105, "t": "Jedi Council", "f": "republic", "r": "operative"},
+  "c0":{"n": "Savage Opress", "c": 0, "t": "Dooku's Apprentice", "f": "separatist", "r": "operative"},
+  "c1":{"n": "Savage Opress", "c": 0, "t": "Maul's Enforcer", "f": "mercenary", "r": "operative"},
+  "c2":{"n": "Shaak Ti", "c": 120, "t": "Jedi Council", "f": "republic", "r": "operative"},
+  "c3":{"n": "The Armorer", "c": 120, "t": "Forging the Future", "f": "mercenary", "r": "commander"},
+  "c4":{"n": "Mandalorian Warriors", "c": 55, "t": "Fire Support", "f": "mercenary", "r": "support"},
+  "c5":{"n": "Mandalorian Warriors", "c": 64, "t": "", "f": "mercenary", "r": "corps"},
+  "c6":{"n": "Geonosian Warriors", "c": 55, "t": "Geonosian Engineers", "f": "separatist", "r": "corps"},
+  "c7":{"n": "Din Djarin", "c": 95, "t": "The Mandalorian", "f": "mercenary", "r": "operative"},
+  "c8":{"n": "Rook Kast", "c": 85, "t": "Devoted to the Cause", "f": "mercenary", "r": "operative"},
+  "c9":{"n": "Sabine Wren", "c": 110, "t": "Back in the Fold", "f": "mercenary", "r": "operative"},
+  "ca":{"n": "Gar Saxon", "c": 115, "t": "Head of Clan Saxon", "f": "mercenary", "r": "commander"},
+  "cb":{"n": "Ursa Wren", "c": 75, "t": "Leader of Clan Wren", "f": "mercenary", "r": "commander"},
+  "cc":{"n": "Super Commandos", "c": 92, "t": "", "f": "mercenary", "r": "special"},
 };
 
 // ─── TABLETOP ADMIRAL UPGRADE LOOKUP (hex id → name) ─────────────────────────
@@ -3233,6 +3233,44 @@ function collectUnitKeywords(dbUnit, upgradeCards){
   return [...out].sort((a,b)=>a.localeCompare(b));
 }
 
+// ─── CROSS-DATABASE CARD MATCHING ────────────────────────────────────────────
+// UNIT_DB/UPGRADE_DB come from LegionHQ2 and are keyed by its own ids, so
+// Tabletop Admiral records have to be matched across by NAME -- but names are
+// not unique. 32 unit names and 13 upgrade names are shared by two or more
+// distinct cards ("Stormtroopers" is both the base unit and the Heavy Response
+// Unit; "The Darksaber" exists once per character who can carry it). Taking the
+// first name hit silently attributes the wrong variant's art and keywords.
+function _normTitle(s){ return String(s||'').trim().toLowerCase(); }
+function _normFaction(s){ return String(s||'').trim().toLowerCase().replace(/s$/,''); }
+
+// Units: title splits 28 of the 32 collisions and faction splits the other 4.
+function findDbUnit(name, title, faction){
+  const hits=Object.values(UNIT_DB).filter(u=>u.n===name);
+  if(hits.length<2) return hits[0]||null;
+  const t=_normTitle(title), f=_normFaction(faction);
+  const byBoth=hits.filter(u=>_normTitle(u.t)===t&&_normFaction(u.f)===f);
+  if(byBoth.length===1) return byBoth[0];
+  const byTitle=hits.filter(u=>_normTitle(u.t)===t);
+  if(byTitle.length===1) return byTitle[0];
+  const byFaction=hits.filter(u=>_normFaction(u.f)===f);
+  if(byFaction.length===1) return byFaction[0];
+  console.warn('[list] ambiguous unit, skipping keywords:',name,title,faction);
+  return null;
+}
+
+// Upgrades: Tabletop Admiral gives them no title and leaves faction null, so
+// cost is the only discriminator available. When it can't pick exactly one we
+// return nothing on purpose -- an unresolved upgrade loses its art and keywords
+// but keeps its name and cost, which beats showing another character's card.
+function findDbUpgrade(name, cost){
+  const hits=Object.values(UPGRADE_DB).filter(u=>u.n===name);
+  if(hits.length<2) return hits[0]||null;
+  const byCost=hits.filter(u=>(u.c||0)===cost);
+  if(byCost.length===1) return byCost[0];
+  console.warn('[list] ambiguous upgrade, skipping art/keywords:',name,cost);
+  return null;
+}
+
 // Standard Legion army-list rank order, used to sort the print-by-unit sheet
 // so commanders lead and heavies bring up the rear.
 const RANK_ORDER={commander:0,operative:1,corps:2,special:3,'special forces':3,
@@ -3318,13 +3356,10 @@ function parseTtaUrl(url){
     for(const {hexId,codes} of blocks){
       const tta=TTA_UNITS[hexId];
       if(!tta) continue;
-      // Find matching unit in UNIT_DB by name (TTA_UNITS only has name/faction/cost,
-      // UNIT_DB carries the full keyword list scraped from LegionHQ2).
-      let dbUnit=null;
-      for(const u of Object.values(UNIT_DB)){
-        if(u.n===tta.n){dbUnit=u;break;}
-      }
-      const displayUnit=dbUnit||{n:tta.n,t:'',k:[],i:''};
+      // Match into UNIT_DB, which carries the keyword list scraped from
+      // LegionHQ2 (TTA_UNITS only has name/title/faction/cost/rank).
+      const dbUnit=findDbUnit(tta.n,tta.t,tta.f);
+      const displayUnit=dbUnit||{n:tta.n,t:tta.t||'',k:[],i:''};
       points+=tta.c||0;
 
       const upgradeNames=[];
@@ -3335,13 +3370,11 @@ function parseTtaUrl(url){
         if(!ttaUpg) continue;
         upgradeNames.push(ttaUpg.n);
         points+=ttaUpg.c||0;
-        // Find matching upgrade in UPGRADE_DB by name to pull its keywords in too.
-        // Fall back to a keyword-less stub so freeform-text upgrades (Fire Control,
-        // Hit the Dirt, ...) still get name-matched against the catalog.
-        let dbUpg=null;
-        for(const u of Object.values(UPGRADE_DB)){
-          if(u.n===ttaUpg.n){dbUpg=u;break;}
-        }
+        // Match into UPGRADE_DB for keywords + card art. Falls back to a
+        // keyword-less stub so freeform-text upgrades (Fire Control, Hit the
+        // Dirt, ...) still get name-matched against the catalog, and so an
+        // unresolvable duplicate still shows its name.
+        const dbUpg=findDbUpgrade(ttaUpg.n,ttaUpg.c||0);
         upgCards.push(dbUpg||{n:ttaUpg.n,k:[]});
         // Prefer TTA's cost (it reflects current points) but take card art from
         // the LegionHQ2 record, which is the only side that carries a filename.

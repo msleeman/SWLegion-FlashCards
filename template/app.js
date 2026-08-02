@@ -1246,6 +1246,44 @@ function collectUnitKeywords(dbUnit, upgradeCards){
   return [...out].sort((a,b)=>a.localeCompare(b));
 }
 
+// ─── CROSS-DATABASE CARD MATCHING ────────────────────────────────────────────
+// UNIT_DB/UPGRADE_DB come from LegionHQ2 and are keyed by its own ids, so
+// Tabletop Admiral records have to be matched across by NAME -- but names are
+// not unique. 32 unit names and 13 upgrade names are shared by two or more
+// distinct cards ("Stormtroopers" is both the base unit and the Heavy Response
+// Unit; "The Darksaber" exists once per character who can carry it). Taking the
+// first name hit silently attributes the wrong variant's art and keywords.
+function _normTitle(s){ return String(s||'').trim().toLowerCase(); }
+function _normFaction(s){ return String(s||'').trim().toLowerCase().replace(/s$/,''); }
+
+// Units: title splits 28 of the 32 collisions and faction splits the other 4.
+function findDbUnit(name, title, faction){
+  const hits=Object.values(UNIT_DB).filter(u=>u.n===name);
+  if(hits.length<2) return hits[0]||null;
+  const t=_normTitle(title), f=_normFaction(faction);
+  const byBoth=hits.filter(u=>_normTitle(u.t)===t&&_normFaction(u.f)===f);
+  if(byBoth.length===1) return byBoth[0];
+  const byTitle=hits.filter(u=>_normTitle(u.t)===t);
+  if(byTitle.length===1) return byTitle[0];
+  const byFaction=hits.filter(u=>_normFaction(u.f)===f);
+  if(byFaction.length===1) return byFaction[0];
+  console.warn('[list] ambiguous unit, skipping keywords:',name,title,faction);
+  return null;
+}
+
+// Upgrades: Tabletop Admiral gives them no title and leaves faction null, so
+// cost is the only discriminator available. When it can't pick exactly one we
+// return nothing on purpose -- an unresolved upgrade loses its art and keywords
+// but keeps its name and cost, which beats showing another character's card.
+function findDbUpgrade(name, cost){
+  const hits=Object.values(UPGRADE_DB).filter(u=>u.n===name);
+  if(hits.length<2) return hits[0]||null;
+  const byCost=hits.filter(u=>(u.c||0)===cost);
+  if(byCost.length===1) return byCost[0];
+  console.warn('[list] ambiguous upgrade, skipping art/keywords:',name,cost);
+  return null;
+}
+
 // Standard Legion army-list rank order, used to sort the print-by-unit sheet
 // so commanders lead and heavies bring up the rear.
 const RANK_ORDER={commander:0,operative:1,corps:2,special:3,'special forces':3,
@@ -1331,13 +1369,10 @@ function parseTtaUrl(url){
     for(const {hexId,codes} of blocks){
       const tta=TTA_UNITS[hexId];
       if(!tta) continue;
-      // Find matching unit in UNIT_DB by name (TTA_UNITS only has name/faction/cost,
-      // UNIT_DB carries the full keyword list scraped from LegionHQ2).
-      let dbUnit=null;
-      for(const u of Object.values(UNIT_DB)){
-        if(u.n===tta.n){dbUnit=u;break;}
-      }
-      const displayUnit=dbUnit||{n:tta.n,t:'',k:[],i:''};
+      // Match into UNIT_DB, which carries the keyword list scraped from
+      // LegionHQ2 (TTA_UNITS only has name/title/faction/cost/rank).
+      const dbUnit=findDbUnit(tta.n,tta.t,tta.f);
+      const displayUnit=dbUnit||{n:tta.n,t:tta.t||'',k:[],i:''};
       points+=tta.c||0;
 
       const upgradeNames=[];
@@ -1348,13 +1383,11 @@ function parseTtaUrl(url){
         if(!ttaUpg) continue;
         upgradeNames.push(ttaUpg.n);
         points+=ttaUpg.c||0;
-        // Find matching upgrade in UPGRADE_DB by name to pull its keywords in too.
-        // Fall back to a keyword-less stub so freeform-text upgrades (Fire Control,
-        // Hit the Dirt, ...) still get name-matched against the catalog.
-        let dbUpg=null;
-        for(const u of Object.values(UPGRADE_DB)){
-          if(u.n===ttaUpg.n){dbUpg=u;break;}
-        }
+        // Match into UPGRADE_DB for keywords + card art. Falls back to a
+        // keyword-less stub so freeform-text upgrades (Fire Control, Hit the
+        // Dirt, ...) still get name-matched against the catalog, and so an
+        // unresolvable duplicate still shows its name.
+        const dbUpg=findDbUpgrade(ttaUpg.n,ttaUpg.c||0);
         upgCards.push(dbUpg||{n:ttaUpg.n,k:[]});
         // Prefer TTA's cost (it reflects current points) but take card art from
         // the LegionHQ2 record, which is the only side that carries a filename.
