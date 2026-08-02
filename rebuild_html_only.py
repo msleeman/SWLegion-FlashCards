@@ -21,7 +21,8 @@ from src.overrides import (
     apply_manual_overlays,
 )
 from src.scrape import find_pdf, extract_keywords_from_pdf
-from src.images import download_images, download_upgrade_card_images
+from src.images import (download_images, download_upgrade_card_images,
+                        download_tta_upgrade_images)
 from src.render import build_html
 
 # ── 1. Load cached card data ──────────────────────────────────────────────────
@@ -118,6 +119,53 @@ if os.path.exists(kw_map_path):
     if injected:
         print(f"  {injected} new cards injected from overrides (no scraped data existed)")
 
+# ── 4b. Overlay Tabletop Admiral keyword text (authoritative over the scrape) ──
+# TTA carries current 2.6 wording; the older legion.takras.net scrape had at
+# least one outright wrong rule (Ruthless described removing suppression when
+# the card actually lets the unit suffer a wound for a free action). Runs BEFORE
+# step 4 so hand-written overrides still win over it.
+try:
+    from src.render import fetch_tta_keywords
+    tta_kws = fetch_tta_keywords()
+    if tta_kws:
+        def _tk(n):
+            n = re.sub(r'\[\]', '', n)
+            n = re.sub(r'\s+X$', '', n)
+            n = re.sub(r':\s*.+$', '', n)
+            return n.strip().lower()
+
+        by_norm = {}
+        for k in tta_kws.values():
+            desc = (k.get('description') or '').strip()
+            if desc:
+                by_norm.setdefault(_tk(k.get('name', '')), (k.get('name', ''), desc))
+
+        updated = 0
+        for c in card_data:
+            hit = by_norm.get(_tk(c['name']))
+            if hit and hit[1] != c.get('definition'):
+                c['definition'] = hit[1]
+                c['credit'] = 'tabletopadmiral.com'
+                updated += 1
+
+        existing = {_tk(c['name']) for c in card_data}
+        added = 0
+        for norm_name, (disp, desc) in by_norm.items():
+            if norm_name in existing:
+                continue
+            art = find_card_art(disp)
+            card_data.append({
+                'name': disp, 'definition': desc, 'summary': '',
+                'type': 'unit', 'imgs': [art] if art else [],
+                'credit': 'tabletopadmiral.com', 'card_source': '',
+                'art_credit': find_card_art_credit(disp) or '', 'units': '',
+            })
+            existing.add(norm_name)
+            added += 1
+        print(f"  TTA keyword text: {updated} definitions refreshed, {added} new cards added")
+except Exception as e:
+    print(f"  WARN: TTA keyword overlay failed: {e}")
+
 # ── 4. Apply manual overrides (always last — they win over everything) ────────
 manual_count = apply_manual_overlays(card_data)
 if manual_count:
@@ -132,7 +180,10 @@ html = build_html(card_data)
 try:
     dl, sk, fl = download_upgrade_card_images(DIST_IMGDIR)
     if dl or fl:
-        print(f"  Upgrade art: {dl} downloaded, {sk} cached, {fl} failed")
+        print(f"  Upgrade art (LegionHQ2): {dl} downloaded, {sk} cached, {fl} failed")
+    dl, sk, fl = download_tta_upgrade_images(DIST_IMGDIR)
+    if dl or fl:
+        print(f"  Upgrade art (Tabletop Admiral): {dl} downloaded, {sk} cached, {fl} failed")
 except Exception as e:
     print(f"  WARN: upgrade art download failed: {e}")
 out = os.path.join(DIST_DIR, "index.html")

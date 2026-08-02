@@ -159,3 +159,72 @@ def download_upgrade_card_images(imgdir):
             failed += 1
 
     return downloaded, skipped, failed
+
+
+def download_tta_upgrade_images(imgdir):
+    """Download Tabletop Admiral's own upgrade card art, keyed by public_id.
+
+    Complements download_upgrade_card_images(): LegionHQ2 has broader coverage
+    (433 of 434) but has to be matched by name, which is ambiguous for the 13
+    upgrade names shared by several cards -- that is how a Bo-Katan Darksaber
+    ended up rendered on Moff Gideon. TTA art is addressed by public_id, so it
+    is always the right card; where TTA has none we fall back to LegionHQ2.
+
+    Returns (downloaded, skipped, failed).
+    """
+    from src.config import CACHE_DIR
+
+    cache_path = os.path.join(CACHE_DIR, "tta_upgrades.json")
+    if not os.path.exists(cache_path):
+        return 0, 0, 0
+    import json
+    with open(cache_path, encoding="utf-8") as f:
+        db = json.load(f)
+
+    raw_path = os.path.join(CACHE_DIR, "tta_upgrades_raw.json")
+    if os.path.exists(raw_path):
+        with open(raw_path, encoding="utf-8") as f:
+            raw = json.load(f)
+    else:
+        try:
+            r = requests.get("https://tabletopadmiral.com/api/upgrades",
+                             headers=HEADERS, timeout=30)
+            r.raise_for_status()
+            raw = r.json()
+            with open(raw_path, "w", encoding="utf-8") as f:
+                json.dump(raw, f, ensure_ascii=False)
+        except Exception:
+            return 0, 0, 0
+
+    url_by_hex = {}
+    for u in raw:
+        pid = u.get("public_id")
+        if pid is None:
+            continue
+        art = u.get("image_url") or u.get("cloudinary_image_url")
+        if art:
+            url_by_hex[format(int(pid), "x")] = art
+
+    outdir = os.path.join(imgdir, "upgrades", "tta")
+    os.makedirs(outdir, exist_ok=True)
+
+    downloaded = skipped = failed = 0
+    for hex_id, entry in db.items():
+        fname = entry.get("a")
+        url = url_by_hex.get(hex_id)
+        if not fname or not url:
+            continue
+        dest = os.path.join(outdir, fname)
+        if os.path.exists(dest) and os.path.getsize(dest) > 1000:
+            skipped += 1
+            continue
+        try:
+            r = requests.get(url, headers=HEADERS, timeout=20)
+            r.raise_for_status()
+            with open(dest, "wb") as f:
+                f.write(r.content)
+            downloaded += 1
+        except Exception:
+            failed += 1
+
+    return downloaded, skipped, failed

@@ -295,6 +295,53 @@ def _tta_cost(rec):
     return 0
 
 
+def fetch_tta_keywords():
+    """Return Tabletop Admiral's keyword table as {id: record}, cached to disk.
+
+    This is the authoritative keyword source: units and upgrades reference these
+    by numeric id, so resolving a card's keywords needs no name matching at all
+    (LegionHQ2 name lookups were ambiguous -- 32 unit and 13 upgrade names are
+    shared by multiple cards). Descriptions here are also current 2.6 wording;
+    the older scraped text had at least one outright wrong rule (Ruthless).
+    """
+    cache_path = os.path.join(CACHE_DIR, "tta_keywords.json")
+    if os.path.exists(cache_path):
+        try:
+            with open(cache_path, encoding='utf-8') as f:
+                data = json.load(f)
+            print(f"  (TTA keywords loaded from cache: {len(data)} keywords)")
+            return data
+        except Exception:
+            pass
+    print("  Fetching TTA keyword database...")
+    try:
+        r = requests.get('https://tabletopadmiral.com/api/keywords',
+                         headers=HEADERS, timeout=30)
+        r.raise_for_status()
+        data = {str(k['id']): k for k in r.json()}
+        with open(cache_path, 'w', encoding='utf-8') as f:
+            json.dump(data, f, ensure_ascii=False)
+        print(f"  TTA keyword DB: {len(data)} keywords cached")
+        return data
+    except Exception as e:
+        print(f"  WARN: could not fetch TTA keywords: {e}")
+        return {}
+
+
+def build_tta_keywords_db_js():
+    """const TTA_KEYWORDS = {id: name}; -- just the id->name map the page needs.
+
+    Definitions are not shipped here; they get overlaid onto CARDS at build time
+    so the override system still wins over them.
+    """
+    data = fetch_tta_keywords()
+    lines = ['const TTA_KEYWORDS = {']
+    for kid, k in sorted(data.items(), key=lambda x: int(x[0])):
+        lines.append(f'  {json.dumps(kid)}:{json.dumps(k.get("name", ""), ensure_ascii=False)},')
+    lines.append('};')
+    return '\n'.join(lines)
+
+
 def build_tta_db_js():
     """Return a compact JS const TTA_UNITS = {...}; mapping hex unit ID -> {n, f} from TTA API."""
     cache_path = os.path.join(CACHE_DIR, "tta_units.json")
@@ -329,7 +376,8 @@ def build_tta_db_js():
                 # across to UNIT_DB (e.g. Stormtroopers vs Stormtroopers "Heavy
                 # Response Unit"). 32 unit names are shared by 2+ cards.
                 entry = {'n': u.get('name', ''), 'c': _tta_cost(u),
-                         't': u.get('title') or ''}
+                         't': u.get('title') or '',
+                         'kw': [str(i) for i in (u.get('keyword_ids') or [])]}
                 fkey = str(u.get('faction_fkey') or '')
                 if fkey in faction_map:
                     entry['f'] = faction_map[fkey]
@@ -383,7 +431,15 @@ def build_tta_upgrades_db_js():
                 if pub_id is None:
                     continue
                 hex_id = format(int(pub_id), 'x')
-                data[hex_id] = {'n': u.get('name', ''), 'c': _tta_cost(u)}
+                entry = {'n': u.get('name', ''), 'c': _tta_cost(u),
+                         'kw': [str(i) for i in (u.get('keyword_ids') or [])]}
+                # TTA's own card art, keyed by public_id -- exact for this card,
+                # unlike the LegionHQ2 art we have to name-match for.
+                art = u.get('image_url') or u.get('cloudinary_image_url')
+                if art:
+                    ext = os.path.splitext(art.split('?')[0])[1] or '.webp'
+                    entry['a'] = hex_id + ext
+                data[hex_id] = entry
             with open(cache_path, 'w', encoding='utf-8') as f:
                 json.dump(data, f, ensure_ascii=False)
             print(f"  TTA upgrade DB: {len(data)} upgrades cached to tta_upgrades.json")
@@ -426,12 +482,14 @@ def build_html(card_data):
     upgrade_db_js    = build_upgrade_db_js()
     tta_db_js        = build_tta_db_js()
     tta_upgrades_js  = build_tta_upgrades_db_js()
+    tta_keywords_js  = build_tta_keywords_db_js()
     js = js.replace("/*CARD_JSON*/", fish_js)
     js = js.replace("/*BASE_NAMES*/", base_names)
     js = js.replace("/*UNIT_DB_JSON*/", unit_db_js)
     js = js.replace("/*UPGRADE_DB_JSON*/", upgrade_db_js)
     js = js.replace("/*TTA_DB_JS*/", tta_db_js)
     js = js.replace("/*TTA_UPGRADES_JSON*/", tta_upgrades_js)
+    js = js.replace("/*TTA_KEYWORDS_JSON*/", tta_keywords_js)
 
     html = html.replace("/*STYLE_CSS*/", css)
     html = html.replace("/*APP_JS*/", js)

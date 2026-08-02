@@ -1004,6 +1004,10 @@ function modAddToList(listId){
 // ─── TABLETOP ADMIRAL UPGRADE LOOKUP (hex id → name) ─────────────────────────
 /*TTA_UPGRADES_JSON*/
 
+// ─── TABLETOP ADMIRAL KEYWORD LOOKUP (numeric id → name) ─────────────────────
+// Authoritative: units/upgrades reference keywords by id, so no name matching.
+/*TTA_KEYWORDS_JSON*/
+
 const UNIT_STATS={
   "at":{"sp":2,"w":20,"cg":null,"dd":"r","ds":false,"as":"c"},
   "au":{"sp":2,"w":5, "cg":3,   "dd":"w","ds":false,"as":null},
@@ -1369,10 +1373,12 @@ function parseTtaUrl(url){
     for(const {hexId,codes} of blocks){
       const tta=TTA_UNITS[hexId];
       if(!tta) continue;
-      // Match into UNIT_DB, which carries the keyword list scraped from
-      // LegionHQ2 (TTA_UNITS only has name/title/faction/cost/rank).
+      // Keywords come from TTA's numeric ids -- exact for this card, no name
+      // matching. UNIT_DB is still consulted, but only for its card art.
       const dbUnit=findDbUnit(tta.n,tta.t,tta.f);
-      const displayUnit=dbUnit||{n:tta.n,t:tta.t||'',k:[],i:''};
+      const displayUnit={n:tta.n,t:tta.t||'',
+                         k:(tta.kw||[]).map(id=>TTA_KEYWORDS[id]).filter(Boolean),
+                         i:(dbUnit&&dbUnit.i)||''};
       points+=tta.c||0;
 
       const upgradeNames=[];
@@ -1383,15 +1389,15 @@ function parseTtaUrl(url){
         if(!ttaUpg) continue;
         upgradeNames.push(ttaUpg.n);
         points+=ttaUpg.c||0;
-        // Match into UPGRADE_DB for keywords + card art. Falls back to a
-        // keyword-less stub so freeform-text upgrades (Fire Control, Hit the
-        // Dirt, ...) still get name-matched against the catalog, and so an
-        // unresolvable duplicate still shows its name.
+        // Keywords straight from TTA's ids -- exact for this card. UPGRADE_DB is
+        // only consulted for art, and only as a fallback.
         const dbUpg=findDbUpgrade(ttaUpg.n,ttaUpg.c||0);
-        upgCards.push(dbUpg||{n:ttaUpg.n,k:[]});
-        // Prefer TTA's cost (it reflects current points) but take card art from
-        // the LegionHQ2 record, which is the only side that carries a filename.
-        upgDetails.push({n:ttaUpg.n,c:ttaUpg.c||0,i:(dbUpg&&dbUpg.i)||''});
+        upgCards.push({n:ttaUpg.n,
+                       k:(ttaUpg.kw||[]).map(id=>TTA_KEYWORDS[id]).filter(Boolean)});
+        // Art: TTA's own image is addressed by public_id so it is always the
+        // right card; LegionHQ2's has broader coverage but must be name-matched.
+        upgDetails.push({n:ttaUpg.n,c:ttaUpg.c||0,
+                         i:(dbUpg&&dbUpg.i)||'', a:ttaUpg.a||''});
       }
 
       const kws=collectUnitKeywords(dbUnit,upgCards);
@@ -1781,11 +1787,15 @@ function printListUnits(listId){
       : (u.upgrades||[]).map(n=>({n,c:0,i:''}));
     const upgThumbs=upgCards.map(up=>{
       const cost=up.c?`<span class="pu-upgcost">${escHtml(up.c)}</span>`:'';
-      const inner=up.i
-        ? `<img src="images/upgrades/${encodeURIComponent(up.i)}" alt=""
+      // Prefer Tabletop Admiral's art (addressed by card id, always the right
+      // card) and fall back to LegionHQ2's name-matched art.
+      const src=up.a?'images/upgrades/tta/'+encodeURIComponent(up.a)
+                    :(up.i?'images/upgrades/'+encodeURIComponent(up.i):'');
+      const inner=src
+        ? `<img src="${src}" alt=""
              onerror="this.parentNode.classList.add('pu-upgfallback');this.remove()">`
         : '';
-      return `<div class="pu-upgcard${up.i?'':' pu-upgfallback'}">${inner}`+
+      return `<div class="pu-upgcard${src?'':' pu-upgfallback'}">${inner}`+
              `<span class="pu-upgname">${escHtml(up.n)}${cost}</span></div>`;
     }).join('');
 
