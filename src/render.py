@@ -273,6 +273,28 @@ def build_upgrade_db_js():
     return '\n'.join(lines)
 
 
+def _tta_cost(rec):
+    """Current points for a Tabletop Admiral unit/upgrade record.
+
+    TTA carries four cost columns and picking the wrong one silently skews a
+    whole list's total. Verified precedence, checked against what TTA's own
+    listbuilder renders:
+
+      revamp_cost        current (2.6 "revamp" edition) points -- authoritative
+      current_cost       latest points update for cards with no revamp entry
+      recent_active_cost
+      original_cost      launch points; only right when nothing above is set
+
+    e.g. XS-IV Assault Cannon is revamp 49 but original 48 / current 55, and
+    Improvised Orders is current 5 but original 10.
+    """
+    for field in ('revamp_cost', 'current_cost', 'recent_active_cost', 'original_cost'):
+        value = rec.get(field)
+        if value is not None:
+            return value
+    return 0
+
+
 def build_tta_db_js():
     """Return a compact JS const TTA_UNITS = {...}; mapping hex unit ID -> {n, f} from TTA API."""
     cache_path = os.path.join(CACHE_DIR, "tta_units.json")
@@ -303,10 +325,7 @@ def build_tta_db_js():
                 if pub_id is None:
                     continue  # no public_id means this unit can't appear in a listbuilder URL
                 hex_id = format(int(pub_id), 'x')
-                cost = u.get('current_cost')
-                if cost is None:
-                    cost = u.get('original_cost', 0)
-                entry = {'n': u.get('name', ''), 'c': cost}
+                entry = {'n': u.get('name', ''), 'c': _tta_cost(u)}
                 fkey = str(u.get('faction_fkey') or '')
                 if fkey in faction_map:
                     entry['f'] = faction_map[fkey]
@@ -360,10 +379,7 @@ def build_tta_upgrades_db_js():
                 if pub_id is None:
                     continue
                 hex_id = format(int(pub_id), 'x')
-                cost = u.get('current_cost')
-                if cost is None:
-                    cost = u.get('original_cost', 0)
-                data[hex_id] = {'n': u.get('name', ''), 'c': cost}
+                data[hex_id] = {'n': u.get('name', ''), 'c': _tta_cost(u)}
             with open(cache_path, 'w', encoding='utf-8') as f:
                 json.dump(data, f, ensure_ascii=False)
             print(f"  TTA upgrade DB: {len(data)} upgrades cached to tta_upgrades.json")
