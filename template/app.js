@@ -1633,6 +1633,25 @@ function escHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;')
 // ─── PRINT LIST KEYWORDS ─────────────────────────────────────────────────────
 // Resolve a keyword name to its flashcard. Tries direct match, then normalized,
 // then progressive word truncation so old-format/parametric names still land.
+// Wait for every <img> in `root` to finish loading before returning.
+// window.print() snapshots the page synchronously, so printing straight after
+// setting innerHTML races the image downloads: on a local file:// build they
+// resolve instantly and look fine, but over the network (GitHub Pages) the
+// print dialog opens before the art arrives and the cards come out blank.
+// Images that already failed are `complete`, so they don't stall us; the
+// timeout is a backstop for anything that neither loads nor errors.
+function whenImagesReady(root, timeoutMs=10000){
+  const pending=[...root.querySelectorAll('img')].filter(i=>!i.complete);
+  if(!pending.length) return Promise.resolve();
+  return Promise.race([
+    Promise.all(pending.map(i=>new Promise(res=>{
+      i.addEventListener('load',res,{once:true});
+      i.addEventListener('error',res,{once:true});
+    }))),
+    new Promise(res=>setTimeout(res,timeoutMs))
+  ]);
+}
+
 function _cardIndexByNorm(){
   const cardByNorm={};
   CARDS.forEach(c=>{ cardByNorm[normKw(c.name)]=c; });
@@ -1665,10 +1684,9 @@ function printListKeywords(listId){
     const card=findCardForKeyword(kw,cardByNorm);
     const def=card?(card.summary||card.definition||''):'';
     const type=card?((card.type||'').charAt(0).toUpperCase()+(card.type||'').slice(1)):'';
-    const short=def.length>350?def.slice(0,350).replace(/\s\S+$/,'')+'…':def;
     return `<tr>
       <td class="pk-kw"><strong>${escHtml(dispName(kw))}</strong>${type?`<br><span class="pk-type">${escHtml(type)}</span>`:''}
-      </td><td class="pk-def">${escHtml(short)}</td></tr>`;
+      </td><td class="pk-def">${escHtml(def)}</td></tr>`;
   }).join('');
 
   const faction=(list.faction||'').toUpperCase();
@@ -1708,10 +1726,11 @@ function printListUnits(listId){
 
   const kwItem=kw=>{
     const card=findCardForKeyword(kw,cardByNorm);
+    // Print the rule text in full -- this is a play reference, so a clipped
+    // definition ending in "..." is worse than a longer row.
     const def=card?(card.summary||card.definition||''):'';
-    const short=def.length>160?def.slice(0,160).replace(/\s\S+$/,'')+'…':def;
     return `<li><span class="pu-kwname">${escHtml(dispName(kw))}</span>`+
-           `${short?` — ${escHtml(short)}`:''}</li>`;
+           `${def?` — ${escHtml(def)}`:''}</li>`;
   };
 
   let rows=sortUnitsByRank(units).map(u=>{
@@ -1791,7 +1810,7 @@ function printListUnits(listId){
     </div>
     <table class="pu-table"><tbody>${rows}</tbody></table>
     <p class="pk-footer">SW Legion Keywords App — ${new Date().toLocaleDateString()}</p>`;
-  window.print();
+  whenImagesReady(pane).then(()=>window.print());
 }
 
 // ─── SUPABASE AUTH & CLOUD SYNC ───────────────────────────────────────────────
