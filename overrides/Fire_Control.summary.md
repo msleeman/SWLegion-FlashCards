@@ -1,1 +1,1 @@
-Allies within range 1 upgrade 2 attack dice against enemies in this unit's LOS.
+Allies within range 1 and LOS of this unit upgrade 2 attack dice against enemies.

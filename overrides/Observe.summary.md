@@ -1,1 +1,1 @@
-Card action: an enemy within range 3 gains X observation tokens, which allies spend for rerolls.
+Place X observation tokens on an enemy unit to let friendly units reroll attack dice during attacks.
