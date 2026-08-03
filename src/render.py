@@ -10,6 +10,39 @@ import requests
 from src.config import HERE, CACHE_DIR, TEMPLATE_DIR, HEADERS
 
 
+def _weapon_list(card):
+    """Weapons as [{n, d:{r,b,w}, k:[...], rg:[...]}] for the dice maths.
+
+    Melee-only "Unarmed" profiles are dropped -- they are on nearly every card
+    and would just pad the unit sheet.
+    """
+    out = []
+    for w in (card.get('weapons') or []):
+        name = w.get('name', '')
+        dice = w.get('dice') or {}
+        if not any(dice.get(c) for c in ('r', 'b', 'w')):
+            continue
+        if name.strip().lower() == 'unarmed':
+            continue
+        kws = []
+        for kw in (w.get('keywords') or []):
+            if isinstance(kw, str):
+                kws.append(kw)
+            elif isinstance(kw, dict):
+                n = kw.get('name', '')
+                v = kw.get('value')
+                kws.append(f"{n} {v}" if v is not None else n)
+        entry = {'n': name,
+                 'd': {c: dice.get(c, 0) for c in ('r', 'b', 'w') if dice.get(c)}}
+        if kws:
+            entry['k'] = kws
+        rg = w.get('range')
+        if rg:
+            entry['rg'] = rg
+        out.append(entry)
+    return out
+
+
 def build_unit_db_js():
     """Return a compact JavaScript const UNIT_DB = {...}; string from the LegionHQ2 bundle.
 
@@ -116,6 +149,7 @@ def build_unit_db_js():
             for uid, card in data.items():
                 if card.get('cardType') != 'unit':
                     continue
+                stats = card.get('stats') or {}
                 unit_db[uid] = {
                     'n': card.get('cardName', ''),
                     't': card.get('title', ''),
@@ -124,6 +158,13 @@ def build_unit_db_js():
                     'c': card.get('cost', 0),
                     'k': all_kw_names(card),
                     'i': card.get('imageName', ''),
+                    # Dice maths for the unit sheet: defence die + surge charts,
+                    # miniature count, and each weapon's pool.
+                    'dd': stats.get('defense', ''),
+                    'ds': stats.get('defsurge', ''),
+                    'hs': stats.get('hitsurge', ''),
+                    'mc': stats.get('minicount', 1),
+                    'w': _weapon_list(card),
                 }
 
             with open(cache_path, "w", encoding="utf-8") as f:
@@ -255,6 +296,7 @@ def build_upgrade_db_js():
                     'c': card.get('cost', 0),
                     'k': all_upgrade_kw_names(card),
                     'i': card.get('imageName', ''),
+                    'w': _weapon_list(card),
                 }
 
             with open(cache_path, "w", encoding="utf-8") as f:

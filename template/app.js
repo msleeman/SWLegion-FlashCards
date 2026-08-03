@@ -1254,6 +1254,75 @@ function collectUnitKeywords(dbUnit, upgradeCards){
   return [...out].sort((a,b)=>a.localeCompare(b));
 }
 
+// ─── DICE MATHS ──────────────────────────────────────────────────────────────
+// Face counts verified against legion.takras.net/dice-calculator by driving it
+// directly: 20 dice of one colour with no keywords returns 12.51 / 8.32 / 4.18
+// average wounds for red / black / white, and switching the defender to a red
+// die takes 20 black from 8.34 to exactly 5.00.
+//
+//   attack (d8)   red   5 hit, 1 crit, 1 surge, 1 blank
+//                 black 3 hit, 1 crit, 1 surge, 3 blank
+//                 white 1 hit, 1 crit, 1 surge, 5 blank
+//   defence (d6)  red   3 block, 1 surge, 2 blank
+//                 white 1 block, 1 surge, 4 blank
+//
+// Note the calculator's headline "avg wounds" already subtracts a WHITE save;
+// the figures below are raw successes before any defence, so that the weapon
+// stat and the defending unit's save stay separate numbers.
+const ATK_FACES={r:{hit:5,crit:1,surge:1},b:{hit:3,crit:1,surge:1},w:{hit:1,crit:1,surge:1}};
+
+function _binomAtLeast(n,p,k){
+  // P(X >= k) for X ~ Binomial(n, p)
+  let cdf=0, term=Math.pow(1-p,n);
+  for(let i=0;i<k;i++){
+    if(i>0) term*= (n-i+1)/i * (p/(1-p));
+    cdf+=term;
+  }
+  return Math.max(0,Math.min(1,1-cdf));
+}
+
+// Expected successes for a dice pool. surge is '', 'h' (surge->hit) or
+// 'c' (surge->crit); criticalX converts up to X surges to crits first.
+function poolStats(pool, criticalX, surge){
+  const n=(pool.r||0)+(pool.b||0)+(pool.w||0);
+  if(!n) return {hits:0,crits:0,total:0,dice:0};
+  let hits=0, crits=0;
+  for(const c of ['r','b','w']){
+    const cnt=pool[c]||0;
+    if(!cnt) continue;
+    hits += cnt*ATK_FACES[c].hit/8;
+    crits+= cnt*ATK_FACES[c].crit/8;
+  }
+  const pSurge=1/8, expSurge=n*pSurge;
+  // Critical X: E[min(S, X)] = sum over k=1..X of P(S >= k)
+  let toCrit=0;
+  for(let k=1;k<=(criticalX||0);k++) toCrit+=_binomAtLeast(n,pSurge,k);
+  crits+=toCrit;
+  const leftover=Math.max(0,expSurge-toCrit);
+  if(surge==='h') hits+=leftover;
+  else if(surge==='c') crits+=leftover;
+  return {hits,crits,total:hits+crits,dice:n};
+}
+
+// Chance a single defence die saves one incoming hit.
+function saveChance(defDie, defSurge){
+  if(!defDie) return null;
+  const blocks=defDie==='r'?3:1;
+  return (blocks+(defSurge==='b'?1:0))/6;
+}
+
+function critValue(keywords){
+  for(const kw of (keywords||[])){
+    const m=/^Critical\s+(\d+)/i.exec(String(kw));
+    if(m) return parseInt(m[1],10);
+  }
+  return 0;
+}
+
+function fmtPool(d){
+  return ['r','b','w'].filter(c=>d[c]).map(c=>d[c]+({r:'R',b:'B',w:'W'})[c]).join(' ');
+}
+
 // ─── CROSS-DATABASE CARD MATCHING ────────────────────────────────────────────
 // UNIT_DB/UPGRADE_DB come from LegionHQ2 and are keyed by its own ids, so
 // Tabletop Admiral records have to be matched across by NAME -- but names are
@@ -1337,7 +1406,7 @@ function decodeArmy(url){
                 rank:unit.r||'',
                 cost:unit.c||0,
                 upgradeNames:upgCards.map(u=>u.n),
-                upgradeCards:upgCards.map(u=>({n:u.n,c:u.c||0,i:u.i||''}))});
+                upgradeCards:upgCards.map(u=>({n:u.n,c:u.c||0,i:u.i||'',w:u.w||[]}))});
     // The army-wide keyword set is just the union of the per-unit sets.
     kws.forEach(kw=>allKeywords.add(kw));
   }
@@ -1382,7 +1451,10 @@ function parseTtaUrl(url){
       const dbUnit=findDbUnit(tta.n,tta.t,tta.f);
       const displayUnit={n:tta.n,t:tta.t||'',
                          k:(tta.kw||[]).map(id=>TTA_KEYWORDS[id]).filter(Boolean),
-                         i:(dbUnit&&dbUnit.i)||''};
+                         i:(dbUnit&&dbUnit.i)||'',
+                         dd:(dbUnit&&dbUnit.dd)||'', ds:(dbUnit&&dbUnit.ds)||'',
+                         hs:(dbUnit&&dbUnit.hs)||'', mc:(dbUnit&&dbUnit.mc)||1,
+                         w:(dbUnit&&dbUnit.w)||[]};
       points+=tta.c||0;
 
       const upgradeNames=[];
@@ -1397,11 +1469,13 @@ function parseTtaUrl(url){
         // only consulted for art, and only as a fallback.
         const dbUpg=findDbUpgrade(ttaUpg.n,ttaUpg.c||0);
         upgCards.push({n:ttaUpg.n,
-                       k:(ttaUpg.kw||[]).map(id=>TTA_KEYWORDS[id]).filter(Boolean)});
+                       k:(ttaUpg.kw||[]).map(id=>TTA_KEYWORDS[id]).filter(Boolean),
+                       w:(dbUpg&&dbUpg.w)||[]});
         // Art: TTA's own image is addressed by public_id so it is always the
         // right card; LegionHQ2's has broader coverage but must be name-matched.
         upgDetails.push({n:ttaUpg.n,c:ttaUpg.c||0,
-                         i:(dbUpg&&dbUpg.i)||'', a:ttaUpg.a||''});
+                         i:(dbUpg&&dbUpg.i)||'', a:ttaUpg.a||'',
+                         w:(dbUpg&&dbUpg.w)||[]});
       }
 
       const kws=collectUnitKeywords(dbUnit,upgCards);
@@ -1521,7 +1595,12 @@ function saveList(){
       cost:u.cost||0,
       upgrades:u.upgradeNames||[],
       upgradeCards:u.upgradeCards||[],
-      kws:u.kws||[]
+      kws:u.kws||[],
+      // Dice maths inputs for the unit sheet.
+      dd:(u.unit&&u.unit.dd)||'', ds:(u.unit&&u.unit.ds)||'',
+      hs:(u.unit&&u.unit.hs)||'', mc:(u.unit&&u.unit.mc)||1,
+      weapons:[...((u.unit&&u.unit.w)||[]),
+               ...(u.upgradeCards||[]).flatMap(c=>c.w||[])]
     })),
     armyUrl:url,
     createdAt:new Date().toISOString()
@@ -1818,6 +1897,30 @@ function printListUnits(listId){
     const upgNames=(u.upgrades&&u.upgrades.length)
       ? `<div class="pu-upg">Upgrades: ${escHtml(u.upgrades.join(', '))}</div>` : '';
 
+    // Per-weapon expected hits, plus this unit's own save chance.
+    const save=saveChance(u.dd,u.ds);
+    const wpnRows=(u.weapons||[]).map(w=>{
+      const st=poolStats(w.d||{},critValue(w.k),u.hs||'');
+      const kw=(w.k||[]).join(', ');
+      const rg=w.rg&&w.rg.length
+        ? (w.rg.length>1?`${w.rg[0]}-${w.rg[w.rg.length-1]}`:String(w.rg[0])) : '';
+      return `<tr>
+        <td class="pw-n">${escHtml(w.n)}${rg?` <span class="pw-rg">R${escHtml(rg)}</span>`:''}
+          ${kw?`<span class="pw-kw">${escHtml(kw)}</span>`:''}</td>
+        <td class="pw-d">${escHtml(fmtPool(w.d||{}))}</td>
+        <td class="pw-h"><strong>${st.total.toFixed(2)}</strong>
+          <span class="pw-c">(${st.crits.toFixed(2)} crit)</span></td>
+      </tr>`;
+    }).join('');
+    const wpnBlock=wpnRows
+      ? `<table class="pw-table"><thead><tr>
+           <th>Weapon</th><th>Dice</th><th>Avg hits</th></tr></thead>
+         <tbody>${wpnRows}</tbody></table>` : '';
+    const saveLine=save!==null
+      ? `<div class="pu-save">Save vs 1 hit: <strong>${Math.round(save*100)}%</strong>
+         <span class="pu-savebits">(${u.dd==='r'?'red':'white'} defence${
+           u.ds==='b'?' + surge':''})</span></div>` : '';
+
     return `<tr class="pu-row">
       <td class="pu-img">
         ${img}
@@ -1828,6 +1931,8 @@ function printListUnits(listId){
         <div class="pu-name">${u.count>1?escHtml(u.count)+'× ':''}${escHtml(u.name)}${title}</div>
         ${rank}
         ${upgNames}
+        ${saveLine}
+        ${wpnBlock}
         <ul class="pu-kwlist">${kws.map(kwItem).join('')||'<li class="pu-none">No keywords</li>'}</ul>
       </td></tr>`;
   }).join('');
