@@ -1383,6 +1383,29 @@ function fmtPool(d){
   return ['r','b','w'].filter(c=>d[c]).map(c=>d[c]+({r:'R',b:'B',w:'W'})[c]).join(' ');
 }
 
+// Upgrade n dice one colour step. Upgrading always takes the weakest die first
+// (white -> black, then black -> red), which is what Assault X and Fire Control
+// do to a pool.
+function upgradeDice(pool, n){
+  const out={r:pool.r||0,b:pool.b||0,w:pool.w||0};
+  for(let i=0;i<n;i++){
+    if(out.w>0){ out.w--; out.b++; }
+    else if(out.b>0){ out.b--; out.r++; }
+    else break;
+  }
+  return out;
+}
+
+function kwNumber(kws, name){
+  for(const kw of (kws||[])){
+    // "Assault 2", bare "Assault", or "Assault X" when no source carries the
+    // value -- treat the last two as 1.
+    const m=new RegExp('^'+name+'(?:\\s+(\\d+|X))?\\s*$','i').exec(String(kw).trim());
+    if(m) return (m[1]&&m[1]!=='X'&&m[1]!=='x')?parseInt(m[1],10):1;
+  }
+  return 0;
+}
+
 // ─── CROSS-DATABASE CARD MATCHING ────────────────────────────────────────────
 // UNIT_DB/UPGRADE_DB come from LegionHQ2 and are keyed by its own ids, so
 // Tabletop Admiral records have to be matched across by NAME -- but names are
@@ -1998,18 +2021,22 @@ function printListUnits(listId){
         (c.w||[]).some(x=>x.n===w.n)));
     if(unitRanged){
       const mc=u.mc||1;
-      const pool={r:0,b:0,w:0};
-      for(const c of ['r','b','w']) pool[c]+=(unitRanged.d[c]||0)*mc;
+      // Track weapons separately: Assault upgrades X dice of each weapon, which
+      // is not the same as upgrading X dice of the merged pool.
+      const groups=[{d:{r:(unitRanged.d.r||0)*mc,b:(unitRanged.d.b||0)*mc,
+                        w:(unitRanged.d.w||0)*mc}, n:`${mc}x ${unitRanged.n}`}];
       let crit=critValue(unitRanged.k);
-      const parts=[`${mc}x ${unitRanged.n}`];
       for(const up of (u.upgradeCards||[])){
         for(const w of (up.w||[])){
           if(!w.rg||!w.rg.length||Math.max(...w.rg)<=0) continue;
-          for(const c of ['r','b','w']) pool[c]+=(w.d[c]||0);
+          groups.push({d:{r:w.d.r||0,b:w.d.b||0,w:w.d.w||0}, n:w.n});
           crit=Math.max(crit,critValue(w.k));
-          parts.push(w.n);
         }
       }
+      const sum=gs=>gs.reduce((a,g)=>({r:a.r+g.d.r,b:a.b+g.d.b,w:a.w+g.d.w}),
+                              {r:0,b:0,w:0});
+      const pool=sum(groups);
+      const parts=groups.map(g=>g.n);
       const st=poolStats(pool,crit,u.hs||'');
       if(st.dice){
         totalRow=`<tr class="pw-total">
@@ -2019,6 +2046,20 @@ function printListUnits(listId){
           <td class="pw-d">${escHtml(fmtPool(pool))}</td>
           <td class="pw-h"><strong>${st.total.toFixed(2)}</strong>
             <span class="pw-c">(${st.crits.toFixed(2)} crit)</span></td></tr>`;
+        // Assault X upgrades X dice of each weapon, but only when the defender
+        // is within range 1 -- so it gets its own conditional row rather than
+        // inflating the headline figure.
+        const assault=kwNumber(u.kws,'Assault');
+        if(assault){
+          const up=sum(groups.map(g=>({d:upgradeDice(g.d,assault)})));
+          const sa=poolStats(up,crit,u.hs||'');
+          totalRow+=`<tr class="pw-total pw-cond">
+            <td class="pw-n"><strong>Full unit at range 1</strong>
+              <span class="pw-kw">Assault ${assault}: upgrade ${assault} die per weapon</span></td>
+            <td class="pw-d">${escHtml(fmtPool(up))}</td>
+            <td class="pw-h"><strong>${sa.total.toFixed(2)}</strong>
+              <span class="pw-c">(${sa.crits.toFixed(2)} crit)</span></td></tr>`;
+        }
       }
     }
     const wpnBlock=wpnRows

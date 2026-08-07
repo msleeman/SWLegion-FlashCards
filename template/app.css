@@ -392,6 +392,8 @@ html,body{width:100%;height:100%;overflow:hidden;
   .pw-d{white-space:nowrap;color:#333;font-size:8pt}
   .pw-h{white-space:nowrap;color:#000}
   .pw-c{color:#777;font-size:7.5pt;font-weight:normal}
+  .pw-total td{border-top:1px solid #bbb;border-bottom:none;padding-top:3pt}
+  .pw-cond td{border-top:none;color:#555}
   .pu-kwlist{list-style:none;margin:0;padding:0}
   .pu-kwlist li{font-size:8.5pt;line-height:1.35;color:#333;
     padding:1.5pt 0;border-bottom:1px dotted #eee}
