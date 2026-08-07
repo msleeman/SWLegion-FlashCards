@@ -161,73 +161,69 @@ def download_upgrade_card_images(imgdir):
     return downloaded, skipped, failed
 
 
-def download_tta_upgrade_images(imgdir):
-    """Download Tabletop Admiral's own upgrade card art, keyed by public_id.
+def _tta_card_art(rows, kind, outdir, path_tpl):
+    """Fetch current Tabletop Admiral card art for units or upgrades.
 
-    Complements download_upgrade_card_images(): LegionHQ2 has broader coverage
-    (433 of 434) but has to be matched by name, which is ambiguous for the 13
-    upgrade names shared by several cards -- that is how a Bo-Katan Darksaber
-    ended up rendered on Moff Gideon. TTA art is addressed by public_id, so it
-    is always the right card; where TTA has none we fall back to LegionHQ2.
+    Addressed by the record's `id` and `image_version` on the CDN the live site
+    actually serves from (d26oqf9i6fvic.cloudfront.net). This is NOT the same as
+    the API's `image_url` field, which still points at old Cloudinary scans that
+    carry the pre-revamp layout with the point cost and card type along the
+    bottom edge.
 
-    Returns (downloaded, skipped, failed).
+    Returns (downloaded, skipped, missing).
     """
-    from src.config import CACHE_DIR
-
-    cache_path = os.path.join(CACHE_DIR, "tta_upgrades.json")
-    if not os.path.exists(cache_path):
-        return 0, 0, 0
-    import json
-    with open(cache_path, encoding="utf-8") as f:
-        db = json.load(f)
-
-    raw_path = os.path.join(CACHE_DIR, "tta_upgrades_raw.json")
-    if os.path.exists(raw_path):
-        with open(raw_path, encoding="utf-8") as f:
-            raw = json.load(f)
-    else:
-        try:
-            r = requests.get("https://tabletopadmiral.com/api/upgrades",
-                             headers=HEADERS, timeout=30)
-            r.raise_for_status()
-            raw = r.json()
-            with open(raw_path, "w", encoding="utf-8") as f:
-                json.dump(raw, f, ensure_ascii=False)
-        except Exception:
-            return 0, 0, 0
-
-    url_by_hex = {}
-    for u in raw:
-        pid = u.get("public_id")
-        if pid is None:
-            continue
-        art = u.get("image_url") or u.get("cloudinary_image_url")
-        if art:
-            url_by_hex[format(int(pid), "x")] = art
-
-    outdir = os.path.join(imgdir, "upgrades", "tta")
     os.makedirs(outdir, exist_ok=True)
-
-    downloaded = skipped = failed = 0
-    for hex_id, entry in db.items():
-        fname = entry.get("a")
-        url = url_by_hex.get(hex_id)
-        if not fname or not url:
+    downloaded = skipped = missing = 0
+    for rec in rows:
+        rid = rec.get('id')
+        if rid is None:
             continue
+        fname = f"{rid}.webp"
         dest = os.path.join(outdir, fname)
         if os.path.exists(dest) and os.path.getsize(dest) > 1000:
             skipped += 1
             continue
+        url = path_tpl.format(id=rid, ver=rec.get('image_version') or 1)
         try:
             r = requests.get(url, headers=HEADERS, timeout=20)
-            r.raise_for_status()
-            with open(dest, "wb") as f:
+            if r.status_code != 200 or len(r.content) < 1000:
+                missing += 1
+                continue
+            with open(dest, 'wb') as f:
                 f.write(r.content)
             downloaded += 1
         except Exception:
-            failed += 1
+            missing += 1
+    return downloaded, skipped, missing
 
-    return downloaded, skipped, failed
+
+TTA_CDN = 'https://d26oqf9i6fvic.cloudfront.net/'
+
+
+def download_tta_card_images(imgdir):
+    """Download current TTA art for both upgrades and units.
+
+    Runs before the HTML build so render.py can tell which cards actually have
+    current art simply by looking on disk.
+    """
+    out = {}
+    try:
+        ups = requests.get('https://tabletopadmiral.com/api/upgrades',
+                           headers=HEADERS, timeout=30).json()
+        out['upgrades'] = _tta_card_art(
+            ups, 'upgrade', os.path.join(imgdir, 'upgrades', 'tta'),
+            TTA_CDN + 'upgrades-new/trimmed/{id}.webp?version={ver}')
+    except Exception as e:
+        print(f"  WARN: TTA upgrade art failed: {e}")
+    try:
+        units = requests.get('https://tabletopadmiral.com/api/units',
+                             headers=HEADERS, timeout=30).json()
+        out['units'] = _tta_card_art(
+            units, 'unit', os.path.join(imgdir, 'units', 'tta'),
+            TTA_CDN + 'new-unit-cards/front/420/{id}.webp?version={ver}')
+    except Exception as e:
+        print(f"  WARN: TTA unit art failed: {e}")
+    return out
 
 
 def download_command_card_images(imgdir):

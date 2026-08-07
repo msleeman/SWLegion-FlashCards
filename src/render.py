@@ -7,7 +7,7 @@ import json
 
 import requests
 
-from src.config import HERE, CACHE_DIR, TEMPLATE_DIR, HEADERS
+from src.config import HERE, CACHE_DIR, TEMPLATE_DIR, HEADERS, DIST_IMGDIR
 
 
 def _weapon_list(card):
@@ -577,6 +577,10 @@ def build_tta_db_js():
                 entry = {'n': u.get('name', ''), 'c': _tta_cost(u),
                          't': u.get('title') or '',
                          'kw': [str(i) for i in (u.get('keyword_ids') or [])]}
+                # Current TTA unit card art (see the upgrade builder above).
+                art_name = f"{u.get('id')}.webp"
+                if os.path.exists(os.path.join(DIST_IMGDIR, 'units', 'tta', art_name)):
+                    entry['a'] = art_name
                 fkey = str(u.get('faction_fkey') or '')
                 if fkey in faction_map:
                     entry['f'] = faction_map[fkey]
@@ -632,12 +636,14 @@ def build_tta_upgrades_db_js():
                 hex_id = format(int(pub_id), 'x')
                 entry = {'n': u.get('name', ''), 'c': _tta_cost(u),
                          'kw': [str(i) for i in (u.get('keyword_ids') or [])]}
-                # TTA's own card art, keyed by public_id -- exact for this card,
-                # unlike the LegionHQ2 art we have to name-match for.
-                art = u.get('image_url') or u.get('cloudinary_image_url')
-                if art:
-                    ext = os.path.splitext(art.split('?')[0])[1] or '.webp'
-                    entry['a'] = hex_id + ext
+                # Current TTA card art, addressed by the record id and fetched
+                # ahead of the build by download_tta_card_images(). Exact for
+                # this card (no name matching) and the post-revamp layout --
+                # the API's own image_url still serves the old scans.
+                art_name = f"{u.get('id')}.webp"
+                art_path = os.path.join(DIST_IMGDIR, 'upgrades', 'tta', art_name)
+                if os.path.exists(art_path):
+                    entry['a'] = art_name
                 data[hex_id] = entry
             with open(cache_path, 'w', encoding='utf-8') as f:
                 json.dump(data, f, ensure_ascii=False)

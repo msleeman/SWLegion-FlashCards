@@ -22,7 +22,7 @@ from src.overrides import (
 )
 from src.scrape import find_pdf, extract_keywords_from_pdf
 from src.images import (download_images, download_upgrade_card_images,
-                        download_tta_upgrade_images, download_command_card_images)
+                        download_tta_card_images, download_command_card_images)
 from src.render import build_html
 
 # ── 1. Load cached card data ──────────────────────────────────────────────────
@@ -171,6 +171,17 @@ manual_count = apply_manual_overlays(card_data)
 if manual_count:
     print(f"  {manual_count} definitions overridden from manual/ folder")
 
+# ── 4c. Current Tabletop Admiral card art ─────────────────────────────────────
+# Must run BEFORE build_html: render.py decides whether a card has current art
+# by checking for the file on disk.
+try:
+    res = download_tta_card_images(DIST_IMGDIR)
+    for kind, (dl, sk, ms) in res.items():
+        if dl or ms:
+            print(f"  TTA {kind} art: {dl} downloaded, {sk} cached, {ms} unavailable")
+except Exception as e:
+    print(f"  WARN: TTA card art download failed: {e}")
+
 # ── 5. Build HTML ─────────────────────────────────────────────────────────────
 print("Building HTML...")
 html = build_html(card_data)
@@ -181,9 +192,6 @@ try:
     dl, sk, fl = download_upgrade_card_images(DIST_IMGDIR)
     if dl or fl:
         print(f"  Upgrade art (LegionHQ2): {dl} downloaded, {sk} cached, {fl} failed")
-    dl, sk, fl = download_tta_upgrade_images(DIST_IMGDIR)
-    if dl or fl:
-        print(f"  Upgrade art (Tabletop Admiral): {dl} downloaded, {sk} cached, {fl} failed")
     dl, sk, fl = download_command_card_images(DIST_IMGDIR)
     if dl or fl:
         print(f"  Command card art: {dl} downloaded, {sk} cached, {fl} failed")

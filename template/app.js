@@ -1451,7 +1451,7 @@ function parseTtaUrl(url){
       const dbUnit=findDbUnit(tta.n,tta.t,tta.f);
       const displayUnit={n:tta.n,t:tta.t||'',
                          k:(tta.kw||[]).map(id=>TTA_KEYWORDS[id]).filter(Boolean),
-                         i:(dbUnit&&dbUnit.i)||'',
+                         i:(dbUnit&&dbUnit.i)||'', a:tta.a||'',
                          dd:(dbUnit&&dbUnit.dd)||'', ds:(dbUnit&&dbUnit.ds)||'',
                          hs:(dbUnit&&dbUnit.hs)||'', mc:(dbUnit&&dbUnit.mc)||1,
                          w:(dbUnit&&dbUnit.w)||[]};
@@ -1591,6 +1591,7 @@ function saveList(){
       name:(u.unit&&u.unit.n)||'',
       title:(u.unit&&u.unit.t)||'',
       img:(u.unit&&u.unit.i)||'',
+      artTta:(u.unit&&u.unit.a)||'',
       rank:u.rank||'',
       cost:u.cost||0,
       upgrades:u.upgradeNames||[],
@@ -1859,8 +1860,11 @@ function printListUnits(listId){
     const kws=(u.kws||[]).filter(k=>!active||active.has(k.toLowerCase()));
     kws.forEach(k=>covered.add(k.toLowerCase()));
 
-    const img=u.img
-      ? `<img class="pu-unitcard" src="images/${encodeURIComponent(u.img)}" alt="" onerror="this.style.display='none'">`
+    // Prefer current TTA art; the LegionHQ2 scans are the pre-revamp layout.
+    const unitSrc=u.artTta?'images/units/tta/'+encodeURIComponent(u.artTta)
+                          :(u.img?'images/'+encodeURIComponent(u.img):'');
+    const img=unitSrc
+      ? `<img class="pu-unitcard" src="${unitSrc}" alt="" onerror="this.style.display='none'">`
       : `<div class="pu-noimg">${escHtml(u.name)}</div>`;
 
     // Upgrade cards under the unit card: real art where we have it, a named
