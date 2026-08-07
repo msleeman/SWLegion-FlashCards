@@ -1254,6 +1254,39 @@ function collectUnitKeywords(dbUnit, upgradeCards){
   return [...out].sort((a,b)=>a.localeCompare(b));
 }
 
+// Tabletop Admiral references keywords by numeric id, which tells us WHICH
+// keyword a card has but not its X value. LegionHQ2 spells the value into the
+// keyword string ("Strategize 2", "Tactical 1"), so pull the numbers from there
+// and pin them to the TTA names.
+function kwValueMap(dbUnit, upgradeCards){
+  const map={};
+  const scan=list=>(list||[]).forEach(kw=>{
+    const m=/^(.*?)\s+(\d+)\s*$/.exec(String(kw).replace(/:.*$/,'').trim());
+    if(m) map[m[1].trim().toLowerCase()]=m[2];
+  });
+  scan(dbUnit&&dbUnit.k);
+  (dbUnit&&dbUnit.w||[]).forEach(w=>scan(w.k));
+  (upgradeCards||[]).forEach(u=>{
+    if(!u) return;
+    scan(u.lk);                       // LegionHQ2 strings carry the values
+    (u.w||[]).forEach(w=>scan(w.k));  // weapon keywords, e.g. "Critical 2"
+  });
+  return map;
+}
+
+// Apply those values: "Strategize" -> "Strategize 2", "Tactical X" -> "Tactical 1".
+// TTA spells some names with a literal X ("Tactical X", "Critical X"), so strip
+// that before matching and then substitute rather than append.
+function applyKwValues(names, valueMap){
+  return names.map(n=>{
+    if(/\d/.test(n)) return n;                       // already carries a value
+    const base=n.replace(/\s+X$/i,'').trim();
+    const v=valueMap[base.toLowerCase()];
+    if(!v) return n;
+    return /\s+X$/i.test(n)?`${base} ${v}`:`${n} ${v}`;
+  });
+}
+
 // ─── DICE MATHS ──────────────────────────────────────────────────────────────
 // Face counts verified against legion.takras.net/dice-calculator by driving it
 // directly: 20 dice of one colour with no keywords returns 12.51 / 8.32 / 4.18
@@ -1309,6 +1342,33 @@ function saveChance(defDie, defSurge){
   if(!defDie) return null;
   const blocks=defDie==='r'?3:1;
   return (blocks+(defSurge==='b'?1:0))/6;
+}
+
+// Resolve card art by NAME at render time rather than trusting the filename a
+// list captured when it was saved. Art filenames have been re-keyed once
+// already (public_id -> id) and a saved list then points at files that no
+// longer exist, which shows up as broken images only after deploy.
+// Cost disambiguates the 13 upgrade names shared by several cards -- matching
+// on name alone puts Sabine's Darksaber on Moff Gideon.
+function currentUpgradeArt(name, cost){
+  const pick=list=>{
+    const hits=list.filter(u=>u.n===name);
+    if(hits.length<2) return hits[0];
+    return hits.find(u=>(u.c||0)===cost)||null;
+  };
+  const t=pick(Object.values(TTA_UPGRADES));
+  if(t&&t.a) return 'images/upgrades/tta/'+encodeURIComponent(t.a);
+  const l=pick(Object.values(UPGRADE_DB));
+  if(l&&l.i) return 'images/upgrades/'+encodeURIComponent(l.i);
+  return '';
+}
+function currentUnitArt(name,title){
+  for(const u of Object.values(TTA_UNITS))
+    if(u.n===name&&(!title||!u.t||u.t===title)&&u.a)
+      return 'images/units/tta/'+encodeURIComponent(u.a);
+  for(const u of Object.values(UNIT_DB))
+    if(u.n===name&&u.i) return 'images/'+encodeURIComponent(u.i);
+  return '';
 }
 
 function critValue(keywords){
@@ -1470,6 +1530,7 @@ function parseTtaUrl(url){
         const dbUpg=findDbUpgrade(ttaUpg.n,ttaUpg.c||0);
         upgCards.push({n:ttaUpg.n,
                        k:(ttaUpg.kw||[]).map(id=>TTA_KEYWORDS[id]).filter(Boolean),
+                       lk:(dbUpg&&dbUpg.k)||[],
                        w:(dbUpg&&dbUpg.w)||[]});
         // Art: TTA's own image is addressed by public_id so it is always the
         // right card; LegionHQ2's has broader coverage but must be name-matched.
@@ -1478,7 +1539,14 @@ function parseTtaUrl(url){
                          w:(dbUpg&&dbUpg.w)||[]});
       }
 
-      const kws=collectUnitKeywords(dbUnit,upgCards);
+      // Keyword SET comes from TTA ids; X values come from LegionHQ2 strings.
+      const ttaNames=[...new Set([
+        ...(tta.kw||[]).map(id=>TTA_KEYWORDS[id]).filter(Boolean),
+        ...upgCards.flatMap(u=>u.k||[]),
+        ...upgCards.filter(u=>matchesKnownCard(u.n)).map(u=>u.n)
+      ])];
+      const kws=applyKwValues(ttaNames, kwValueMap(dbUnit,upgCards))
+                  .sort((a,b)=>a.localeCompare(b));
       kws.forEach(kw=>allKeywords.add(kw));
 
       const groupKey=hexId+'|'+upgradeNames.slice().sort().join(',');
@@ -1823,7 +1891,7 @@ function printListKeywords(listId){
       <p class="pk-meta">${faction}${pts}${src} · ${sorted.length} keywords · Alphabetical</p>
     </div>
     <table class="pk-table"><tbody>${rows}</tbody></table>
-    <p class="pk-footer">SW Legion Keywords App — ${new Date().toLocaleDateString()}</p>`;
+    <p class="pk-footer">SW Legion Keywords App: ${new Date().toLocaleDateString()}</p>`;
   window.print();
 }
 
@@ -1851,18 +1919,23 @@ function printListUnits(listId){
     const card=findCardForKeyword(kw,cardByNorm);
     // Print the rule text in full -- this is a play reference, so a clipped
     // definition ending in "..." is worse than a longer row.
-    const def=card?(card.summary||card.definition||''):'';
+    let def=card?(card.summary||card.definition||''):'';
+    // Substitute the unit's actual value for X, so Thrawn reads "Strategize 2 --
+    // ... then 2 allies ..." rather than leaving the reader to do the swap.
+    const val=/\s(\d+)\s*$/.exec(kw);
+    if(val&&def) def=def.replace(/\bX\b/g,val[1]);
     return `<li><span class="pu-kwname">${escHtml(dispName(kw))}</span>`+
-           `${def?` — ${escHtml(def)}`:''}</li>`;
+           `${def?`: ${escHtml(def)}`:''}</li>`;
   };
 
   let rows=sortUnitsByRank(units).map(u=>{
     const kws=(u.kws||[]).filter(k=>!active||active.has(k.toLowerCase()));
     kws.forEach(k=>covered.add(k.toLowerCase()));
 
-    // Prefer current TTA art; the LegionHQ2 scans are the pre-revamp layout.
-    const unitSrc=u.artTta?'images/units/tta/'+encodeURIComponent(u.artTta)
-                          :(u.img?'images/'+encodeURIComponent(u.img):'');
+    // Resolve fresh so lists saved before an art re-key still render.
+    const unitSrc=currentUnitArt(u.name,u.title)
+      ||(u.artTta?'images/units/tta/'+encodeURIComponent(u.artTta):'')
+      ||(u.img?'images/'+encodeURIComponent(u.img):'');
     const img=unitSrc
       ? `<img class="pu-unitcard" src="${unitSrc}" alt="" onerror="this.style.display='none'">`
       : `<div class="pu-noimg">${escHtml(u.name)}</div>`;
@@ -1874,10 +1947,10 @@ function printListUnits(listId){
       : (u.upgrades||[]).map(n=>({n,c:0,i:''}));
     const upgThumbs=upgCards.map(up=>{
       const cost=up.c?`<span class="pu-upgcost">${escHtml(up.c)}</span>`:'';
-      // Prefer Tabletop Admiral's art (addressed by card id, always the right
-      // card) and fall back to LegionHQ2's name-matched art.
-      const src=up.a?'images/upgrades/tta/'+encodeURIComponent(up.a)
-                    :(up.i?'images/upgrades/'+encodeURIComponent(up.i):'');
+      // Resolve fresh so lists saved before an art re-key still render.
+      const src=currentUpgradeArt(up.n,up.c||0)
+        ||(up.a?'images/upgrades/tta/'+encodeURIComponent(up.a):'')
+        ||(up.i?'images/upgrades/'+encodeURIComponent(up.i):'');
       const inner=src
         ? `<img src="${src}" alt=""
              onerror="this.parentNode.classList.add('pu-upgfallback');this.remove()">`
@@ -1916,10 +1989,42 @@ function printListUnits(listId){
           <span class="pw-c">(${st.crits.toFixed(2)} crit)</span></td>
       </tr>`;
     }).join('');
+    // Full-unit pool: every miniature fires the unit card's ranged weapon, and
+    // each weapon-bearing upgrade adds its own miniature on top. So a 4-model
+    // Stormtrooper squad with a T-21 throws 4x1W + 4W = 8W, Critical 2.
+    let totalRow='';
+    const unitRanged=(u.weapons||[]).find(w=>
+      w.rg&&w.rg.length&&Math.max(...w.rg)>0&&!(u.upgradeCards||[]).some(c=>
+        (c.w||[]).some(x=>x.n===w.n)));
+    if(unitRanged){
+      const mc=u.mc||1;
+      const pool={r:0,b:0,w:0};
+      for(const c of ['r','b','w']) pool[c]+=(unitRanged.d[c]||0)*mc;
+      let crit=critValue(unitRanged.k);
+      const parts=[`${mc}x ${unitRanged.n}`];
+      for(const up of (u.upgradeCards||[])){
+        for(const w of (up.w||[])){
+          if(!w.rg||!w.rg.length||Math.max(...w.rg)<=0) continue;
+          for(const c of ['r','b','w']) pool[c]+=(w.d[c]||0);
+          crit=Math.max(crit,critValue(w.k));
+          parts.push(w.n);
+        }
+      }
+      const st=poolStats(pool,crit,u.hs||'');
+      if(st.dice){
+        totalRow=`<tr class="pw-total">
+          <td class="pw-n"><strong>Full unit</strong>
+            <span class="pw-kw">${escHtml(parts.join(' + '))}${
+              crit?`, Critical ${crit}`:''}</span></td>
+          <td class="pw-d">${escHtml(fmtPool(pool))}</td>
+          <td class="pw-h"><strong>${st.total.toFixed(2)}</strong>
+            <span class="pw-c">(${st.crits.toFixed(2)} crit)</span></td></tr>`;
+      }
+    }
     const wpnBlock=wpnRows
       ? `<table class="pw-table"><thead><tr>
            <th>Weapon</th><th>Dice</th><th>Avg hits</th></tr></thead>
-         <tbody>${wpnRows}</tbody></table>` : '';
+         <tbody>${wpnRows}${totalRow}</tbody></table>` : '';
     const saveLine=save!==null
       ? `<div class="pu-save">Save vs 1 hit: <strong>${Math.round(save*100)}%</strong>
          <span class="pu-savebits">(${u.dd==='r'?'red':'white'} defence${
@@ -1965,7 +2070,7 @@ function printListUnits(listId){
       <p class="pk-meta">${faction}${pts} · ${totalMinis} units · By unit</p>
     </div>
     <table class="pu-table"><tbody>${rows}</tbody></table>
-    <p class="pk-footer">SW Legion Keywords App — ${new Date().toLocaleDateString()}</p>`;
+    <p class="pk-footer">SW Legion Keywords App: ${new Date().toLocaleDateString()}</p>`;
   whenImagesReady(pane).then(()=>window.print());
 }
 

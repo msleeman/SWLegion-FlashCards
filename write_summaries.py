@@ -13,7 +13,7 @@ from collections import defaultdict
 from src.overrides import _keyword_stem
 
 S = {
-"Advanced_Targeting": "Attacking the listed unit type, may gain X aim tokens — but only 1 attack pool and no additional defenders.",
+"Advanced_Targeting": "Attacking the listed unit type, may gain X aim tokens, but only 1 attack pool and no additional defenders.",
 "Agile": "Gains X dodge tokens after each standard move.",
 "AI": "With no faceup order token (and suppressed, damaged, or half-destroyed), must take one of the listed actions.",
 "Aid": "Hand an aim/dodge/surge token you would gain to a listed ally within range 2; you take 1 suppression.",
@@ -34,7 +34,7 @@ S = {
 "Beam": "Declare up to X extra attacks with this weapon, each against a unit within range 1 of the last. Never with Gunslinger.",
 "Blast": "The defender cannot use cover against this attack pool.",
 "Block": "Spending a dodge token while defending grants surge:block for that attack.",
-"Bolster": "Card action: up to X allies nearby each gain a token (aim or surge — see the card).",
+"Bolster": "Card action: up to X allies nearby each gain a token (aim or surge, see the card).",
 "Bounty": "Marks an enemy commander or operative at setup; score 1 VP for defeating it.",
 "Cache": "Places the listed tokens on the card at setup, still spendable if the added miniatures die.",
 "Calculate_Odds": "Card action: a nearby friendly unit in LOS gains several tokens (see the card for which).",
@@ -69,7 +69,7 @@ S = {
 "Divulge": "May be revealed early for its divulge effect, then returns to hand unplayed.",
 "Djem_So_Mastery": "A melee attacker suffers 1 wound if its attack roll contains any blanks.",
 "Dodge": "The dodge action grants a dodge token; spend them to cancel hit results.",
-"Duelist": "Spending an aim in melee grants Pierce 1; spending a dodge grants Immune: Pierce.",
+"Duelist": "Spending aim tokens during melee attacks grants Pierce 1, while spending dodge tokens when defending grants Immune: Pierce.",
 "Enrage": "At X or more wounds, gains Charge and its courage becomes “-”.",
 "Entourage": "The named unit ignores rank limits, can be ordered at range 2, and can give backup.",
 "Equip": "Must equip the listed upgrades during army building.",
@@ -110,7 +110,7 @@ S = {
 "Interrogate": "Enemy command cards near this unit count as 1 more pip when breaking priority ties.",
 "Ion": "Wounded vehicles and droids gain X ion tokens, each risking a lost action. Also forces shield flips.",
 "Jarkai_Mastery": "In melee, spend dodge tokens to turn blanks into hits or hits into crits.",
-"Jedi_Hunter": "Gains surge:crit when attacking a unit with a force upgrade slot.",
+"Jedi_Hunter": "When a unit with the Jedi Hunter keyword attacks a unit with a force upgrade icon on its upgrade bar, the attacking unit gains surge to crit until the end of that attack.",
 "Jump": "A move action that ignores terrain of height X or lower.",
 "Juyo_Mastery": "With 1 or more wounds, gains an extra action. Still limited to 2 moves.",
 "Latent_Power": "End of activation: take 1 suppression to roll a red die for a debuff or a heal.",
