@@ -138,9 +138,9 @@ class TestBadSummary:
 
 class TestProgressBarLayout:
 
-    def test_topbar_right_padding_205px(self, source):
+    def test_topbar_right_padding_225px(self, source):
         label, text = source
-        assertIn("padding:14px 205px 0 16px", text, label)
+        assertIn("padding:14px 225px 0 16px", text, label)
 
     def test_old_equal_padding_gone(self, source):
         label, text = source

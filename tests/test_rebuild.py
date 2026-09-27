@@ -138,8 +138,8 @@ class TestRebuildProgressBarLayout:
 
     def test_topbar_right_padding(self, rebuilt_html):
         html, _ = rebuilt_html
-        assert "padding:14px 205px 0 16px" in html, (
-            "Rebuilt HTML: #fs-topbar must have 205px right padding to clear nav chips"
+        assert "padding:14px 225px 0 16px" in html, (
+            "Rebuilt HTML: #fs-topbar must have 225px right padding to clear nav chips"
         )
 
 

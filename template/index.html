@@ -72,9 +72,14 @@
     </div>
   </div>
   <div id="fs-nav-btns">
-    <button class="fs-pill" onclick="showScreen('catalog-screen')">Catalog</button>
-    <button class="fs-pill" onclick="showScreen('commands-screen')">Commands</button>
-    <button class="fs-pill" id="pill-lists" onclick="showScreen('lists-screen')">Lists</button>
+    <div id="lists-menu-wrap">
+      <button class="fs-pill" id="pill-lists" onclick="toggleListsMenu()">Lists &#9662;</button>
+      <div id="lists-menu"></div>
+    </div>
+    <div class="fs-pill-group">
+      <button class="fs-pill" onclick="showScreen('catalog-screen')">Catalog</button>
+      <button class="fs-pill" onclick="showScreen('commands-screen')">Commands</button>
+    </div>
     <div id="acct-dropdown-wrap">
       <button class="fs-pill" id="acct-btn" onclick="toggleAcctDropdown()">&#128100;</button>
       <div id="acct-dropdown">

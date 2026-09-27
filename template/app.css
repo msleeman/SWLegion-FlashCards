@@ -22,7 +22,7 @@ html,body{width:100%;height:100%;overflow:hidden;
 #fs-bot-grad{display:none}
 #fs-flip-zone{position:absolute;inset:0;cursor:pointer;z-index:3}
 #fs-topbar{position:absolute;top:0;left:0;right:0;
-  padding:14px 205px 0 16px;display:flex;align-items:center;gap:10px;z-index:10;pointer-events:none}
+  padding:14px 225px 0 16px;display:flex;align-items:center;gap:10px;z-index:10;pointer-events:none}
 #fs-topbar>*{pointer-events:all}
 .fs-pill{background:rgba(0,0,0,.6);backdrop-filter:blur(12px);
   border:1px solid rgba(245,197,24,.25);border-radius:20px;
@@ -291,6 +291,27 @@ html,body{width:100%;height:100%;overflow:hidden;
   transition:background .15s}
 .acct-item:hover{background:rgba(245,197,24,.1);color:var(--gold)}
 .acct-item.danger{color:#f08080}
+/* Top-bar Lists menu */
+#lists-menu-wrap{position:relative;display:inline-block}
+#lists-menu{position:absolute;top:calc(100% + 6px);right:0;min-width:300px;max-width:calc(100vw - 32px);
+  max-height:70vh;overflow-y:auto;background:#0d1020;border:1px solid rgba(245,197,24,.35);border-radius:10px;
+  z-index:300;box-shadow:0 8px 24px rgba(0,0,0,.6);display:none}
+#lists-menu.open{display:block}
+.lists-menu-row{display:flex;align-items:center;gap:6px;padding:8px 10px 8px 14px;
+  border-bottom:1px solid rgba(255,255,255,.06)}
+.lists-menu-name{flex:1;min-width:0;font-size:13px;color:var(--white2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lists-menu-btn{flex-shrink:0;font-size:12px;padding:4px 10px;border-radius:12px;background:rgba(245,197,24,.1);
+  border:1px solid rgba(245,197,24,.35);color:var(--gold);cursor:pointer;font-family:inherit;white-space:nowrap}
+.lists-menu-btn:hover{background:rgba(245,197,24,.22)}
+.lists-menu-manage{font-size:12px;color:rgba(255,255,255,.5)}
+@media(max-width:500px){
+  #lists-menu{position:fixed;top:56px;left:16px;right:16px;min-width:0;max-width:none}
+}
+/* Catalog + Commands shown as one joined control */
+.fs-pill-group{display:flex}
+.fs-pill-group .fs-pill{border-radius:0}
+.fs-pill-group .fs-pill:first-child{border-radius:20px 0 0 20px}
+.fs-pill-group .fs-pill:last-child{border-radius:0 20px 20px 0;border-left:none}
 .acct-item.danger:hover{background:rgba(192,57,43,.2);color:#f08080}
 
 /* ── COMMAND CARD BROWSER ─────────────────────────────────────────────────── */

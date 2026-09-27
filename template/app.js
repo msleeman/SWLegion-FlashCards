@@ -1730,6 +1730,8 @@ function renderSavedLists(){
         </div>
       </div>
       <div class="list-card-actions" onclick="event.stopPropagation()">
+        <button class="list-btn-edit" onclick="printListUnits('${lst.id}')" title="Print unit cards with their keywords">&#128444; By Unit</button>
+        <button class="list-btn-edit" onclick="printListKeywords('${lst.id}')" title="Print keywords as PDF">&#128438; PDF</button>
         <button class="list-btn-filter${isActive?' on':''}" data-list-id="${lst.id}"
           onclick="toggleListFilter('${lst.id}')">${isActive?'Filtering':'Filter'}</button>
         <button class="list-btn-edit" onclick="openListModal('${lst.id}')">Edit</button>
@@ -2528,6 +2530,30 @@ function toggleAcctDropdown(){
       closeAcctDropdown(); document.removeEventListener('click',_c);
     }
   }); },0);
+}
+// Top-bar Lists menu: every saved list with one-click print buttons, plus a
+// link through to the Lists screen for importing and editing.
+function toggleListsMenu(){
+  const dd=document.getElementById('lists-menu');
+  if(dd.classList.contains('open')){ closeListsMenu(); return; }
+  const lists=loadLists();
+  let html=lists.map(l=>`<div class="lists-menu-row">
+      <div class="lists-menu-name" title="${escHtml(l.name)}">${escHtml(l.name)}</div>
+      <button class="lists-menu-btn" onclick="closeListsMenu();printListUnits('${l.id}')" title="Print unit cards with their keywords">&#128444; By Unit</button>
+      <button class="lists-menu-btn" onclick="closeListsMenu();printListKeywords('${l.id}')" title="Print keywords as PDF">&#128438; PDF</button>
+    </div>`).join('');
+  if(!lists.length) html=`<div class="list-dd-item none-item">No lists saved yet</div>`;
+  html+=`<div class="acct-item lists-menu-manage" onclick="closeListsMenu();showScreen('lists-screen')">Import / manage lists&hellip;</div>`;
+  dd.innerHTML=html;
+  dd.classList.add('open');
+  setTimeout(()=>{ document.addEventListener('click', function _c(e){
+    if(!document.getElementById('lists-menu-wrap').contains(e.target)){
+      closeListsMenu(); document.removeEventListener('click',_c);
+    }
+  }); },0);
+}
+function closeListsMenu(){
+  document.getElementById('lists-menu').classList.remove('open');
 }
 function closeAcctDropdown(){
   document.getElementById('acct-dropdown').classList.remove('open');
