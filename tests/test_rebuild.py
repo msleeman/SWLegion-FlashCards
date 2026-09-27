@@ -77,10 +77,10 @@ class TestRebuildCatalogNoneFilter:
 
 class TestRebuildModalPhoto:
 
-    def test_modal_photo_height_340(self, rebuilt_html):
+    def test_modal_photo_height_260(self, rebuilt_html):
         html, _ = rebuilt_html
-        assert "height:340px" in html, (
-            "Rebuilt HTML: .modal-photo height must be 340px"
+        assert ".modal-photo{width:100%;height:260px" in html, (
+            "Rebuilt HTML: .modal-photo height must be 260px"
         )
 
     def test_modal_photo_object_fit_contain(self, rebuilt_html):
@@ -138,8 +138,8 @@ class TestRebuildProgressBarLayout:
 
     def test_topbar_right_padding(self, rebuilt_html):
         html, _ = rebuilt_html
-        assert "padding:14px 225px 0 16px" in html, (
-            "Rebuilt HTML: #fs-topbar must have 225px right padding to clear nav chips"
+        assert "padding:14px var(--nav-clear,320px) 0 16px" in html, (
+            "Rebuilt HTML: #fs-topbar must reserve the measured nav width"
         )
 
 

@@ -42,9 +42,9 @@ class TestCunningKrennicImage:
         )
 
     def test_built_html_cunning_cdn_url(self, html_content):
-        """Live HTML: Cunning card imgs must use the Krennic CDN URL."""
-        assert "Director%20Orson%20Krennic.webp" in html_content, (
-            "Built HTML: Cunning card must reference Director Orson Krennic CDN image"
+        """Live HTML: Cunning's card must carry its (locally downloaded) image."""
+        assert '"imgs": ["images/Cunning.webp"]' in html_content, (
+            "Built HTML: Cunning card must reference its downloaded Krennic image"
         )
 
     def test_built_html_cunning_card_source(self, html_content):
@@ -66,13 +66,13 @@ class TestCatalogNoneFilter:
         assertIn("toggleCatListDropdown", text, label)
 
 
-# ─── Fix 3: Modal photo 340 px tall, object-fit contain ──────────────────────
+# ─── Fix 3: Modal photo 260 px tall (eecb819), object-fit contain ──────────────────────
 
 class TestModalPhotoSize:
 
-    def test_height_340px(self, source):
+    def test_height_260px(self, source):
         label, text = source
-        assertIn("height:340px", text, label)
+        assertIn(".modal-photo{width:100%;height:260px", text, label)
 
     def test_object_fit_contain(self, source):
         label, text = source
@@ -138,9 +138,10 @@ class TestBadSummary:
 
 class TestProgressBarLayout:
 
-    def test_topbar_right_padding_225px(self, source):
+    def test_topbar_reserves_measured_nav_width(self, source):
         label, text = source
-        assertIn("padding:14px 225px 0 16px", text, label)
+        assertIn("padding:14px var(--nav-clear,320px) 0 16px", text, label)
+        assertIn("function fitTopbarToNav()", text, label)
 
     def test_old_equal_padding_gone(self, source):
         label, text = source

@@ -1920,6 +1920,81 @@ function printListKeywords(listId){
   window.print();
 }
 
+// Match key for comparing keyword spellings across sources: "Impact 3", bare
+// "Impact" and "Impact X" collapse together, but "Immune: Pierce" stays apart
+// from "Immune: Blast".
+function kwSourceKey(kw){
+  return kwNormalize(String(kw)).replace(/\[\]/g,'').replace(/\s+X$/i,'').trim().toLowerCase();
+}
+
+// Work out where each of a saved unit's keywords comes from: the unit card,
+// one of its weapons, an upgrade card, or a weapon on an upgrade. Resolved
+// fresh from UNIT_DB / UPGRADE_DB / TTA_UPGRADES so lists saved before sources
+// were tracked still print, and so keywords carry their values ("Impact 3")
+// even where the saved list stripped them. `removed` holds keys taken off the
+// list in the Edit tab; those stay off.
+function unitKeywordSources(u, removed){
+  const seen=new Set();
+  const add=(out,kw,src)=>{
+    const key=kwSourceKey(kw);
+    if(!key||removed.has(key)||seen.has(key+'|'+src)) return;
+    seen.add(key+'|'+src);
+    out.push({kw:String(kw).trim(),key,src});
+  };
+  // Within one source, prefer the spelling that carries a value.
+  const best=list=>{
+    const by={};
+    (list||[]).forEach(kw=>{
+      const k=kwSourceKey(kw);
+      if(!by[k]||(/\d/.test(kw)&&!/\d/.test(by[k]))) by[k]=kw;
+    });
+    return by;
+  };
+
+  const upgNames=new Set((u.upgradeCards||[]).flatMap(c=>(c.w||[]).map(w=>w.n)));
+  const dbHits=Object.values(UNIT_DB).filter(x=>x.n===u.name);
+  const dbUnit=dbHits.find(x=>(x.t||'')===(u.title||''))||(dbHits.length===1?dbHits[0]:null);
+  const unitWeapons=dbUnit?(dbUnit.w||[]):(u.weapons||[]).filter(w=>!upgNames.has(w.n));
+
+  const unitOut=[];
+  const wpnKeys=new Set();
+  unitWeapons.forEach(w=>Object.values(best(w.k)).forEach(kw=>wpnKeys.add(kwSourceKey(kw))));
+  // Unit card first: its keyword list includes its weapons', so drop those here.
+  Object.values(best(dbUnit&&dbUnit.k)).forEach(kw=>{
+    if(!wpnKeys.has(kwSourceKey(kw))) add(unitOut,kw,'Unit card');
+  });
+  unitWeapons.forEach(w=>Object.values(best(w.k)).forEach(kw=>add(unitOut,kw,`Weapon: ${w.n}`)));
+
+  const upgOut=[];
+  const bare=[];
+  (u.upgradeCards&&u.upgradeCards.length?u.upgradeCards:(u.upgrades||[]).map(n=>({n,c:0})))
+    .forEach(up=>{
+      const dbUp=findDbUpgrade(up.n,up.c||0);
+      const ttaHits=Object.values(TTA_UPGRADES).filter(t=>t.n===up.n);
+      const tta=ttaHits.length===1?ttaHits[0]:ttaHits.find(t=>(t.c||0)===(up.c||0));
+      const weapons=(up.w&&up.w.length)?up.w:((dbUp&&dbUp.w)||[]);
+      const wk=new Set(weapons.flatMap(w=>(w.k||[]).map(kwSourceKey)));
+      const ttaNames=((tta&&tta.kw)||[]).map(id=>TTA_KEYWORDS[id]).filter(Boolean);
+      const names=applyKwValues([...ttaNames,...((dbUp&&dbUp.k)||[])],
+                                kwValueMap(null,[{lk:(dbUp&&dbUp.k)||[],w:weapons}]));
+      if(matchesKnownCard(up.n)) names.push(up.n);
+      const before=upgOut.length;
+      Object.values(best(names)).forEach(kw=>{
+        if(!wk.has(kwSourceKey(kw))) add(upgOut,kw,up.n);
+      });
+      weapons.forEach(w=>Object.values(best(w.k)).forEach(kw=>
+        add(upgOut,kw,`${up.n} › ${w.n}`)));
+      if(upgOut.length===before) bare.push(up.n);
+    });
+
+  // Anything the saved list has that no source accounted for (a unit missing
+  // from UNIT_DB, a TTA-only keyword) still prints, against the unit card.
+  const got=new Set([...unitOut,...upgOut].map(x=>x.key));
+  (u.kws||[]).forEach(kw=>{ if(!got.has(kwSourceKey(kw))) add(unitOut,kw,'Unit card'); });
+
+  return {unit:unitOut, upgrades:upgOut, bare};
+}
+
 // ─── PRINT UNIT CARDS + KEYWORDS (2-column) ──────────────────────────────────
 // One row per unit loadout: card image on the left, that unit's full keyword
 // list on the right. Keywords include the unit's own, its weapons' (already
@@ -1940,22 +2015,43 @@ function printListUnits(listId){
     ? new Set(list.keywords.map(k=>k.toLowerCase())) : null;
   const covered=new Set();
 
-  const kwItem=kw=>{
+  // `printed` tracks rule text already given for this unit, so a keyword that
+  // shows up from two sources only spells its rules out once.
+  const kwItem=(kw,src,printed)=>{
     const card=findCardForKeyword(kw,cardByNorm);
     // Print the rule text in full -- this is a play reference, so a clipped
     // definition ending in "..." is worse than a longer row.
     let def=card?(card.summary||card.definition||''):'';
     // Substitute the unit's actual value for X, so Thrawn reads "Strategize 2 --
     // ... then 2 allies ..." rather than leaving the reader to do the swap.
-    const val=/\s(\d+)\s*$/.exec(kw);
+    const val=/\s(\d+)(?::.*)?\s*$/.exec(kw);
     if(val&&def) def=def.replace(/\bX\b/g,val[1]);
+    const ref=card?card.name:kw.toLowerCase();
+    if(printed){
+      if(printed.has(ref)) def=def?'see above':'';
+      printed.add(ref);
+    }
     return `<li><span class="pu-kwname">${escHtml(dispName(kw))}</span>`+
+           `${src?` <span class="pu-kwsrc">${escHtml(src)}</span>`:''}`+
            `${def?`: ${escHtml(def)}`:''}</li>`;
   };
 
   let rows=sortUnitsByRank(units).map(u=>{
-    const kws=(u.kws||[]).filter(k=>!active||active.has(k.toLowerCase()));
-    kws.forEach(k=>covered.add(k.toLowerCase()));
+    // A keyword the unit had at parse time but the list no longer carries was
+    // removed in the Edit tab.
+    const removed=new Set((u.kws||[]).filter(k=>active&&!active.has(k.toLowerCase()))
+                                     .map(kwSourceKey));
+    const srcs=unitKeywordSources(u,removed);
+    [...srcs.unit,...srcs.upgrades].forEach(x=>covered.add(x.key));
+    (u.kws||[]).forEach(k=>{ if(!removed.has(kwSourceKey(k))) covered.add(kwSourceKey(k)); });
+    const printed=new Set();
+    const kwSection=(head,items)=>items.length
+      ? `<div class="pu-kwhead">${head}</div>`+
+        `<ul class="pu-kwlist">${items.map(x=>kwItem(x.kw,x.src,printed)).join('')}</ul>` : '';
+    const kwBlock=kwSection('Unit keywords',srcs.unit)+
+      kwSection('Upgrade keywords',srcs.upgrades)+
+      (srcs.bare.length
+        ? `<div class="pu-kwbare">No keywords: ${escHtml(srcs.bare.join(', '))}</div>` : '');
 
     // Resolve fresh so lists saved before an art re-key still render.
     const unitSrc=currentUnitArt(u.name,u.title)
@@ -2085,20 +2181,20 @@ function printListUnits(listId){
         ${upgNames}
         ${saveLine}
         ${wpnBlock}
-        <ul class="pu-kwlist">${kws.map(kwItem).join('')||'<li class="pu-none">No keywords</li>'}</ul>
+        ${kwBlock||'<ul class="pu-kwlist"><li class="pu-none">No keywords</li></ul>'}
       </td></tr>`;
   }).join('');
 
   // Keywords added by hand in the Edit tab don't belong to any unit — list them
   // separately rather than dropping them silently.
-  const extra=(list.keywords||[]).filter(k=>!covered.has(k.toLowerCase()))
+  const extra=(list.keywords||[]).filter(k=>!covered.has(kwSourceKey(k)))
                                  .sort((a,b)=>a.localeCompare(b));
   if(extra.length){
     rows+=`<tr class="pu-row">
       <td class="pu-img"><div class="pu-noimg">+</div></td>
       <td class="pu-cell">
         <div class="pu-name">Additional keywords</div>
-        <ul class="pu-kwlist">${extra.map(kwItem).join('')}</ul>
+        <ul class="pu-kwlist">${extra.map(k=>kwItem(k,'',null)).join('')}</ul>
       </td></tr>`;
   }
 
@@ -2315,6 +2411,7 @@ function startApp(){
   updateCatAddRow();
   updateAccountUI();
   applyPermImgs();
+  fitTopbarToNav();
   const aiBtn=document.getElementById('fs-ai-summary-btn');
   if(aiBtn) aiBtn.style.display=(_currentUser?.email==='martinjsleeman@gmail.com')?'':'none';
   setMode('learn');
@@ -2531,6 +2628,18 @@ function toggleAcctDropdown(){
     }
   }); },0);
 }
+// The nav chips sit absolutely positioned over the top bar's right end, so the
+// top bar reserves their measured width (plus a gap) to keep the progress bar
+// from running underneath them. Re-measured whenever the chips change size.
+function fitTopbarToNav(){
+  const nav=document.getElementById('fs-nav-btns');
+  const bar=document.getElementById('fs-topbar');
+  if(!nav||!bar) return;
+  const fit=()=>{ if(nav.offsetWidth) bar.style.setProperty('--nav-clear',(nav.offsetWidth+26)+'px'); };
+  if(window.ResizeObserver) new ResizeObserver(fit).observe(nav);
+  fit();
+}
+
 // Top-bar Lists menu: every saved list with one-click print buttons, plus a
 // link through to the Lists screen for importing and editing.
 function toggleListsMenu(){

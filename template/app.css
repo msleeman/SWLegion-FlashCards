@@ -22,7 +22,7 @@ html,body{width:100%;height:100%;overflow:hidden;
 #fs-bot-grad{display:none}
 #fs-flip-zone{position:absolute;inset:0;cursor:pointer;z-index:3}
 #fs-topbar{position:absolute;top:0;left:0;right:0;
-  padding:14px 225px 0 16px;display:flex;align-items:center;gap:10px;z-index:10;pointer-events:none}
+  padding:14px var(--nav-clear,320px) 0 16px;display:flex;align-items:center;gap:10px;z-index:10;pointer-events:none}
 #fs-topbar>*{pointer-events:all}
 .fs-pill{background:rgba(0,0,0,.6);backdrop-filter:blur(12px);
   border:1px solid rgba(245,197,24,.25);border-radius:20px;
@@ -420,6 +420,12 @@ html,body{width:100%;height:100%;overflow:hidden;
     padding:1.5pt 0;border-bottom:1px dotted #eee}
   .pu-kwlist li:last-child{border-bottom:none}
   .pu-kwname{font-weight:bold;color:#000}
+  .pu-kwhead{font-size:7pt;font-weight:bold;text-transform:uppercase;letter-spacing:.4pt;
+    color:#555;border-bottom:1px solid #bbb;margin:5pt 0 1pt;padding-bottom:1pt}
+  .pu-kwsrc{font-size:7.5pt;color:#777;font-style:italic}
+  .pu-kwsrc::before{content:"("}
+  .pu-kwsrc::after{content:")"}
+  .pu-kwbare{font-size:7.5pt;color:#888;font-style:italic;margin-top:3pt}
   .pu-none{color:#999;font-style:italic}
   /* Real per-page margins. This must be @page, not padding on the container:
      padding only applies before the first line and after the last, so a

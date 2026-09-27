@@ -35,13 +35,16 @@ class TestFlashcardScreen:
         expect(guest_page.locator("#fs-back-content")).to_be_visible()
 
     def test_bad_summary_button_visible_on_back(self, guest_page):
-        """Fix 5: Bad Summary button must appear on the card back."""
+        """Fix 5: Bad Summary button is on the card back, but owner-only --
+        a guest must not see it."""
         # Flip first (may already be flipped from previous test, but click again safely)
         back = guest_page.locator("#fs-back-content")
         if back.is_hidden():
             guest_page.click("#fs-flip-zone")
             guest_page.wait_for_selector("#fs-back-content", state="visible", timeout=5000)
-        expect(guest_page.locator("button:has-text('Bad Summary')")).to_be_visible()
+        btn = guest_page.locator("#fs-ai-summary-btn")
+        expect(btn).to_have_count(1)
+        expect(btn).to_be_hidden()
 
     def test_notes_textarea_has_maxlength_2000(self, guest_page):
         """Fix 4: #fs-notes textarea must enforce 2000 char limit."""
@@ -70,19 +73,19 @@ class TestFlashcardScreen:
         assert "/" in text and text.replace("/", "").replace(" ", "").isdigit() or \
                "/" in text, f"Counter text must be N/M format, got: {text!r}"
 
-    def test_progress_bar_does_not_overlap_catalog_chip(self, guest_page):
-        """Fix 6: Progress bar right edge must not overlap the Catalog button."""
+    def test_progress_bar_does_not_overlap_nav_chips(self, guest_page):
+        """Fix 6: Progress bar right edge must stop before the leftmost nav chip
+        (the Lists menu), not just the Catalog button."""
         bar = guest_page.locator("#fs-progress")
-        # Use the specific nav button, not the 'View Catalog' button on the done screen
-        catalog_btn = guest_page.locator("#fs-nav-btns button:has-text('Catalog')")
+        nav = guest_page.locator("#fs-nav-btns")
         bar_box = bar.bounding_box()
-        cat_box = catalog_btn.bounding_box()
-        assert bar_box and cat_box, "Could not measure bounding boxes"
+        nav_box = nav.bounding_box()
+        assert bar_box and nav_box, "Could not measure bounding boxes"
         bar_right = bar_box["x"] + bar_box["width"]
-        cat_left = cat_box["x"]
-        assert bar_right <= cat_left + 5, (  # 5px tolerance
+        nav_left = nav_box["x"]
+        assert bar_right <= nav_left, (
             f"Progress bar right edge ({bar_right:.0f}px) overlaps "
-            f"Catalog button left edge ({cat_left:.0f}px)"
+            f"nav chips left edge ({nav_left:.0f}px)"
         )
 
 
@@ -130,13 +133,13 @@ class TestCatalogModal:
         expect(catalog_page.locator("#modal-bg")).to_be_visible()
 
     def test_modal_photo_taller_than_220px(self, catalog_page):
-        """Fix 3: Modal photo must be taller than the old 220px."""
+        """Fix 3: Modal photo must be taller than the old 220px (260px since eecb819)."""
         self._open_first_modal(catalog_page)
         photo = catalog_page.locator(".modal-photo, .modal-photo-ph").first
         box = photo.bounding_box()
         assert box is not None, "Could not measure modal photo height"
-        assert box["height"] >= 300, (
-            f"Modal photo height should be >= 300px (was 220px before fix), "
+        assert box["height"] >= 250, (
+            f"Modal photo height should be >= 250px (was 220px before fix), "
             f"got {box['height']:.0f}px"
         )
 

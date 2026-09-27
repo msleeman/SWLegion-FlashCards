@@ -6,7 +6,9 @@ import pytest
 
 # Project root is one level above this tests/ directory
 PROJECT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-HTML_FILE = os.path.join(PROJECT, "swlegion_flashcards.html")
+# The built app. swlegion_flashcards.html at the root is only a redirect here.
+HTML_FILE = os.path.join(PROJECT, "dist", "index.html")
+TEMPLATE_DIR = os.path.join(PROJECT, "template")
 
 
 # ── Python / build fixtures ───────────────────────────────────────────────────
@@ -18,7 +20,7 @@ def project_dir():
 
 @pytest.fixture(scope="session")
 def html_content():
-    """Contents of the current committed swlegion_flashcards.html."""
+    """Contents of the built dist/index.html."""
     with open(HTML_FILE, encoding="utf-8") as f:
         return f.read()
 
@@ -33,9 +35,14 @@ def bld():
 
 
 @pytest.fixture(scope="session")
-def build_template(bld):
-    """The HTML_TEMPLATE string embedded in build_swlegion_v4.py."""
-    return bld.HTML_TEMPLATE
+def build_template():
+    """The template sources every rebuild starts from: template/index.html,
+    app.css and app.js, joined so a fix in any of them is visible."""
+    parts = []
+    for name in ("index.html", "app.css", "app.js"):
+        with open(os.path.join(TEMPLATE_DIR, name), encoding="utf-8") as f:
+            parts.append(f.read())
+    return "\n".join(parts)
 
 
 # ── Rebuild fixture (runs rebuild_html_only.py, then restores original) ───────
@@ -44,15 +51,18 @@ def build_template(bld):
 def rebuilt_html():
     """
     Executes rebuild_html_only.py, yields (rebuilt_html_str, CompletedProcess).
-    Always restores the original HTML when the module finishes, even on failure.
+    Always restores the original dist/index.html when the module finishes,
+    even on failure.
     """
-    with open(HTML_FILE, encoding="utf-8") as f:
+    with open(HTML_FILE, "rb") as f:
         original = f.read()
 
     rebuild_script = os.path.join(PROJECT, "rebuild_html_only.py")
     result = subprocess.run(
-        ["py", rebuild_script],
-        capture_output=True, text=True, cwd=PROJECT, timeout=180
+        [sys.executable, rebuild_script],
+        capture_output=True, text=True, cwd=PROJECT, timeout=180,
+        encoding="utf-8", errors="replace",
+        env={**os.environ, "PYTHONIOENCODING": "utf-8"},
     )
 
     try:
@@ -60,7 +70,7 @@ def rebuilt_html():
             rebuilt = f.read()
         yield rebuilt, result
     finally:
-        with open(HTML_FILE, "w", encoding="utf-8") as f:
+        with open(HTML_FILE, "wb") as f:
             f.write(original)
 
 
