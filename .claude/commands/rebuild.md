@@ -134,26 +134,32 @@ print(sorted(missing))
 Any keyword in `missing` needs either a scraped definition or an `overrides/<Stem>.md`
 file. **Never write definitions from memory.**
 
-### Fetching definitions from legion.takras.net
+### Rules text sources (highest priority first)
 
-URL pattern: `https://legion.takras.net/<keyword>/` (lowercase, spaces → hyphens)
+1. `overrides/<Stem>.md` — hand-written, always wins
+2. The AMG rulebook PDF in `documents/` (newest in `src/config.RULEBOOK_PDFS`,
+   currently `DOC56_SWQ_Rulebook.pdf`)
+3. Legion Helper — `data/legion_helper.json`
+4. Tabletop Admiral keyword descriptions — only where nothing above has text
 
-The site is a Next.js SPA. Two extraction methods:
-1. **BeautifulSoup** — works when the page has static HTML content (most keywords)
-2. **RSC meta description fallback** — for JS-rendered pages, extract from the RSC payload:
-   ```python
-   import requests, re, json
-   r = requests.get('https://legion.takras.net/<keyword>/', timeout=10)
-   for chunk in re.findall(r'self\.__next_f\.push\(\[1,(.+?)\]\)\s*</script>', r.text, re.DOTALL):
-       try:
-           payload = json.loads(chunk)
-           m = re.search(r'"description","content":"([^"]{20,})"', payload)
-           if m: print(m.group(1)); break
-       except: pass
-   ```
-   This is already implemented as a fallback in `src/scrape.py`.
+### Legion Helper (legion.takras.net)
 
-If both fail (404 or empty), ask the user for the correct rule text.
+Legion Helper's keyword pages are rendered in the browser: the HTML they serve
+has **no rules text**, so a plain `requests` fetch (the old scraper in
+`src/scrape.py`) gets nothing for keywords, and only a one-line meta
+description for concept pages. `legion_helper.py` loads each page in headless
+Chromium, one page at a time with a pause, and saves the rendered text to
+`data/legion_helper.json` (committed). The builds read that file; they never
+visit the site. The page list is the site's own A–Z keyword index.
+
+```bash
+py legion_helper.py            # read pages not cached yet
+py legion_helper.py --all      # re-read everything (after a rules update)
+py legion_helper.py spur aim   # re-read specific slugs
+```
+
+Re-run it when Legion Helper's "rules reference updated" date on its home page
+changes. If a keyword has no text anywhere, ask the user for the correct rule text.
 
 Also ensure `data/unit_keyword_mappings.json` has an entry for each missing keyword
 (key = lowercase, value = canonical card name). Without it the injection system won't

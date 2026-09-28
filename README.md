@@ -67,7 +67,10 @@ SWLegion-FlashCards/
 ├── build_swlegion_v4.py          # Legacy shim → delegates to src.build
 ├── rebuild_html_only.py          # Fast HTML-only rebuild (reads cache)
 ├── refresh_definitions.py        # Re-scrape definitions selectively
-└── documents/DOC51_SWQ_Rulebook_05-01_Update.pdf  # Official rulebook (optional, see src/config.RULEBOOK_PDFS)
+├── legion_helper.py              # Read Legion Helper's rendered rules text -> data/legion_helper.json
+├── ocr_upgrades.py               # OCR upgrade card text -> data/upgrade_ocr.json
+├── ocr_commands.py               # OCR command card text -> data/command_ocr.json
+└── documents/DOC56_SWQ_Rulebook.pdf  # Official rulebook, newest (optional, see src/config.RULEBOOK_PDFS)
 ```
 
 ---

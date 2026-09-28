@@ -2290,22 +2290,42 @@ function printListUnits(listId){
     // nothing at all to a ranged pool.
     const minis=[];
     for(let i=0;i<mc;i++) minis.push({ws:unitWpns, own:[], side:null});
-    const shared=[];
+    // Weapons on an upgrade that adds no miniature of its own (armaments,
+    // grenades) can be used by EVERY miniature, unless the card limits it
+    // ("1 miniature in this unit may use the weapon below" -- Flame
+    // Projector). A Reconfigure card (E-11D Focused Fire / Grenade Launcher)
+    // has one weapon per side, and the whole unit is on one side at a time:
+    // each side is a "mode", and each range uses the mode that hits hardest.
+    const everyMini=[], oneMini=[], modeSets=[];
     for(const up of (u.upgradeCards||[])){
       const own=(up.w||[]).map(w=>({...w,assault:kwNumber(w.k,'Assault')}));
       if(!own.length) continue;
       const ocr=upgradeText(up.n,up.c||0);
+      const dbUp=findDbUpgrade(up.n,up.c||0);
+      const reconf=own.length>1&&(/reconfigure/i.test((ocr&&ocr.t)||'')||
+        ((dbUp&&dbUp.k)||[]).some(k=>/^reconfigure$/i.test(k)));
+      if(reconf){
+        const set=modeSets.length;
+        own.forEach((w,i)=>{ w.mode=[set,i]; });
+        modeSets.push(own.length);
+      }
       // No card text read at all: assume it adds its own miniature, as most
       // weapon-bearing upgrades do.
       const added=ocr?(ocr.m||0):1;
       const side=sidearmOf(ocr);
-      // No miniature of its own (grenades and similar): one existing
-      // miniature may use it in place of its own weapon.
       if(added) for(let i=0;i<added;i++) minis.push({ws:[...unitWpns,...own], own, side});
-      else shared.push(...own);
+      else if(/\b(1|one) miniature in this unit may use/i.test((ocr&&ocr.t)||'')) oneMini.push(...own);
+      else everyMini.push(...own);
     }
-    if(shared.length&&minis.length) minis[0]={...minis[0], ws:[...minis[0].ws,...shared]};
+    minis.forEach((m,i)=>{
+      const extra=[...everyMini,...(i===0?oneMini:[])];
+      if(extra.length) minis[i]={...m, ws:[...m.ws,...extra]};
+    });
     const usable=(m,r)=>m.side&&(r===0?m.side.melee:m.side.ranged)?m.own:m.ws;
+    // Every combination of Reconfigure sides (almost always 1 card, 2 sides).
+    const scenarios=modeSets.reduce((acc,n)=>acc.flatMap(a=>
+      Array.from({length:n},(_,i)=>[...a,i])),[[]]);
+    const inMode=(w,sc)=>!w.mode||sc[w.mode[0]]===w.mode[1];
 
     const dice=d=>({r:(d&&d.r)||0,b:(d&&d.b)||0,w:(d&&d.w)||0});
     const reaches=(w,r)=>w.rg&&w.rg.length&&r>=Math.min(...w.rg)&&r<=Math.max(...w.rg);
@@ -2317,10 +2337,20 @@ function printListUnits(listId){
     // does, Sonic Charge only grants it to the other weapons).
     const assault=kwNumber(u.kws,'Assault')||
       Math.max(0,...minis.flatMap(m=>m.ws).map(w=>w.assault||0));
-    const band=r=>{
+    const count=list=>{
+      const c={}; list.forEach(n=>{ c[n]=(c[n]||0)+1; });
+      return Object.entries(c).map(([n,k])=>k>1?`${k}× ${n}`:n).join(', ');
+    };
+    // The unit's pool at range r (0 = melee) with Reconfigure sides `sc`:
+    // each miniature adds its best weapon that reaches.
+    const poolAt=(r,sc)=>{
       const picks=minis.map(m=>{
-        const ok=usable(m,r).filter(w=>reaches(w,r)&&Object.values(dice(w.d)).some(Boolean));
-        return ok.length?ok.reduce((a,b)=>alone(b)>alone(a)?b:a):null;
+        const ok=usable(m,r).filter(w=>inMode(w,sc)&&reaches(w,r)&&
+          Object.values(dice(w.d)).some(Boolean));
+        // Ties go to the longer reach, so neighbouring ranges pick the same
+        // weapon and merge into one row.
+        const score=w=>alone(w)+Math.max(...w.rg)*1e-6;
+        return ok.length?ok.reduce((a,b)=>score(b)>score(a)?b:a):null;
       }).filter(Boolean);
       if(!picks.length) return null;
       const upg=r===1&&assault
@@ -2331,17 +2361,24 @@ function printListUnits(listId){
         return {r:a.r+d.r,b:a.b+d.b,w:a.w+d.w};
       },{r:0,b:0,w:0});
       const crit=Math.max(0,...picks.map(w=>critValue(w.k)));
-      const count=list=>{
-        const c={}; list.forEach(n=>{ c[n]=(c[n]||0)+1; });
-        return Object.entries(c).map(([n,k])=>k>1?`${k}× ${n}`:n).join(', ');
-      };
       const upgraded=upg.filter(x=>x.x);
-      return {r, pool, crit, st:poolStats(pool,crit,hs),
-              sig:picks.map(w=>w.n).sort().join('|'),
+      // Melee is range 0, not range 1, and Assault only upgrades Ranged
+      // weapons (Sonic Charge: "other Ranged weapons ... gain Assault 1"), so
+      // Unarmed stays black in melee. Settled with Martin 2026-09-27; the
+      // sheet says so on the melee row so it isn't re-argued.
+      const note=upgraded.length
+        ? `Assault ${assault}: upgrade ${assault} die on each: ${count(upgraded.map(x=>x.w.n))}`
+        : (r===0&&assault
+          ? `Assault ${assault} upgrades Ranged weapons only, so melee dice are not upgraded`
+          : '');
+      return {r, pool, crit, st:poolStats(pool,crit,hs), note,
               parts:count(picks.map(w=>w.n)),
-              note:upgraded.length
-                ? `Assault ${assault}: upgrade ${assault} die on each: ${count(upgraded.map(x=>x.w.n))}` : ''};
+              sig:picks.map(w=>w.n).sort().join('|')+'#'+fmtPool(pool)+'#'+note};
     };
+    // The best attack at each range: melee, 1, 2, ... out to the unit's
+    // longest weapon, taking whichever Reconfigure side hits hardest there.
+    const band=r=>scenarios.map(sc=>poolAt(r,sc)).filter(Boolean)
+      .reduce((a,b)=>!a||b.st.total>a.st.total?b:a,null);
     const row=(label,b)=>`<tr class="pw-total">
       <td class="pw-n"><strong>Full unit at ${label}</strong>
         <span class="pw-kw">${escHtml(b.parts)}${b.crit?`, Critical ${b.crit}`:''}</span>
@@ -2350,31 +2387,20 @@ function printListUnits(listId){
       <td class="pw-h"><strong>${b.st.total.toFixed(2)}</strong>
         <span class="pw-c">(${b.st.crits.toFixed(2)} crit)</span></td></tr>`;
 
-    const melee=band(0);
-    const out=[];
-    if(melee) out.push({at:0, html:row('melee',melee)});
     const maxR=Math.max(0,...minis.flatMap(m=>m.ws).map(w=>w.rg&&w.rg.length?Math.max(...w.rg):0));
-    const bands=[];
-    for(let r=1;r<=maxR;r++){ const b=band(r); if(b) bands.push(b); }
-    // Runs of consecutive ranges that throw the same pool.
+    // One row per run of consecutive ranges that throw the same pool, so the
+    // table never repeats itself: "melee–range 1", "range 2–3", "range 4".
     const runs=[];
-    bands.forEach(b=>{
+    for(let r=0;r<=maxR;r++){
+      const b=band(r);
+      if(!b) continue;
       const last=runs[runs.length-1];
-      if(last&&last.b.sig===b.sig&&!last.b.note&&!b.note&&last.to===b.r-1) last.to=b.r;
-      else runs.push({from:b.r,to:b.r,b});
-    });
-    const span=x=>x.from===x.to?`range ${x.from}`:`range ${x.from}–${x.to}`;
-    // Usually one ranged row: the best attack at range 2+ (range 1 folds in
-    // when it throws the same pool). Range 1 gets its own row only when it
-    // beats that -- short-range weapons or Assault, as on Scout Troopers.
-    const far=runs.filter(x=>x.to>=2);
-    const best=far.length?far.reduce((a,b)=>b.b.st.total>a.b.st.total?b:a):null;
-    const near=runs.find(x=>x.from===1);
-    if(best) out.push({at:best.from, html:row(span(best),best.b)});
-    if(near&&near!==best&&(!best||near.b.st.total>best.b.st.total))
-      out.push({at:near.from, html:row(span(near),near.b)});
-    // Range order: melee, range 1, range 2, ...
-    totalRow=out.sort((a,b)=>a.at-b.at).map(x=>x.html).join('');
+      if(last&&last.b.sig===b.sig&&last.to===r-1) last.to=r;
+      else runs.push({from:r,to:r,b});
+    }
+    const span=x=>x.from===x.to?(x.from===0?'melee':`range ${x.from}`)
+      :(x.from===0?`melee–range ${x.to}`:`range ${x.from}–${x.to}`);
+    totalRow=runs.map(x=>row(span(x),x.b)).join('');
     const wpnBlock=wpnRows
       ? `<table class="pw-table"><thead><tr>
            <th>Weapon</th><th>Dice</th><th>Avg hits</th></tr></thead>

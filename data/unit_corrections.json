@@ -1,4 +1,9 @@
 {
- "_comment": "Fields to overwrite in UNIT_DB where LegionHQ2's data is out of date. Key is \"Name|Title\" (empty title for untitled units). Applied by src/render.py _apply_unit_corrections().",
- "Scout Troopers|Strike Team": {"mc": 1}
+ "_comment": "Fields to overwrite in UNIT_DB where LegionHQ2's data is out of date. Key is \"Name|Title\" (empty title for untitled units). Applied by src/render.py _apply_unit_corrections(). Check each against the card image before adding.",
+ "Scout Troopers|Strike Team": {"mc": 1},
+ "_DF-90": "Card shows the E-22 Blaster Rifle at melee to range 3; LegionHQ2 has melee only.",
+ "DF-90 Mortar Trooper|": {"w": [
+  {"n": "E-22 Blaster Rifle", "d": {"b": 1}, "rg": [0, 3]},
+  {"n": "DF-90 Mortar", "d": {"b": 2}, "k": ["Critical 1", "Cumbersome", "Suppressive", "Fixed Front"], "rg": [3, 4]}
+ ]}
 }

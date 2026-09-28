@@ -1,6 +1,7 @@
 """
 Web scraping and PDF extraction for SWLegion-FlashCards.
 """
+import json
 import os
 import re
 import time
@@ -338,6 +339,54 @@ def extract_keywords_from_pdf(pdf_path):
 
 
 # ── Scrape keywords from legion.takras.net ────────────────────────────────────
+# Legion Helper renders rules icons as <img title="...">. Shared by the
+# HTML scraper below and legion_helper.py, which reads rendered pages.
+_ICON_TITLE_MAP = {
+    "hit":          "[HIT]",
+    "hit surge":    "[SURGE: HIT]",
+    "hit critical": "[CRIT]",
+    "block":        "[BLOCK]",
+    "block surge":  "[SURGE: BLOCK]",
+    "range melee":    "[MELEE]",
+    "range half":     "[RANGE 1/2]",
+    "range 1":        "[RANGE 1]",
+    "range 2":        "[RANGE 2]",
+    "range 3":        "[RANGE 3]",
+    "range 4":        "[RANGE 4]",
+    "range 5":        "[RANGE 5]",
+    "range infinite": "[RANGE ∞]",
+    "rank commander": "[COMMANDER]",
+    "rank operative": "[OPERATIVE]",
+    "rank corps":     "[CORPS]",
+    "rank specialist":"[SPECIALIST]",
+    "rank support":   "[SUPPORT]",
+    "rank heavy":     "[HEAVY]",
+    "courage": "[COURAGE]",
+}
+_TOKEN_NAME_MAP = {
+    "aim":        "[AIM TOKEN]",
+    "dodge":      "[DODGE TOKEN]",
+    "surge":      "[SURGE TOKEN]",
+    "standby":    "[STANDBY TOKEN]",
+    "observation":"[OBSERVATION TOKEN]",
+    "smoke":      "[SMOKE TOKEN]",
+    "damage":     "[DAMAGE TOKEN]",
+    "order":      "[ORDER TOKEN]",
+    "commander":  "[COMMANDER TOKEN]",
+    "ion":        "[ION TOKEN]",
+    "poison":     "[POISON TOKEN]",
+    "immobilize": "[IMMOBILIZE TOKEN]",
+    "shield":     "[SHIELD TOKEN]",
+    "charge":     "[CHARGE TOKEN]",
+    "wheel-mode": "[WHEEL MODE TOKEN]",
+    "incognito":  "[INCOGNITO TOKEN]",
+    "graffiti":   "[GRAFFITI TOKEN]",
+    "poi":        "[POI TOKEN]",
+    "asset":      "[ASSET TOKEN]",
+    "advantage":  "[ADVANTAGE TOKEN]",
+}
+
+
 def scrape_keyword_page(slug, display_name, session):
     """Fetch a single keyword page and extract type + definition."""
     display_name = display_name.replace("[]", "").strip()
@@ -353,50 +402,6 @@ def scrape_keyword_page(slug, display_name, session):
         from bs4 import BeautifulSoup
         soup = BeautifulSoup(r.text, "html.parser")
 
-        _ICON_TITLE_MAP = {
-            "hit":          "[HIT]",
-            "hit surge":    "[SURGE: HIT]",
-            "hit critical": "[CRIT]",
-            "block":        "[BLOCK]",
-            "block surge":  "[SURGE: BLOCK]",
-            "range melee":    "[MELEE]",
-            "range half":     "[RANGE 1/2]",
-            "range 1":        "[RANGE 1]",
-            "range 2":        "[RANGE 2]",
-            "range 3":        "[RANGE 3]",
-            "range 4":        "[RANGE 4]",
-            "range 5":        "[RANGE 5]",
-            "range infinite": "[RANGE ∞]",
-            "rank commander": "[COMMANDER]",
-            "rank operative": "[OPERATIVE]",
-            "rank corps":     "[CORPS]",
-            "rank specialist":"[SPECIALIST]",
-            "rank support":   "[SUPPORT]",
-            "rank heavy":     "[HEAVY]",
-            "courage": "[COURAGE]",
-        }
-        _TOKEN_NAME_MAP = {
-            "aim":        "[AIM TOKEN]",
-            "dodge":      "[DODGE TOKEN]",
-            "surge":      "[SURGE TOKEN]",
-            "standby":    "[STANDBY TOKEN]",
-            "observation":"[OBSERVATION TOKEN]",
-            "smoke":      "[SMOKE TOKEN]",
-            "damage":     "[DAMAGE TOKEN]",
-            "order":      "[ORDER TOKEN]",
-            "commander":  "[COMMANDER TOKEN]",
-            "ion":        "[ION TOKEN]",
-            "poison":     "[POISON TOKEN]",
-            "immobilize": "[IMMOBILIZE TOKEN]",
-            "shield":     "[SHIELD TOKEN]",
-            "charge":     "[CHARGE TOKEN]",
-            "wheel-mode": "[WHEEL MODE TOKEN]",
-            "incognito":  "[INCOGNITO TOKEN]",
-            "graffiti":   "[GRAFFITI TOKEN]",
-            "poi":        "[POI TOKEN]",
-            "asset":      "[ASSET TOKEN]",
-            "advantage":  "[ADVANTAGE TOKEN]",
-        }
 
         if soup.head:
             soup.head.decompose()
@@ -565,9 +570,14 @@ def _rulebook_keys(name):
     # "(Charge Type)" is a template parameter too.
     n = re.sub(r'\s*\([^)]*\)', '', name.replace('[]', '')).strip()
     base, _, param = n.partition(':')
-    base = re.sub(r'\s+X$', '', base.strip(), flags=re.I)
+    # The value slot, however it's written: "Armor X", "Transport [X]",
+    # "Repair 1" all reduce to their base name.
+    base = re.sub(r'\s+(\[?X\]?|\d+)$', '', base.strip(), flags=re.I)
     param = param.strip()
-    if not param or '/' in param or re.search(r'\b(x|unit name|unit type|type)\b', param, re.I):
+    # "Capacity Y", "Capacity 2" are value templates too, not a choice.
+    if (not param or '/' in param
+            or re.search(r'\b(x|y|unit name|unit type|type)\b', param, re.I)
+            or re.fullmatch(r'capacity\s*\d+', param, re.I)):
         param = ''
     norm = lambda t: re.sub(r'[^a-z0-9]', '', t.lower())
     return norm(base + param), norm(base)
@@ -620,3 +630,53 @@ def fill_from_rulebook(cards, credit, only_credit='tabletopadmiral.com'):
             c['credit'] = credit
             filled += 1
     return filled
+
+
+LEGION_HELPER_CREDIT = 'legion.takras.net'
+
+
+def apply_legion_helper_text(cards, keep_credits):
+    """Give cards Legion Helper's rules text (data/legion_helper.json).
+
+    Rules text order is overrides/ > rulebook > Legion Helper > Tabletop
+    Admiral, so this replaces every definition EXCEPT those credited to
+    `keep_credits` (the rulebook, hand-written overrides). That covers
+    Tabletop Admiral text, empty definitions, and the one-line meta
+    descriptions the old HTML scraper captured for concept pages.
+
+    The JSON is written by legion_helper.py, which reads the rendered pages;
+    the build never visits the site. Matching: exact name first (so "Cover X"
+    and the "Cover" concept stay apart), then the rulebook keys.
+    Returns the number of cards updated.
+    """
+    path = os.path.join(HERE, 'data', 'legion_helper.json')
+    if not os.path.exists(path):
+        return 0
+    with open(path, encoding='utf-8') as f:
+        pages = json.load(f)
+
+    exact_norm = lambda n: re.sub(r'[^a-z0-9]', '', n.replace('[]', '').lower())
+    exact, full, base = {}, {}, {}
+    for page in pages.values():
+        name, text = page.get('n', ''), (page.get('t') or '').strip()
+        if not name or len(text) < 15:
+            continue
+        exact.setdefault(exact_norm(name), text)
+        f_, b_ = _rulebook_keys(name)
+        full.setdefault(f_, text)
+        base.setdefault(b_, text)
+
+    updated = 0
+    for c in cards:
+        credit = c.get('credit') or ''
+        # Any rulebook edition counts, including text cached under an older
+        # rulebook's credit ("AMG Rulebook 2026-05-01").
+        if credit in keep_credits or credit.startswith('AMG Rulebook'):
+            continue
+        f_, b_ = _rulebook_keys(c['name'])
+        text = exact.get(exact_norm(c['name'])) or full.get(f_) or base.get(b_)
+        if text and text != c.get('definition'):
+            c['definition'] = text
+            c['credit'] = LEGION_HELPER_CREDIT
+            updated += 1
+    return updated

@@ -20,7 +20,8 @@ from src.overrides import (
     _keyword_stem, find_manual_definition, find_manual_summary,
     apply_manual_overlays,
 )
-from src.scrape import find_pdf, extract_keywords_from_pdf, fill_from_rulebook, rulebook_matcher
+from src.scrape import (find_pdf, extract_keywords_from_pdf, fill_from_rulebook,
+                        rulebook_matcher, apply_legion_helper_text)
 from src.images import (download_images, download_upgrade_card_images,
                         download_tta_card_images, download_command_card_images)
 from src.render import build_html
@@ -135,6 +136,12 @@ try:
           f"of those Tabletop Admiral cards")
 except Exception as e:
     print(f"  WARN: TTA keyword overlay failed: {e}")
+
+# ── 4c. Legion Helper text (data/legion_helper.json, see legion_helper.py) ─────
+# Beats Tabletop Admiral and empty definitions; the rulebook and hand-written
+# overrides still win.
+lh = apply_legion_helper_text(card_data, keep_credits={RULEBOOK_CREDIT, 'Manual'})
+print(f"  Legion Helper text: {lh} definitions")
 
 # ── 4. Apply manual overrides (always last — they win over everything) ────────
 manual_count = apply_manual_overlays(card_data)

@@ -16,7 +16,7 @@ from src.config import (
 )
 from src.data_tables import BUNDLED_KEYWORDS, KEYWORD_CARDS
 from src.scrape import (scrape_keywords, find_pdf, extract_keywords_from_pdf,
-                        rulebook_matcher)
+                        rulebook_matcher, apply_legion_helper_text)
 from src.images import download_images
 from src.overrides import apply_manual_overlays, find_card_art_credit
 from src.units import inject_units
@@ -103,6 +103,12 @@ def main():
     else:
         print("\n      No PDF found — using web definitions only")
         print(f"      (Place one of {RULEBOOK_PDFS[0]!r} in documents/ to use official AMG text)")
+
+    # Legion Helper's rendered text (data/legion_helper.json) for everything
+    # the rulebook didn't cover -- the HTML scrape above only gets it for a
+    # few concept pages.
+    lh = apply_legion_helper_text(keywords, keep_credits={RULEBOOK_CREDIT, 'Manual'})
+    print(f"      Legion Helper text: {lh} definitions")
 
     # Tabletop Admiral fills what the rulebook and Legion Helper left empty
     # (rules text order: overrides/ > rulebook > Legion Helper > TTA > the
