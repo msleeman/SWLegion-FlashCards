@@ -1,1 +1,1 @@
-Army may skip the commander minimum; counts as a commander only for issuing orders.
+Lets the army skip the commander minimum; can be nominated to issue orders from command cards. Same-faction allies within range 3 may treat it as a commander with courage 2.

@@ -1,1 +1,1 @@
-Card action: up to X friendly units nearby each gain a dodge token.
+Card or free card action: up to X allied units within range 2 each gain a dodge token.

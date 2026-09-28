@@ -1,1 +1,1 @@
-End of activation: take 1 suppression to roll a red die for a debuff or a heal.
+End of activation: may take 1 suppression to roll a red defense die. On a defense surge, an enemy within range 1 gains 2 suppression and 2 immobilize; on a blank, remove 1 wound or poison from an allied non-droid trooper within range 1.

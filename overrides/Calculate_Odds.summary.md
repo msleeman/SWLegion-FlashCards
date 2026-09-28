@@ -1,1 +1,1 @@
-Card action: a nearby friendly unit in LOS gains several tokens (see the card for which).
+Card action: an allied trooper within range 2 and LOS gains 1 aim, 1 dodge, and 1 suppression token.

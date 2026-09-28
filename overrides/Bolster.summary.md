@@ -1,1 +1,1 @@
-Card action: up to X allies nearby each gain a token (aim or surge, see the card).
+Card action: up to X allied units within range 2 each gain 1 surge token.

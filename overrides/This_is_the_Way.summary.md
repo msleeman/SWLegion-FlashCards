@@ -1,1 +1,1 @@
-When issued an order, X allies nearby each make the listed action for free.
+When issued an order, up to X other allied Covert units within range 2 each make the listed action as a free action.

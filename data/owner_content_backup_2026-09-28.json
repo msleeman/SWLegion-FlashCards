@@ -1,0 +1,287 @@
+{
+ "_comment": "Backup of the Supabase owner_content table (shared owner edits) taken 2026-09-28, before clearing it. Every summary here was checked against the rulebook / Legion Helper; the good ones are now in overrides/*.summary.md, so the files are the single source of truth. To restore a row, re-save it from the app while signed in as the owner.",
+ "rows": [
+  {
+   "card_name": "Armor X",
+   "custom_def": null,
+   "custom_summary": "Defending units can cancel up to X hit results during attack resolution.",
+   "updated_at": "2026-04-26T18:44:36.955811+00:00"
+  },
+  {
+   "card_name": "Arsenal X",
+   "custom_def": null,
+   "custom_summary": "Each miniature with Arsenal X can contribute up to X weapons to separate attack pools during formation, with each weapon used only once.",
+   "updated_at": "2026-04-26T18:44:36.955811+00:00"
+  },
+  {
+   "card_name": "Blast",
+   "custom_def": null,
+   "custom_summary": "Defending units cannot use light a or heavy cover to cancel hit when Blast is used.",
+   "updated_at": "2026-04-26T18:44:36.955811+00:00"
+  },
+  {
+   "card_name": "Building a Command Hand",
+   "custom_def": null,
+   "custom_summary": "Players build a seven-card command hand with fixed pip distributions (2-1, 2-2, 2-3, plus Standing Orders) that can only include cards matching their army's units and factions.",
+   "updated_at": "2026-04-26T18:44:36.955811+00:00"
+  },
+  {
+   "card_name": "Commander and Panic Check",
+   "custom_def": null,
+   "custom_summary": "When a unit checks to see if it is Panicked, if there are 1 or more [COMMANDER] units with higher [COURAGE] within [RANGE 3], it uses the highest of those [COURAGE] instead of its own. For example, a unit with 3 Suppression tokens and Courage value 1 would not be Panicked if there is an allied [COMMANDER] within [RANGE 3] that has a Courage value of 2 or greater.",
+   "updated_at": "2026-04-26T18:44:36.955811+00:00"
+  },
+  {
+   "card_name": "Compel: Rank/Unit Type",
+   "custom_def": null,
+   "custom_summary": "Suppressed units near a Compel unit can gain a suppression token to perform a free move during their action step.",
+   "updated_at": "2026-04-26T18:44:36.955811+00:00"
+  },
+  {
+   "card_name": "Compulsory Move",
+   "custom_def": null,
+   "custom_summary": "A compulsory Move is a free Move action. To make a compulsory Move, the unit makes a full Move at its Speed.",
+   "updated_at": "2026-04-26T18:44:36.955811+00:00"
+  },
+  {
+   "card_name": "Counterpart",
+   "custom_def": null,
+   "custom_summary": "A companion miniature joins another unit, sharing its rank/defense/speed stats. Wounds can be redirected to the companion, and it's defeated separately using its own wound threshold.",
+   "updated_at": "2026-04-26T18:44:36.955811+00:00"
+  },
+  {
+   "card_name": "Cover",
+   "custom_def": null,
+   "custom_summary": "Cover helps miniatures defend themselves from attacks. Cover is divided into three categories: light, heavy, and no Cover, and is determined during the attack sequence.",
+   "updated_at": "2026-04-26T18:44:36.955811+00:00"
+  },
+  {
+   "card_name": "Cover X",
+   "custom_def": null,
+   "custom_summary": "Increases its Cover by X ",
+   "updated_at": "2026-04-26T18:44:36.955811+00:00"
+  },
+  {
+   "card_name": "Creature Trooper",
+   "custom_def": null,
+   "custom_summary": "Creature troopers have notched bases. Creature troopers can make Reverse Moves. Creature troopers can Pivot, even while they are engaged. Creature troopers receive except from barricades . Creature troopers can attack and Withdraw during the same Activation.",
+   "updated_at": "2026-04-26T18:44:36.955811+00:00"
+  },
+  {
+   "card_name": "Critical X",
+   "custom_def": "When a unit converts attack surges for an attack pool with the Critical X keyword, during the Convert Surges step it may convert up to X surge results to critical results.",
+   "custom_summary": "During the Convert Surges step, convert up to X surge results to critical results instead of hit results.",
+   "updated_at": "2026-04-26T18:44:36.955811+00:00"
+  },
+  {
+   "card_name": "Cunning",
+   "custom_def": null,
+   "custom_summary": "When you reveal a Command Card that belongs to a unit with the Cunning keyword and there would be a tie for priority, treat that Command Card as having 1 fewer pip.  E.g an Orson Krennic command card with 2 pips become 1 pip. ",
+   "updated_at": "2026-04-26T18:44:36.955811+00:00"
+  },
+  {
+   "card_name": "Death From Above",
+   "custom_def": null,
+   "custom_summary": "When a unit with the Death From Above keyword attacks the defending unit cannot use cover to cancel hit results during the Apply Cover step if the attacking unit's unit leader is of greater height than any terrain the defending unit's unit leader resides.",
+   "updated_at": "2026-04-26T18:44:36.955811+00:00"
+  },
+  {
+   "card_name": "Deflect",
+   "custom_def": null,
+   "custom_summary": "Deflect converts defense surges to blocks and causes attackers to suffer one wound. It doesn't work against High Velocity weapons.",
+   "updated_at": "2026-04-26T18:44:36.955811+00:00"
+  },
+  {
+   "card_name": "Deploy",
+   "custom_def": null,
+   "custom_summary": "Undeployed units must move from their army's edge of the battlefield to enter play; they can't take other actions until they've deployed.",
+   "updated_at": "2026-04-26T18:44:36.955811+00:00"
+  },
+  {
+   "card_name": "Detachment: Name/Type",
+   "custom_def": null,
+   "custom_summary": "Detachment units require a matching non-Detachment unit in your army and don't count toward rank limits. They gain Infiltrate or Prepared Position if their matching unit has it.",
+   "updated_at": "2026-04-26T18:44:36.955811+00:00"
+  },
+  {
+   "card_name": "Dice",
+   "custom_def": null,
+   "custom_summary": "Players roll colored dice to resolve attacks and defenses: red/black/white attack dice produce hits/crits/surges, while red/white defense dice produce blocks/surges to mitigate damage.",
+   "updated_at": "2026-04-26T18:44:36.955811+00:00"
+  },
+  {
+   "card_name": "Djem So Mastery",
+   "custom_def": null,
+   "custom_summary": " When a unit with the Djem So Mastery keyword is defending keyword against a melee attack, during the Compare Results step, the attacking  unit suffers a wound if the attack roll contains one or may more blank results. ",
+   "updated_at": "2026-04-26T18:44:36.955811+00:00"
+  },
+  {
+   "card_name": "Duelist",
+   "custom_def": null,
+   "custom_summary": "Duelist; spending aim tokens during melee attacks grants Pierce 1, while spending *dodge* tokens when defending grants Immune: Pierce.",
+   "updated_at": "2026-04-26T18:44:36.955811+00:00"
+  },
+  {
+   "card_name": "Field Commander",
+   "custom_def": null,
+   "custom_summary": "A non-Commander unit can function as a Commander for army building and issuing orders, and nearby allied units treat it as a Commander with Courage 2.",
+   "updated_at": "2026-04-26T18:44:36.955811+00:00"
+  },
+  {
+   "card_name": "Guardian X",
+   "custom_def": null,
+   "custom_summary": "Nearby friendly units can redirect up to X ranged hits to this unit, which rolls defense dice and suffers wounds for blanks. The protected unit gains suppression as normal.",
+   "updated_at": "2026-04-26T18:44:36.955811+00:00"
+  },
+  {
+   "card_name": "Immobilize X",
+   "custom_def": null,
+   "custom_summary": "Wounded units gain X immobilize tokens, reducing maximum speed by 1 per token. Units with zero speed and immobilize tokens cannot move; tokens are removed at activation end.",
+   "updated_at": "2026-04-26T18:44:36.955811+00:00"
+  },
+  {
+   "card_name": "Impact X",
+   "custom_def": null,
+   "custom_summary": "When attacking ARMOR the attacking unit can modify up to X [HIT] results to [CRIT] results during the Modify Attack Dice step.",
+   "updated_at": "2026-04-26T18:44:36.955811+00:00"
+  },
+  {
+   "card_name": "Indomitable",
+   "custom_def": null,
+   "custom_summary": "Indomitable means the unit cannot be suppressed or gain suppression tokens. Full stop. It's the suppression immunity keyword.",
+   "updated_at": "2026-04-26T18:44:36.955811+00:00"
+  },
+  {
+   "card_name": "Infiltrate",
+   "custom_def": null,
+   "custom_summary": "When a unit with the Infiltrate keyword starts its Activation, if it is undeployed, it may Deploy by placing the unit leader of that unit ANYWHERE completely within allied Territory.",
+   "updated_at": "2026-04-26T18:44:36.955811+00:00"
+  },
+  {
+   "card_name": "Jar'Kai Mastery",
+   "custom_def": null,
+   "custom_summary": "A unit with Jar'Kai Mastery keyword may spend any number of dodge tokens. For each dodge token spent in this way, change a blank result to a hit result, a hit result to a critical result, or spend two dodge tokens to change a blank result to a critical result.",
+   "updated_at": "2026-04-26T18:44:36.955811+00:00"
+  },
+  {
+   "card_name": "Jedi Hunter",
+   "custom_def": null,
+   "custom_summary": "When a unit with the Jedi Hunter keyword attacks a unit with ab upgrade icon on its upgrade bar, it gains : .",
+   "updated_at": "2026-04-26T18:44:36.955811+00:00"
+  },
+  {
+   "card_name": "Juyo Mastery",
+   "custom_def": "While a unit with the Juyo Mastery keyword has one or more wound tokens, it can perform one additional action during its activation. A unit with Juyo Mastery may only perform two move actions during its activation, including free actions.",
+   "custom_summary": "While a unit with the Juyo Mastery keyword has one or more wound tokens, it can perform one additional action during its activation. A unit with Juyo Mastery may only perform two move actions during its activation, including free actions.",
+   "updated_at": "2026-04-26T18:44:36.955811+00:00"
+  },
+  {
+   "card_name": "Long Shot",
+   "custom_def": null,
+   "custom_summary": "Spend 1 Aim token to increase the maximum Range of that weapon by 1 until the end of that attack sequence.  Only 1 Aim token may be spent in this way per attack sequence.",
+   "updated_at": "2026-04-26T18:44:36.955811+00:00"
+  },
+  {
+   "card_name": "Master of the Force",
+   "custom_def": null,
+   "custom_summary": "At the end of its activation, a unit that has the Master of the Force X keyword may ready up to X of its exhausted Force Upgrade Cards.",
+   "updated_at": "2026-04-26T18:44:36.955811+00:00"
+  },
+  {
+   "card_name": "Objects/Battlefield",
+   "custom_def": "ObjectsBattlefield Miniatures, tokens, and terrain are all objects. The table or surface being played on is the battlefield.",
+   "custom_summary": null,
+   "updated_at": "2026-04-26T18:40:21.715415+00:00"
+  },
+  {
+   "card_name": "Observe X",
+   "custom_def": null,
+   "custom_summary": "Place observation tokens on enemy units to let friendly units reroll attack dice during attacks. Tokens last until the end phase and can be spent one at a time on the same die.",
+   "updated_at": "2026-04-26T18:44:36.955811+00:00"
+  },
+  {
+   "card_name": "One Step Ahead",
+   "custom_def": null,
+   "custom_summary": "If command cards don't match pips, one One Step Ahead unit moves Speed-1. If they match, any allied unit moves Speed-1.",
+   "updated_at": "2026-04-26T18:44:36.955811+00:00"
+  },
+  {
+   "card_name": "Overrun X",
+   "custom_def": null,
+   "custom_summary": "A weapon with a red overrun Range icon is an Overrun weapon and can only be used during Overrun attacks. Overrun attacks are not Ranged or Melee attacks. A unit may make X Overrun attacks during its activation. A unit with an Overrun weapon can make an Overrun attack after it makes a Standard Move in which the Movement Tool or one of its miniatures’ bases overlapped an enemy miniature’s base. After the Move is resolved, the unit with the Overrun weapon makes an attack against the unit it moved through, and ignores Range when making this attack. A unit can only form 1 Attack Pool when making an Overrun attack.",
+   "updated_at": "2026-04-26T18:44:36.955811+00:00"
+  },
+  {
+   "card_name": "Pierce X",
+   "custom_def": null,
+   "custom_summary": " Pierce X keyword it may cancel up to X [BLOCK] results during the Modify Defense Dice step.",
+   "updated_at": "2026-04-26T18:44:36.955811+00:00"
+  },
+  {
+   "card_name": "Plodding",
+   "custom_def": null,
+   "custom_summary": "A unit with the Plodding keyword can Unit only perform one move action of speed 1. ",
+   "updated_at": "2026-04-26T18:44:36.955811+00:00"
+  },
+  {
+   "card_name": "Poison X",
+   "custom_def": null,
+   "custom_summary": "When a non-droid unit suffers wounds from a weapon with Poison X, it gains X poison tokens. At the end of that unit's activation, it suffers 1 wound per token, then removes all tokens.",
+   "updated_at": "2026-04-26T18:44:36.955811+00:00"
+  },
+  {
+   "card_name": "Primitive",
+   "custom_def": null,
+   "custom_summary": "If the defending unit has the Armor or Armor X keyword, a unit whose attack pool includes a weapon that has the Primitive keyword must modify all critical results to hit results for that attack.",
+   "updated_at": "2026-04-26T18:44:36.955811+00:00"
+  },
+  {
+   "card_name": "Relentless",
+   "custom_def": null,
+   "custom_summary": "After a unit that has the Relentless keyword performs a move action, it may perform a free attack action.  Vader rules.",
+   "updated_at": "2026-04-26T18:44:36.955811+00:00"
+  },
+  {
+   "card_name": "Shielded X",
+   "custom_def": null,
+   "custom_summary": "A unit gains X shield tokens that can be flipped during defense to cancel hits or crits (one result per token flipped). Flipped tokens toggle between active and inactive sides.",
+   "updated_at": "2026-04-26T18:44:36.955811+00:00"
+  },
+  {
+   "card_name": "Speeder X",
+   "custom_def": null,
+   "custom_summary": " A unit with the Speeder X keyword must make a free compulsory Move action at the start or end of its Make Actions step. If a unit with the Speeder X keyword makes more than 1 non-compulsory Move action during its Activation",
+   "updated_at": "2026-04-26T18:44:36.955811+00:00"
+  },
+  {
+   "card_name": "Uncanny Luck X",
+   "custom_def": "Reroll up to X of its defense dice during the Reroll Defense Dice step. Any dice rerolled with the Uncanny Luck X keyword must be rerolled at the same time and each die cannot be rerolled more than once.",
+   "custom_summary": null,
+   "updated_at": "2026-04-26T18:40:21.715415+00:00"
+  },
+  {
+   "card_name": "Unstoppable",
+   "custom_def": null,
+   "custom_summary": "Activates with ≤1 facedown token, max 1 faceup token, and adds an extra order token to the pool each round.",
+   "updated_at": "2026-04-26T18:44:36.955811+00:00"
+  },
+  {
+   "card_name": "Upgrade Cards",
+   "custom_def": null,
+   "custom_summary": "Units equip Upgrade Cards during army building to add weapons, gear, abilities, or miniatures, with each card type matching a slot on the unit's upgrade bar and counting toward total army points.",
+   "updated_at": "2026-04-26T18:44:36.955811+00:00"
+  },
+  {
+   "card_name": "Weak Point X",
+   "custom_def": null,
+   "custom_summary": "While a unit is attack from the weak point (rear etc.) the Attack Pool gains the Impact X keyword where X is equal to the value of Weak Point X. \n",
+   "updated_at": "2026-04-26T18:44:36.955811+00:00"
+  },
+  {
+   "card_name": "Wound X",
+   "custom_def": null,
+   "custom_summary": "The first time a unit with the Wound X keyword enters play, that unit suffers X wounds.",
+   "updated_at": "2026-04-26T18:44:36.955811+00:00"
+  }
+ ]
+}
