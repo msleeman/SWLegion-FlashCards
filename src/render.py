@@ -13,16 +13,15 @@ from src.config import HERE, CACHE_DIR, TEMPLATE_DIR, HEADERS, DIST_IMGDIR
 def _weapon_list(card):
     """Weapons as [{n, d:{r,b,w}, k:[...], rg:[...]}] for the dice maths.
 
-    Melee-only "Unarmed" profiles are dropped -- they are on nearly every card
-    and would just pad the unit sheet.
+    "Unarmed" profiles are kept: in 2.6 they roll real dice (1 black on Scout
+    Troopers and Shoretroopers) and belong in the unit's melee pool. The unit
+    sheet hides them from its per-weapon table so they don't pad it.
     """
     out = []
     for w in (card.get('weapons') or []):
         name = w.get('name', '')
         dice = w.get('dice') or {}
         if not any(dice.get(c) for c in ('r', 'b', 'w')):
-            continue
-        if name.strip().lower() == 'unarmed':
             continue
         kws = []
         for kw in (w.get('keywords') or []):

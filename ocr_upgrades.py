@@ -8,7 +8,8 @@ art, the same way ocr_commands.py does for command cards.
 
 Output goes to data/upgrade_ocr.json, which IS committed, so a normal rebuild
 never needs the OCR dependencies installed. Re-run this only when new upgrade
-cards appear (already-read cards are skipped; pass --all to redo them):
+cards appear (already-read cards are skipped; pass --all to redo them, or
+--tidy to re-apply the text clean-up to the cached output only):
 
     py -m pip install pillow rapidocr-onnxruntime
     py ocr_upgrades.py
@@ -84,6 +85,25 @@ def extract(res, img_h):
     return re.sub(r'\s+', ' ', rules).strip(), re.sub(r'\s+', ' ', weapon).strip()
 
 
+def tidy(text):
+    """Put back what OCR reliably loses on upgrade cards.
+
+    The exhaust icon in "you may <exhaust> this card" is invisible to OCR and
+    leaves "you may this card" -- restore it as [TAP]. Small digits also run
+    into the next word ("choose 1of the drawn Order tokens").
+    """
+    text = re.sub(r'\bmay\s+this card\b', 'may [TAP] this card', text)
+    text = re.sub(r'\b(\d)(of|or|and)\b', r'\1 \2', text)
+    return re.sub(r'\s+([.,;:])', r'\1', text)
+
+
+def minis_added(rules):
+    """N from "Add N ... miniature(s)" -- the card art sometimes misspells it
+    ("Add 1 Electrostaff Pirate minature")."""
+    m = re.search(r'Add\s*(\d+)\s*.*?\bmini?a?tures?\b', rules, re.I)
+    return int(m.group(1)) if m else None
+
+
 def _cards():
     """Every upgrade as (key, name, image path, needs upscale)."""
     lhq = json.load(open(os.path.join('cache', 'legionhq2_upgrades.json'), encoding='utf-8'))
@@ -111,6 +131,15 @@ def main():
     if os.path.exists(CACHE) and not redo:
         with open(CACHE, encoding='utf-8') as f:
             out = json.load(f)
+    if '--tidy' in sys.argv:
+        # Re-apply tidy() to what is already cached, without re-reading art.
+        for e in out.values():
+            e['t'] = tidy(e['t'])
+            if minis_added(e['t']):
+                e['m'] = minis_added(e['t'])
+        _save(out)
+        print(f'tidied {len(out)} cached cards')
+        return
 
     cards = _cards()
     todo = [(k, v) for k, v in sorted(cards.items()) if k not in out]
@@ -130,13 +159,12 @@ def main():
             print(f'  [{n}/{len(todo)}] FAILED {key}: {e}')
             continue
         rules, weapon = extract(res, img_h)
-        rules = repair(rules, vocab)
+        rules = tidy(repair(rules, vocab))
         entry = {'t': rules}
         if weapon:
             entry['w'] = repair(weapon, vocab)
-        m = re.search(r'Add\s*(\d+)\s*.*?miniatures?', rules, re.I)
-        if m:
-            entry['m'] = int(m.group(1))
+        if minis_added(rules):
+            entry['m'] = minis_added(rules)
         out[key] = entry
         print(f'  [{n}/{len(todo)}] {key[:48]:48} {len(rules):4d} chars'
               f'{"  (tta)" if upscale else ""}')

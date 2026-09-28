@@ -2216,11 +2216,13 @@ function printListUnits(listId){
     const title=u.title?` <span class="pu-title">${escHtml(u.title)}</span>`:'';
     const rank=u.rank?`<span class="pu-rank">${escHtml(u.rank)}</span>`:'';
     const upgNames=(u.upgrades&&u.upgrades.length)
-      ? `<div class="pu-upg">Upgrades: ${escHtml(u.upgrades.join(', '))}</div>` : '';
+      ? `<span class="pu-upg">Upgrades: ${escHtml(u.upgrades.join(', '))}</span>` : '';
+    // Rank on the left, upgrades right-justified on the same line.
+    const rankLine=(rank||upgNames)?`<div class="pu-rankrow">${rank}${upgNames}</div>`:'';
 
     // Per-weapon expected hits, plus this unit's own save chance.
     const save=saveChance(u.dd,u.ds);
-    const wpnRows=(u.weapons||[]).map(w=>{
+    const wpnRows=(u.weapons||[]).filter(w=>w.n!=='Unarmed').map(w=>{
       const st=poolStats(w.d||{},critValue(w.k),u.hs||'');
       const kw=(w.k||[]).join(', ');
       const rg=w.rg&&w.rg.length
@@ -2233,70 +2235,100 @@ function printListUnits(listId){
           <span class="pw-c">(${st.crits.toFixed(2)} crit)</span></td>
       </tr>`;
     }).join('');
-    // Full-unit pool: every miniature fires the unit card's ranged weapon, and
-    // each weapon-bearing upgrade adds its own miniature on top. So a 4-model
-    // Stormtrooper squad with a T-21 throws 4x1W + 4W = 8W, Critical 2.
+    // Full-unit pools, one per range. Each miniature adds ONE weapon to a
+    // pool: the best it has that reaches. A miniature added by an upgrade
+    // ("Add 1 Sonic Charge Saboteur miniature") also carries every weapon on
+    // the unit card, so 4 Scouts + a Saboteur throw 5x EC-17 at range 2 and
+    // 4x EC-17 + the Sonic Charge at range 1.
     let totalRow='';
-    const unitRanged=(u.weapons||[]).find(w=>
-      w.rg&&w.rg.length&&Math.max(...w.rg)>0&&!(u.upgradeCards||[]).some(c=>
-        (c.w||[]).some(x=>x.n===w.n)));
-    if(unitRanged){
-      // Fresh from UNIT_DB so data/unit_corrections.json reaches saved lists.
-      const mc=(dbUnitFor(u)||{}).mc||u.mc||1;
-      // Track weapons separately, and each miniature's copy of the unit weapon
-      // as its own weapon: Assault upgrades X dice of EACH weapon, so four
-      // EC-17s (2B each) with Assault 1 become 4R 4B, not 1R 7B.
-      const dice=d=>({r:d.r||0,b:d.b||0,w:d.w||0});
-      const groups=[{d:dice(unitRanged.d), copies:mc, n:`${mc}x ${unitRanged.n}`,
-                     label:`${mc}× ${unitRanged.n}`, unitWpn:true}];
-      let crit=critValue(unitRanged.k);
-      for(const up of (u.upgradeCards||[])){
-        // "Add 2 KX-Series Security Droid miniatures": each fires the weapon.
-        const ocr=upgradeText(up.n,up.c||0);
-        const copies=(ocr&&ocr.m)||1;
-        for(const w of (up.w||[])){
-          if(!w.rg||!w.rg.length||Math.max(...w.rg)<=0) continue;
-          groups.push({d:dice(w.d), copies, n:copies>1?`${copies}x ${w.n}`:w.n,
-                       label:copies>1?`${copies}× ${w.n}`:w.n,
-                       assault:kwNumber(w.k,'Assault')});
-          crit=Math.max(crit,critValue(w.k));
-        }
-      }
-      const sum=gs=>gs.reduce((a,g)=>({r:a.r+g.d.r*g.copies,b:a.b+g.d.b*g.copies,
-                                        w:a.w+g.d.w*g.copies}),{r:0,b:0,w:0});
-      const pool=sum(groups);
-      const parts=groups.map(g=>g.n);
-      const st=poolStats(pool,crit,u.hs||'');
-      if(st.dice){
-        totalRow=`<tr class="pw-total">
-          <td class="pw-n"><strong>Full unit</strong>
-            <span class="pw-kw">${escHtml(parts.join(' + '))}${
-              crit?`, Critical ${crit}`:''}</span></td>
-          <td class="pw-d">${escHtml(fmtPool(pool))}</td>
-          <td class="pw-h"><strong>${st.total.toFixed(2)}</strong>
-            <span class="pw-c">(${st.crits.toFixed(2)} crit)</span></td></tr>`;
-        // Assault X upgrades X dice of each weapon, but only when the defender
-        // is within range 1 -- so it gets its own conditional row rather than
-        // inflating the headline figure. It applies to every miniature's copy
-        // of the unit weapon; an upgrade's own weapon is upgraded only when
-        // that weapon itself lists Assault (Proton Charge, not Sonic Charge).
-        const assault=kwNumber(u.kws,'Assault')||
-          Math.max(0,...groups.map(g=>g.assault||0));
-        if(assault){
-          const hit=groups.map(g=>({...g,
-            x:g.unitWpn?assault:(g.assault||0)}));
-          const up=sum(hit.map(g=>({...g,d:g.x?upgradeDice(g.d,g.x):g.d})));
-          const which=hit.filter(g=>g.x).map(g=>g.label).join(', ');
-          const sa=poolStats(up,crit,u.hs||'');
-          totalRow+=`<tr class="pw-total pw-cond">
-            <td class="pw-n"><strong>Full unit at range 1</strong>
-              <span class="pw-kw">Assault ${assault}: upgrade ${assault} die on each: ${escHtml(which)}</span></td>
-            <td class="pw-d">${escHtml(fmtPool(up))}</td>
-            <td class="pw-h"><strong>${sa.total.toFixed(2)}</strong>
-              <span class="pw-c">(${sa.crits.toFixed(2)} crit)</span></td></tr>`;
-        }
-      }
+    const dbu=dbUnitFor(u);
+    // Fresh from UNIT_DB so data/unit_corrections.json reaches saved lists.
+    const mc=(dbu||{}).mc||u.mc||1;
+    const upgWpnNames=new Set((u.upgradeCards||[]).flatMap(c=>(c.w||[]).map(w=>w.n)));
+    const unitWpns=(dbu?(dbu.w||[]):(u.weapons||[]).filter(w=>!upgWpnNames.has(w.n)))
+      .map(w=>({...w,unitWpn:true}));
+    const minis=[];
+    for(let i=0;i<mc;i++) minis.push(unitWpns);
+    const shared=[];
+    for(const up of (u.upgradeCards||[])){
+      const own=(up.w||[]).map(w=>({...w,assault:kwNumber(w.k,'Assault')}));
+      if(!own.length) continue;
+      const ocr=upgradeText(up.n,up.c||0);
+      // No card text read at all: assume it adds its own miniature, as most
+      // weapon-bearing upgrades do.
+      const added=ocr?(ocr.m||0):1;
+      // No miniature of its own (grenades and similar): one existing
+      // miniature may use it in place of its own weapon.
+      if(added) for(let i=0;i<added;i++) minis.push([...unitWpns,...own]);
+      else shared.push(...own);
     }
+    if(shared.length&&minis.length) minis[0]=[...minis[0],...shared];
+
+    const dice=d=>({r:(d&&d.r)||0,b:(d&&d.b)||0,w:(d&&d.w)||0});
+    const reaches=(w,r)=>w.rg&&w.rg.length&&r>=Math.min(...w.rg)&&r<=Math.max(...w.rg);
+    const hs=u.hs||'';
+    const alone=w=>poolStats(dice(w.d),critValue(w.k),hs).total;
+    // Assault X upgrades X dice of each weapon when the defender is within
+    // range 1. It applies to every miniature's copy of a unit-card weapon; an
+    // upgrade's own weapon only when it lists Assault itself (Proton Charge
+    // does, Sonic Charge only grants it to the other weapons).
+    const assault=kwNumber(u.kws,'Assault')||
+      Math.max(0,...minis.flat().map(w=>w.assault||0));
+    const band=r=>{
+      const picks=minis.map(ws=>{
+        const ok=ws.filter(w=>reaches(w,r)&&Object.values(dice(w.d)).some(Boolean));
+        return ok.length?ok.reduce((a,b)=>alone(b)>alone(a)?b:a):null;
+      }).filter(Boolean);
+      if(!picks.length) return null;
+      const upg=r===1&&assault
+        ? picks.map(w=>({w, x:w.unitWpn&&w.rg&&Math.max(...w.rg)>0?assault:(w.assault||0)}))
+        : picks.map(w=>({w, x:0}));
+      const pool=upg.reduce((a,{w,x})=>{
+        const d=x?upgradeDice(dice(w.d),x):dice(w.d);
+        return {r:a.r+d.r,b:a.b+d.b,w:a.w+d.w};
+      },{r:0,b:0,w:0});
+      const crit=Math.max(0,...picks.map(w=>critValue(w.k)));
+      const count=list=>{
+        const c={}; list.forEach(n=>{ c[n]=(c[n]||0)+1; });
+        return Object.entries(c).map(([n,k])=>k>1?`${k}× ${n}`:n).join(', ');
+      };
+      const upgraded=upg.filter(x=>x.x);
+      return {r, pool, crit, st:poolStats(pool,crit,hs),
+              sig:picks.map(w=>w.n).sort().join('|'),
+              parts:count(picks.map(w=>w.n)),
+              note:upgraded.length
+                ? `Assault ${assault}: upgrade ${assault} die on each: ${count(upgraded.map(x=>x.w.n))}` : ''};
+    };
+    const row=(label,b)=>`<tr class="pw-total">
+      <td class="pw-n"><strong>Full unit at ${label}</strong>
+        <span class="pw-kw">${escHtml(b.parts)}${b.crit?`, Critical ${b.crit}`:''}</span>
+        ${b.note?`<span class="pw-kw">${escHtml(b.note)}</span>`:''}</td>
+      <td class="pw-d">${escHtml(fmtPool(b.pool))}</td>
+      <td class="pw-h"><strong>${b.st.total.toFixed(2)}</strong>
+        <span class="pw-c">(${b.st.crits.toFixed(2)} crit)</span></td></tr>`;
+
+    const melee=band(0);
+    if(melee) totalRow+=row('melee',melee);
+    const maxR=Math.max(0,...minis.flat().map(w=>w.rg&&w.rg.length?Math.max(...w.rg):0));
+    const bands=[];
+    for(let r=1;r<=maxR;r++){ const b=band(r); if(b) bands.push(b); }
+    // Runs of consecutive ranges that throw the same pool.
+    const runs=[];
+    bands.forEach(b=>{
+      const last=runs[runs.length-1];
+      if(last&&last.b.sig===b.sig&&!last.b.note&&!b.note&&last.to===b.r-1) last.to=b.r;
+      else runs.push({from:b.r,to:b.r,b});
+    });
+    const span=x=>x.from===x.to?`range ${x.from}`:`range ${x.from}–${x.to}`;
+    // Usually one ranged row: the best attack at range 2+ (range 1 folds in
+    // when it throws the same pool). Range 1 gets its own row only when it
+    // beats that -- short-range weapons or Assault, as on Scout Troopers.
+    const far=runs.filter(x=>x.to>=2);
+    const best=far.length?far.reduce((a,b)=>b.b.st.total>a.b.st.total?b:a):null;
+    const near=runs.find(x=>x.from===1);
+    if(best) totalRow+=row(span(best),best.b);
+    if(near&&near!==best&&(!best||near.b.st.total>best.b.st.total))
+      totalRow+=row(span(near),near.b);
     const wpnBlock=wpnRows
       ? `<table class="pw-table"><thead><tr>
            <th>Weapon</th><th>Dice</th><th>Avg hits</th></tr></thead>
@@ -2313,8 +2345,7 @@ function printListUnits(listId){
       </td>
       <td class="pu-cell">
         <div class="pu-name"><span>${u.count>1?escHtml(u.count)+'× ':''}${escHtml(u.name)}${title}</span>${costLine}</div>
-        ${rank}
-        ${upgNames}
+        ${rankLine}
         ${saveLine}
         ${wpnBlock}
         ${kwBlock||'<ul class="pu-kwlist"><li class="pu-none">No keywords</li></ul>'}
