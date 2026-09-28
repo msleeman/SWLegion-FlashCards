@@ -2024,6 +2024,15 @@ function upgradeText(name,cost){
   const k=Object.keys(UPGRADE_TEXT).find(k=>k.startsWith(name+'|'));
   return k?UPGRADE_TEXT[k]:null;
 }
+// Attack types a card's "Sidearm: X" covers, read off the card text
+// ("SIDEARM: MELEE, RANGED."). The data sources only carry the template
+// "Sidearm: Melee/Ranged" or a bare "Sidearm". OCR sometimes reads "RAMGED".
+function sidearmOf(ocr){
+  if(!ocr) return null;
+  const m=/sidearm[:;]?\s*((?:melee|ra[nm]ged)(?:[.,]?\s*(?:melee|ra[nm]ged))?)/i
+    .exec((ocr.t||'')+' '+(ocr.w||''));
+  return m?{melee:/melee/i.test(m[1]), ranged:/ra[nm]ged/i.test(m[1])}:null;
+}
 // A keyword's value as printed on the card ("gain Assault 1", "IMPACT 4").
 // Neither data source carries every value, but the card always does.
 function ocrKwValue(ocr,base){
@@ -2042,6 +2051,29 @@ function dbUnitFor(u){
     const r=byTitle.find(x=>x.r===u.rank); if(r) return r;
   }
   return byTitle[0]||(hits.length===1?hits[0]:null);
+}
+
+// Tabletop Admiral is preferred over LegionHQ2 wherever both have the data:
+// it is updated more often and has proved more accurate. These find the TTA
+// record for a saved unit / upgrade card.
+function ttaUnitFor(u){
+  const hits=Object.values(TTA_UNITS).filter(t=>t.n===u.name&&(t.t||'')===(u.title||''));
+  return (u.rank&&hits.find(t=>t.r===u.rank))||hits[hits.length-1]||null;
+}
+function ttaUpgradeFor(name,cost){
+  const hits=Object.values(TTA_UPGRADES).filter(t=>t.n===name);
+  return hits.length===1?hits[0]:(hits.find(t=>(t.c||0)===(cost||0))||null);
+}
+// Which keywords a card has comes from Tabletop Admiral; its names are
+// templates ("Scout X", "Coordinate: Emplacement Trooper"), so the matching
+// LegionHQ2 spelling is used where there is one, for its value / parameter.
+function ttaKeywordsWithValues(ttaIds, lhqNames){
+  const lhq=(lhqNames||[]).map(kwParse);
+  return (ttaIds||[]).map(id=>TTA_KEYWORDS[id]).filter(Boolean).map(kw=>{
+    const e=kwParse(kw);
+    const l=lhq.filter(x=>kwSame(x,e)).sort((a,b)=>(b.value!==null)-(a.value!==null))[0];
+    return l?l.raw:kw;
+  });
 }
 
 // Every keyword on a saved unit, grouped by meaning and attributed to the
@@ -2083,7 +2115,9 @@ function unitKeywordSources(u, removed){
   const upgWpnNames=new Set((u.upgradeCards||[]).flatMap(c=>(c.w||[]).map(w=>w.n)));
   const unitWeapons=dbUnit?(dbUnit.w||[]):(u.weapons||[]).filter(w=>!upgWpnNames.has(w.n));
 
-  minus(dbUnit&&dbUnit.k,unitWeapons).forEach(kw=>add(kw,'Unit card','unit'));
+  const ttaU=ttaUnitFor(u);
+  const cardKws=ttaU?ttaKeywordsWithValues(ttaU.kw,dbUnit&&dbUnit.k):((dbUnit&&dbUnit.k)||[]);
+  minus(cardKws,unitWeapons).forEach(kw=>add(kw,'Unit card','unit'));
   unitWeapons.forEach(w=>(w.k||[]).forEach(kw=>add(kw,`Weapon: ${w.n}`,'weapon')));
 
   const bare=[];
@@ -2091,14 +2125,12 @@ function unitKeywordSources(u, removed){
     ? u.upgradeCards : (u.upgrades||[]).map(n=>({n,c:0}));
   upgs.forEach(up=>{
     const dbUp=findDbUpgrade(up.n,up.c||0);
-    const ttaHits=Object.values(TTA_UPGRADES).filter(t=>t.n===up.n);
-    const tta=ttaHits.length===1?ttaHits[0]:ttaHits.find(t=>(t.c||0)===(up.c||0));
+    const tta=ttaUpgradeFor(up.n,up.c||0);
     const weapons=(up.w&&up.w.length)?up.w:((dbUp&&dbUp.w)||[]);
     const ocr=upgradeText(up.n,up.c||0);
     const fill=base=>ocrKwValue(ocr,base);
     const before=groups.reduce((n,g)=>n+g.srcs.length,0);
-    const names=[...((tta&&tta.kw)||[]).map(id=>TTA_KEYWORDS[id]).filter(Boolean),
-                 ...((dbUp&&dbUp.k)||[])];
+    const names=tta?ttaKeywordsWithValues(tta.kw,dbUp&&dbUp.k):((dbUp&&dbUp.k)||[]);
     if(matchesKnownCard(up.n)) names.push(up.n);
     minus(names,weapons).forEach(kw=>add(kw,up.n,'upgrade',fill));
     weapons.forEach(w=>(w.k||[]).forEach(kw=>add(kw,`${up.n} › ${w.n}`,'upgweapon',fill)));
@@ -2190,7 +2222,8 @@ function printListUnits(listId){
       ? u.upgradeCards
       : (u.upgrades||[]).map(n=>({n,c:0,i:''}));
     const upgThumbs=upgCards.map(up=>{
-      const cost=up.c?`<span class="pu-upgcost">${escHtml(up.c)}</span>`:'';
+      const c=(ttaUpgradeFor(up.n,up.c||0)||{c:up.c}).c;
+      const cost=c?`<span class="pu-upgcost">${escHtml(c)}</span>`:'';
       // Resolve fresh so lists saved before an art re-key still render.
       const src=currentUpgradeArt(up.n,up.c||0)
         ||(up.a?'images/upgrades/tta/'+encodeURIComponent(up.a):'')
@@ -2203,12 +2236,15 @@ function printListUnits(listId){
              `<span class="pu-upgname">${escHtml(up.n)}${cost}</span></div>`;
     }).join('');
 
-    const upgSum=upgCards.reduce((n,up)=>n+(up.c||0),0);
-    const each=(u.cost||0)+upgSum;
+    const ttaCost=(r,fallback)=>r&&r.c!==undefined?r.c:(fallback||0);
+    const upgCost=up=>ttaCost(ttaUpgradeFor(up.n,up.c||0),up.c);
+    const baseCost=ttaCost(ttaUnitFor(u),u.cost);
+    const upgSum=upgCards.reduce((n,up)=>n+upgCost(up),0);
+    const each=baseCost+upgSum;
     const costLine=each
       ? `<span class="pu-cost"><strong>${escHtml(each)}</strong> pts`+
         `${u.count>1?' each':''}`+
-        `<span class="pu-costbits"> (${escHtml(u.cost||0)} base`+
+        `<span class="pu-costbits"> (${escHtml(baseCost)} base`+
         `${upgSum?` + ${escHtml(upgSum)} upg`:''})`+
         `${u.count>1?` · ${escHtml(each*u.count)} total`:''}</span></span>`
       : '';
@@ -2247,8 +2283,13 @@ function printListUnits(listId){
     const upgWpnNames=new Set((u.upgradeCards||[]).flatMap(c=>(c.w||[]).map(w=>w.n)));
     const unitWpns=(dbu?(dbu.w||[]):(u.weapons||[]).filter(w=>!upgWpnNames.has(w.n)))
       .map(w=>({...w,unitWpn:true}));
+    // Each miniature: {ws: every weapon it carries, own: its card's weapons,
+    // side: Sidearm attack types}. "Sidearm: X" means that miniature may use
+    // ONLY its card's weapon for X -- Fifth Brother (Sidearm: Melee, Ranged)
+    // swings his lightsaber in melee and, since it is melee-only, adds
+    // nothing at all to a ranged pool.
     const minis=[];
-    for(let i=0;i<mc;i++) minis.push(unitWpns);
+    for(let i=0;i<mc;i++) minis.push({ws:unitWpns, own:[], side:null});
     const shared=[];
     for(const up of (u.upgradeCards||[])){
       const own=(up.w||[]).map(w=>({...w,assault:kwNumber(w.k,'Assault')}));
@@ -2257,12 +2298,14 @@ function printListUnits(listId){
       // No card text read at all: assume it adds its own miniature, as most
       // weapon-bearing upgrades do.
       const added=ocr?(ocr.m||0):1;
+      const side=sidearmOf(ocr);
       // No miniature of its own (grenades and similar): one existing
       // miniature may use it in place of its own weapon.
-      if(added) for(let i=0;i<added;i++) minis.push([...unitWpns,...own]);
+      if(added) for(let i=0;i<added;i++) minis.push({ws:[...unitWpns,...own], own, side});
       else shared.push(...own);
     }
-    if(shared.length&&minis.length) minis[0]=[...minis[0],...shared];
+    if(shared.length&&minis.length) minis[0]={...minis[0], ws:[...minis[0].ws,...shared]};
+    const usable=(m,r)=>m.side&&(r===0?m.side.melee:m.side.ranged)?m.own:m.ws;
 
     const dice=d=>({r:(d&&d.r)||0,b:(d&&d.b)||0,w:(d&&d.w)||0});
     const reaches=(w,r)=>w.rg&&w.rg.length&&r>=Math.min(...w.rg)&&r<=Math.max(...w.rg);
@@ -2273,10 +2316,10 @@ function printListUnits(listId){
     // upgrade's own weapon only when it lists Assault itself (Proton Charge
     // does, Sonic Charge only grants it to the other weapons).
     const assault=kwNumber(u.kws,'Assault')||
-      Math.max(0,...minis.flat().map(w=>w.assault||0));
+      Math.max(0,...minis.flatMap(m=>m.ws).map(w=>w.assault||0));
     const band=r=>{
-      const picks=minis.map(ws=>{
-        const ok=ws.filter(w=>reaches(w,r)&&Object.values(dice(w.d)).some(Boolean));
+      const picks=minis.map(m=>{
+        const ok=usable(m,r).filter(w=>reaches(w,r)&&Object.values(dice(w.d)).some(Boolean));
         return ok.length?ok.reduce((a,b)=>alone(b)>alone(a)?b:a):null;
       }).filter(Boolean);
       if(!picks.length) return null;
@@ -2308,8 +2351,9 @@ function printListUnits(listId){
         <span class="pw-c">(${b.st.crits.toFixed(2)} crit)</span></td></tr>`;
 
     const melee=band(0);
-    if(melee) totalRow+=row('melee',melee);
-    const maxR=Math.max(0,...minis.flat().map(w=>w.rg&&w.rg.length?Math.max(...w.rg):0));
+    const out=[];
+    if(melee) out.push({at:0, html:row('melee',melee)});
+    const maxR=Math.max(0,...minis.flatMap(m=>m.ws).map(w=>w.rg&&w.rg.length?Math.max(...w.rg):0));
     const bands=[];
     for(let r=1;r<=maxR;r++){ const b=band(r); if(b) bands.push(b); }
     // Runs of consecutive ranges that throw the same pool.
@@ -2326,9 +2370,11 @@ function printListUnits(listId){
     const far=runs.filter(x=>x.to>=2);
     const best=far.length?far.reduce((a,b)=>b.b.st.total>a.b.st.total?b:a):null;
     const near=runs.find(x=>x.from===1);
-    if(best) totalRow+=row(span(best),best.b);
+    if(best) out.push({at:best.from, html:row(span(best),best.b)});
     if(near&&near!==best&&(!best||near.b.st.total>best.b.st.total))
-      totalRow+=row(span(near),near.b);
+      out.push({at:near.from, html:row(span(near),near.b)});
+    // Range order: melee, range 1, range 2, ...
+    totalRow=out.sort((a,b)=>a.at-b.at).map(x=>x.html).join('');
     const wpnBlock=wpnRows
       ? `<table class="pw-table"><thead><tr>
            <th>Weapon</th><th>Dice</th><th>Avg hits</th></tr></thead>

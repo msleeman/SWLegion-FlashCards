@@ -22,9 +22,12 @@ holds:
                           BLAST. IMPACT 4. SUPPRESSIVE"
   m  miniatures added  -- from "Add N ... miniature(s)", when present
 
-Art: the LegionHQ2 scans (725px wide) are preferred because they read far more
-cleanly; Tabletop Admiral's 420px art is upscaled 2x as a fallback. Inline
-rules ICONS (exhaust, range) are invisible to OCR and drop out, leaving a gap.
+Art: Tabletop Admiral's is preferred -- it is updated more often and has
+proved more accurate than LegionHQ2's. It is only 420px wide, so it is
+upscaled 2x before reading; LegionHQ2's 725px scans are the fallback. (The
+first run in 2026-09 read LegionHQ2 art first; those cached entries are kept.)
+Inline rules ICONS (exhaust, range) are invisible to OCR and drop out, leaving
+a gap; tidy() restores the exhaust icon as [TAP].
 """
 import json
 import os
@@ -109,23 +112,23 @@ def _cards():
     lhq = json.load(open(os.path.join('cache', 'legionhq2_upgrades.json'), encoding='utf-8'))
     tta = json.load(open(os.path.join('cache', 'tta_upgrades.json'), encoding='utf-8'))
     out = {}
-    for u in lhq.values():
-        p = os.path.join(LHQ_DIR, u.get('i') or '')
-        if u.get('i') and os.path.exists(p):
-            out.setdefault(f"{u['n']}|{u.get('c', 0)}", (u['n'], p, False))
+    # Tabletop Admiral first (current art), LegionHQ2 for anything it lacks.
     for u in tta.values():
-        key = f"{u['n']}|{u.get('c', 0)}"
         p = os.path.join(TTA_DIR, u.get('a') or '')
-        if key not in out and u.get('a') and os.path.exists(p):
-            out[key] = (u['n'], p, True)
+        if u.get('a') and os.path.exists(p):
+            out.setdefault(f"{u['n']}|{u.get('c', 0)}", (u['n'], p, True))
+    have = {k.split('|')[0] for k in out}
+    for u in lhq.values():
+        key = f"{u['n']}|{u.get('c', 0)}"
+        p = os.path.join(LHQ_DIR, u.get('i') or '')
+        if u['n'] not in have and u.get('i') and os.path.exists(p):
+            out.setdefault(key, (u['n'], p, False))
     return out
 
 
 def main():
-    import numpy as np
-    from PIL import Image
-    from rapidocr_onnxruntime import RapidOCR
-
+    # data/upgrade_ocr.json comes FIRST: OCR is slow, so a card is only read
+    # off its art when the cache has nothing for it at all.
     redo = '--all' in sys.argv
     out = {}
     if os.path.exists(CACHE) and not redo:
@@ -142,9 +145,25 @@ def main():
         return
 
     cards = _cards()
+    # A points change alone ("KX-Series Security Droids" 30 -> 18) gives the
+    # card a new key but not new text: reuse the cached entry by name.
+    by_name = {k.split('|')[0]: v for k, v in out.items()}
+    reused = 0
+    for k, (name, _p, _u) in cards.items():
+        if k not in out and name in by_name:
+            out[k] = by_name[name]
+            reused += 1
     todo = [(k, v) for k, v in sorted(cards.items()) if k not in out]
-    print(f'{len(cards)} upgrade cards, {len(todo)} need OCR ({len(out)} already cached)')
+    print(f'{len(cards)} upgrade cards: {len(out) - reused} cached, {reused} reused '
+          f'by name after a points change, {len(todo)} need OCR')
+    if not todo:
+        if reused:
+            _save(out)
+        return
 
+    import numpy as np
+    from PIL import Image
+    from rapidocr_onnxruntime import RapidOCR
     ocr = RapidOCR()
     vocab = build_vocab()
     for n, (key, (name, path, upscale)) in enumerate(todo, 1):

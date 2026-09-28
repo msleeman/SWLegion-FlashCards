@@ -531,8 +531,9 @@ def fetch_tta_keywords():
     This is the authoritative keyword source: units and upgrades reference these
     by numeric id, so resolving a card's keywords needs no name matching at all
     (LegionHQ2 name lookups were ambiguous -- 32 unit and 13 upgrade names are
-    shared by multiple cards). Descriptions here are also current 2.6 wording;
-    the older scraped text had at least one outright wrong rule (Ruthless).
+    shared by multiple cards). The DESCRIPTIONS are a different matter: for
+    rules text the rulebook and Legion Helper come first, and these only fill
+    gaps (see apply_tta_keyword_text).
     """
     cache_path = os.path.join(CACHE_DIR, "tta_keywords.json")
     if os.path.exists(cache_path):
@@ -556,6 +557,51 @@ def fetch_tta_keywords():
     except Exception as e:
         print(f"  WARN: could not fetch TTA keywords: {e}")
         return {}
+
+
+def apply_tta_keyword_text(cards):
+    """Fill keyword definitions nothing better supplied with Tabletop Admiral's.
+
+    Rules text is trusted in this order (highest first):
+      1. hand-written overrides/ files  -- applied AFTER this, always win
+      2. the AMG rulebook PDF           -- the official wording
+      3. Legion Helper (legion.takras.net)
+      4. Tabletop Admiral               -- this function: last resort only
+    So TTA text is used only where a card has no definition yet, and for TTA
+    keywords that have no card at all.
+
+    `cards` is a list of dicts with 'name' and 'definition'. Returns
+    (filled, missing) where missing is [(display name, text)] for TTA
+    keywords with no card yet -- each caller adds those in its own format.
+    """
+    tta_kws = fetch_tta_keywords()
+    if not tta_kws:
+        return 0, []
+
+    def norm(n):
+        n = re.sub(r'\[\]', '', n)
+        n = re.sub(r'\s+X$', '', n)
+        n = re.sub(r':\s*.+$', '', n)
+        return n.strip().lower()
+
+    by_norm = {}
+    for k in tta_kws.values():
+        desc = (k.get('description') or '').strip()
+        if desc:
+            by_norm.setdefault(norm(k.get('name', '')), (k.get('name', ''), desc))
+
+    updated = 0
+    for c in cards:
+        hit = by_norm.get(norm(c['name']))
+        # Anything already here came from the rulebook or Legion Helper.
+        if hit and len((c.get('definition') or '').strip()) < 15:
+            c['definition'] = hit[1]
+            c['credit'] = 'tabletopadmiral.com'
+            updated += 1
+
+    existing = {norm(c['name']) for c in cards}
+    missing = [v for n, v in by_norm.items() if n not in existing]
+    return updated, missing
 
 
 def build_tta_keywords_db_js():

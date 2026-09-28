@@ -1,1 +1,1 @@
-May suffer 1 wound to treat a move as a speed-3 move.
+May gain 1 suppression token when moving to increase Speed by 1 for that move, to a maximum of 3.

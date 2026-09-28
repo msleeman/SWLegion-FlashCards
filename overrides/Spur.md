@@ -1,1 +1,3 @@
-When this unit performs a move, it may suffer 1 wound to treat that move as a speed-3 move.
+When a unit with the Spur keyword makes a Move, its controlling player may assign it 1 Suppression token. If they do, that unit increases its Speed by 1 during that Move to a maximum of 3. When a unit makes a Move, apply any effects that increase the unit's Speed before applying any effects that reduce that unit's Speed.
+
+For example, a unit that normally has a Speed of 1, but has 1 Immobilize token, can use the Spur keyword to make a Move with a total Speed of 1. However, a unit that normally has a Speed of 1, but has 2 Immobilize tokens, cannot use the Spur keyword to make a Move because its Speed would still be 0.

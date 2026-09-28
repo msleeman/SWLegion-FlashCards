@@ -550,3 +550,73 @@ def scrape_keywords():
 
     print(f"\n  Scraped {len(keywords)} / {total} keywords")
     return keywords
+
+
+_PDF_CACHE = {}
+
+
+def _rulebook_keys(name):
+    """(full key, base key) for exact rulebook matching.
+
+    The full key keeps a specific parameter ("Immune: Pierce"); templates
+    ("Coordinate: Unit Name/ Unit Type", "Weak Point X: Front/rear/ Sides",
+    "Arm X: Charge Token Type") collapse to the base name.
+    """
+    # "(Charge Type)" is a template parameter too.
+    n = re.sub(r'\s*\([^)]*\)', '', name.replace('[]', '')).strip()
+    base, _, param = n.partition(':')
+    base = re.sub(r'\s+X$', '', base.strip(), flags=re.I)
+    param = param.strip()
+    if not param or '/' in param or re.search(r'\b(x|unit name|unit type|type)\b', param, re.I):
+        param = ''
+    norm = lambda t: re.sub(r'[^a-z0-9]', '', t.lower())
+    return norm(base + param), norm(base)
+
+
+def rulebook_matcher(pdf_dict):
+    """name -> rulebook entry, by exact key: full name first, then base name.
+
+    Replaces the old prefix matching, which in either direction handed
+    "Charge Token" the Charge rules, "Attack" Attack Run's and "Climbing"
+    Climbing Vehicle's.
+    """
+    full, base = {}, {}
+    for k, v in (pdf_dict or {}).items():
+        if not (v or {}).get('definition'):
+            continue
+        f, b = _rulebook_keys(k)
+        full.setdefault(f, v)
+        base.setdefault(b, v)
+
+    def match(name):
+        f, b = _rulebook_keys(name)
+        return full.get(f) or base.get(b)
+    return match
+
+
+def fill_from_rulebook(cards, credit, only_credit='tabletopadmiral.com'):
+    """Give cards whose text came from `only_credit` the rulebook's wording.
+
+    Rules text order is overrides/ > rulebook > Legion Helper > Tabletop
+    Admiral. The main PDF overlay runs before Tabletop Admiral adds the
+    keywords nothing else had, so those never saw the rulebook; this second
+    pass gives them its text. Matching is exact (full name, then base name),
+    so "Scouting Party" can't pick up "Scout".
+    Returns the number of cards filled.
+    """
+    pdf_path = find_pdf()
+    if not pdf_path:
+        return 0
+    if pdf_path not in _PDF_CACHE:
+        _PDF_CACHE[pdf_path] = extract_keywords_from_pdf(pdf_path) or {}
+    match = rulebook_matcher(_PDF_CACHE[pdf_path])
+    filled = 0
+    for c in cards:
+        if c.get('credit') != only_credit:
+            continue
+        hit = match(c['name'])
+        if hit:
+            c['definition'] = hit['definition']
+            c['credit'] = credit
+            filled += 1
+    return filled
