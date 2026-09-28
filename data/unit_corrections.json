@@ -1,0 +1,4 @@
+{
+ "_comment": "Fields to overwrite in UNIT_DB where LegionHQ2's data is out of date. Key is \"Name|Title\" (empty title for untitled units). Applied by src/render.py _apply_unit_corrections().",
+ "Scout Troopers|Strike Team": {"mc": 1}
+}

@@ -1,6 +1,19 @@
 const CARDS = /*CARD_JSON*/;
 const ST = {};
 function dispName(n){ return n.replace(/\[\]/g,'').trim(); }
+
+// "Issued an order" means a commander handed the unit one -- easy to confuse
+// with drawing a token from the order pool, so every rules text says so.
+// Idempotent: text that already carries the note is left alone.
+function annotateRules(text){
+  return typeof text==='string'
+    ? text.replace(/\bissued an order\b(?!\s*\(not drawn)/gi,'$& (not drawn from order pool)')
+    : text;
+}
+function annotateAllRules(){
+  CARDS.forEach(c=>{ c.definition=annotateRules(c.definition); c.summary=annotateRules(c.summary); });
+  if(typeof COMMANDS!=='undefined') COMMANDS.forEach(c=>{ c.d=annotateRules(c.d); });
+}
 CARDS.forEach(c => { ST[c.name]={idx:0,learned:false,flagged:false,busy:false,notes:'',pinned:false}; });
 
 function loadState(){
@@ -766,7 +779,7 @@ function modSaveDef(){
   const val=document.getElementById('mod-def-edit').value.trim();
   // Update CARDS in memory so all views see the new text immediately
   if(!mcard._builtinDef) mcard._builtinDef=mcard.definition;
-  mcard.definition=val||mcard._builtinDef;
+  mcard.definition=annotateRules(val||mcard._builtinDef);
   mcard._ownerDef=!!val;
   // Persist to shared owner_content table
   _ownerUpsert(mcard.name, {custom_def: val||null});
@@ -807,7 +820,7 @@ function modToggleEditSummary(){
 function modSaveSummary(){
   const val=document.getElementById('mod-summary-edit').value.trim();
   if(!mcard._builtinSummary) mcard._builtinSummary=mcard.summary;
-  mcard.summary=val;
+  mcard.summary=annotateRules(val);
   mcard._ownerSum=!!val;
   _ownerUpsert(mcard.name, {custom_summary: val||null});
   const modSum=document.getElementById('mod-summary');
@@ -1011,6 +1024,10 @@ function modAddToList(listId){
 
 // ─── COMMAND CARDS (all factions) ────────────────────────────────────────────
 /*COMMANDS_JSON*/
+
+// ─── UPGRADE CARD TEXT (OCR of the card art, see ocr_upgrades.py) ────────────
+// Keyed "name|cost": {t: rules text, w: weapon bar, m: miniatures added}.
+/*UPGRADE_TEXT_JSON*/
 
 const UNIT_STATS={
   "at":{"sp":2,"w":20,"cg":null,"dd":"r","ds":false,"as":"c"},
@@ -1362,12 +1379,19 @@ function currentUpgradeArt(name, cost){
   if(l&&l.i) return 'images/upgrades/'+encodeURIComponent(l.i);
   return '';
 }
-function currentUnitArt(name,title){
-  for(const u of Object.values(TTA_UNITS))
-    if(u.n===name&&(!title||!u.t||u.t===title)&&u.a)
-      return 'images/units/tta/'+encodeURIComponent(u.a);
-  for(const u of Object.values(UNIT_DB))
-    if(u.n===name&&u.i) return 'images/'+encodeURIComponent(u.i);
+function currentUnitArt(name,title,rank){
+  // Title must match exactly: an untitled "Scout Troopers" used to match a
+  // "Strike Team" request and hand it the wrong card. Where one name+title
+  // has several cards (the Special Forces Strike Team and its 2026 Support
+  // replacement), the rank picks the right one.
+  const pick=list=>{
+    const hits=list.filter(u=>u.n===name&&(u.t||'')===(title||''));
+    return (rank&&hits.find(u=>u.r===rank))||hits[hits.length-1];
+  };
+  const t=pick(Object.values(TTA_UNITS).filter(u=>u.a));
+  if(t) return 'images/units/tta/'+encodeURIComponent(t.a);
+  const l=pick(Object.values(UNIT_DB).filter(u=>u.i));
+  if(l) return 'images/'+encodeURIComponent(l.i);
   return '';
 }
 
@@ -1892,16 +1916,42 @@ function printListKeywords(listId){
   if(!list||!list.keywords||!list.keywords.length){
     alert('No keywords in this list to print.'); return;
   }
-  const sorted=[...list.keywords].sort((a,b)=>a.localeCompare(b));
+  // The list's keyword names come from Tabletop Admiral with "X" for the
+  // value, so take the real values from the units: "Impact 1/4" when units
+  // differ, "Assault 1" rather than "Assault X".
+  const active=list.keywords.map(kwParse);
+  const groups=[];
+  (list.units||[]).forEach(u=>{
+    const removed=new Set((u.kws||[]).map(kwParse)
+      .filter(e=>!active.some(a=>kwSame(a,e))).map(e=>e.key));
+    const s=unitKeywordSources(u,removed);
+    groups.push(...s.unit,...s.upgrades);
+  });
+  // One row per keyword and parameter -- "Detachment: Shoretroopers" and
+  // "Detachment: Scout Troopers" are separate rows -- collecting every value.
+  const byMeaning=[];
+  const collect=g=>{
+    let row=byMeaning.find(r=>r.key===g.key&&_kwParamNorm(r.param)===_kwParamNorm(g.param));
+    if(!row){ row={...g, vals:new Set()}; byMeaning.push(row); }
+    if(g.value!==null) row.vals.add(g.value);
+  };
+  groups.filter(g=>active.some(a=>kwSame(a,g))).forEach(collect);
+  // Keywords added by hand in the Edit tab belong to no unit.
+  active.filter(e=>!groups.some(g=>kwSame(g,e))).forEach(collect);
+  const entries=byMeaning.map(r=>{
+    const vals=[...r.vals].sort((a,b)=>a-b);
+    const param=r.param||r.paramRaw;
+    const name=r.base+(vals.length?' '+vals.join('/'):(r.numeric?' X':''))+(param?': '+param:'');
+    return {name, card:r.card, value:vals.length===1?vals[0]:null};
+  }).sort((a,b)=>a.name.localeCompare(b.name));
+  const sorted=entries;
 
-  const cardByNorm=_cardIndexByNorm();
-
-  const rows=sorted.map(kw=>{
-    const card=findCardForKeyword(kw,cardByNorm);
-    const def=card?(card.summary||card.definition||''):'';
+  const rows=entries.map(({name,card,value})=>{
+    let def=card?(card.summary||card.definition||''):'';
+    if(value!==null&&def) def=def.replace(/\bX\b/g,String(value));
     const type=card?((card.type||'').charAt(0).toUpperCase()+(card.type||'').slice(1)):'';
     return `<tr>
-      <td class="pk-kw"><strong>${escHtml(dispName(kw))}</strong>${type?`<br><span class="pk-type">${escHtml(type)}</span>`:''}
+      <td class="pk-kw"><strong>${escHtml(name)}</strong>${type?`<br><span class="pk-type">${escHtml(type)}</span>`:''}
       </td><td class="pk-def">${escHtml(def)}</td></tr>`;
   }).join('');
 
@@ -1920,79 +1970,165 @@ function printListKeywords(listId){
   window.print();
 }
 
-// Match key for comparing keyword spellings across sources: "Impact 3", bare
-// "Impact" and "Impact X" collapse together, but "Immune: Pierce" stays apart
-// from "Immune: Blast".
-function kwSourceKey(kw){
-  return kwNormalize(String(kw)).replace(/\[\]/g,'').replace(/\s+X$/i,'').trim().toLowerCase();
+// ─── KEYWORD IDENTITY ────────────────────────────────────────────────────────
+// The same keyword arrives spelled several ways. Tabletop Admiral names are
+// templates ("Armor [X]", "Coordinate: Emplacement Trooper", "Fixed:
+// Front/Sides/Rear", "Scout X"); LegionHQ2 strings carry values and run the
+// parameter on without a colon ("Armor 3", "Coordinate Emplacement Trooper",
+// "Direct Empire Unit"). Comparing spellings printed each of those twice, so
+// kwParse() reduces any spelling to what it MEANS: the rules card it resolves
+// to, its numeric value, and its specific parameter.
+let _kwCardIdx=null;
+function kwParse(raw){
+  if(!_kwCardIdx) _kwCardIdx=_cardIndexByNorm();
+  const s=String(raw).replace(/\[\]/g,'').replace(/\s+/g,' ').trim();
+  const card=findCardForKeyword(s,_kwCardIdx);
+  const strip=n=>n.replace(/:.*$/,'').replace(/\s*(\[X\]|\bX)\s*$/i,'').trim();
+  const base=strip(card?dispName(card.name):kwNormalize(s));
+  // What follows the base name: " 3", " [X]", ": Emplacement Trooper",
+  // " Empire Unit", " 1: Rear". The card name and the spelling can differ
+  // ("Anti-Materiel X" vs "Anti-Material 2"), so fall back to the spelling's
+  // own stem when the card's base isn't a prefix.
+  let rest='';
+  if(s.toLowerCase().startsWith(base.toLowerCase())) rest=s.slice(base.length);
+  else{ const stem=strip(kwNormalize(s)); if(s.startsWith(stem)) rest=s.slice(stem.length); }
+  let value=null;
+  const v=/^\s*(\d+)/.exec(rest);
+  if(v){ value=parseInt(v[1],10); rest=rest.slice(v[0].length); }
+  else rest=rest.replace(/^\s*(\[X\]|X\b)/i,'');
+  const paramRaw=rest.replace(/^\s*:?\s*/,'').trim();
+  // "Front/Sides/Rear", "Melee/Ranged", "[X]" are the card's template, not a
+  // choice this unit made -- they match any concrete value.
+  const template=!paramRaw||/[\/\[]/.test(paramRaw)||/^x$/i.test(paramRaw);
+  const cardName=card?dispName(card.name).replace(/:.*$/,''):'';
+  return {raw:s, card, base, key:base.toLowerCase(), value,
+          param:template?'':paramRaw, paramRaw,
+          numeric:value!==null||/(\s|^)(\[X\]|X)$/.test(cardName)};
+}
+function _kwParamNorm(p){ return String(p||'').toLowerCase().replace(/[^a-z0-9]/g,''); }
+function kwSame(a,b){
+  return a.key===b.key&&(!a.param||!b.param||_kwParamNorm(a.param)===_kwParamNorm(b.param));
+}
+// "Impact 2", "Coordinate: Emplacement Trooper", "Weak Point 1: Rear".
+function kwDisplay(g){
+  const p=g.param||g.paramRaw;
+  return g.base+(g.value!==null?' '+g.value:(g.numeric?' X':''))+(p?': '+p:'');
 }
 
-// Work out where each of a saved unit's keywords comes from: the unit card,
-// one of its weapons, an upgrade card, or a weapon on an upgrade. Resolved
-// fresh from UNIT_DB / UPGRADE_DB / TTA_UPGRADES so lists saved before sources
-// were tracked still print, and so keywords carry their values ("Impact 3")
-// even where the saved list stripped them. `removed` holds keys taken off the
-// list in the Edit tab; those stay off.
+// Upgrade card text read off the art (ocr_upgrades.py): rules, weapon bar,
+// miniatures added. Keyed "name|cost"; falls back to any cost of that name.
+function upgradeText(name,cost){
+  if(typeof UPGRADE_TEXT==='undefined') return null;
+  const hit=UPGRADE_TEXT[name+'|'+(cost||0)];
+  if(hit) return hit;
+  const k=Object.keys(UPGRADE_TEXT).find(k=>k.startsWith(name+'|'));
+  return k?UPGRADE_TEXT[k]:null;
+}
+// A keyword's value as printed on the card ("gain Assault 1", "IMPACT 4").
+// Neither data source carries every value, but the card always does.
+function ocrKwValue(ocr,base){
+  if(!ocr) return null;
+  const text=((ocr.t||'')+' '+(ocr.w||'')).replace(/\s+/g,'');
+  const m=new RegExp(base.replace(/\s+/g,'').replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'(\\d+)','i').exec(text);
+  return m?parseInt(m[1],10):null;
+}
+
+// The saved unit's current UNIT_DB record, resolved fresh so corrections
+// (data/unit_corrections.json) reach lists saved before them.
+function dbUnitFor(u){
+  const hits=Object.values(UNIT_DB).filter(x=>x.n===u.name);
+  const byTitle=hits.filter(x=>(x.t||'')===(u.title||''));
+  if(byTitle.length>1&&u.rank){
+    const r=byTitle.find(x=>x.r===u.rank); if(r) return r;
+  }
+  return byTitle[0]||(hits.length===1?hits[0]:null);
+}
+
+// Every keyword on a saved unit, grouped by meaning and attributed to the
+// card or weapon it comes from. Returns {unit, upgrades, bare}:
+//   unit      keywords from the unit card and its weapons -- unit card ones
+//             first, alphabetical (the order the cards print them), then
+//             weapon keywords
+//   upgrades  keywords from upgrade cards and their weapons, in card order
+//   bare      upgrades that grant no keyword, with their card text
+// The same keyword from several cards is combined, and numbered ones add up:
+// KX-Series Security Droids (Impact 1) + Fifth Brother (Impact 1) = Impact 2.
+// `removed` holds keys taken off the list in the Edit tab; those stay off.
 function unitKeywordSources(u, removed){
-  const seen=new Set();
-  const add=(out,kw,src)=>{
-    const key=kwSourceKey(kw);
-    if(!key||removed.has(key)||seen.has(key+'|'+src)) return;
-    seen.add(key+'|'+src);
-    out.push({kw:String(kw).trim(),key,src});
+  const groups=[];
+  const add=(raw,label,type,fill)=>{
+    const e=kwParse(raw);
+    if(!e.base||removed.has(e.key)) return;
+    if(e.value===null&&fill) e.value=fill(e.base);
+    let g=groups.find(x=>kwSame(x,e));
+    if(!g){
+      g={...e, srcs:[], order:groups.length};
+      groups.push(g);
+    }
+    if(!g.param&&e.param) g.param=e.param;
+    if(!g.paramRaw&&e.paramRaw) g.paramRaw=e.paramRaw;
+    g.numeric=g.numeric||e.numeric;
+    // One card listing a keyword twice ("Impact" and "Impact 1") is one source.
+    const same=g.srcs.find(x=>x.label===label);
+    if(same){ if(same.value===null) same.value=e.value; }
+    else g.srcs.push({label,type,value:e.value});
   };
-  // Within one source, prefer the spelling that carries a value.
-  const best=list=>{
-    const by={};
-    (list||[]).forEach(kw=>{
-      const k=kwSourceKey(kw);
-      if(!by[k]||(/\d/.test(kw)&&!/\d/.test(by[k]))) by[k]=kw;
-    });
-    return by;
+  // Keywords a card only repeats because its weapon has them.
+  const minus=(list,weapons)=>{
+    const wk=weapons.flatMap(w=>(w.k||[]).map(kwParse));
+    return (list||[]).filter(k=>{ const e=kwParse(k); return !wk.some(w=>kwSame(w,e)); });
   };
 
-  const upgNames=new Set((u.upgradeCards||[]).flatMap(c=>(c.w||[]).map(w=>w.n)));
-  const dbHits=Object.values(UNIT_DB).filter(x=>x.n===u.name);
-  const dbUnit=dbHits.find(x=>(x.t||'')===(u.title||''))||(dbHits.length===1?dbHits[0]:null);
-  const unitWeapons=dbUnit?(dbUnit.w||[]):(u.weapons||[]).filter(w=>!upgNames.has(w.n));
+  const dbUnit=dbUnitFor(u);
+  const upgWpnNames=new Set((u.upgradeCards||[]).flatMap(c=>(c.w||[]).map(w=>w.n)));
+  const unitWeapons=dbUnit?(dbUnit.w||[]):(u.weapons||[]).filter(w=>!upgWpnNames.has(w.n));
 
-  const unitOut=[];
-  const wpnKeys=new Set();
-  unitWeapons.forEach(w=>Object.values(best(w.k)).forEach(kw=>wpnKeys.add(kwSourceKey(kw))));
-  // Unit card first: its keyword list includes its weapons', so drop those here.
-  Object.values(best(dbUnit&&dbUnit.k)).forEach(kw=>{
-    if(!wpnKeys.has(kwSourceKey(kw))) add(unitOut,kw,'Unit card');
-  });
-  unitWeapons.forEach(w=>Object.values(best(w.k)).forEach(kw=>add(unitOut,kw,`Weapon: ${w.n}`)));
+  minus(dbUnit&&dbUnit.k,unitWeapons).forEach(kw=>add(kw,'Unit card','unit'));
+  unitWeapons.forEach(w=>(w.k||[]).forEach(kw=>add(kw,`Weapon: ${w.n}`,'weapon')));
 
-  const upgOut=[];
   const bare=[];
-  (u.upgradeCards&&u.upgradeCards.length?u.upgradeCards:(u.upgrades||[]).map(n=>({n,c:0})))
-    .forEach(up=>{
-      const dbUp=findDbUpgrade(up.n,up.c||0);
-      const ttaHits=Object.values(TTA_UPGRADES).filter(t=>t.n===up.n);
-      const tta=ttaHits.length===1?ttaHits[0]:ttaHits.find(t=>(t.c||0)===(up.c||0));
-      const weapons=(up.w&&up.w.length)?up.w:((dbUp&&dbUp.w)||[]);
-      const wk=new Set(weapons.flatMap(w=>(w.k||[]).map(kwSourceKey)));
-      const ttaNames=((tta&&tta.kw)||[]).map(id=>TTA_KEYWORDS[id]).filter(Boolean);
-      const names=applyKwValues([...ttaNames,...((dbUp&&dbUp.k)||[])],
-                                kwValueMap(null,[{lk:(dbUp&&dbUp.k)||[],w:weapons}]));
-      if(matchesKnownCard(up.n)) names.push(up.n);
-      const before=upgOut.length;
-      Object.values(best(names)).forEach(kw=>{
-        if(!wk.has(kwSourceKey(kw))) add(upgOut,kw,up.n);
-      });
-      weapons.forEach(w=>Object.values(best(w.k)).forEach(kw=>
-        add(upgOut,kw,`${up.n} › ${w.n}`)));
-      if(upgOut.length===before) bare.push(up.n);
-    });
+  const upgs=u.upgradeCards&&u.upgradeCards.length
+    ? u.upgradeCards : (u.upgrades||[]).map(n=>({n,c:0}));
+  upgs.forEach(up=>{
+    const dbUp=findDbUpgrade(up.n,up.c||0);
+    const ttaHits=Object.values(TTA_UPGRADES).filter(t=>t.n===up.n);
+    const tta=ttaHits.length===1?ttaHits[0]:ttaHits.find(t=>(t.c||0)===(up.c||0));
+    const weapons=(up.w&&up.w.length)?up.w:((dbUp&&dbUp.w)||[]);
+    const ocr=upgradeText(up.n,up.c||0);
+    const fill=base=>ocrKwValue(ocr,base);
+    const before=groups.reduce((n,g)=>n+g.srcs.length,0);
+    const names=[...((tta&&tta.kw)||[]).map(id=>TTA_KEYWORDS[id]).filter(Boolean),
+                 ...((dbUp&&dbUp.k)||[])];
+    if(matchesKnownCard(up.n)) names.push(up.n);
+    minus(names,weapons).forEach(kw=>add(kw,up.n,'upgrade',fill));
+    weapons.forEach(w=>(w.k||[]).forEach(kw=>add(kw,`${up.n} › ${w.n}`,'upgweapon',fill)));
+    if(groups.reduce((n,g)=>n+g.srcs.length,0)===before)
+      bare.push({n:up.n, text:ocr&&ocr.t||''});
+  });
 
-  // Anything the saved list has that no source accounted for (a unit missing
-  // from UNIT_DB, a TTA-only keyword) still prints, against the unit card.
-  const got=new Set([...unitOut,...upgOut].map(x=>x.key));
-  (u.kws||[]).forEach(kw=>{ if(!got.has(kwSourceKey(kw))) add(unitOut,kw,'Unit card'); });
+  // The saved list's own keywords, for anything no card above accounted for
+  // (a unit missing from UNIT_DB, a keyword only Tabletop Admiral knows).
+  // Matched by meaning, so "Armor [X]" no longer duplicates "Armor 3".
+  (u.kws||[]).forEach(kw=>{
+    const e=kwParse(kw);
+    if(!groups.some(g=>kwSame(g,e))) add(kw,'Unit card','unit');
+  });
 
-  return {unit:unitOut, upgrades:upgOut, bare};
+  groups.forEach(g=>{
+    const vals=g.srcs.map(x=>x.value).filter(v=>v!==null);
+    g.value=vals.length?vals.reduce((a,b)=>a+b,0):null;
+    const only=g.srcs.length===1?g.srcs[0]:null;
+    // The heading already says "Unit keywords", so a lone unit-card source
+    // needs no tag; anything combined spells out its parts.
+    g.label=only
+      ? (only.type==='unit'||only.label===g.base?'':only.label)
+      : g.srcs.map(x=>x.label+(g.numeric&&x.value!==null?' '+x.value:'')).join(' + ');
+  });
+  const isUnit=g=>g.srcs.some(x=>x.type==='unit'||x.type==='weapon');
+  const onCard=g=>g.srcs.some(x=>x.type==='unit');
+  const unit=groups.filter(isUnit).sort((a,b)=>
+    (onCard(b)-onCard(a))||(onCard(a)?kwDisplay(a).localeCompare(kwDisplay(b)):a.order-b.order));
+  return {unit, upgrades:groups.filter(g=>!isUnit(g)), bare};
 }
 
 // ─── PRINT UNIT CARDS + KEYWORDS (2-column) ──────────────────────────────────
@@ -2009,52 +2145,39 @@ function printListUnits(listId){
     return;
   }
 
-  const cardByNorm=_cardIndexByNorm();
   // Keywords removed via the Edit tab shouldn't reappear on the printout.
-  const active=(list.keywords&&list.keywords.length)
-    ? new Set(list.keywords.map(k=>k.toLowerCase())) : null;
-  const covered=new Set();
+  const active=(list.keywords&&list.keywords.length)?list.keywords.map(kwParse):null;
+  const covered=[];
 
-  // `printed` tracks rule text already given for this unit, so a keyword that
-  // shows up from two sources only spells its rules out once.
-  const kwItem=(kw,src,printed)=>{
-    const card=findCardForKeyword(kw,cardByNorm);
+  const kwItem=g=>{
     // Print the rule text in full -- this is a play reference, so a clipped
     // definition ending in "..." is worse than a longer row.
-    let def=card?(card.summary||card.definition||''):'';
+    let def=g.card?(g.card.summary||g.card.definition||''):'';
     // Substitute the unit's actual value for X, so Thrawn reads "Strategize 2 --
     // ... then 2 allies ..." rather than leaving the reader to do the swap.
-    const val=/\s(\d+)(?::.*)?\s*$/.exec(kw);
-    if(val&&def) def=def.replace(/\bX\b/g,val[1]);
-    const ref=card?card.name:kw.toLowerCase();
-    if(printed){
-      if(printed.has(ref)) def=def?'see above':'';
-      printed.add(ref);
-    }
-    return `<li><span class="pu-kwname">${escHtml(dispName(kw))}</span>`+
-           `${src?` <span class="pu-kwsrc">${escHtml(src)}</span>`:''}`+
+    if(g.value!==null&&def) def=def.replace(/\bX\b/g,String(g.value));
+    return `<li><span class="pu-kwname">${escHtml(kwDisplay(g))}</span>`+
+           `${g.label?` <span class="pu-kwsrc">${escHtml(g.label)}</span>`:''}`+
            `${def?`: ${escHtml(def)}`:''}</li>`;
   };
+  // An upgrade with no keyword prints its card text instead.
+  const bareItem=b=>`<li><span class="pu-kwname">${escHtml(b.n)}</span>`+
+    `${b.text?`: ${escHtml(b.text)}`:' <span class="pu-none">(no keywords)</span>'}</li>`;
 
   let rows=sortUnitsByRank(units).map(u=>{
     // A keyword the unit had at parse time but the list no longer carries was
     // removed in the Edit tab.
-    const removed=new Set((u.kws||[]).filter(k=>active&&!active.has(k.toLowerCase()))
-                                     .map(kwSourceKey));
+    const removed=new Set(active?(u.kws||[]).map(kwParse)
+      .filter(e=>!active.some(a=>kwSame(a,e))).map(e=>e.key):[]);
     const srcs=unitKeywordSources(u,removed);
-    [...srcs.unit,...srcs.upgrades].forEach(x=>covered.add(x.key));
-    (u.kws||[]).forEach(k=>{ if(!removed.has(kwSourceKey(k))) covered.add(kwSourceKey(k)); });
-    const printed=new Set();
+    covered.push(...srcs.unit,...srcs.upgrades);
     const kwSection=(head,items)=>items.length
-      ? `<div class="pu-kwhead">${head}</div>`+
-        `<ul class="pu-kwlist">${items.map(x=>kwItem(x.kw,x.src,printed)).join('')}</ul>` : '';
-    const kwBlock=kwSection('Unit keywords',srcs.unit)+
-      kwSection('Upgrade keywords',srcs.upgrades)+
-      (srcs.bare.length
-        ? `<div class="pu-kwbare">No keywords: ${escHtml(srcs.bare.join(', '))}</div>` : '');
+      ? `<div class="pu-kwhead">${head}</div><ul class="pu-kwlist">${items.join('')}</ul>` : '';
+    const kwBlock=kwSection('Unit keywords',srcs.unit.map(kwItem))+
+      kwSection('Upgrade keywords',[...srcs.upgrades.map(kwItem),...srcs.bare.map(bareItem)]);
 
     // Resolve fresh so lists saved before an art re-key still render.
-    const unitSrc=currentUnitArt(u.name,u.title)
+    const unitSrc=currentUnitArt(u.name,u.title,u.rank)
       ||(u.artTta?'images/units/tta/'+encodeURIComponent(u.artTta):'')
       ||(u.img?'images/'+encodeURIComponent(u.img):'');
     const img=unitSrc
@@ -2083,11 +2206,11 @@ function printListUnits(listId){
     const upgSum=upgCards.reduce((n,up)=>n+(up.c||0),0);
     const each=(u.cost||0)+upgSum;
     const costLine=each
-      ? `<div class="pu-cost"><strong>${escHtml(each)}</strong> pts`+
+      ? `<span class="pu-cost"><strong>${escHtml(each)}</strong> pts`+
         `${u.count>1?' each':''}`+
         `<span class="pu-costbits"> (${escHtml(u.cost||0)} base`+
         `${upgSum?` + ${escHtml(upgSum)} upg`:''})`+
-        `${u.count>1?` · ${escHtml(each*u.count)} total`:''}</span></div>`
+        `${u.count>1?` · ${escHtml(each*u.count)} total`:''}</span></span>`
       : '';
 
     const title=u.title?` <span class="pu-title">${escHtml(u.title)}</span>`:'';
@@ -2118,21 +2241,29 @@ function printListUnits(listId){
       w.rg&&w.rg.length&&Math.max(...w.rg)>0&&!(u.upgradeCards||[]).some(c=>
         (c.w||[]).some(x=>x.n===w.n)));
     if(unitRanged){
-      const mc=u.mc||1;
-      // Track weapons separately: Assault upgrades X dice of each weapon, which
-      // is not the same as upgrading X dice of the merged pool.
-      const groups=[{d:{r:(unitRanged.d.r||0)*mc,b:(unitRanged.d.b||0)*mc,
-                        w:(unitRanged.d.w||0)*mc}, n:`${mc}x ${unitRanged.n}`}];
+      // Fresh from UNIT_DB so data/unit_corrections.json reaches saved lists.
+      const mc=(dbUnitFor(u)||{}).mc||u.mc||1;
+      // Track weapons separately, and each miniature's copy of the unit weapon
+      // as its own weapon: Assault upgrades X dice of EACH weapon, so four
+      // EC-17s (2B each) with Assault 1 become 4R 4B, not 1R 7B.
+      const dice=d=>({r:d.r||0,b:d.b||0,w:d.w||0});
+      const groups=[{d:dice(unitRanged.d), copies:mc, n:`${mc}x ${unitRanged.n}`,
+                     label:`${mc}× ${unitRanged.n}`, unitWpn:true}];
       let crit=critValue(unitRanged.k);
       for(const up of (u.upgradeCards||[])){
+        // "Add 2 KX-Series Security Droid miniatures": each fires the weapon.
+        const ocr=upgradeText(up.n,up.c||0);
+        const copies=(ocr&&ocr.m)||1;
         for(const w of (up.w||[])){
           if(!w.rg||!w.rg.length||Math.max(...w.rg)<=0) continue;
-          groups.push({d:{r:w.d.r||0,b:w.d.b||0,w:w.d.w||0}, n:w.n});
+          groups.push({d:dice(w.d), copies, n:copies>1?`${copies}x ${w.n}`:w.n,
+                       label:copies>1?`${copies}× ${w.n}`:w.n,
+                       assault:kwNumber(w.k,'Assault')});
           crit=Math.max(crit,critValue(w.k));
         }
       }
-      const sum=gs=>gs.reduce((a,g)=>({r:a.r+g.d.r,b:a.b+g.d.b,w:a.w+g.d.w}),
-                              {r:0,b:0,w:0});
+      const sum=gs=>gs.reduce((a,g)=>({r:a.r+g.d.r*g.copies,b:a.b+g.d.b*g.copies,
+                                        w:a.w+g.d.w*g.copies}),{r:0,b:0,w:0});
       const pool=sum(groups);
       const parts=groups.map(g=>g.n);
       const st=poolStats(pool,crit,u.hs||'');
@@ -2146,14 +2277,20 @@ function printListUnits(listId){
             <span class="pw-c">(${st.crits.toFixed(2)} crit)</span></td></tr>`;
         // Assault X upgrades X dice of each weapon, but only when the defender
         // is within range 1 -- so it gets its own conditional row rather than
-        // inflating the headline figure.
-        const assault=kwNumber(u.kws,'Assault');
+        // inflating the headline figure. It applies to every miniature's copy
+        // of the unit weapon; an upgrade's own weapon is upgraded only when
+        // that weapon itself lists Assault (Proton Charge, not Sonic Charge).
+        const assault=kwNumber(u.kws,'Assault')||
+          Math.max(0,...groups.map(g=>g.assault||0));
         if(assault){
-          const up=sum(groups.map(g=>({d:upgradeDice(g.d,assault)})));
+          const hit=groups.map(g=>({...g,
+            x:g.unitWpn?assault:(g.assault||0)}));
+          const up=sum(hit.map(g=>({...g,d:g.x?upgradeDice(g.d,g.x):g.d})));
+          const which=hit.filter(g=>g.x).map(g=>g.label).join(', ');
           const sa=poolStats(up,crit,u.hs||'');
           totalRow+=`<tr class="pw-total pw-cond">
             <td class="pw-n"><strong>Full unit at range 1</strong>
-              <span class="pw-kw">Assault ${assault}: upgrade ${assault} die per weapon</span></td>
+              <span class="pw-kw">Assault ${assault}: upgrade ${assault} die on each: ${escHtml(which)}</span></td>
             <td class="pw-d">${escHtml(fmtPool(up))}</td>
             <td class="pw-h"><strong>${sa.total.toFixed(2)}</strong>
               <span class="pw-c">(${sa.crits.toFixed(2)} crit)</span></td></tr>`;
@@ -2172,11 +2309,10 @@ function printListUnits(listId){
     return `<tr class="pu-row">
       <td class="pu-img">
         ${img}
-        ${costLine}
         ${upgThumbs?`<div class="pu-upgrow">${upgThumbs}</div>`:''}
       </td>
       <td class="pu-cell">
-        <div class="pu-name">${u.count>1?escHtml(u.count)+'× ':''}${escHtml(u.name)}${title}</div>
+        <div class="pu-name"><span>${u.count>1?escHtml(u.count)+'× ':''}${escHtml(u.name)}${title}</span>${costLine}</div>
         ${rank}
         ${upgNames}
         ${saveLine}
@@ -2187,14 +2323,16 @@ function printListUnits(listId){
 
   // Keywords added by hand in the Edit tab don't belong to any unit — list them
   // separately rather than dropping them silently.
-  const extra=(list.keywords||[]).filter(k=>!covered.has(kwSourceKey(k)))
-                                 .sort((a,b)=>a.localeCompare(b));
+  const extra=(list.keywords||[]).map(kwParse)
+    .filter(e=>!covered.some(g=>kwSame(g,e)))
+    .map(e=>({...e,label:''}))
+    .sort((a,b)=>kwDisplay(a).localeCompare(kwDisplay(b)));
   if(extra.length){
     rows+=`<tr class="pu-row">
       <td class="pu-img"><div class="pu-noimg">+</div></td>
       <td class="pu-cell">
         <div class="pu-name">Additional keywords</div>
-        <ul class="pu-kwlist">${extra.map(k=>kwItem(k,'',null)).join('')}</ul>
+        <ul class="pu-kwlist">${extra.map(kwItem).join('')}</ul>
       </td></tr>`;
   }
 
@@ -2204,7 +2342,7 @@ function printListUnits(listId){
 
   const pane=document.getElementById('print-keywords');
   pane.innerHTML=`
-    <div class="pk-header">
+    <div class="pk-header pk-header-row">
       <h1>${escHtml(list.name)}</h1>
       <p class="pk-meta">${faction}${pts} · ${totalMinis} units · By unit</p>
     </div>
@@ -2411,6 +2549,7 @@ function startApp(){
   updateCatAddRow();
   updateAccountUI();
   applyPermImgs();
+  annotateAllRules();
   fitTopbarToNav();
   const aiBtn=document.getElementById('fs-ai-summary-btn');
   if(aiBtn) aiBtn.style.display=(_currentUser?.email==='martinjsleeman@gmail.com')?'':'none';
@@ -2439,6 +2578,7 @@ async function loadSharedContent(){
           c.summary=oc.custom_summary; c._ownerSum=true;
         }
       });
+      annotateAllRules();
       console.log('[CONTENT] Shared content loaded:',data.length,'card overrides');
     }
   }catch(e){ console.warn('[CONTENT] loadSharedContent failed:',e.message); }

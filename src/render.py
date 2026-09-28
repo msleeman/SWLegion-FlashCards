@@ -175,12 +175,44 @@ def build_unit_db_js():
             print(f"  WARN: could not build unit DB: {e}")
             return "const UNIT_DB = {};"
 
+    _apply_unit_corrections(unit_db)
     lines = ['const UNIT_DB = {']
     for uid, u in sorted(unit_db.items()):
         entry = json.dumps({k: v for k, v in u.items() if v}, ensure_ascii=False)
         lines.append(f'  {json.dumps(uid)}:{entry},')
     lines.append('};')
     return '\n'.join(lines)
+
+
+def _apply_unit_corrections(unit_db):
+    """Patch UNIT_DB fields LegionHQ2 has not caught up with.
+
+    data/unit_corrections.json maps "Name|Title" to the fields to overwrite,
+    e.g. the April 2026 Scout Troopers Strike Team is a 1-miniature Support
+    unit, but LegionHQ2 still reports 4 miniatures. Applied after the cache
+    load so it holds whether or not the bundle was re-fetched.
+    """
+    path = os.path.join(HERE, 'data', 'unit_corrections.json')
+    if not os.path.exists(path):
+        return
+    with open(path, encoding='utf-8') as f:
+        fixes = {k: v for k, v in json.load(f).items() if not k.startswith('_')}
+    for u in unit_db.values():
+        fix = fixes.get(f"{u.get('n', '')}|{u.get('t') or ''}")
+        if fix:
+            u.update(fix)
+
+
+def build_upgrade_text_js():
+    """const UPGRADE_TEXT = {"name|cost": {t, w, m}}; -- upgrade card text read
+    off the art by ocr_upgrades.py (data/upgrade_ocr.json, committed)."""
+    path = os.path.join(HERE, 'data', 'upgrade_ocr.json')
+    data = {}
+    if os.path.exists(path):
+        with open(path, encoding='utf-8') as f:
+            data = json.load(f)
+    return 'const UPGRADE_TEXT = ' + json.dumps(data, ensure_ascii=False,
+                                                 separators=(',', ':')) + ';'
 
 
 def build_upgrade_db_js():
@@ -689,6 +721,7 @@ def build_html(card_data):
     tta_upgrades_js  = build_tta_upgrades_db_js()
     tta_keywords_js  = build_tta_keywords_db_js()
     commands_js      = build_commands_db_js()
+    upgrade_text_js  = build_upgrade_text_js()
     js = js.replace("/*CARD_JSON*/", fish_js)
     js = js.replace("/*BASE_NAMES*/", base_names)
     js = js.replace("/*UNIT_DB_JSON*/", unit_db_js)
@@ -697,6 +730,7 @@ def build_html(card_data):
     js = js.replace("/*TTA_UPGRADES_JSON*/", tta_upgrades_js)
     js = js.replace("/*TTA_KEYWORDS_JSON*/", tta_keywords_js)
     js = js.replace("/*COMMANDS_JSON*/", commands_js)
+    js = js.replace("/*UPGRADE_TEXT_JSON*/", upgrade_text_js)
 
     html = html.replace("/*STYLE_CSS*/", css)
     html = html.replace("/*APP_JS*/", js)
