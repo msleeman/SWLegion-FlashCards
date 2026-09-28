@@ -116,6 +116,14 @@ def main():
         page = browser.new_page()
         page.goto(BASE + '/', wait_until='networkidle')
         index = page.evaluate(_INDEX_JS)
+        # Pages the full build's base set needs but the A-Z index doesn't
+        # list (e.g. /courage/): they exist, so read them too.
+        base_path = os.path.join('data', 'base_keywords.json')
+        if os.path.exists(base_path):
+            listed = {s for s, _n in index}
+            with open(base_path, encoding='utf-8') as f:
+                index += [(k['slug'], k['name']) for k in json.load(f)['keywords']
+                          if k['slug'] not in listed]
         print(f'Legion Helper index: {len(index)} entries ({len(out)} cached)')
 
         if args:

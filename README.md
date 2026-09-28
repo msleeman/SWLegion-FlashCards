@@ -7,13 +7,16 @@ A web-based flashcard app for learning all Star Wars: Legion keywords. Browse th
 ## Quick Start
 
 ```bash
-# Full rebuild (scrapes web + PDF, downloads images, writes cache)
+# Full rebuild (data/ files + PDF, downloads images, writes cache; no scraping)
 py -m src.build
 
 # Fast rebuild from cache (no network, no scraping)
 py rebuild_html_only.py
 
-# Re-scrape only garbage/missing definitions
+# Refresh Legion Helper rules text (only after its rules reference updates)
+py legion_helper.py --all
+
+# Re-scrape only garbage/missing definitions (legacy HTML scraper)
 py refresh_definitions.py
 
 # Open the result
@@ -151,6 +154,6 @@ GitHub is the source of truth. Friends clone the repo and open `dist/index.html`
 
 | Script | Network? | Scraping? | PDF? | Use when |
 |---|---|---|---|---|
-| `py -m src.build` | Yes | Yes | Yes | First run, new keywords, fresh machine |
+| `py -m src.build` | Card data + images | No | Yes | First run, new keywords, fresh machine |
 | `py rebuild_html_only.py` | Only if image missing | No | Yes | CSS/JS tweaks, override edits |
 | `py refresh_definitions.py` | Yes | Definitions only | No | Fix bad definitions without full rebuild |

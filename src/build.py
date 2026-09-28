@@ -15,7 +15,7 @@ from src.config import (
     RULEBOOK_CREDIT, RULEBOOK_PDFS,
 )
 from src.data_tables import BUNDLED_KEYWORDS, KEYWORD_CARDS
-from src.scrape import (scrape_keywords, find_pdf, extract_keywords_from_pdf,
+from src.scrape import (load_base_keywords, find_pdf, extract_keywords_from_pdf,
                         rulebook_matcher, apply_legion_helper_text)
 from src.images import download_images
 from src.overrides import apply_manual_overlays, find_card_art_credit
@@ -61,18 +61,18 @@ def main():
     os.makedirs(DATA_DIR, exist_ok=True)
     print("=" * 62)
     print("  SW Legion Flashcards Builder v4")
-    print("  Keywords: Web Scrape (names+types) + PDF (definitions)")
+    print("  Keywords: data/ files + rulebook PDF (no web scraping)")
     print("  Images:   legionhq2.com CDN + Wikimedia Commons")
     print("=" * 62)
 
-    # ── Step 1a: Web scrape for full keyword list (names, types, definitions) ──
-    print("\n[1/3] Scraping keywords from legion.takras.net...")
-    keywords = []
-    try:
-        keywords = scrape_keywords()
-        print(f"      {len(keywords)} keywords from web scraper")
-    except Exception as e:
-        print(f"      Scrape failed: {e}")
+    # ── Step 1a: Base keyword set + Legion Helper text, from data/ files ──────
+    # The old step scraped ~311 legion.takras.net pages over HTTP, but those
+    # pages render their text in the browser, so it got nothing for keywords.
+    # legion_helper.py now reads the rendered pages into data/.
+    print("\n[1/3] Loading keywords (data/base_keywords.json + data/legion_helper.json)...")
+    keywords = load_base_keywords()
+    print(f"      {len(keywords)} base keywords, "
+          f"{sum(1 for k in keywords if k['definition'])} with Legion Helper text")
 
     if not keywords:
         print("      Falling back to bundled keyword definitions...")

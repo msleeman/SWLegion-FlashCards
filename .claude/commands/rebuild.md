@@ -28,7 +28,7 @@ Key things to remember from the README:
 | Override a keyword definition | Create `overrides/<Stem>.md` |
 | Override a summary | Create `overrides/<Stem>.summary.md` |
 | Override card art | Drop `overrides/<Stem>.webp\|png\|jpg` |
-| Full rescrape | `py -m src.build` |
+| Full build (no scraping) | `py -m src.build` |
 | Fix one bad definition | `py refresh_definitions.py` |
 | Tag a release | `git tag v5.x.y && git push origin v5.x.y` |
 
@@ -157,6 +157,11 @@ py legion_helper.py            # read pages not cached yet
 py legion_helper.py --all      # re-read everything (after a rules update)
 py legion_helper.py spur aim   # re-read specific slugs
 ```
+
+The full build no longer scrapes at all. Its base card set (91 concept
+cards, names and types) is frozen in `data/base_keywords.json` -- card names
+are what saved progress and notes are keyed by, so they must not drift -- and
+each card's text comes from `data/legion_helper.json` by page slug.
 
 Re-run it when Legion Helper's "rules reference updated" date on its home page
 changes. If a keyword has no text anywhere, ask the user for the correct rule text.

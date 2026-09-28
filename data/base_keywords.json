@@ -1,0 +1,460 @@
+{
+ "_comment": "The full build's base card set: names, types and Legion Helper page slugs. Frozen from the last HTML scrape (2026-09-28) so card names never change -- saved progress, notes and owner edits are keyed by card name. Rules text comes from data/legion_helper.json by slug.",
+ "keywords": [
+  {
+   "slug": "cumbersome",
+   "name": "Cumbersome",
+   "type": "concept"
+  },
+  {
+   "slug": "command_vehicle_x",
+   "name": "Command Vehicle X",
+   "type": "concept"
+  },
+  {
+   "slug": "mobile",
+   "name": "Mobile",
+   "type": "concept"
+  },
+  {
+   "slug": "abilities_provide_move",
+   "name": "Abilities That Provide Moves",
+   "type": "concept"
+  },
+  {
+   "slug": "activating_units",
+   "name": "Activating a Unit",
+   "type": "concept"
+  },
+  {
+   "slug": "activation_phase",
+   "name": "Activation Phase",
+   "type": "concept"
+  },
+  {
+   "slug": "advanced_targeting_x",
+   "name": "Advanced Targeting: Unit Type X",
+   "type": "concept"
+  },
+  {
+   "slug": "advantage_cards",
+   "name": "Advantage Cards",
+   "type": "concept"
+  },
+  {
+   "slug": "affiliations",
+   "name": "Affiliations",
+   "type": "concept"
+  },
+  {
+   "slug": "agile_x",
+   "name": "Agile X",
+   "type": "concept"
+  },
+  {
+   "slug": "ai_action",
+   "name": "AI: Action",
+   "type": "concept"
+  },
+  {
+   "slug": "aid",
+   "name": "Aid: Affiliation",
+   "type": "concept"
+  },
+  {
+   "slug": "aim",
+   "name": "Aim",
+   "type": "concept"
+  },
+  {
+   "slug": "allies_of_convenience",
+   "name": "Allies of Convenience",
+   "type": "concept"
+  },
+  {
+   "slug": "apply_dodge_cover",
+   "name": "Apply Dodge and Cover",
+   "type": "concept"
+  },
+  {
+   "slug": "area_terrain",
+   "name": "Area Terrain",
+   "type": "concept"
+  },
+  {
+   "slug": "area_weapon",
+   "name": "Area Weapon",
+   "type": "concept"
+  },
+  {
+   "slug": "arm_x",
+   "name": "Arm X",
+   "type": "concept"
+  },
+  {
+   "slug": "attack",
+   "name": "Attack",
+   "type": "concept"
+  },
+  {
+   "slug": "actions",
+   "name": "Make Actions",
+   "type": "concept"
+  },
+  {
+   "slug": "backup",
+   "name": "Backup",
+   "type": "concept"
+  },
+  {
+   "slug": "bane_tokens",
+   "name": "Bane Tokens",
+   "type": "concept"
+  },
+  {
+   "slug": "barrage",
+   "name": "Barrage",
+   "type": "concept"
+  },
+  {
+   "slug": "barricades",
+   "name": "Barricades",
+   "type": "concept"
+  },
+  {
+   "slug": "base",
+   "name": "Bases and Base Contact",
+   "type": "concept"
+  },
+  {
+   "slug": "battle_cards",
+   "name": "Battle Cards",
+   "type": "concept"
+  },
+  {
+   "slug": "battle_forces",
+   "name": "Battle Forces",
+   "type": "concept"
+  },
+  {
+   "slug": "battlefield",
+   "name": "Battlefield",
+   "type": "concept"
+  },
+  {
+   "slug": "beam_x",
+   "name": "Beam X",
+   "type": "concept"
+  },
+  {
+   "slug": "blast",
+   "name": "Blast",
+   "type": "concept"
+  },
+  {
+   "slug": "block",
+   "name": "Block",
+   "type": "concept"
+  },
+  {
+   "slug": "bolster_x",
+   "name": "Bolster X",
+   "type": "concept"
+  },
+  {
+   "slug": "bounty",
+   "name": "Bounty",
+   "type": "concept"
+  },
+  {
+   "slug": "building_a_battle_deck",
+   "name": "Building a Battle Deck",
+   "type": "concept"
+  },
+  {
+   "slug": "building_a_command_hand",
+   "name": "Building a Command Hand",
+   "type": "concept"
+  },
+  {
+   "slug": "objects",
+   "name": "Objects/Battlefield",
+   "type": "concept"
+  },
+  {
+   "slug": "cache",
+   "name": "Cache",
+   "type": "concept"
+  },
+  {
+   "slug": "calculate_odds",
+   "name": "Calculate Odds",
+   "type": "concept"
+  },
+  {
+   "slug": "card_action",
+   "name": "Card Action",
+   "type": "concept"
+  },
+  {
+   "slug": "card_effects",
+   "name": "Card Effects",
+   "type": "concept"
+  },
+  {
+   "slug": "charge",
+   "name": "Charge",
+   "type": "concept"
+  },
+  {
+   "slug": "charge_token",
+   "name": "Charge Token",
+   "type": "concept"
+  },
+  {
+   "slug": "claiming_objective_tokens",
+   "name": "Claiming Objective Tokens",
+   "type": "concept"
+  },
+  {
+   "slug": "climb",
+   "name": "Climbing",
+   "type": "concept"
+  },
+  {
+   "slug": "climb_vehicle",
+   "name": "Climbing Vehicle",
+   "type": "concept"
+  },
+  {
+   "slug": "clone_trooper",
+   "name": "Clone Trooper",
+   "type": "concept"
+  },
+  {
+   "slug": "cohesion",
+   "name": "Cohesion",
+   "type": "concept"
+  },
+  {
+   "slug": "command_cards",
+   "name": "Command Cards",
+   "type": "concept"
+  },
+  {
+   "slug": "command_phase",
+   "name": "Command Phase",
+   "type": "concept"
+  },
+  {
+   "slug": "panic_commander",
+   "name": "Commander and Panic Check",
+   "type": "concept"
+  },
+  {
+   "slug": "compel",
+   "name": "Compel: Rank/Unit Type",
+   "type": "concept"
+  },
+  {
+   "slug": "complete_the_mission",
+   "name": "Complete the Mission",
+   "type": "concept"
+  },
+  {
+   "slug": "compulsory_move",
+   "name": "Compulsory Move",
+   "type": "concept"
+  },
+  {
+   "slug": "contesting_objectives",
+   "name": "Contesting Objective Tokens",
+   "type": "concept"
+  },
+  {
+   "slug": "coordinate",
+   "name": "Coordinate: Type/Name",
+   "type": "concept"
+  },
+  {
+   "slug": "counterpart",
+   "name": "Counterpart",
+   "type": "concept"
+  },
+  {
+   "slug": "courage",
+   "name": "Courage",
+   "type": "concept"
+  },
+  {
+   "slug": "cover",
+   "name": "Cover",
+   "type": "concept"
+  },
+  {
+   "slug": "cover_x",
+   "name": "Cover X",
+   "type": "concept"
+  },
+  {
+   "slug": "covert_ops",
+   "name": "Covert Ops",
+   "type": "concept"
+  },
+  {
+   "slug": "critical_x",
+   "name": "Critical X",
+   "type": "concept"
+  },
+  {
+   "slug": "cunning",
+   "name": "Cunning",
+   "type": "concept"
+  },
+  {
+   "slug": "cycle",
+   "name": "Cycle",
+   "type": "concept"
+  },
+  {
+   "slug": "demoralize_x",
+   "name": "Demoralize X",
+   "type": "concept"
+  },
+  {
+   "slug": "detonate_x",
+   "name": "Detonate X (Charge Type)",
+   "type": "concept"
+  },
+  {
+   "slug": "dodge",
+   "name": "Dodge",
+   "type": "concept"
+  },
+  {
+   "slug": "free_card_action",
+   "name": "Free Card Action",
+   "type": "concept"
+  },
+  {
+   "slug": "immobilize_x",
+   "name": "Immobilize X",
+   "type": "concept"
+  },
+  {
+   "slug": "leader",
+   "name": "Leader",
+   "type": "concept"
+  },
+  {
+   "slug": "line_of_sight",
+   "name": "Line of Sight",
+   "type": "concept"
+  },
+  {
+   "slug": "mercenaries",
+   "name": "Mercenaries",
+   "type": "concept"
+  },
+  {
+   "slug": "move",
+   "name": "Move",
+   "type": "concept"
+  },
+  {
+   "slug": "noncombatant",
+   "name": "Noncombatant",
+   "type": "concept"
+  },
+  {
+   "slug": "notch_based_movement",
+   "name": "Notched Base Movement",
+   "type": "concept"
+  },
+  {
+   "slug": "permanent",
+   "name": "Permanent",
+   "type": "concept"
+  },
+  {
+   "slug": "override",
+   "name": "Override",
+   "type": "concept"
+  },
+  {
+   "slug": "poison_x",
+   "name": "Poison X",
+   "type": "concept"
+  },
+  {
+   "slug": "rally",
+   "name": "Rally Step",
+   "type": "concept"
+  },
+  {
+   "slug": "recover",
+   "name": "Recover",
+   "type": "concept"
+  },
+  {
+   "slug": "resiliency",
+   "name": "Resiliency",
+   "type": "concept"
+  },
+  {
+   "slug": "retinue_x",
+   "name": "Retinue: Unit/Unit Type",
+   "type": "concept"
+  },
+  {
+   "slug": "roll_attack_dice",
+   "name": "Roll Attack Dice",
+   "type": "concept"
+  },
+  {
+   "slug": "ruthless",
+   "name": "Ruthless",
+   "type": "concept"
+  },
+  {
+   "slug": "sidearm",
+   "name": "Sidearm",
+   "type": "concept"
+  },
+  {
+   "slug": "silhouettes",
+   "name": "Silhouettes",
+   "type": "concept"
+  },
+  {
+   "slug": "sniper_team",
+   "name": "Sniper Team",
+   "type": "concept"
+  },
+  {
+   "slug": "spray",
+   "name": "Spray",
+   "type": "concept"
+  },
+  {
+   "slug": "standby",
+   "name": "Standby",
+   "type": "concept"
+  },
+  {
+   "slug": "versatile",
+   "name": "Versatile",
+   "type": "concept"
+  },
+  {
+   "slug": "weapons",
+   "name": "Weapons",
+   "type": "concept"
+  },
+  {
+   "slug": "within_range",
+   "name": "Within, Completely Within, and Not Within",
+   "type": "concept"
+  }
+ ]
+}

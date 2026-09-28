@@ -680,3 +680,34 @@ def apply_legion_helper_text(cards, keep_credits):
             c['credit'] = LEGION_HELPER_CREDIT
             updated += 1
     return updated
+
+
+def load_base_keywords():
+    """The full build's base card set, with Legion Helper's text.
+
+    Replaces the old per-page HTML scrape of legion.takras.net. That scrape
+    kept only pages whose HTML carried text -- 91 concept pages -- and those
+    became the base cards the rest of the build hangs off. The set is frozen
+    in data/base_keywords.json (card names are what saved progress and notes
+    are keyed by, so they must not drift), and each card's text comes from
+    data/legion_helper.json, which legion_helper.py reads from the rendered
+    pages. No network access.
+
+    Returns [{name, definition, type}]; definition is '' where Legion Helper
+    had nothing, for the rulebook / Tabletop Admiral / bundled steps to fill.
+    """
+    base_path = os.path.join(HERE, 'data', 'base_keywords.json')
+    lh_path = os.path.join(HERE, 'data', 'legion_helper.json')
+    if not os.path.exists(base_path):
+        return []
+    with open(base_path, encoding='utf-8') as f:
+        base = json.load(f).get('keywords', [])
+    pages = {}
+    if os.path.exists(lh_path):
+        with open(lh_path, encoding='utf-8') as f:
+            pages = json.load(f)
+    out = []
+    for kw in base:
+        text = (pages.get(kw['slug']) or {}).get('t', '')
+        out.append({'name': kw['name'], 'definition': text, 'type': kw['type']})
+    return out
