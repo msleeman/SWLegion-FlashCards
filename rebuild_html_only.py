@@ -20,7 +20,7 @@ from src.overrides import (
     _keyword_stem, find_manual_definition, find_manual_summary,
     apply_manual_overlays,
 )
-from src.scrape import find_pdf, extract_keywords_from_pdf
+from src.scrape import find_pdf, extract_keywords_from_pdf, fill_from_rulebook, rulebook_matcher
 from src.images import (download_images, download_upgrade_card_images,
                         download_tta_card_images, download_command_card_images)
 from src.render import build_html
@@ -67,16 +67,10 @@ if pdf_path:
     try:
         pdf_dict = extract_keywords_from_pdf(pdf_path)
         if pdf_dict:
-            pdf_lookup = {_norm(k): v for k, v in pdf_dict.items()}
+            lookup = rulebook_matcher(pdf_dict)
             overlaid = 0
             for c in card_data:
-                key = _norm(c["name"])
-                match = pdf_lookup.get(key)
-                if not match:
-                    for pk, pv in pdf_lookup.items():
-                        if pk.startswith(key) or key.startswith(pk):
-                            match = pv
-                            break
+                match = lookup(c["name"])
                 if match and match.get("definition"):
                     c["definition"] = match["definition"]
                     c["credit"] = RULEBOOK_CREDIT
@@ -119,50 +113,26 @@ if os.path.exists(kw_map_path):
     if injected:
         print(f"  {injected} new cards injected from overrides (no scraped data existed)")
 
-# ── 4b. Overlay Tabletop Admiral keyword text (authoritative over the scrape) ──
-# TTA carries current 2.6 wording; the older legion.takras.net scrape had at
-# least one outright wrong rule (Ruthless described removing suppression when
-# the card actually lets the unit suffer a wound for a free action). Runs BEFORE
-# step 4 so hand-written overrides still win over it.
+# ── 4b. Tabletop Admiral keyword text, as a last resort ───────────────────────
+# Rules text order: overrides/ > AMG rulebook > Legion Helper > Tabletop
+# Admiral. TTA only fills keywords the rulebook and Legion Helper left empty,
+# plus TTA keywords with no card yet. Runs BEFORE step 4 so hand-written
+# overrides still win over it.
 try:
-    from src.render import fetch_tta_keywords
-    tta_kws = fetch_tta_keywords()
-    if tta_kws:
-        def _tk(n):
-            n = re.sub(r'\[\]', '', n)
-            n = re.sub(r'\s+X$', '', n)
-            n = re.sub(r':\s*.+$', '', n)
-            return n.strip().lower()
-
-        by_norm = {}
-        for k in tta_kws.values():
-            desc = (k.get('description') or '').strip()
-            if desc:
-                by_norm.setdefault(_tk(k.get('name', '')), (k.get('name', ''), desc))
-
-        updated = 0
-        for c in card_data:
-            hit = by_norm.get(_tk(c['name']))
-            if hit and hit[1] != c.get('definition'):
-                c['definition'] = hit[1]
-                c['credit'] = 'tabletopadmiral.com'
-                updated += 1
-
-        existing = {_tk(c['name']) for c in card_data}
-        added = 0
-        for norm_name, (disp, desc) in by_norm.items():
-            if norm_name in existing:
-                continue
-            art = find_card_art(disp)
-            card_data.append({
-                'name': disp, 'definition': desc, 'summary': '',
-                'type': 'unit', 'imgs': [art] if art else [],
-                'credit': 'tabletopadmiral.com', 'card_source': '',
-                'art_credit': find_card_art_credit(disp) or '', 'units': '',
-            })
-            existing.add(norm_name)
-            added += 1
-        print(f"  TTA keyword text: {updated} definitions refreshed, {added} new cards added")
+    from src.render import apply_tta_keyword_text
+    updated, missing = apply_tta_keyword_text(card_data)
+    for disp, desc in missing:
+        art = find_card_art(disp)
+        card_data.append({
+            'name': disp, 'definition': desc, 'summary': '',
+            'type': 'unit', 'imgs': [art] if art else [],
+            'credit': 'tabletopadmiral.com', 'card_source': '',
+            'art_credit': find_card_art_credit(disp) or '', 'units': '',
+        })
+    print(f"  TTA keyword text: {updated} empty definitions filled, {len(missing)} new cards added")
+    # Cards TTA just added never went through step 3: the rulebook still beats TTA.
+    print(f"  Rulebook text for {fill_from_rulebook(card_data, RULEBOOK_CREDIT)} "
+          f"of those Tabletop Admiral cards")
 except Exception as e:
     print(f"  WARN: TTA keyword overlay failed: {e}")
 

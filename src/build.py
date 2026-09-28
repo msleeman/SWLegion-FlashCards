@@ -15,11 +15,12 @@ from src.config import (
     RULEBOOK_CREDIT, RULEBOOK_PDFS,
 )
 from src.data_tables import BUNDLED_KEYWORDS, KEYWORD_CARDS
-from src.scrape import scrape_keywords, find_pdf, extract_keywords_from_pdf
+from src.scrape import (scrape_keywords, find_pdf, extract_keywords_from_pdf,
+                        rulebook_matcher)
 from src.images import download_images
 from src.overrides import apply_manual_overlays, find_card_art_credit
 from src.units import inject_units
-from src.render import build_html
+from src.render import build_html, apply_tta_keyword_text
 
 
 def _load_prior_summaries():
@@ -86,18 +87,10 @@ def main():
         try:
             pdf_dict = extract_keywords_from_pdf(pdf_path)
             if pdf_dict:
-                def _norm(s):
-                    return re.sub(r'[^a-z0-9]', '', s.lower())
-                pdf_lookup = {_norm(k): v for k, v in pdf_dict.items()}
+                lookup = rulebook_matcher(pdf_dict)
                 overlaid = 0
                 for kw in keywords:
-                    key = _norm(kw["name"])
-                    match = pdf_lookup.get(key)
-                    if not match:
-                        for pk, pv in pdf_lookup.items():
-                            if pk.startswith(key) or key.startswith(pk):
-                                match = pv
-                                break
+                    match = lookup(kw["name"])
                     if match and match.get("definition"):
                         kw["definition"] = match["definition"]
                         kw["credit"] = RULEBOOK_CREDIT
@@ -110,6 +103,20 @@ def main():
     else:
         print("\n      No PDF found — using web definitions only")
         print(f"      (Place one of {RULEBOOK_PDFS[0]!r} in documents/ to use official AMG text)")
+
+    # Tabletop Admiral fills what the rulebook and Legion Helper left empty
+    # (rules text order: overrides/ > rulebook > Legion Helper > TTA > the
+    # bundled fallback below) -- the same step rebuild_html_only.py runs.
+    # TTA keywords with no card at all are NOT added here: rebuild_html_only.py
+    # adds them after it injects the override-only cards, so those keep their
+    # existing names ("Spur[]"). Adding them here first renamed 14 cards, and
+    # saved progress, notes and owner edits are all keyed by card name.
+    try:
+        updated, missing = apply_tta_keyword_text(keywords)
+        print(f"      TTA keyword text: {updated} empty definitions filled "
+              f"({len(missing)} TTA-only keywords left to the rebuild step)")
+    except Exception as e:
+        print(f"      WARN: TTA keyword overlay failed: {e}")
 
     # Fill any empty definitions from bundled fallback
     bundled_lookup = {re.sub(r'[^a-z0-9]', '', k.lower()): v
