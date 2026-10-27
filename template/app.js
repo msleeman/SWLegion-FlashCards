@@ -1361,6 +1361,38 @@ function saveChance(defDie, defSurge){
   return (blocks+(defSurge==='b'?1:0))/6;
 }
 
+// Upgrades that rewrite the unit's surge chart. These carry NO keyword -- the
+// whole effect is printed card text ("This unit gains defence surge: block") --
+// and none of our sources expose it: LegionHQ2 and Tabletop Admiral only list
+// keywords, and the upgrade OCR drops the surge/block icons ("This unit
+// gains:"). So the dice maths only ever saw the unit card's own chart: a
+// Mandalorian Hunter with Full Beskar Armor showed 50% (red, no surge) instead
+// of 67% (red + surge). Keyed by upgrade NAME and applied at render time, so
+// lists saved before this table existed are corrected too.
+//   ds:'b'      defence surge -> block
+//   hs:'h'|'c'  attack surge  -> hit | crit
+const UPGRADE_SURGE_MODS={
+  'Full Beskar Armor': {ds:'b'},   // Mandalorian Hunter only
+};
+
+// A unit's effective surge chart: its card's own chart plus any upgrade that
+// grants a surge. Never downgrades (an existing crit surge stays crit).
+// Returns the names of the upgrades responsible so the sheet can say why.
+function effectiveSurges(u){
+  let ds=u.ds||'', hs=u.hs||'';
+  const from=[];
+  const names=new Set([...(u.upgrades||[]), ...(u.upgradeCards||[]).map(c=>c&&c.n)]);
+  for(const n of names){
+    const m=n&&UPGRADE_SURGE_MODS[n];
+    if(!m) continue;
+    let changed=false;
+    if(m.ds&&ds!==m.ds){ ds=m.ds; changed=true; }
+    if(m.hs&&hs!==m.hs&&!(hs==='c'&&m.hs==='h')){ hs=m.hs; changed=true; }
+    if(changed) from.push(n);
+  }
+  return {ds,hs,from};
+}
+
 // Resolve card art by NAME at render time rather than trusting the filename a
 // list captured when it was saved. Art filenames have been re-keyed once
 // already (public_id -> id) and a saved list then points at files that no
@@ -2257,9 +2289,11 @@ function printListUnits(listId){
     const rankLine=(rank||upgNames)?`<div class="pu-rankrow">${rank}${upgNames}</div>`:'';
 
     // Per-weapon expected hits, plus this unit's own save chance.
-    const save=saveChance(u.dd,u.ds);
+    // Surge charts include upgrade-granted surges (Full Beskar Armor, ...).
+    const surges=effectiveSurges(u);
+    const save=saveChance(u.dd,surges.ds);
     const wpnRows=(u.weapons||[]).filter(w=>w.n!=='Unarmed').map(w=>{
-      const st=poolStats(w.d||{},critValue(w.k),u.hs||'');
+      const st=poolStats(w.d||{},critValue(w.k),surges.hs);
       const kw=(w.k||[]).join(', ');
       const rg=w.rg&&w.rg.length
         ? (w.rg.length>1?`${w.rg[0]}-${w.rg[w.rg.length-1]}`:String(w.rg[0])) : '';
@@ -2329,7 +2363,7 @@ function printListUnits(listId){
 
     const dice=d=>({r:(d&&d.r)||0,b:(d&&d.b)||0,w:(d&&d.w)||0});
     const reaches=(w,r)=>w.rg&&w.rg.length&&r>=Math.min(...w.rg)&&r<=Math.max(...w.rg);
-    const hs=u.hs||'';
+    const hs=surges.hs;
     const alone=w=>poolStats(dice(w.d),critValue(w.k),hs).total;
     // Assault X upgrades X dice of each weapon when the defender is within
     // range 1. It applies to every miniature's copy of a unit-card weapon; an
@@ -2408,7 +2442,8 @@ function printListUnits(listId){
     const saveLine=save!==null
       ? `<div class="pu-save">Save vs 1 hit: <strong>${Math.round(save*100)}%</strong>
          <span class="pu-savebits">(${u.dd==='r'?'red':'white'} defence${
-           u.ds==='b'?' + surge':''})</span></div>` : '';
+           surges.ds==='b'?' + surge':''}${
+           surges.from.length?' from '+escHtml(surges.from.join(', ')):''})</span></div>` : '';
 
     return `<tr class="pu-row">
       <td class="pu-img">
