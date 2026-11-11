@@ -4082,7 +4082,14 @@ function findDbUnit(name, title, faction){
 // return nothing on purpose -- an unresolved upgrade loses its art and keywords
 // but keeps its name and cost, which beats showing another character's card.
 function findDbUpgrade(name, cost){
-  const hits=Object.values(UPGRADE_DB).filter(u=>u.n===name);
+  let hits=Object.values(UPGRADE_DB).filter(u=>u.n===name);
+  if(!hits.length){
+    // TTA sometimes suffixes the bearer onto a heavy-weapon upgrade's name
+    // ("Mertalizer Dark Trooper" vs LegionHQ2's "Mertalizer"). Fall back to a
+    // DB card whose name is a word-prefix of TTA's AND whose cost matches --
+    // the cost check keeps e.g. "Astromech Droid" (8) off "Astromech" (10).
+    hits=Object.values(UPGRADE_DB).filter(u=>u.n&&name.startsWith(u.n+' ')&&(u.c||0)===cost);
+  }
   if(hits.length<2) return hits[0]||null;
   const byCost=hits.filter(u=>(u.c||0)===cost);
   if(byCost.length===1) return byCost[0];
