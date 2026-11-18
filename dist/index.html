@@ -486,7 +486,7 @@ html,body{width:100%;height:100%;overflow:hidden;
       </div>
     </div>
     <p class="auth-footer">Guest progress is saved locally on this device only.</p>
-    <p class="auth-footer">v5.0.0-74-gbcb710c-dirty · 2026-11-18 00:48 UTC</p>
+    <p class="auth-footer">v5.0.0-75-g2e33f7f-dirty · 2026-11-18 00:50 UTC</p>
   </div>
 </div>
 
@@ -540,7 +540,7 @@ html,body{width:100%;height:100%;overflow:hidden;
         <div class="acct-item" id="acct-signin-item" onclick="showAuthFromApp()" style="display:none">Sign in / Switch account</div>
         <div class="acct-item danger" id="acct-signout-item" onclick="authSignOut()" style="display:none">Sign out</div>
         <div class="acct-item" id="acct-guest-label" style="display:none;cursor:default;color:rgba(255,255,255,.3)">Progress saved locally</div>
-        <div style="font-size:10px;color:rgba(255,255,255,.18);padding:4px 14px 8px;text-align:center;letter-spacing:.3px">v5.0.0-74-gbcb710c-dirty · 2026-11-18 00:48 UTC</div>
+        <div style="font-size:10px;color:rgba(255,255,255,.18);padding:4px 14px 8px;text-align:center;letter-spacing:.3px">v5.0.0-75-g2e33f7f-dirty · 2026-11-18 00:50 UTC</div>
       </div>
     </div>
   </div>
@@ -4966,7 +4966,7 @@ function ttaKeywordsWithValues(ttaIds, lhqNames){
 // `removed` holds keys taken off the list in the Edit tab; those stay off.
 function unitKeywordSources(u, removed){
   const groups=[];
-  const add=(raw,label,type,fill)=>{
+  const add=(raw,label,type,fill,wpn)=>{
     const e=kwParse(raw);
     if(!e.base||removed.has(e.key)) return;
     if(e.value===null&&fill) e.value=fill(e.base);
@@ -4981,7 +4981,7 @@ function unitKeywordSources(u, removed){
     // One card listing a keyword twice ("Impact" and "Impact 1") is one source.
     const same=g.srcs.find(x=>x.label===label);
     if(same){ if(same.value===null) same.value=e.value; }
-    else g.srcs.push({label,type,value:e.value});
+    else g.srcs.push({label,type,value:e.value,rg:wpn&&wpn.rg});
   };
   // Keywords a card only repeats because its weapon has them.
   const minus=(list,weapons)=>{
@@ -4996,7 +4996,7 @@ function unitKeywordSources(u, removed){
   const ttaU=ttaUnitFor(u);
   const cardKws=ttaU?ttaKeywordsWithValues(ttaU.kw,dbUnit&&dbUnit.k):((dbUnit&&dbUnit.k)||[]);
   minus(cardKws,unitWeapons).forEach(kw=>add(kw,'Unit card','unit'));
-  unitWeapons.forEach(w=>(w.k||[]).forEach(kw=>add(kw,`Weapon: ${w.n}`,'weapon')));
+  unitWeapons.forEach(w=>(w.k||[]).forEach(kw=>add(kw,`Weapon: ${w.n}`,'weapon',null,w)));
 
   const bare=[];
   const upgs=u.upgradeCards&&u.upgradeCards.length
@@ -5011,7 +5011,7 @@ function unitKeywordSources(u, removed){
     const names=tta?ttaKeywordsWithValues(tta.kw,dbUp&&dbUp.k):((dbUp&&dbUp.k)||[]);
     if(matchesKnownCard(up.n)) names.push(up.n);
     minus(names,weapons).forEach(kw=>add(kw,up.n,'upgrade',fill));
-    weapons.forEach(w=>(w.k||[]).forEach(kw=>add(kw,`${up.n} › ${w.n}`,'upgweapon',fill)));
+    weapons.forEach(w=>(w.k||[]).forEach(kw=>add(kw,`${up.n} › ${w.n}`,'upgweapon',fill,w)));
     if(groups.reduce((n,g)=>n+g.srcs.length,0)===before)
       bare.push({n:up.n, text:ocr&&ocr.t||''});
   });
@@ -5024,15 +5024,49 @@ function unitKeywordSources(u, removed){
     if(!groups.some(g=>kwSame(g,e))) add(kw,'Unit card','unit');
   });
 
+  // A weapon keyword only counts in an attack that uses that weapon, and one
+  // attack pool only holds weapons that reach the same range. So weapon
+  // sources add up only within a range band they share: Gideon's blaster
+  // (range 1-2, Pierce 1) and the Darksaber (melee, Pierce 1) give Pierce 1,
+  // not 2. Card keywords (unit or upgrade) apply to every attack.
+  const isWpn=x=>x.type==='weapon'||x.type==='upgweapon';
+  const band=rg=>{
+    const r=(rg||[]).filter(v=>typeof v==='number');
+    if(!r.length) return null;               // unknown range: assume it fits
+    const lo=Math.min(...r), hi=r.length>1?Math.max(...r):r[0];
+    return [lo, (rg.length>1&&rg[rg.length-1]===null)?99:hi];
+  };
+  const weaponSets=ws=>{
+    if(ws.length<2) return [ws];
+    const bs=ws.map(x=>band(x.rg));
+    const edges=[...new Set(bs.filter(Boolean).flat())].sort((a,b)=>a-b);
+    const sets=[];
+    for(const r of (edges.length?edges:[0])){
+      const s=ws.filter((x,i)=>!bs[i]||(r>=bs[i][0]&&r<=bs[i][1]));
+      if(!sets.some(o=>s.every(x=>o.includes(x)))){
+        for(let i=sets.length-1;i>=0;i--) if(sets[i].every(x=>s.includes(x))) sets.splice(i,1);
+        sets.push(s);
+      }
+    }
+    return sets.length?sets:[ws];
+  };
+  const part=(g,x)=>x.label+(g.numeric&&x.value!==null?' '+x.value:'');
   groups.forEach(g=>{
-    const vals=g.srcs.map(x=>x.value).filter(v=>v!==null);
-    g.value=vals.length?vals.reduce((a,b)=>a+b,0):null;
+    const fixed=g.srcs.filter(x=>!isWpn(x));
+    const sets=weaponSets(g.srcs.filter(isWpn));
+    const sum=xs=>xs.reduce((a,x)=>a+(x.value||0),0);
+    const hasVal=g.srcs.some(x=>x.value!==null);
+    g.value=hasVal?sum(fixed)+Math.max(...sets.map(sum)):null;
     const only=g.srcs.length===1?g.srcs[0]:null;
     // The heading already says "Unit keywords", so a lone unit-card source
-    // needs no tag; anything combined spells out its parts.
-    g.label=only
-      ? (only.type==='unit'||only.label===g.base?'':only.label)
-      : g.srcs.map(x=>x.label+(g.numeric&&x.value!==null?' '+x.value:'')).join(' + ');
+    // needs no tag; anything combined spells out its parts, with "or" between
+    // weapons that can't be in the same attack.
+    if(only){ g.label=only.type==='unit'||only.label===g.base?'':only.label; return; }
+    const wpnLabel=sets.filter(s=>s.length).map(s=>s.map(x=>part(g,x)).join(' + '));
+    const alt=wpnLabel.length>1
+      ? (fixed.length?'('+wpnLabel.join(' or ')+')':wpnLabel.join(' or '))
+      : wpnLabel[0];
+    g.label=[...fixed.map(x=>part(g,x)),...(alt?[alt]:[])].join(' + ');
   });
   const isUnit=g=>g.srcs.some(x=>x.type==='unit'||x.type==='weapon');
   const onCard=g=>g.srcs.some(x=>x.type==='unit');
