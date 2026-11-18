@@ -1808,6 +1808,20 @@ function findTtaUpgradeByName(name){
   return hits.length?_newestHex(hits):null;
 }
 
+// The export's battle deck:
+//   "battlefieldDeck":{"scenario":"standard","conditions":[...],
+//                      "deployment":[...],"objective":[...]}
+// Kept as plain card names so the by-unit sheet can list them at the end.
+function normBattlefieldDeck(d){
+  if(!d||typeof d!=='object') return null;
+  const names=a=>Array.isArray(a)?a.map(s=>String(s||'').trim()).filter(Boolean):[];
+  const deck={scenario:String(d.scenario||'').trim(),
+              objective:names(d.objective),
+              deployment:names(d.deployment),
+              conditions:names(d.conditions)};
+  return (deck.objective.length||deck.deployment.length||deck.conditions.length)?deck:null;
+}
+
 function parseTtaJson(text){
   let data;
   try{ data=JSON.parse(text); }catch(e){ return {error:'That is not valid JSON.'}; }
@@ -1829,6 +1843,7 @@ function parseTtaJson(text){
   army.listName=data.listname||'';
   army.listUrl=data.listlink||'';
   army.commandCards=Array.isArray(data.commandCards)?data.commandCards:[];
+  army.battlefieldDeck=normBattlefieldDeck(data.battlefieldDeck);
   army.missing=missing;
   return army;
 }
@@ -1946,6 +1961,7 @@ function saveList(){
     })),
     armyUrl:url,
     ...(_parsedArmy.commandCards?{commandCards:_parsedArmy.commandCards}:{}),
+    ...(_parsedArmy.battlefieldDeck?{battlefieldDeck:_parsedArmy.battlefieldDeck}:{}),
     createdAt:new Date().toISOString()
   });
   saveLists(lists);
@@ -2689,6 +2705,19 @@ function printListUnits(listId){
   const pts=list.points?` · ${list.points} pts`:'';
   const totalMinis=units.reduce((n,u)=>n+(u.count||1),0);
 
+  // Battle deck from a Tabletop Admiral JSON import, after the last unit.
+  const bd=list.battlefieldDeck;
+  const bdCol=(head,cards)=>`<div class="pb-col"><div class="pu-kwhead">${head}</div>`+
+    `<ul class="pu-kwlist">${cards.length?cards.map(c=>`<li>${escHtml(c)}</li>`).join('')
+      :'<li class="pu-none">None</li>'}</ul></div>`;
+  const deckBlock=bd
+    ? `<div class="pb-deck">
+        <div class="pu-name">Battlefield deck${bd.scenario
+          ?` <span class="pu-title">${escHtml(bd.scenario.charAt(0).toUpperCase()+bd.scenario.slice(1))}</span>`:''}</div>
+        <div class="pb-cols">${bdCol('Objective',bd.objective||[])}${
+          bdCol('Deployment',bd.deployment||[])}${bdCol('Conditions',bd.conditions||[])}</div>
+      </div>` : '';
+
   const pane=document.getElementById('print-keywords');
   pane.innerHTML=`
     <div class="pk-header pk-header-row">
@@ -2696,6 +2725,7 @@ function printListUnits(listId){
       <p class="pk-meta">${faction}${pts} · ${totalMinis} units · By unit</p>
     </div>
     <table class="pu-table"><tbody>${rows}</tbody></table>
+    ${deckBlock}
     <p class="pk-footer">SW Legion Keywords App: ${new Date().toLocaleDateString()}</p>`;
   whenImagesReady(pane).then(()=>window.print());
 }

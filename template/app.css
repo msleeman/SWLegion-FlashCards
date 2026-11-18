@@ -440,6 +440,10 @@ html,body{width:100%;height:100%;overflow:hidden;
   .pu-kwsrc{font-size:7.5pt;color:#777;font-style:italic}
   .pu-kwsrc::before{content:"("}
   .pu-kwsrc::after{content:")"}
+  /* Battlefield deck after the last unit: objective / deployment / conditions */
+  .pb-deck{margin-top:10pt;page-break-inside:avoid}
+  .pb-cols{display:flex;gap:14pt}
+  .pb-col{flex:1 1 0}
   .pu-kwbare{font-size:7.5pt;color:#888;font-style:italic;margin-top:3pt}
   .pu-none{color:#999;font-style:italic}
   /* Real per-page margins. This must be @page, not padding on the container:
