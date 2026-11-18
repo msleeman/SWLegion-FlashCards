@@ -233,10 +233,19 @@ html,body{width:100%;height:100%;overflow:hidden;
 .list-card-name{font-size:14px;font-weight:700;color:var(--white);margin-bottom:4px}
 .list-card-meta{font-size:12px;color:rgba(255,255,255,.4)}
 .list-card-actions{display:flex;gap:6px}
+/* Five buttons don't fit beside the name on a phone: put them on their own
+   line under it, wrapping if needed. */
+@media(max-width:560px){
+  .list-card{flex-wrap:wrap}
+  .list-card-info{flex-basis:100%}
+  .list-card-actions{flex-wrap:wrap}
+}
 .list-btn-filter{font-size:12px;padding:5px 12px;border-radius:12px;background:rgba(29,158,117,.2);border:1px solid var(--G);color:var(--Gt);cursor:pointer;font-family:inherit}
 .list-btn-filter.on{background:rgba(29,158,117,.4)}
 .list-btn-edit{font-size:12px;padding:5px 12px;border-radius:12px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);color:var(--white2);cursor:pointer;font-family:inherit}
 .list-btn-edit:hover{background:rgba(255,255,255,.12)}
+.list-btn-delete{font-size:12px;padding:5px 12px;border-radius:12px;background:rgba(192,57,43,.2);border:1px solid #c0392b;color:#f08080;cursor:pointer;font-family:inherit}
+.list-btn-delete:hover{background:rgba(192,57,43,.4)}
 .lists-empty{color:rgba(255,255,255,.25);font-size:14px;text-align:center;padding:2rem 0}
 /* List modal */
 .list-modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:200;align-items:center;justify-content:center;padding:1rem;backdrop-filter:blur(10px)}

@@ -2002,6 +2002,7 @@ function renderSavedLists(){
         <button class="list-btn-filter${isActive?' on':''}" data-list-id="${lst.id}"
           onclick="toggleListFilter('${lst.id}')">${isActive?'Filtering':'Filter'}</button>
         <button class="list-btn-edit" onclick="openListModal('${lst.id}')">Edit</button>
+        <button class="list-btn-delete" onclick="deleteList('${lst.id}')" title="Delete this list">&#128465; Delete</button>
       </div>
     </div>`;
   }).join('');
@@ -2100,16 +2101,20 @@ function lmSaveEdit(){
   document.getElementById('lm-edit-status').style.color='#6effc4';
 }
 
-function lmDeleteList(){
-  if(!confirm('Delete this list?')) return;
-  let lists=loadLists();
-  lists=lists.filter(l=>l.id!==_lmListId);
-  saveLists(lists);
-  if(activeListId===_lmListId) setListFilter(null);
-  document.getElementById('list-modal-bg').classList.remove('on');
+// Shared by the Delete button on each saved-list row and the one in the list
+// modal. Returns whether the list was deleted.
+function deleteList(listId){
+  const lst=getListById(listId);
+  if(!lst) return false;
+  if(!confirm(`Delete "${lst.name}"? This can't be undone.`)) return false;
+  saveLists(loadLists().filter(l=>l.id!==listId));
+  if(activeListId===listId) setListFilter(null);
+  if(_lmListId===listId) document.getElementById('list-modal-bg').classList.remove('on');
   renderSavedLists();
   updateListPillLabel();
+  return true;
 }
+function lmDeleteList(){ deleteList(_lmListId); }
 
 function escHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 

@@ -239,10 +239,19 @@ html,body{width:100%;height:100%;overflow:hidden;
 .list-card-name{font-size:14px;font-weight:700;color:var(--white);margin-bottom:4px}
 .list-card-meta{font-size:12px;color:rgba(255,255,255,.4)}
 .list-card-actions{display:flex;gap:6px}
+/* Five buttons don't fit beside the name on a phone: put them on their own
+   line under it, wrapping if needed. */
+@media(max-width:560px){
+  .list-card{flex-wrap:wrap}
+  .list-card-info{flex-basis:100%}
+  .list-card-actions{flex-wrap:wrap}
+}
 .list-btn-filter{font-size:12px;padding:5px 12px;border-radius:12px;background:rgba(29,158,117,.2);border:1px solid var(--G);color:var(--Gt);cursor:pointer;font-family:inherit}
 .list-btn-filter.on{background:rgba(29,158,117,.4)}
 .list-btn-edit{font-size:12px;padding:5px 12px;border-radius:12px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);color:var(--white2);cursor:pointer;font-family:inherit}
 .list-btn-edit:hover{background:rgba(255,255,255,.12)}
+.list-btn-delete{font-size:12px;padding:5px 12px;border-radius:12px;background:rgba(192,57,43,.2);border:1px solid #c0392b;color:#f08080;cursor:pointer;font-family:inherit}
+.list-btn-delete:hover{background:rgba(192,57,43,.4)}
 .lists-empty{color:rgba(255,255,255,.25);font-size:14px;text-align:center;padding:2rem 0}
 /* List modal */
 .list-modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:200;align-items:center;justify-content:center;padding:1rem;backdrop-filter:blur(10px)}
@@ -486,7 +495,7 @@ html,body{width:100%;height:100%;overflow:hidden;
       </div>
     </div>
     <p class="auth-footer">Guest progress is saved locally on this device only.</p>
-    <p class="auth-footer">v5.0.0-75-g2e33f7f-dirty · 2026-11-18 00:50 UTC</p>
+    <p class="auth-footer">v5.0.0-76-g2b4e9b9-dirty · 2026-11-18 00:56 UTC</p>
   </div>
 </div>
 
@@ -540,7 +549,7 @@ html,body{width:100%;height:100%;overflow:hidden;
         <div class="acct-item" id="acct-signin-item" onclick="showAuthFromApp()" style="display:none">Sign in / Switch account</div>
         <div class="acct-item danger" id="acct-signout-item" onclick="authSignOut()" style="display:none">Sign out</div>
         <div class="acct-item" id="acct-guest-label" style="display:none;cursor:default;color:rgba(255,255,255,.3)">Progress saved locally</div>
-        <div style="font-size:10px;color:rgba(255,255,255,.18);padding:4px 14px 8px;text-align:center;letter-spacing:.3px">v5.0.0-75-g2e33f7f-dirty · 2026-11-18 00:50 UTC</div>
+        <div style="font-size:10px;color:rgba(255,255,255,.18);padding:4px 14px 8px;text-align:center;letter-spacing:.3px">v5.0.0-76-g2b4e9b9-dirty · 2026-11-18 00:56 UTC</div>
       </div>
     </div>
   </div>
@@ -4624,6 +4633,7 @@ function renderSavedLists(){
         <button class="list-btn-filter${isActive?' on':''}" data-list-id="${lst.id}"
           onclick="toggleListFilter('${lst.id}')">${isActive?'Filtering':'Filter'}</button>
         <button class="list-btn-edit" onclick="openListModal('${lst.id}')">Edit</button>
+        <button class="list-btn-delete" onclick="deleteList('${lst.id}')" title="Delete this list">&#128465; Delete</button>
       </div>
     </div>`;
   }).join('');
@@ -4722,16 +4732,20 @@ function lmSaveEdit(){
   document.getElementById('lm-edit-status').style.color='#6effc4';
 }
 
-function lmDeleteList(){
-  if(!confirm('Delete this list?')) return;
-  let lists=loadLists();
-  lists=lists.filter(l=>l.id!==_lmListId);
-  saveLists(lists);
-  if(activeListId===_lmListId) setListFilter(null);
-  document.getElementById('list-modal-bg').classList.remove('on');
+// Shared by the Delete button on each saved-list row and the one in the list
+// modal. Returns whether the list was deleted.
+function deleteList(listId){
+  const lst=getListById(listId);
+  if(!lst) return false;
+  if(!confirm(`Delete "${lst.name}"? This can't be undone.`)) return false;
+  saveLists(loadLists().filter(l=>l.id!==listId));
+  if(activeListId===listId) setListFilter(null);
+  if(_lmListId===listId) document.getElementById('list-modal-bg').classList.remove('on');
   renderSavedLists();
   updateListPillLabel();
+  return true;
 }
+function lmDeleteList(){ deleteList(_lmListId); }
 
 function escHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
