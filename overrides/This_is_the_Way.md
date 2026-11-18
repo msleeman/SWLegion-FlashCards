@@ -1,1 +1,1 @@
-When an allied unit with the This is the Way keyword is issued an Order, choose up to X other allied units within of that unit. Each chosen unit performs the Action listed by the unit that was issued the order's This is the Way keyword as a free action.
+When an allied unit with the This is the Way keyword is issued an Order, choose up to X other allied [FACTION COVERT] units within [RANGE 2] of that unit. Each chosen unit performs the Action listed by the unit that was issued the order's This is the Way keyword as a free action.

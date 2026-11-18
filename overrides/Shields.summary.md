@@ -1,1 +1,1 @@
-Has X shield tokens that negate wounds; all flip back to active at the start of activation.
+Has X shield tokens; flip an active one to cancel a hit or crit from a ranged attack.

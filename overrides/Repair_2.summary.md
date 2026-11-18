@@ -1,1 +1,1 @@
-Card action: remove 2 wound, ion, or damage tokens from a friendly ground vehicle at range 1. Limit 2.
+Card or free card action: remove up to 2 wound, ion, or vehicle damage tokens from an allied droid trooper or vehicle within range 1 and LOS, or restore up to 2 miniatures. Not usable once the card holds 2 wounds.

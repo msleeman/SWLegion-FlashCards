@@ -1,7 +1,30 @@
 {
   "permissions": {
     "allow": [
-      "Bash(powershell -Command \"cd 'c:/Users/marti/AI/SWLegion-FlashCards'; Remove-Item build_swlegion.py; git add -A; git commit -m 'Remove obsolete v1 build script \\(superseded by build_swlegion_v3.py\\)'; git push\")"
+      "Bash(powershell -Command \"cd 'c:/Users/marti/AI/SWLegion-FlashCards'; Remove-Item build_swlegion.py; git add -A; git commit -m 'Remove obsolete v1 build script \\(superseded by build_swlegion_v3.py\\)'; git push\")",
+      "WebSearch",
+      "WebFetch(domain:store.asmodee.com)",
+      "WebFetch(domain:www.miniaturemarket.com)",
+      "WebFetch(domain:www.discountgamesinc.com)",
+      "WebFetch(domain:kickassmailorder.com)",
+      "WebFetch(domain:www.bigbadtoystore.com)",
+      "WebFetch(domain:www.excelrc.com)",
+      "WebFetch(domain:koroswargames.com)",
+      "WebFetch(domain:www.nobleknight.com)",
+      "WebFetch(domain:www.amazon.com)",
+      "WebFetch(domain:zatu.com)",
+      "WebFetch(domain:www.asmodee.co.uk)",
+      "WebFetch(domain:shop.millenniumgames.com)",
+      "WebFetch(domain:www.gamenerdz.com)",
+      "WebFetch(domain:jandjgamingfactory.com)",
+      "WebFetch(domain:imps-gaming.com)",
+      "WebFetch(domain:www.broadswordwargaming.com)",
+      "WebFetch(domain:www.warbay.shop)",
+      "WebFetch(domain:www.firestormgames.co.uk)",
+      "WebFetch(domain:www.zavvi.com)",
+      "WebFetch(domain:www.philibertnet.com)",
+      "WebFetch(domain:www.eltallerdelmodelista.com)",
+      "WebFetch(domain:amusengames.ca)"
     ]
   }
 }
