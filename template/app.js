@@ -2337,6 +2337,30 @@ function ttaKeywordsWithValues(ttaIds, lhqNames){
   });
 }
 
+// An upgrade with a weapon but no weapon data (Gideon's Darksaber has no
+// LegionHQ2 card) still prints the weapon on the card, so its OCR weapon line
+// says which of the card's keywords belong to the weapon: those printed there
+// and not in the card text ("gains Demoralize 1 and Immune: Melee Pierce" vs
+// "THE DARKSABER Impact 1. Pierce 1"). A numbered keyword counts as in the card
+// text only with its number, so "Immune: Melee Pierce" doesn't claim Pierce.
+// The range comes from same-named LegionHQ2 weapons when they all agree (every
+// other Darksaber is melee); with none it stays unknown.
+function ocrWeapon(name, ocr, kwNames){
+  if(!ocr||!ocr.w) return [];
+  const sq=s=>String(s||'').toLowerCase().replace(/[^a-z0-9]/g,'');
+  const wTxt=sq(ocr.w), tTxt=sq(ocr.t);
+  const k=(kwNames||[]).filter(raw=>{
+    const e=kwParse(raw), b=sq(e.base);
+    if(!b||!wTxt.includes(b)) return false;
+    return e.numeric ? !new RegExp(b+'\\d').test(tTxt) : !tTxt.includes(b);
+  });
+  if(!k.length) return [];
+  const twins=Object.values(UPGRADE_DB).filter(u=>u.n===name)
+    .flatMap(u=>u.w||[]).filter(w=>w.n===name&&w.rg);
+  const rgs=[...new Set(twins.map(w=>JSON.stringify(w.rg)))];
+  return [{n:name, k, rg:rgs.length===1?JSON.parse(rgs[0]):undefined}];
+}
+
 // Every keyword on a saved unit, grouped by meaning and attributed to the
 // card or weapon it comes from. Returns {unit, upgrades, bare}:
 //   unit      keywords from the unit card and its weapons -- unit card ones
@@ -2393,8 +2417,9 @@ function unitKeywordSources(u, removed){
     const before=groups.reduce((n,g)=>n+g.srcs.length,0);
     const names=tta?ttaKeywordsWithValues(tta.kw,dbUp&&dbUp.k):((dbUp&&dbUp.k)||[]);
     if(matchesKnownCard(up.n)) names.push(up.n);
-    minus(names,weapons).forEach(kw=>add(kw,up.n,'upgrade',fill));
-    weapons.forEach(w=>(w.k||[]).forEach(kw=>add(kw,`${up.n} › ${w.n}`,'upgweapon',fill,w)));
+    const wpns=weapons.length?weapons:ocrWeapon(up.n,ocr,names);
+    minus(names,wpns).forEach(kw=>add(kw,up.n,'upgrade',fill));
+    wpns.forEach(w=>(w.k||[]).forEach(kw=>add(kw,`${up.n} › ${w.n}`,'upgweapon',fill,w)));
     if(groups.reduce((n,g)=>n+g.srcs.length,0)===before)
       bare.push({n:up.n, text:ocr&&ocr.t||''});
   });

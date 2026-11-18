@@ -495,7 +495,7 @@ html,body{width:100%;height:100%;overflow:hidden;
       </div>
     </div>
     <p class="auth-footer">Guest progress is saved locally on this device only.</p>
-    <p class="auth-footer">v5.0.0-76-g2b4e9b9-dirty · 2026-11-18 00:56 UTC</p>
+    <p class="auth-footer">v5.0.0-77-g6742dac-dirty · 2026-11-18 01:00 UTC</p>
   </div>
 </div>
 
@@ -549,7 +549,7 @@ html,body{width:100%;height:100%;overflow:hidden;
         <div class="acct-item" id="acct-signin-item" onclick="showAuthFromApp()" style="display:none">Sign in / Switch account</div>
         <div class="acct-item danger" id="acct-signout-item" onclick="authSignOut()" style="display:none">Sign out</div>
         <div class="acct-item" id="acct-guest-label" style="display:none;cursor:default;color:rgba(255,255,255,.3)">Progress saved locally</div>
-        <div style="font-size:10px;color:rgba(255,255,255,.18);padding:4px 14px 8px;text-align:center;letter-spacing:.3px">v5.0.0-76-g2b4e9b9-dirty · 2026-11-18 00:56 UTC</div>
+        <div style="font-size:10px;color:rgba(255,255,255,.18);padding:4px 14px 8px;text-align:center;letter-spacing:.3px">v5.0.0-77-g6742dac-dirty · 2026-11-18 01:00 UTC</div>
       </div>
     </div>
   </div>
@@ -4968,6 +4968,30 @@ function ttaKeywordsWithValues(ttaIds, lhqNames){
   });
 }
 
+// An upgrade with a weapon but no weapon data (Gideon's Darksaber has no
+// LegionHQ2 card) still prints the weapon on the card, so its OCR weapon line
+// says which of the card's keywords belong to the weapon: those printed there
+// and not in the card text ("gains Demoralize 1 and Immune: Melee Pierce" vs
+// "THE DARKSABER Impact 1. Pierce 1"). A numbered keyword counts as in the card
+// text only with its number, so "Immune: Melee Pierce" doesn't claim Pierce.
+// The range comes from same-named LegionHQ2 weapons when they all agree (every
+// other Darksaber is melee); with none it stays unknown.
+function ocrWeapon(name, ocr, kwNames){
+  if(!ocr||!ocr.w) return [];
+  const sq=s=>String(s||'').toLowerCase().replace(/[^a-z0-9]/g,'');
+  const wTxt=sq(ocr.w), tTxt=sq(ocr.t);
+  const k=(kwNames||[]).filter(raw=>{
+    const e=kwParse(raw), b=sq(e.base);
+    if(!b||!wTxt.includes(b)) return false;
+    return e.numeric ? !new RegExp(b+'\\d').test(tTxt) : !tTxt.includes(b);
+  });
+  if(!k.length) return [];
+  const twins=Object.values(UPGRADE_DB).filter(u=>u.n===name)
+    .flatMap(u=>u.w||[]).filter(w=>w.n===name&&w.rg);
+  const rgs=[...new Set(twins.map(w=>JSON.stringify(w.rg)))];
+  return [{n:name, k, rg:rgs.length===1?JSON.parse(rgs[0]):undefined}];
+}
+
 // Every keyword on a saved unit, grouped by meaning and attributed to the
 // card or weapon it comes from. Returns {unit, upgrades, bare}:
 //   unit      keywords from the unit card and its weapons -- unit card ones
@@ -5024,8 +5048,9 @@ function unitKeywordSources(u, removed){
     const before=groups.reduce((n,g)=>n+g.srcs.length,0);
     const names=tta?ttaKeywordsWithValues(tta.kw,dbUp&&dbUp.k):((dbUp&&dbUp.k)||[]);
     if(matchesKnownCard(up.n)) names.push(up.n);
-    minus(names,weapons).forEach(kw=>add(kw,up.n,'upgrade',fill));
-    weapons.forEach(w=>(w.k||[]).forEach(kw=>add(kw,`${up.n} › ${w.n}`,'upgweapon',fill,w)));
+    const wpns=weapons.length?weapons:ocrWeapon(up.n,ocr,names);
+    minus(names,wpns).forEach(kw=>add(kw,up.n,'upgrade',fill));
+    wpns.forEach(w=>(w.k||[]).forEach(kw=>add(kw,`${up.n} › ${w.n}`,'upgweapon',fill,w)));
     if(groups.reduce((n,g)=>n+g.srcs.length,0)===before)
       bare.push({n:up.n, text:ocr&&ocr.t||''});
   });
