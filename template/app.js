@@ -1585,6 +1585,12 @@ function parseTtaUrl(url){
     const blocks=[...unitSection.matchAll(/_([0-9a-f]+)_([^_]*)/gi)]
       .map(x=>({hexId:x[1].toLowerCase(), codes:x[2].split(',').filter(c=>c&&c!=='EM')}));
 
+    return buildTtaArmy(blocks, factionRaw);
+  }catch(e){return null;}
+}
+
+// Shared by the URL and JSON importers: blocks is [{hexId, codes:[upgrade hexId]}].
+function buildTtaArmy(blocks, factionRaw){
     const groups={}; // key: hexId + sorted upgrade codes -> {count,unit,hexId,upgrades}
     const allKeywords=new Set();
     let points=0;
@@ -1654,7 +1660,64 @@ function parseTtaUrl(url){
                 'separatistalliance':'separatist','mercenary':'mercenary'};
     const faction=fMap[fLow]||fLow;
     return{faction,points,units,keywords:[...allKeywords].sort(),source:'tta'};
-  }catch(e){return null;}
+}
+
+// ─── TABLETOP ADMIRAL JSON EXPORT ────────────────────────────────────────────
+// TTA's "export JSON" gives cards by NAME, not id:
+//   {"listname":..., "armyFaction":"empire", "listlink":"https://modular.tabletopadmiral.com/209726",
+//    "commandCards":[...], "units":[{"name":"Darth Vader The Emperor's Apprentice",
+//                                     "upgrades":["Saber Throw",...]}, ...]}
+// A unit's name is its card name and title joined by a space. Names are matched
+// back onto TTA_UNITS / TTA_UPGRADES and then built exactly like a URL import.
+// Where a name is shared by several cards (the 2026 Strike Team re-releases, the
+// six Darksabers) the army's faction narrows it first and then the newest card
+// (highest public_id) wins, since an export comes from the current list builder.
+function _ttaNameKey(s){
+  return String(s||'').toLowerCase().replace(/[‘’]/g,"'").replace(/\s+/g,' ').trim();
+}
+function _newestHex(ids){
+  return ids.slice().sort((a,b)=>parseInt(b,16)-parseInt(a,16))[0];
+}
+function findTtaUnitByName(fullName, faction){
+  const key=_ttaNameKey(fullName);
+  const hits=Object.keys(TTA_UNITS).filter(h=>{
+    const u=TTA_UNITS[h];
+    return _ttaNameKey(u.n+(u.t?' '+u.t:''))===key || (!u.t&&_ttaNameKey(u.n)===key);
+  });
+  if(hits.length<2) return hits[0]||null;
+  const f=_normFaction(faction);
+  const inFaction=hits.filter(h=>_normFaction(TTA_UNITS[h].f)===f);
+  return _newestHex(inFaction.length?inFaction:hits);
+}
+function findTtaUpgradeByName(name){
+  const key=_ttaNameKey(name);
+  const hits=Object.keys(TTA_UPGRADES).filter(h=>_ttaNameKey(TTA_UPGRADES[h].n)===key);
+  return hits.length?_newestHex(hits):null;
+}
+
+function parseTtaJson(text){
+  let data;
+  try{ data=JSON.parse(text); }catch(e){ return {error:'That is not valid JSON.'}; }
+  if(!data||!Array.isArray(data.units)) return {error:'JSON has no "units" list.'};
+  const missing=[];
+  const blocks=[];
+  for(const u of data.units){
+    const hexId=findTtaUnitByName(u.name, data.armyFaction);
+    if(!hexId){ missing.push(u.name); continue; }
+    const codes=[];
+    for(const n of (u.upgrades||[])){
+      const code=findTtaUpgradeByName(n);
+      if(code) codes.push(code); else missing.push(n);
+    }
+    blocks.push({hexId,codes});
+  }
+  if(!blocks.length) return {error:'None of the units in that JSON were recognised.'};
+  const army=buildTtaArmy(blocks, data.armyFaction||'');
+  army.listName=data.listname||'';
+  army.listUrl=data.listlink||'';
+  army.commandCards=Array.isArray(data.commandCards)?data.commandCards:[];
+  army.missing=missing;
+  return army;
 }
 
 // ─── LIST PERSISTENCE ─────────────────────────────────────────────────────────
@@ -1675,7 +1738,16 @@ let _parsedArmy=null;
 
 function parseListUrl(){
   const url=document.getElementById('list-url-input').value.trim();
-  if(!url){ showListStatus('Please enter a LegionHQ2 or Tabletop Admiral URL','err'); return; }
+  if(!url){ showListStatus('Please enter a LegionHQ2 or Tabletop Admiral URL, or Tabletop Admiral JSON','err'); return; }
+  if(url.startsWith('{')){
+    const res=parseTtaJson(url);
+    if(res.error){ _parsedArmy=null; showListStatus(res.error,'err'); return; }
+    _parsedArmy=res;
+    renderParseResult(_parsedArmy, res.listUrl);
+    if(res.missing.length)
+      showListStatus('Not recognised, left out: '+res.missing.join(', '),'err');
+    return;
+  }
   if(url.includes('legionhq2.com')){
     _parsedArmy=decodeArmy(url);
   } else if(url.includes('tabletopadmiral.com')){
@@ -1721,7 +1793,7 @@ function renderParseResult(army, url){
   // Pre-fill list name
   const fCap=army.faction.charAt(0).toUpperCase()+army.faction.slice(1);
   const defaultName=army.points?fCap+' '+army.points+'pts':fCap+' List';
-  document.getElementById('list-name-input').value=defaultName;
+  document.getElementById('list-name-input').value=army.listName||defaultName;
   document.getElementById('list-save-status').textContent='';
 }
 
@@ -1729,7 +1801,9 @@ function saveList(){
   if(!_parsedArmy){ showListStatus('Parse a URL first','err'); return; }
   const name=document.getElementById('list-name-input').value.trim();
   if(!name){ showListStatus('Enter a list name','err'); return; }
-  const url=document.getElementById('list-url-input').value.trim();
+  const raw=document.getElementById('list-url-input').value.trim();
+  // A JSON import keeps its list link, not the pasted JSON blob.
+  const url=raw.startsWith('{')?(_parsedArmy.listUrl||''):raw;
 
   const lists=loadLists();
   const id='lst_'+Date.now();
@@ -1758,6 +1832,7 @@ function saveList(){
                ...(u.upgradeCards||[]).flatMap(c=>c.w||[])]
     })),
     armyUrl:url,
+    ...(_parsedArmy.commandCards?{commandCards:_parsedArmy.commandCards}:{}),
     createdAt:new Date().toISOString()
   });
   saveLists(lists);
