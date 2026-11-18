@@ -618,6 +618,31 @@ def build_tta_keywords_db_js():
     return '\n'.join(lines)
 
 
+# Cache format marker: caches written before 'tn' existed are refetched.
+_TTA_CACHE_VERSION = 2
+
+
+def _tta_cache_current(data):
+    return isinstance(data, dict) and data.get('_v') == _TTA_CACHE_VERSION
+
+
+def _tta_export_fields(entry, u, display_name):
+    """Add the fields the JSON-export importer needs to match a card by name.
+
+    TTA's "export JSON" names cards by `tts_name` where one is set, not by
+    `name`: the four bearer-specific Darksabers are all named "The Darksaber"
+    but export as "The Darksaber (Gideon)" etc., and Delta Squad exports as
+    "Clone Commandos Delta Squad". `hide` marks superseded duplicates (e.g. an
+    old Darksaber record) that the list builder never offers, so name matching
+    skips them; URL imports still resolve them by public_id.
+    """
+    tts = (u.get('tts_name') or '').strip()
+    if tts and tts != display_name:
+        entry['tn'] = tts
+    if u.get('hide'):
+        entry['h'] = 1
+
+
 def build_tta_db_js():
     """Return a compact JS const TTA_UNITS = {...}; mapping hex unit ID -> {n, f} from TTA API."""
     cache_path = os.path.join(CACHE_DIR, "tta_units.json")
@@ -627,7 +652,11 @@ def build_tta_db_js():
         try:
             with open(cache_path, encoding='utf-8') as f:
                 data = json.load(f)
-            print(f"  (TTA units loaded from cache: {len(data)} units)")
+            if not _tta_cache_current(data):
+                print("  (TTA units cache predates tts_name -- refetching)")
+                data = None
+            else:
+                print(f"  (TTA units loaded from cache: {len(data)} units)")
         except Exception:
             data = None
 
@@ -658,6 +687,8 @@ def build_tta_db_js():
                 art_name = f"{u.get('id')}.webp"
                 if os.path.exists(os.path.join(DIST_IMGDIR, 'units', 'tta', art_name)):
                     entry['a'] = art_name
+                full = entry['n'] + (' ' + entry['t'] if entry['t'] else '')
+                _tta_export_fields(entry, u, full)
                 fkey = str(u.get('faction_fkey') or '')
                 if fkey in faction_map:
                     entry['f'] = faction_map[fkey]
@@ -665,6 +696,7 @@ def build_tta_db_js():
                 if rank:
                     entry['r'] = rank
                 data[hex_id] = entry
+            data['_v'] = _TTA_CACHE_VERSION
             with open(cache_path, 'w', encoding='utf-8') as f:
                 json.dump(data, f, ensure_ascii=False)
             print(f"  TTA DB: {len(data)} units cached to tta_units.json")
@@ -673,7 +705,8 @@ def build_tta_db_js():
             return "const TTA_UNITS = {};"
 
     lines = ['const TTA_UNITS = {']
-    for hex_id, u in sorted(data.items(), key=lambda x: int(x[0], 16)):
+    for hex_id, u in sorted(((h, u) for h, u in data.items() if h != '_v'),
+                            key=lambda x: int(x[0], 16)):
         entry = json.dumps(u, ensure_ascii=False)
         lines.append(f'  {json.dumps(hex_id)}:{entry},')
     lines.append('};')
@@ -695,7 +728,11 @@ def build_tta_upgrades_db_js():
         try:
             with open(cache_path, encoding='utf-8') as f:
                 data = json.load(f)
-            print(f"  (TTA upgrades loaded from cache: {len(data)} upgrades)")
+            if not _tta_cache_current(data):
+                print("  (TTA upgrades cache predates tts_name -- refetching)")
+                data = None
+            else:
+                print(f"  (TTA upgrades loaded from cache: {len(data)} upgrades)")
         except Exception:
             data = None
 
@@ -713,6 +750,7 @@ def build_tta_upgrades_db_js():
                 hex_id = format(int(pub_id), 'x')
                 entry = {'n': u.get('name', ''), 'c': _tta_cost(u),
                          'kw': [str(i) for i in (u.get('keyword_ids') or [])]}
+                _tta_export_fields(entry, u, entry['n'])
                 # Current TTA card art, addressed by the record id and fetched
                 # ahead of the build by download_tta_card_images(). Exact for
                 # this card (no name matching) and the post-revamp layout --
@@ -722,6 +760,7 @@ def build_tta_upgrades_db_js():
                 if os.path.exists(art_path):
                     entry['a'] = art_name
                 data[hex_id] = entry
+            data['_v'] = _TTA_CACHE_VERSION
             with open(cache_path, 'w', encoding='utf-8') as f:
                 json.dump(data, f, ensure_ascii=False)
             print(f"  TTA upgrade DB: {len(data)} upgrades cached to tta_upgrades.json")
@@ -730,7 +769,8 @@ def build_tta_upgrades_db_js():
             return "const TTA_UPGRADES = {};"
 
     lines = ['const TTA_UPGRADES = {']
-    for hex_id, u in sorted(data.items(), key=lambda x: int(x[0], 16)):
+    for hex_id, u in sorted(((h, u) for h, u in data.items() if h != '_v'),
+                            key=lambda x: int(x[0], 16)):
         entry = json.dumps(u, ensure_ascii=False)
         lines.append(f'  {json.dumps(hex_id)}:{entry},')
     lines.append('};')

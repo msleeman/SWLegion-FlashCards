@@ -1577,7 +1577,21 @@ function findDbUnit(name, title, faction){
 // cost is the only discriminator available. When it can't pick exactly one we
 // return nothing on purpose -- an unresolved upgrade loses its art and keywords
 // but keeps its name and cost, which beats showing another character's card.
-function findDbUpgrade(name, cost){
+// TTA's export name (`tn`) often ends in a bearer/faction tag -- "Heavy Blaster
+// Pistol (Empire)", "The Darksaber (Gar)" -- and LegionHQ2's art filename for
+// the same card carries the same tag ("... E.webp", "Gar Saxon The
+// Darksaber.webp"). That is tried before cost, because TTA's points move with
+// each update while LegionHQ2's cached costs do not.
+function _upgTag(tn){
+  const m=/\(([^)]+)\)\s*$/.exec(tn||'');
+  return m?m[1].toLowerCase():'';
+}
+function _upgArtTokens(u){
+  const own=new Set(String(u.n).toLowerCase().split(/[\s()]+/));
+  return String(u.i||'').toLowerCase().replace(/\.[a-z]+$/,'')
+    .split(/[\s()]+/).filter(t=>t&&!own.has(t));
+}
+function findDbUpgrade(name, cost, tn){
   let hits=Object.values(UPGRADE_DB).filter(u=>u.n===name);
   if(!hits.length){
     // TTA sometimes suffixes the bearer onto a heavy-weapon upgrade's name
@@ -1587,6 +1601,11 @@ function findDbUpgrade(name, cost){
     hits=Object.values(UPGRADE_DB).filter(u=>u.n&&name.startsWith(u.n+' ')&&(u.c||0)===cost);
   }
   if(hits.length<2) return hits[0]||null;
+  const tag=_upgTag(tn);
+  if(tag){
+    const byTag=hits.filter(u=>_upgArtTokens(u).some(t=>t.startsWith(tag)||tag.startsWith(t)));
+    if(byTag.length===1) return byTag[0];
+  }
   const byCost=hits.filter(u=>(u.c||0)===cost);
   if(byCost.length===1) return byCost[0];
   console.warn('[list] ambiguous upgrade, skipping art/keywords:',name,cost);
@@ -1705,14 +1724,14 @@ function buildTtaArmy(blocks, factionRaw){
         points+=ttaUpg.c||0;
         // Keywords straight from TTA's ids -- exact for this card. UPGRADE_DB is
         // only consulted for art, and only as a fallback.
-        const dbUpg=findDbUpgrade(ttaUpg.n,ttaUpg.c||0);
+        const dbUpg=findDbUpgrade(ttaUpg.n,ttaUpg.c||0,ttaUpg.tn);
         upgCards.push({n:ttaUpg.n,
                        k:(ttaUpg.kw||[]).map(id=>TTA_KEYWORDS[id]).filter(Boolean),
                        lk:(dbUpg&&dbUpg.k)||[],
                        w:(dbUpg&&dbUpg.w)||[]});
         // Art: TTA's own image is addressed by public_id so it is always the
         // right card; LegionHQ2's has broader coverage but must be name-matched.
-        upgDetails.push({n:ttaUpg.n,c:ttaUpg.c||0,
+        upgDetails.push({n:ttaUpg.n,c:ttaUpg.c||0,h:code,
                          i:(dbUpg&&dbUpg.i)||'', a:ttaUpg.a||'',
                          w:(dbUpg&&dbUpg.w)||[]});
       }
@@ -1764,20 +1783,28 @@ function _ttaNameKey(s){
 function _newestHex(ids){
   return ids.slice().sort((a,b)=>parseInt(b,16)-parseInt(a,16))[0];
 }
+// The export names a card by its TTA `tts_name` (kept as `tn`) where it has
+// one -- "The Darksaber (Gideon)", not "The Darksaber" -- so that is tried
+// first. A card with a `tn` never exports under its plain name, so it is left
+// out of the plain-name match, as are hidden (`h`) superseded duplicates.
+function _ttaHitsByName(db, key, plainName){
+  const ids=Object.keys(db);
+  const prefer=(hits,ok)=>{ const p=hits.filter(ok); return p.length?p:hits; };
+  const byTn=ids.filter(h=>db[h].tn&&_ttaNameKey(db[h].tn)===key);
+  if(byTn.length) return prefer(byTn,h=>!db[h].h);
+  const byName=ids.filter(h=>plainName(db[h]).some(n=>_ttaNameKey(n)===key));
+  return prefer(byName,h=>!db[h].tn&&!db[h].h);
+}
 function findTtaUnitByName(fullName, faction){
-  const key=_ttaNameKey(fullName);
-  const hits=Object.keys(TTA_UNITS).filter(h=>{
-    const u=TTA_UNITS[h];
-    return _ttaNameKey(u.n+(u.t?' '+u.t:''))===key || (!u.t&&_ttaNameKey(u.n)===key);
-  });
+  const hits=_ttaHitsByName(TTA_UNITS, _ttaNameKey(fullName),
+    u=>u.t?[u.n+' '+u.t]:[u.n]);
   if(hits.length<2) return hits[0]||null;
   const f=_normFaction(faction);
   const inFaction=hits.filter(h=>_normFaction(TTA_UNITS[h].f)===f);
   return _newestHex(inFaction.length?inFaction:hits);
 }
 function findTtaUpgradeByName(name){
-  const key=_ttaNameKey(name);
-  const hits=Object.keys(TTA_UPGRADES).filter(h=>_ttaNameKey(TTA_UPGRADES[h].n)===key);
+  const hits=_ttaHitsByName(TTA_UPGRADES, _ttaNameKey(name), u=>[u.n]);
   return hits.length?_newestHex(hits):null;
 }
 
@@ -2217,8 +2244,9 @@ function kwDisplay(g){
 
 // Upgrade card text read off the art (ocr_upgrades.py): rules, weapon bar,
 // miniatures added. Keyed "name|cost"; falls back to any cost of that name.
-function upgradeText(name,cost){
+function upgradeText(name,cost,tn){
   if(typeof UPGRADE_TEXT==='undefined') return null;
+  if(tn&&tn!==name){ const t=upgradeText(tn,cost); if(t) return t; }
   const hit=UPGRADE_TEXT[name+'|'+(cost||0)];
   if(hit) return hit;
   const k=Object.keys(UPGRADE_TEXT).find(k=>k.startsWith(name+'|'));
@@ -2263,6 +2291,18 @@ function ttaUnitFor(u){
 function ttaUpgradeFor(name,cost){
   const hits=Object.values(TTA_UPGRADES).filter(t=>t.n===name);
   return hits.length===1?hits[0]:(hits.find(t=>(t.c||0)===(cost||0))||null);
+}
+// A saved upgrade's TTA record. Its id (saved since the JSON importer learned
+// tts_name) or its TTA art filename (one per record) pin the exact card; name
+// and cost are a last resort, since saved costs go stale when TTA's points move
+// ("The Darksaber" at 15 stopped matching Gideon's card when it dropped to 10).
+function ttaUpgradeOf(up){
+  if(up.h&&TTA_UPGRADES[up.h]&&TTA_UPGRADES[up.h].n===up.n) return TTA_UPGRADES[up.h];
+  if(up.a){
+    const byArt=Object.values(TTA_UPGRADES).find(t=>t.a===up.a);
+    if(byArt) return byArt;
+  }
+  return ttaUpgradeFor(up.n,up.c||0);
 }
 // Which keywords a card has comes from Tabletop Admiral; its names are
 // templates ("Scout X", "Coordinate: Emplacement Trooper"), so the matching
@@ -2324,10 +2364,10 @@ function unitKeywordSources(u, removed){
   const upgs=u.upgradeCards&&u.upgradeCards.length
     ? u.upgradeCards : (u.upgrades||[]).map(n=>({n,c:0}));
   upgs.forEach(up=>{
-    const dbUp=findDbUpgrade(up.n,up.c||0);
-    const tta=ttaUpgradeFor(up.n,up.c||0);
+    const tta=ttaUpgradeOf(up);
+    const dbUp=findDbUpgrade(up.n,up.c||0,tta&&tta.tn);
     const weapons=(up.w&&up.w.length)?up.w:((dbUp&&dbUp.w)||[]);
-    const ocr=upgradeText(up.n,up.c||0);
+    const ocr=upgradeText(up.n,up.c||0,tta&&tta.tn);
     const fill=base=>ocrKwValue(ocr,base);
     const before=groups.reduce((n,g)=>n+g.srcs.length,0);
     const names=tta?ttaKeywordsWithValues(tta.kw,dbUp&&dbUp.k):((dbUp&&dbUp.k)||[]);
@@ -2422,10 +2462,12 @@ function printListUnits(listId){
       ? u.upgradeCards
       : (u.upgrades||[]).map(n=>({n,c:0,i:''}));
     const upgThumbs=upgCards.map(up=>{
-      const c=(ttaUpgradeFor(up.n,up.c||0)||{c:up.c}).c;
+      const tta=ttaUpgradeOf(up);
+      const c=(tta||{c:up.c}).c;
       const cost=c?`<span class="pu-upgcost">${escHtml(c)}</span>`:'';
       // Resolve fresh so lists saved before an art re-key still render.
-      const src=currentUpgradeArt(up.n,up.c||0)
+      const src=(tta&&tta.a?'images/upgrades/tta/'+encodeURIComponent(tta.a):'')
+        ||currentUpgradeArt(up.n,up.c||0)
         ||(up.a?'images/upgrades/tta/'+encodeURIComponent(up.a):'')
         ||(up.i?'images/upgrades/'+encodeURIComponent(up.i):'');
       const inner=src
@@ -2437,7 +2479,7 @@ function printListUnits(listId){
     }).join('');
 
     const ttaCost=(r,fallback)=>r&&r.c!==undefined?r.c:(fallback||0);
-    const upgCost=up=>ttaCost(ttaUpgradeFor(up.n,up.c||0),up.c);
+    const upgCost=up=>ttaCost(ttaUpgradeOf(up),up.c);
     const baseCost=ttaCost(ttaUnitFor(u),u.cost);
     const upgSum=upgCards.reduce((n,up)=>n+upgCost(up),0);
     const each=baseCost+upgSum;
@@ -2502,8 +2544,9 @@ function printListUnits(listId){
     for(const up of (u.upgradeCards||[])){
       const own=(up.w||[]).map(w=>({...w,assault:kwNumber(w.k,'Assault')}));
       if(!own.length) continue;
-      const ocr=upgradeText(up.n,up.c||0);
-      const dbUp=findDbUpgrade(up.n,up.c||0);
+      const tn=(ttaUpgradeOf(up)||{}).tn;
+      const ocr=upgradeText(up.n,up.c||0,tn);
+      const dbUp=findDbUpgrade(up.n,up.c||0,tn);
       const reconf=own.length>1&&(/reconfigure/i.test((ocr&&ocr.t)||'')||
         ((dbUp&&dbUp.k)||[]).some(k=>/^reconfigure$/i.test(k)));
       if(reconf){

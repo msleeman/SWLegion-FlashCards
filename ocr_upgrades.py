@@ -114,6 +114,8 @@ def _cards():
     out = {}
     # Tabletop Admiral first (current art), LegionHQ2 for anything it lacks.
     for u in tta.values():
+        if not isinstance(u, dict):
+            continue  # the cache's '_v' format marker
         p = os.path.join(TTA_DIR, u.get('a') or '')
         if u.get('a') and os.path.exists(p):
             out.setdefault(f"{u['n']}|{u.get('c', 0)}", (u['n'], p, True))
