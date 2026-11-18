@@ -5,7 +5,7 @@
 @font-face{font-family:"LegionSymbols";font-display:block;
   src:url(data:font/ttf;base64,/*LEGION_FONT_B64*/) format("truetype")}
 .lgi{font-family:"LegionSymbols";font-style:normal;font-weight:normal;
-  font-size:1.45em;line-height:.8;vertical-align:-.2em;letter-spacing:0;
+  font-size:1.45em;line-height:.8;vertical-align:0;letter-spacing:0;
   display:inline-block;padding:0 .05em;speak:never}
 .lgi-preload{position:absolute;left:-9999px;top:0;visibility:hidden}
 :root{
