@@ -750,6 +750,22 @@ def get_version():
         return 'dev'
 
 
+LEGION_FONT_FILE = 'Legionfont0.1.4.ttf'
+
+
+def legion_font_b64():
+    """The Legion symbol font (github.com/Owen-A/Legion-font, MIT) as base64.
+
+    Inlined into the CSS rather than shipped as a file: the page is a single
+    HTML file, and an embedded font is already loaded when window.print()
+    snapshots the keyword sheets, so the icons can't print blank.
+    """
+    import base64
+    path = os.path.join(TEMPLATE_DIR, 'fonts', LEGION_FONT_FILE)
+    with open(path, 'rb') as f:
+        return base64.b64encode(f.read()).decode('ascii')
+
+
 def build_html(card_data):
     with open(os.path.join(TEMPLATE_DIR, 'index.html'), encoding='utf-8') as f:
         html = f.read()
@@ -757,6 +773,7 @@ def build_html(card_data):
         css = f.read()
     with open(os.path.join(TEMPLATE_DIR, 'app.js'), encoding='utf-8') as f:
         js = f.read()
+    css = css.replace("/*LEGION_FONT_B64*/", legion_font_b64())
 
     fish_js    = json.dumps(card_data, ensure_ascii=False)
     base_names = json.dumps([c["name"] for c in card_data], ensure_ascii=False)

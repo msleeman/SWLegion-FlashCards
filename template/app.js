@@ -14,6 +14,92 @@ function annotateAllRules(){
   CARDS.forEach(c=>{ c.definition=annotateRules(c.definition); c.summary=annotateRules(c.summary); });
   if(typeof COMMANDS!=='undefined') COMMANDS.forEach(c=>{ c.d=annotateRules(c.d); });
 }
+// ─── LEGION ICON FONT ────────────────────────────────────────────────────────
+// Rules text carries icons as bracket tokens ("[HIT]", "[RANGE 2]"), set by the
+// Legion Helper scraper's _ICON_TITLE_MAP. Each one this font has a glyph for
+// is drawn with it; anything else ([TAP], [RANGE 1/2], [RANGE 5], the
+// sub-faction icons, Ordnance...) has no glyph in the font and stays as text.
+// The glyph letters were matched by eye against Legion Helper's own icons --
+// note range-infinite is "0" (dot in the middle) and melee is "a".
+const LEGION_GLYPHS={
+  'HIT':'h','CRIT':'c','CRITICAL':'c','BLOCK':'s',
+  'SURGE: HIT':'o','SURGE: BLOCK':'d','COURAGE':'m',
+  'MELEE':'a','RANGE 1':'1','RANGE 2':'2','RANGE 3':'3','RANGE 4':'4',
+  'RANGE ∞':'0','RANGE INFINITE':'0',
+  'ACTION':'x','ACTION FREE':'y','FREE ACTION':'y',
+  'COMMANDER':'5','OPERATIVE':'b','CORPS':'6','SPECIALIST':'7',
+  'SPECIAL FORCES':'7','SUPPORT':'8','HEAVY':'9',
+  'UPGRADE CREW':'A','UPGRADE ARMAMENT':'B','UPGRADE COMMAND':'C',
+  'UPGRADE FORCE':'F','UPGRADE GEAR':'G','UPGRADE HARDPOINT':'H',
+  'UPGRADE GENERATOR':'I','UPGRADE TRAINING':'M','UPGRADE GRENADES':'N',
+  'UPGRADE COMMS':'O','UPGRADE PILOT':'P','UPGRADE PERSONNEL':'U',
+  'UPGRADE HEAVY':'W','UPGRADE HEAVY WEAPON':'W',
+  'REBEL':'!','REBELS':'!','FACTION REBELS':'!',
+  'EMPIRE':'#','FACTION EMPIRE':'#',
+  'MANDALORIAN':'%','MANDALORIANS':'%','FACTION MANDALORIANS':'%',
+};
+// "[RANGE2]" (missing space) and "[Action]" (lower case) also occur.
+function _legionKey(tok){
+  return tok.toUpperCase().replace(/\s+/g,' ').replace(/^RANGE(\d)$/,'RANGE $1').trim();
+}
+const _LEGION_TOKEN_RE=/\[([A-Za-z][A-Za-z _0-9∞:]{0,30})\]/g;
+const _LEGION_SKIP={SCRIPT:1,STYLE:1,TEXTAREA:1,INPUT:1,SELECT:1,OPTION:1,CODE:1,PRE:1};
+function legionIconize(root){
+  if(!root) return;
+  const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode(n){
+    if(!n.nodeValue||n.nodeValue.indexOf('[')<0) return NodeFilter.FILTER_REJECT;
+    for(let p=n.parentNode;p&&p!==root.parentNode;p=p.parentNode){
+      if(p.nodeType!==1) continue;
+      if(_LEGION_SKIP[p.nodeName]||p.isContentEditable||p.classList.contains('lgi'))
+        return NodeFilter.FILTER_REJECT;
+    }
+    return NodeFilter.FILTER_ACCEPT;
+  }});
+  const nodes=[]; while(walker.nextNode()) nodes.push(walker.currentNode);
+  for(const n of nodes){
+    const text=n.nodeValue; let last=0, frag=null, m;
+    _LEGION_TOKEN_RE.lastIndex=0;
+    while((m=_LEGION_TOKEN_RE.exec(text))){
+      const g=LEGION_GLYPHS[_legionKey(m[1])];
+      if(!g) continue;
+      frag=frag||document.createDocumentFragment();
+      if(m.index>last) frag.appendChild(document.createTextNode(text.slice(last,m.index)));
+      const sp=document.createElement('i');
+      sp.className='lgi'; sp.textContent=g;
+      sp.title=m[0]; sp.setAttribute('role','img'); sp.setAttribute('aria-label',m[0]);
+      frag.appendChild(sp);
+      last=m.index+m[0].length;
+    }
+    if(!frag) continue;
+    if(last<text.length) frag.appendChild(document.createTextNode(text.slice(last)));
+    n.parentNode.replaceChild(frag,n);
+  }
+}
+// Rules text reaches the page through dozens of textContent / innerHTML writes
+// (card backs, the catalogue modal, command cards, both print sheets), so
+// rather than touching each one, watch the DOM and iconize whatever arrives.
+function startLegionIcons(){
+  // Touch the font once so it is loaded before anything is printed.
+  const pre=document.createElement('i');
+  pre.className='lgi lgi-preload'; pre.textContent='h'; pre.setAttribute('aria-hidden','true');
+  document.body.appendChild(pre);
+  legionIconize(document.body);
+  let queued=new Set(), scheduled=false;
+  new MutationObserver(muts=>{
+    for(const mu of muts){
+      if(mu.type==='characterData') queued.add(mu.target.parentNode);
+      else mu.addedNodes.forEach(n=>queued.add(n.nodeType===3?n.parentNode:n));
+    }
+    if(scheduled) return; scheduled=true;
+    queueMicrotask(()=>{
+      scheduled=false; const q=[...queued]; queued=new Set();
+      q.forEach(n=>{ if(n&&n.isConnected&&n.nodeType===1) legionIconize(n); });
+    });
+  }).observe(document.body,{childList:true,subtree:true,characterData:true});
+}
+if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',startLegionIcons);
+else startLegionIcons();
+
 CARDS.forEach(c => { ST[c.name]={idx:0,learned:false,flagged:false,busy:false,notes:'',pinned:false}; });
 
 function loadState(){

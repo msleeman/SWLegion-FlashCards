@@ -1,4 +1,13 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+/* Legion symbol font -- github.com/Owen-A/Legion-font (MIT, (c) 2018 Owen-A).
+   Rules-text tokens like [HIT] or [RANGE 2] are swapped for its glyphs by
+   legionIconize() in app.js; the token stays as the title / aria-label. */
+@font-face{font-family:"LegionSymbols";font-display:block;
+  src:url(data:font/ttf;base64,/*LEGION_FONT_B64*/) format("truetype")}
+.lgi{font-family:"LegionSymbols";font-style:normal;font-weight:normal;
+  font-size:1.45em;line-height:.8;vertical-align:-.2em;letter-spacing:0;
+  display:inline-block;padding:0 .05em;speak:never}
+.lgi-preload{position:absolute;left:-9999px;top:0;visibility:hidden}
 :root{
   --gold:#f5c518;--golddim:#a8870d;
   --red:#c0392b;--redbg:rgba(192,57,43,.15);

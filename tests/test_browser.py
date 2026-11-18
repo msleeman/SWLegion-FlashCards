@@ -185,3 +185,34 @@ class TestCatalogModal:
         )
         # Clean up
         catalog_page.click(".modal-btn.cls")
+
+
+class TestLegionIconFont:
+    """Rules-text tokens like [HIT] / [RANGE 3] render as Legion font glyphs."""
+
+    def test_font_embedded_and_loaded(self, guest_page):
+        loaded = guest_page.evaluate(
+            "async()=>{await document.fonts.ready;"
+            "return document.fonts.check('16px LegionSymbols');}")
+        assert loaded, "LegionSymbols @font-face did not load"
+
+    def test_tokens_become_glyphs_in_modal(self, guest_page):
+        res = guest_page.evaluate("""async()=>{
+            showScreen('catalog-screen'); openMod('Commander and Panic Check');
+            await new Promise(r=>setTimeout(r,200));
+            const el=document.getElementById('mod-def');
+            return {icons:[...el.querySelectorAll('i.lgi')].map(i=>i.title+'='+i.textContent),
+                    left:(el.textContent.match(/\[(COMMANDER|COURAGE|RANGE 3)\]/g)||[])};
+        }""")
+        assert "[COMMANDER]=5" in res["icons"]
+        assert "[RANGE 3]=3" in res["icons"]
+        assert "[COURAGE]=m" in res["icons"]
+        assert res["left"] == [], f"tokens left as text: {res['left']}"
+
+    def test_unknown_tokens_stay_text(self, guest_page):
+        out = guest_page.evaluate("""()=>{
+            const d=document.createElement('div');
+            d.textContent='Spend [TAP] at [RANGE 1/2] for [HIT]'; document.body.appendChild(d);
+            legionIconize(d); const t=d.textContent; d.remove(); return t;
+        }""")
+        assert "[TAP]" in out and "[RANGE 1/2]" in out and "[HIT]" not in out
