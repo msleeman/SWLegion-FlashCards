@@ -539,8 +539,10 @@ html,body{width:100%;height:100%;overflow:hidden;
   .pu-table{width:100%;border-collapse:collapse;page-break-inside:auto}
   .pu-row{page-break-inside:avoid;page-break-after:auto}
   .pu-table td{vertical-align:top;padding:8pt 0;border-bottom:1px solid #ddd}
-  .pu-img{width:2.9in;padding-right:12pt!important}
-  .pu-unitcard{width:100%;max-width:2.9in;height:auto;display:block;border-radius:3pt}
+  /* Cards get two thirds of the width so their printed text is readable;
+     the keyword / dice column takes the remaining third. */
+  .pu-img{width:66%;padding-right:12pt!important}
+  .pu-unitcard{width:100%;height:auto;display:block;border-radius:3pt}
   .pu-noimg{width:100%;height:1.3in;border:1px dashed #bbb;border-radius:3pt;
     display:flex;align-items:center;justify-content:center;
     font-size:8pt;color:#999;text-align:center;padding:4pt}
@@ -548,11 +550,12 @@ html,body{width:100%;height:100%;overflow:hidden;
   .pu-costbits{color:#777;font-size:8pt}
   /* Upgrade cards tucked under the unit card, wrapping as needed */
   .pu-upgrow{display:flex;flex-wrap:wrap;gap:4pt;margin-top:5pt}
-  /* Exactly two portrait upgrade cards per row, filling the column width so
-     their dice/stat icons stay legible. Uses a percentage rather than a fixed
-     inch value because the column's box-sizing makes its usable width depend on
-     padding -- hardcoding inches overflows and drops them to one per row. */
-  .pu-upgcard{flex:0 0 calc(50% - 2pt);display:flex;flex-direction:column;
+  /* Exactly three portrait upgrade cards per row -- in the two-thirds card
+     column that prints them at about real card size, so their text stays
+     legible without each unit running past a page. Uses a percentage rather
+     than a fixed inch value because the column's box-sizing makes its usable
+     width depend on padding -- hardcoding inches overflows the row. */
+  .pu-upgcard{flex:0 0 calc((100% - 8pt) / 3);display:flex;flex-direction:column;
     align-items:center}
   .pu-upgcard img{width:100%;height:auto;display:block;border-radius:2pt;
     border:1px solid #ddd}
@@ -635,7 +638,7 @@ html,body{width:100%;height:100%;overflow:hidden;
       </div>
     </div>
     <p class="auth-footer">Guest progress is saved locally on this device only.</p>
-    <p class="auth-footer">v5.0.0-88-g2f6d1f8 · 2026-11-24 08:51 UTC</p>
+    <p class="auth-footer">v5.0.0-89-gdd70934-dirty · 2026-11-24 19:38 UTC</p>
   </div>
 </div>
 
@@ -655,7 +658,7 @@ html,body{width:100%;height:100%;overflow:hidden;
       <div class="acct-item" id="acct-signin-item" onclick="showAuthFromApp()" style="display:none">Sign in / Switch account</div>
       <div class="acct-item danger" id="acct-signout-item" onclick="authSignOut()" style="display:none">Sign out</div>
       <div class="acct-item" id="acct-guest-label" style="display:none;cursor:default;color:rgba(255,255,255,.3)">Progress saved locally</div>
-      <div style="font-size:10px;color:rgba(255,255,255,.18);padding:4px 14px 8px;text-align:center;letter-spacing:.3px">v5.0.0-88-g2f6d1f8 · 2026-11-24 08:51 UTC</div>
+      <div style="font-size:10px;color:rgba(255,255,255,.18);padding:4px 14px 8px;text-align:center;letter-spacing:.3px">v5.0.0-89-gdd70934-dirty · 2026-11-24 19:38 UTC</div>
     </div>
   </div>
 </nav>
