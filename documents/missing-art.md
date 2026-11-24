@@ -60,7 +60,9 @@ Same story: mostly cards for the legacy units above, or older cards.
 
 - **Clone (legacy Phase I/II):** Phase I Clone Trooper · Phase I Clone Captain · Phase I Clone Specialist ·
   DC-15 / DP-23 / RPS-6 / Z-6 Phase I Trooper · Phase II Clone Trooper · Phase II Mortar Trooper ·
-  Z-6 Phase II Trooper · Echo (42 pts — LegionHQ2 has an "Echo" at 46 pts; art likely exists, cost mismatch)
+  Z-6 Phase II Trooper · Echo (42 pts: the classic, pre-revamp Echo, a different card from today's
+  36-pt Echo, ARC Marksman, so its art must not be borrowed. Tabletop Admiral's only scan of it was
+  on their old Cloudinary account, which is now disabled.)
 - **Command / comms:** Long-Range Comlink · Comms Relay · Integrated Comms Antenna · Commanding Presence ·
   Esteemed Leader · Aggressive Tactics · Battle Meditation
 - **Crew / personnel:** Chewbacca, Courageous Co-Pilot · Han Solo, Reckless Smuggler · Reckless Driver ·

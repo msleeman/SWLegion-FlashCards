@@ -304,6 +304,7 @@ function render(){
   const src=ci(c);
   if(src){ img.src=src; img.style.display='block'; }
   else   { img.style.display='none'; }
+  showCostBadge(src,c);
   showFront(c); renderActions(c);
 }
 
@@ -522,16 +523,80 @@ function makeStatQuestion(code){
   return {label:q.label, ans:q.ans, opts};
 }
 
-function positionStatsOverlay(){
-  if(mode!=='stats') return;
+// ─── POINTS BADGE ON STUDY CARDS ─────────────────────────────────────────────
+// Most Study art is a unit card, often saved under a keyword's name
+// ("Inspire.webp" is Leia Organa's card). The build records which unit each
+// image shows in card.iu; the badge shows that unit's current Tabletop
+// Admiral points, falling back to LegionHQ2's.
+let _costUnit=null;
+function unitForArt(src,card){
+  if(!src) return null;
+  const tta=/^images\/units\/tta\/(.+)$/.exec(src);
+  if(tta){
+    const a=decodeURIComponent(tta[1]);
+    const t=Object.values(TTA_UNITS).find(u=>u.a===a);
+    return t?{n:t.n,t:t.t||'',c:t.c}:null;
+  }
+  let file='';
+  if(card&&card.iu&&card.imgs){ const i=card.imgs.indexOf(src); if(i>=0) file=card.iu[i]||''; }
+  if(!file){ const b=decodeURIComponent(src.replace(/^images\//,'')); if(!b.includes('/')) file=b; }
+  if(!file) return null;
+  const u=Object.values(UNIT_DB).find(x=>x.i===file);
+  if(!u) return null;
+  const t=ttaUnitFor({name:u.n,title:u.t||'',rank:u.r||''});
+  return {n:u.n, t:u.t||'', c:t&&t.c!==undefined?t.c:u.c};
+}
+function showCostBadge(src,card){
+  const u=unitForArt(src,card);
+  _costUnit=u&&u.c?u:null;
+  const el=document.getElementById('fs-cost');
+  if(!el) return;
+  if(!_costUnit){ el.style.display='none'; return; }
+  el.innerHTML=`<strong>${escHtml(u.c)}</strong> pts`;
+  el.title=`${u.n}${u.t?' — '+u.t:''}: ${u.c} points`;
+  positionCostBadge();
+}
+// Where the card is actually drawn inside #fs-img, relative to #fs-bg: the
+// image box can be wider or taller than the card (object-fit: contain, top
+// centre). Null until the image has loaded.
+function drawnCardRect(){
   const img=document.getElementById('fs-img');
-  const cover=document.getElementById('fs-stats-cover');
-  if(!img||!cover||img.style.display==='none') return;
+  if(!img||img.style.display==='none'||!img.complete||!img.naturalWidth) return null;
   const imgR=img.getBoundingClientRect();
   const bgR=document.getElementById('fs-bg').getBoundingClientRect();
-  const ow=imgR.width*0.44, oh=imgR.height*0.28;
-  cover.style.left=(imgR.right-bgR.left-ow)+'px';
-  cover.style.top=(imgR.bottom-bgR.top-oh)+'px';
+  const scale=Math.min(imgR.width/img.naturalWidth, imgR.height/img.naturalHeight);
+  const w=img.naturalWidth*scale, h=img.naturalHeight*scale;
+  return {left:imgR.left-bgR.left+(imgR.width-w)/2, top:imgR.top-bgR.top, width:w, height:h};
+}
+// Badge on the card's top-left corner.
+function positionCostBadge(){
+  const el=document.getElementById('fs-cost');
+  if(!el) return;
+  const r=_costUnit?drawnCardRect():null;
+  if(!r){ el.style.display='none'; return; }
+  el.style.left=(r.left+8)+'px';
+  el.style.top=(r.top+8)+'px';
+  el.style.display='block';
+}
+function placeCardOverlays(){ positionCostBadge(); positionStatsOverlay(); }
+(function(){
+  const img=document.getElementById('fs-img');
+  if(!img) return;
+  img.addEventListener('load',placeCardOverlays);
+  img.addEventListener('error',()=>{ document.getElementById('fs-cost').style.display='none'; });
+  if(window.ResizeObserver) new ResizeObserver(placeCardOverlays).observe(img);
+  window.addEventListener('resize',placeCardOverlays);
+})();
+
+// Stats quiz: cover the card's stat box (bottom-right of the card as drawn).
+function positionStatsOverlay(){
+  if(mode!=='stats') return;
+  const cover=document.getElementById('fs-stats-cover');
+  const r=drawnCardRect();
+  if(!cover||!r) return;
+  const ow=r.width*0.44, oh=r.height*0.28;
+  cover.style.left=(r.left+r.width-ow)+'px';
+  cover.style.top=(r.top+r.height-oh)+'px';
   cover.style.width=ow+'px';
   cover.style.height=oh+'px';
   cover.style.display='block';
@@ -556,6 +621,7 @@ function renderStatCard(){
   const img=document.getElementById('fs-img');
   img.src='images/'+unit.i;
   img.style.display='block';
+  showCostBadge(img.getAttribute('src'),null);
   img.classList.remove('dim');
   // Front content: show unit name + question
   document.getElementById('fs-front-content').style.display='block';

@@ -210,6 +210,67 @@ for c in card_data:
         _wired += 1
 print(f"  {_wired} cards given art already on disk")
 
+# ── 4b3. Which unit card each flashcard image shows ──────────────────────────
+# Most keyword art is a unit card saved under the keyword's name
+# ("Inspire.webp" is Leia Organa's card), so the file name can't say whose
+# card it is. Match by content against the LegionHQ2 unit cards; failing that,
+# trust data/keyword_images.json if the image still has unit-card proportions
+# (older crops of the same card). c['iu'][i] is the unit image for c['imgs'][i]
+# ('' = not a unit card); the Study screen uses it to show current points.
+import hashlib as _hashlib
+def _md5(path):
+    with open(path, 'rb') as _f:
+        return _hashlib.md5(_f.read()).hexdigest()
+# The same unit list UNIT_DB is built from.
+try:
+    with open(os.path.join(CACHE_DIR, 'legionhq2_units.json'), encoding='utf-8') as _f:
+        _unit_files = {u.get('i') for u in json.load(_f).values()
+                       if isinstance(u, dict) and u.get('i')}
+except Exception:
+    _unit_files = set()
+_unit_by_hash = {}
+for _uf in _unit_files:
+    _p = os.path.join(IMGDIR, _uf)
+    if os.path.exists(_p):
+        _unit_by_hash.setdefault(_md5(_p), _uf)
+try:
+    from PIL import Image as _Image
+except ImportError:
+    _Image = None
+
+def _unit_card_shaped(path):
+    if _Image is None:
+        return False
+    try:
+        with _Image.open(path) as _im:
+            w, h = _im.size
+        return h and 1.35 <= w / h <= 1.5
+    except Exception:
+        return False
+
+_iu_n = 0
+for c in card_data:
+    iu = []
+    for im in c.get('imgs') or []:
+        p = os.path.join(DIST_DIR, im)
+        hit = ''
+        if os.path.exists(p):
+            base = os.path.basename(im)
+            if base in _unit_files:
+                hit = base
+            else:
+                hit = _unit_by_hash.get(_md5(p), '')
+                if not hit:
+                    mapped = _kci.get(_kw_lookup_key(c['name'].replace('[]', '')).lower())
+                    mapped = _unquote(mapped) if mapped else ''
+                    if mapped in _unit_files and _unit_card_shaped(p):
+                        hit = mapped
+        iu.append(hit)
+    if any(iu):
+        c['iu'] = iu
+        _iu_n += 1
+print(f"  {_iu_n} cards' art matched to a unit card (for points on the Study screen)")
+
 # Cards injected above default to 'unit'; the rulebook knows which are weapon
 # and upgrade keywords.
 print(f"  {retype_from_rulebook(card_data)} cards retyped from the rulebook glossary")
