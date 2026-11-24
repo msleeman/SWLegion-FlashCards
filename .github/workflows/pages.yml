@@ -15,16 +15,33 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+  # Upload and deploy are separate jobs (GitHub's standard Pages setup): the
+  # artifact is complete once the build job ends, so the deploy job always
+  # finds it. In one job, deploy-pages sometimes looked before the upload was
+  # listed and failed with 'No artifacts named "github-pages" were found'.
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/configure-pages@v5
+      # Only what the site serves -- not the rulebook PDFs, sources or data.
+      # URLs stay the same: /index.html redirects to /dist/index.html.
+      - name: Stage site
+        run: |
+          mkdir -p _site
+          cp index.html swlegion_flashcards.html _site/
+          cp -r dist _site/dist
+          cp EmpireCrest.png _site/dist/EmpireCrest.png
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: .
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
       - uses: actions/deploy-pages@v4
         id: deployment
