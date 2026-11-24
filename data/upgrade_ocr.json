@@ -761,15 +761,15 @@
   "w": "This unit gains AID: Trooper UNIT, INDOMITABLE, SPUR, and TACTICAL 1."
  },
  "Full Beskar Armor|10": {
-  "t": "This unit gains:"
+  "t": "Mandalorian Hunter only. This unit gains [DEFENSE SURGE]: [BLOCK]."
  },
  "GALAAR-15 Carbines|5": {
-  "t": ". M.. OR c MANDALORIAN WARRIORS ONLY",
-  "w": "GALAAR-15 CARBINE"
+  "t": "Mandalorian Warriors only (or a unit with one of the clan affiliation icons printed on the card).",
+  "w": "GALAAR-15 Carbine"
  },
  "GALAAR-15 Carbine|0": {
-  "t": "MANDALORIAN LEDER OR MANDALORIAN HUNTER ONLY.",
-  "w": "GALAAR-15 CARBINE"
+  "t": "Mandalorian Leader or Mandalorian Hunter only.",
+  "w": "GALAAR-15 Carbine"
  },
  "GALAAR-90 Sniper Rifle|35": {
   "m": 1,
@@ -1507,7 +1507,7 @@
   "w": "Imperial Officer ONLY. This unit gains RECHARGE 1, SHIELDED 1, and > OBSERVE 1."
  },
  "Seize the Initiative|5": {
-  "t": "OR Only. During the issue ORDERS step of the Command Phase, you may [TAP] this card. If you do, this unit issues an Order to itself."
+  "t": "[COMMANDER] or [OPERATIVE] only. During the Issue Orders step of the Command Phase, you may [TAP] this card. If you do, this unit issues an Order to itself."
  },
  "Seventh Sister|30": {
   "m": 1,
@@ -1674,7 +1674,7 @@
   "w": "E-5BLASTERRIFLE $1-3"
  },
  "Tank Hunting Munitions|3": {
-  "t": "coccom When this unit attacks, during the Form Attack Pool step, you may [TAP] this card. If you do, that Attack Pool gains",
+  "t": "When this unit attacks, during the Form Attack Pool step, you may [TAP] this card. If you do, that Attack Pool gains",
   "w": "ANTI-MATERIEL 2 and IMPACT 2."
  },
  "Targeting Relay|5": {

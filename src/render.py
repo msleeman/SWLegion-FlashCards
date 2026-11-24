@@ -164,6 +164,8 @@ def build_unit_db_js():
                     'hs': stats.get('hitsurge', ''),
                     'mc': stats.get('minicount', 1),
                     'w': _weapon_list(card),
+                    # Upgrade slot ("grenades", "heavy weapon", "gear"...).
+                    's': card.get('cardSubtype', '') or '',
                 }
 
             with open(cache_path, "w", encoding="utf-8") as f:
@@ -233,14 +235,21 @@ def build_upgrade_db_js():
         except Exception:
             upgrade_db = None
 
+    # Caches written before the slot field ('s') existed are refetched once so
+    # the dice maths can tell grenade cards apart. If that refetch fails
+    # (offline), the old cache is still used rather than an empty DB.
+    stale_db = None
+    if upgrade_db and not any('s' in u for u in upgrade_db.values()):
+        print("  (upgrade DB cache predates upgrade slots -- refetching)")
+        stale_db, upgrade_db = upgrade_db, None
+
     if upgrade_db is None:
         print("  Fetching LegionHQ2 upgrade database...")
         try:
             r = requests.get("https://legionhq2.com/list/empire", headers=HEADERS, timeout=15)
             m = re.search(r'src="(/static/js/main\.[^"]+\.js)"', r.text)
             if not m:
-                print("  WARN: could not find JS bundle URL for upgrades")
-                return "const UPGRADE_DB = {};"
+                raise ValueError("could not find JS bundle URL for upgrades")
             bundle_url = "https://legionhq2.com" + m.group(1)
             rb = requests.get(bundle_url, headers=HEADERS, timeout=60)
             rb.raise_for_status()
@@ -249,7 +258,7 @@ def build_upgrade_db_js():
             start_marker = "JSON.parse('"
             start = content.find(start_marker)
             if start < 0:
-                return "const UPGRADE_DB = {};"
+                raise ValueError("no card JSON in the LegionHQ2 bundle")
             start += len(start_marker)
 
             i = start
@@ -265,7 +274,7 @@ def build_upgrade_db_js():
                 i += 1
 
             if json_end < 0:
-                return "const UPGRADE_DB = {};"
+                raise ValueError("card JSON in the LegionHQ2 bundle is unterminated")
 
             json_str = content[start:json_end]
 
@@ -328,6 +337,8 @@ def build_upgrade_db_js():
                     'k': all_upgrade_kw_names(card),
                     'i': card.get('imageName', ''),
                     'w': _weapon_list(card),
+                    # Upgrade slot ("grenades", "heavy weapon", "gear"...).
+                    's': card.get('cardSubtype', '') or '',
                 }
 
             with open(cache_path, "w", encoding="utf-8") as f:
@@ -336,7 +347,10 @@ def build_upgrade_db_js():
 
         except Exception as e:
             print(f"  WARN: could not build upgrade DB: {e}")
-            return "const UPGRADE_DB = {};"
+            if not stale_db:
+                return "const UPGRADE_DB = {};"
+            print("  (using the older upgrade DB cache, without upgrade slots)")
+            upgrade_db = stale_db
 
     lines = ['const UPGRADE_DB = {']
     for uid, u in sorted(upgrade_db.items()):
