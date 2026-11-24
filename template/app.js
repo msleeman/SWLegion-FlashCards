@@ -17,13 +17,15 @@ function annotateAllRules(){
 // ─── LEGION ICON FONT ────────────────────────────────────────────────────────
 // Rules text carries icons as bracket tokens ("[HIT]", "[RANGE 2]"), set by the
 // Legion Helper scraper's _ICON_TITLE_MAP. Each one this font has a glyph for
-// is drawn with it; anything else ([TAP], [RANGE 1/2], [RANGE 5], the
-// sub-faction icons, Ordnance...) has no glyph in the font and stays as text.
+// is drawn with it; anything else ([RANGE 1/2], [RANGE 5], the sub-faction
+// icons, Ordnance...) has no glyph in the font and stays as text.
 // The glyph letters were matched by eye against Legion Helper's own icons --
-// note range-infinite is "0" (dot in the middle) and melee is "a".
+// note range-infinite is "0" (dot in the middle), melee is "a", and the
+// exhaust icon ([TAP], which the upgrade OCR restores) is "z", the bent arrow.
 const LEGION_GLYPHS={
   'HIT':'h','CRIT':'c','CRITICAL':'c','BLOCK':'s',
   'SURGE: HIT':'o','SURGE: BLOCK':'d','COURAGE':'m',
+  'ATTACK SURGE':'o','DEFENSE SURGE':'d','TAP':'z','EXHAUST':'z',
   'MELEE':'a','RANGE 1':'1','RANGE 2':'2','RANGE 3':'3','RANGE 4':'4',
   'RANGE ∞':'0','RANGE INFINITE':'0',
   'ACTION':'x','ACTION FREE':'y','FREE ACTION':'y',
@@ -1461,6 +1463,15 @@ const UPGRADE_SURGE_MODS={
   'Full Beskar Armor': {ds:'b'},   // Mandalorian Hunter only
 };
 
+// Is this upgrade in the Grenades slot? UPGRADE_DB carries the slot ('s',
+// LegionHQ2's cardSubtype) once the build has refetched it; before that, fall
+// back to the card name.
+const _UPG_HAS_SLOTS=typeof UPGRADE_DB!=='undefined'&&Object.values(UPGRADE_DB).some(u=>u.s);
+function isGrenadeCard(name,dbUp){
+  if(_UPG_HAS_SLOTS&&dbUp) return /^grenade/i.test(dbUp.s||'');
+  return /\b(grenades?|detonators?|detpacks?|jetpack rockets)\b/i.test(name||'');
+}
+
 // A unit's effective surge chart: its card's own chart plus any upgrade that
 // grants a surge. Never downgrades (an existing crit surge stays crit).
 // Returns the names of the upgrades responsible so the sheet can say why.
@@ -2614,10 +2625,12 @@ function printListUnits(listId){
     // nothing at all to a ranged pool.
     const minis=[];
     for(let i=0;i<mc;i++) minis.push({ws:unitWpns, own:[], side:null});
-    // Weapons on an upgrade that adds no miniature of its own (armaments,
-    // grenades) can be used by EVERY miniature, unless the card limits it
-    // ("1 miniature in this unit may use the weapon below" -- Flame
-    // Projector). A Reconfigure card (E-11D Focused Fire / Grenade Launcher)
+    // Weapons on an upgrade that adds no miniature of its own (armaments)
+    // can be used by EVERY miniature, unless the card limits it ("1 miniature
+    // in this unit may use the weapon below" -- Flame Projector). A Grenades
+    // card is always used by 1 miniature only: 6 Fire Support with Jetpack
+    // Rockets throw 4 black dice for the rockets, not 24. Each such card goes
+    // to a different miniature, since one miniature adds one weapon per attack. A Reconfigure card (E-11D Focused Fire / Grenade Launcher)
     // has one weapon per side, and the whole unit is on one side at a time:
     // each side is a "mode", and each range uses the mode that hits hardest.
     const everyMini=[], oneMini=[], modeSets=[];
@@ -2639,11 +2652,14 @@ function printListUnits(listId){
       const added=ocr?(ocr.m||0):1;
       const side=sidearmOf(ocr);
       if(added) for(let i=0;i<added;i++) minis.push({ws:[...unitWpns,...own], own, side});
-      else if(/\b(1|one) miniature in this unit may use/i.test((ocr&&ocr.t)||'')) oneMini.push(...own);
+      else if(isGrenadeCard(up.n,dbUp)||
+              /\b(1|one) miniature in this unit may use/i.test((ocr&&ocr.t)||'')) oneMini.push(own);
       else everyMini.push(...own);
     }
     minis.forEach((m,i)=>{
-      const extra=[...everyMini,...(i===0?oneMini:[])];
+      // Card j goes to miniature j (wrapping round if cards outnumber minis).
+      const mine=oneMini.filter((_,j)=>j%minis.length===i).flat();
+      const extra=[...everyMini,...mine];
       if(extra.length) minis[i]={...m, ws:[...m.ws,...extra]};
     });
     const usable=(m,r)=>m.side&&(r===0?m.side.melee:m.side.ranged)?m.own:m.ws;
