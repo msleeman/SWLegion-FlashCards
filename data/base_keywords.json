@@ -1,5 +1,5 @@
 {
- "_comment": "The full build's base card set: names, types and Legion Helper page slugs. Frozen from the last HTML scrape (2026-09-28) so card names never change -- saved progress, notes and owner edits are keyed by card name. Rules text comes from data/legion_helper.json by slug. Concept cards for the 2026-11-30 rules (Flying Vehicles) were appended on 2026-11-24.",
+ "_comment": "The full build's base card set: names, types and Legion Helper page slugs. Frozen from the last HTML scrape (2026-09-28) so card names never change -- saved progress, notes and owner edits are keyed by card name. Rules text comes from data/legion_helper.json by slug. Concept cards for the 2026-11-30 rules (Flying Vehicles) were appended on 2026-11-24. Bane Tokens was removed on 2026-11-24 (dropped from the 2026-11-30 rules).",
  "keywords": [
   {
    "slug": "cumbersome",
@@ -104,11 +104,6 @@
   {
    "slug": "backup",
    "name": "Backup",
-   "type": "concept"
-  },
-  {
-   "slug": "bane_tokens",
-   "name": "Bane Tokens",
    "type": "concept"
   },
   {

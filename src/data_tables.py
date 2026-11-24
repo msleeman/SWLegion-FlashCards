@@ -44,7 +44,6 @@ KEYWORD_PAGES = [
     ("actions",                   "Make Actions"),
     # B
     ("backup",                    "Backup[]"),
-    ("bane_tokens",               "Bane Tokens[]"),
     ("barrage",                   "Barrage"),
     ("barricades",                "Barricades"),
     ("base",                      "Bases and Base Contact"),

@@ -42,6 +42,13 @@ print(f"Loaded {len(card_data)} cards from cache")
 # (e.g. the Flying Vehicles concepts from the 2026-11-30 rules). Their text
 # comes from Legion Helper in step 4c; art, if any, from overrides/.
 from src.scrape import load_base_keywords
+# ...and drop cached base cards the base set no longer lists (Bane Tokens,
+# dropped from the 2026-11-30 rules). The cache holds only base cards.
+_base_names = {k["name"].lower() for k in load_base_keywords()}
+_gone = [c["name"] for c in card_data if c["name"].lower() not in _base_names]
+if _base_names and _gone:
+    card_data = [c for c in card_data if c["name"].lower() in _base_names]
+    print(f"  {len(_gone)} retired base card(s) dropped: {', '.join(_gone)}")
 _have = {c["name"].lower() for c in card_data}
 _new_base = [k for k in load_base_keywords() if k["name"].lower() not in _have]
 for k in _new_base:
