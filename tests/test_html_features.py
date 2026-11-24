@@ -134,14 +134,17 @@ class TestBadSummary:
         )
 
 
-# ─── Fix 6: Progress bar ends before Catalog chip ────────────────────────────
+# ─── Fix 6: Progress bar clear of the nav ────────────────────────────
 
 class TestProgressBarLayout:
 
-    def test_topbar_reserves_measured_nav_width(self, source):
+    def test_nav_is_its_own_bar_above_the_screens(self, source):
+        """The app nav moved out of the flashcard top bar into a fixed bar
+        above every screen, so the top bar no longer reserves room for it."""
         label, text = source
-        assertIn("padding:14px var(--nav-clear,320px) 0 16px", text, label)
-        assertIn("function fitTopbarToNav()", text, label)
+        assertIn('<nav id="app-nav">', text, label)
+        assertIn(".screen{top:var(--nav-h)}", text, label)
+        assert "--nav-clear" not in text, f"[{label}] top bar still reserves nav room"
 
     def test_old_equal_padding_gone(self, source):
         label, text = source

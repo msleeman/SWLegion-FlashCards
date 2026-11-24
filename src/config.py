@@ -26,14 +26,15 @@ MANUAL_DIR    = OVERRIDES_DIR
 # into documents/ and prepend its filename here. Old entries can stay as
 # fallbacks until the file is removed.
 RULEBOOK_PDFS = [
-    "DOC56_SWQ_Rulebook.pdf",                # 2026-05-22 (linked from legion.takras.net)
+    "DOC61_SWQ_Rulebook.pdf",                # 2026-11-17, valid from 2026-11-30 (AMG + legion.takras.net)
+    "DOC56_SWQ_Rulebook.pdf",                # 2026-05-22
     "DOC51_SWQ_Rulebook_05-01_Update.pdf",   # 2026-05-01 update
     "SWQ_Rulebook_2.6.0-1.pdf",              # 2.6.0-1
     "SWQ_Rulebook_2_6_0-1.pdf",              # alternate spelling
 ]
 # Credit shown on cards whose definition came from the PDF.
 # Change this when bumping rulebooks so card credits track the source.
-RULEBOOK_CREDIT = "AMG Rulebook 2026-05-22"
+RULEBOOK_CREDIT = "AMG Rulebook 2026-11-30"
 
 BASE             = 'https://legion.takras.net'
 CDN              = 'https://d2maxvwz12z6fm.cloudfront.net'

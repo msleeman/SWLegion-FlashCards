@@ -55,13 +55,17 @@ _INDEX_JS = r'''async () => {
 }'''
 
 # Runs in the page: the rendered rules text. Icons become their title text,
-# mapped by Python afterwards; the "Related keywords" block is dropped.
+# mapped by Python afterwards; the "Related keywords" and "Cards with this
+# keyword" blocks are dropped.
 _PAGE_JS = r'''() => {
   const c=document.querySelector('div[class*="contentContainer"]');
   if(!c) return null;
   const h=document.querySelector('h2');
   const clone=c.cloneNode(true);
-  clone.querySelectorAll('[id="related"], [class*="related"]').forEach(e=>e.remove());
+  // "Related keywords" and (since 2026-12) "Cards with this keyword" -- the
+  // units and upgrades that carry it -- are navigation, not rules text.
+  clone.querySelectorAll('[id="related"], [class*="related"], #keywordCards, [class*="keyword-cards"]')
+    .forEach(e=>e.remove());
   clone.querySelectorAll('img').forEach(img=>{
     const key=(img.getAttribute('title')||img.getAttribute('alt')||'').trim();
     img.replaceWith(document.createTextNode('\u0000'+key+'\u0001'));

@@ -86,13 +86,16 @@ def guest_page(page, page_url):
     """Open the app, skip auth by clicking Play as Guest, yield the page."""
     page.goto(page_url)
     page.click("text=Play as Guest")
-    page.wait_for_selector("#flashcard-screen.on", timeout=8000)
+    # Lists is the home screen; flashcard tests start from the Study tab.
+    page.wait_for_selector("#lists-screen.on", timeout=8000)
+    page.click("#app-nav .nav-tab[data-screen='flashcard-screen']")
+    page.wait_for_selector("#flashcard-screen.on", timeout=5000)
     return page
 
 
 @pytest.fixture()
 def catalog_page(guest_page):
     """Open the app already on the Catalog screen."""
-    guest_page.click("button:has-text('Catalog')")
+    guest_page.click("#app-nav .nav-tab[data-screen='catalog-screen']")
     guest_page.wait_for_selector("#catalog-screen.on", timeout=5000)
     return guest_page

@@ -136,10 +136,10 @@ class TestRebuildBadSummary:
 
 class TestRebuildProgressBarLayout:
 
-    def test_topbar_right_padding(self, rebuilt_html):
+    def test_nav_bar_above_screens(self, rebuilt_html):
         html, _ = rebuilt_html
-        assert "padding:14px var(--nav-clear,320px) 0 16px" in html, (
-            "Rebuilt HTML: #fs-topbar must reserve the measured nav width"
+        assert '<nav id="app-nav">' in html and ".screen{top:var(--nav-h)}" in html, (
+            "Rebuilt HTML: the app nav must be its own bar above every screen"
         )
 
 

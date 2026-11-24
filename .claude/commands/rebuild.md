@@ -138,7 +138,7 @@ file. **Never write definitions from memory.**
 
 1. `overrides/<Stem>.md` — hand-written, always wins
 2. The AMG rulebook PDF in `documents/` (newest in `src/config.RULEBOOK_PDFS`,
-   currently `DOC56_SWQ_Rulebook.pdf`)
+   currently `DOC61_SWQ_Rulebook.pdf`)
 3. Legion Helper — `data/legion_helper.json`
 4. Tabletop Admiral keyword descriptions — only where nothing above has text
 

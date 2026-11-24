@@ -14,7 +14,7 @@
     <div class="auth-logo">
       <div class="auth-logo-icon">&#9876;</div>
       <h1>SW Legion Keywords</h1>
-      <p>Master every keyword in v2.6</p>
+      <p>Your army lists, keywords and rules in one place</p>
     </div>
     <div class="auth-card">
       <div class="auth-tabs">
@@ -37,8 +37,29 @@
   </div>
 </div>
 
+<!-- APP NAV: shown on every screen. Lists is the home tab. -->
+<nav id="app-nav">
+  <div class="nav-brand" onclick="showScreen('lists-screen')" title="Army Lists">&#9876;<span>SW Legion</span></div>
+  <div class="nav-tabs" role="tablist">
+    <button class="nav-tab" data-screen="lists-screen" onclick="showScreen('lists-screen')">&#9935; Lists</button>
+    <button class="nav-tab" data-screen="flashcard-screen" onclick="showScreen('flashcard-screen')">Study</button>
+    <button class="nav-tab" data-screen="catalog-screen" onclick="showScreen('catalog-screen')">Catalog</button>
+    <button class="nav-tab" data-screen="commands-screen" onclick="showScreen('commands-screen')">Commands</button>
+  </div>
+  <div id="acct-dropdown-wrap">
+    <button class="fs-pill" id="acct-btn" onclick="toggleAcctDropdown()">&#128100;</button>
+    <div id="acct-dropdown">
+      <div class="acct-email" id="acct-email-label">Guest mode</div>
+      <div class="acct-item" id="acct-signin-item" onclick="showAuthFromApp()" style="display:none">Sign in / Switch account</div>
+      <div class="acct-item danger" id="acct-signout-item" onclick="authSignOut()" style="display:none">Sign out</div>
+      <div class="acct-item" id="acct-guest-label" style="display:none;cursor:default;color:rgba(255,255,255,.3)">Progress saved locally</div>
+      <div style="font-size:10px;color:rgba(255,255,255,.18);padding:4px 14px 8px;text-align:center;letter-spacing:.3px">{{VERSION}} · {{BUILD_DATE}}</div>
+    </div>
+  </div>
+</nav>
+
 <!-- FLASHCARD SCREEN -->
-<div class="screen on" id="flashcard-screen">
+<div class="screen" id="flashcard-screen">
   <div id="fs-bg">
     <img id="fs-img" src="" alt="">
     <div id="fs-stats-cover" style="display:none;position:absolute;background:#0a0a0f;border:2px solid rgba(245,197,24,.5);border-radius:6px;pointer-events:none;"></div>
@@ -69,26 +90,6 @@
     <div id="fs-stats-score" style="display:none;gap:12px;align-items:center">
       <div class="fs-stat ok">&#10003;<span id="ss">0</span></div>
       <div class="fs-stat wr">&#10007;<span id="se">0</span></div>
-    </div>
-  </div>
-  <div id="fs-nav-btns">
-    <div id="lists-menu-wrap">
-      <button class="fs-pill" id="pill-lists" onclick="toggleListsMenu()">Lists &#9662;</button>
-      <div id="lists-menu"></div>
-    </div>
-    <div class="fs-pill-group">
-      <button class="fs-pill" onclick="showScreen('catalog-screen')">Catalog</button>
-      <button class="fs-pill" onclick="showScreen('commands-screen')">Commands</button>
-    </div>
-    <div id="acct-dropdown-wrap">
-      <button class="fs-pill" id="acct-btn" onclick="toggleAcctDropdown()">&#128100;</button>
-      <div id="acct-dropdown">
-        <div class="acct-email" id="acct-email-label">Guest mode</div>
-        <div class="acct-item" id="acct-signin-item" onclick="showAuthFromApp()" style="display:none">Sign in / Switch account</div>
-        <div class="acct-item danger" id="acct-signout-item" onclick="authSignOut()" style="display:none">Sign out</div>
-        <div class="acct-item" id="acct-guest-label" style="display:none;cursor:default;color:rgba(255,255,255,.3)">Progress saved locally</div>
-        <div style="font-size:10px;color:rgba(255,255,255,.18);padding:4px 14px 8px;text-align:center;letter-spacing:.3px">{{VERSION}} · {{BUILD_DATE}}</div>
-      </div>
     </div>
   </div>
   <button id="fs-prev" onclick="go(-1)">&#8592;</button>
@@ -138,6 +139,7 @@
     <p>You've mastered all active keywords.<br>Reset or change your filter to continue.</p>
     <button class="big-btn gold" onclick="resetLearned()">Start Over</button>
     <button class="big-btn ghost" onclick="showScreen('catalog-screen')">View Catalog</button>
+    <button class="big-btn ghost" onclick="showScreen('lists-screen')">Back to Lists</button>
   </div>
 </div>
 
@@ -145,10 +147,7 @@
 <div class="screen" id="catalog-screen" style="background:#0a0a0f;overflow-y:auto">
   <div class="cat-wrap">
     <div class="cat-top">
-      <h1>SW Legion Keywords (v2.6)</h1>
-      <div class="cat-top-btns">
-        <button class="dark-pill" onclick="showScreen('flashcard-screen')">&#8592; Back</button>
-      </div>
+      <h1>Keyword Catalog</h1>
     </div>
     <div class="cat-filters" id="cat-filters">
       <button class="dark-pill active" onclick="setCF('all',this)">All</button>
@@ -182,9 +181,6 @@
   <div class="cat-wrap">
     <div class="cat-top">
       <h1>&#9878; Command Cards</h1>
-      <div class="cat-top-btns">
-        <button class="dark-pill" onclick="showScreen('flashcard-screen')">&#8592; Back</button>
-      </div>
     </div>
     <div class="cat-filters" id="cmd-faction-filters"></div>
     <div class="cat-filters" id="cmd-pip-filters"></div>
@@ -212,17 +208,24 @@
 </div>
 
 <!-- LISTS SCREEN -->
-<div class="screen" id="lists-screen" style="background:#0a0a0f;overflow-y:auto">
+<div class="screen on" id="lists-screen" style="background:#0a0a0f;overflow-y:auto">
   <div class="cat-wrap">
-    <div class="cat-top">
-      <h1>&#9935; Army Lists</h1>
-      <div class="cat-top-btns">
-        <button class="dark-pill" onclick="showScreen('flashcard-screen')">&#8592; Back</button>
+    <div class="lists-head">
+      <div>
+        <h1>Army Lists</h1>
+        <div class="lists-sub" id="lists-sub"></div>
       </div>
+      <button class="big-btn gold sm" id="lists-import-btn" onclick="toggleImportPanel()">+ Import list</button>
     </div>
     <!-- CREATE -->
     <div class="list-panel" id="list-create-panel">
-      <h2 class="list-section-title">Import Army List</h2>
+      <div class="list-panel-head">
+        <h2 class="list-section-title">Import an army list</h2>
+        <button class="dark-pill" id="list-import-close" onclick="toggleImportPanel(false)">Close</button>
+      </div>
+      <p class="list-help">Build your list in <a href="https://legionhq2.com" target="_blank" rel="noopener">LegionHQ2</a> or
+        <a href="https://tabletopadmiral.com/listbuilder" target="_blank" rel="noopener">Tabletop Admiral</a>,
+        then paste its share link here &mdash; or paste Tabletop Admiral's <em>Export &rarr; JSON</em> to bring in command cards and the battlefield deck too.</p>
       <div class="list-input-row">
         <input type="text" id="list-url-input" class="list-url-input"
                placeholder="Paste LegionHQ2 / Tabletop Admiral URL, or Tabletop Admiral JSON..."
@@ -248,11 +251,59 @@
       </div>
     </div>
     <!-- SAVED LISTS -->
-    <div class="list-panel" id="list-saved-panel">
-      <h2 class="list-section-title">Saved Lists</h2>
-      <div id="lists-container"></div>
+    <div id="lists-container" class="lists-grid"></div>
+  </div>
+</div>
+
+<!-- LIST DETAIL SCREEN -->
+<div class="screen" id="list-screen" style="background:#0a0a0f;overflow-y:auto">
+  <div class="cat-wrap ld-wrap">
+    <button class="dark-pill ld-back" onclick="showScreen('lists-screen')">&#8592; All lists</button>
+    <div class="ld-hero" id="ld-hero">
+      <div class="ld-hero-text">
+        <h1 id="ld-name"></h1>
+        <div class="ld-meta" id="ld-meta"></div>
+        <div class="ld-progress" id="ld-progress"></div>
+      </div>
+    </div>
+    <div class="ld-actions">
+      <button class="big-btn gold sm" onclick="studyList(_ldListId,'learn')">&#9654; Study keywords</button>
+      <button class="ld-btn" onclick="studyList(_ldListId,'quiz')">Quiz</button>
+      <button class="ld-btn" onclick="printListUnits(_ldListId)" title="Unit cards with their keywords and dice maths">&#128444; Print by unit</button>
+      <button class="ld-btn" onclick="printListKeywords(_ldListId)" title="Every keyword in the list, A&ndash;Z">&#128438; Print keywords</button>
+      <button class="ld-btn" onclick="openListModal(_ldListId);setLmTab('edit')">Edit keywords</button>
+      <button class="ld-btn" onclick="renameList(_ldListId)">Rename</button>
+      <a class="ld-btn" id="ld-source-link" target="_blank" rel="noopener" style="display:none">Open in builder &#8599;</a>
+      <button class="ld-btn danger" onclick="if(deleteList(_ldListId)) showScreen('lists-screen')">&#128465; Delete</button>
+    </div>
+    <div class="ld-cols">
+      <section class="ld-sec ld-roster-sec">
+        <h2 class="ld-h2">Roster <span class="ld-count" id="ld-unit-count"></span></h2>
+        <div id="ld-roster"></div>
+      </section>
+      <aside class="ld-side">
+        <section class="ld-sec">
+          <h2 class="ld-h2">Keywords <span class="ld-count" id="ld-kw-count"></span></h2>
+          <div class="ld-kw-filter" id="ld-kw-filter"></div>
+          <div id="ld-kws" class="list-kw-tags"></div>
+        </section>
+        <section class="ld-sec" id="ld-cmd-sec" style="display:none">
+          <h2 class="ld-h2">Command cards</h2>
+          <div id="ld-cmds" class="ld-cmds"></div>
+        </section>
+        <section class="ld-sec" id="ld-bf-sec" style="display:none">
+          <h2 class="ld-h2">Battlefield deck</h2>
+          <div id="ld-bf"></div>
+        </section>
+      </aside>
     </div>
   </div>
+</div>
+
+<!-- IMAGE VIEWER (unit / upgrade card art on the list page) -->
+<div id="img-viewer" onclick="closeImgViewer()">
+  <img id="img-viewer-img" src="" alt="">
+  <div id="img-viewer-cap"></div>
 </div>
 
 <!-- LIST DETAIL MODAL -->

@@ -73,20 +73,66 @@ class TestFlashcardScreen:
         assert "/" in text and text.replace("/", "").replace(" ", "").isdigit() or \
                "/" in text, f"Counter text must be N/M format, got: {text!r}"
 
-    def test_progress_bar_does_not_overlap_nav_chips(self, guest_page):
-        """Fix 6: Progress bar right edge must stop before the leftmost nav chip
-        (the Lists menu), not just the Catalog button."""
-        bar = guest_page.locator("#fs-progress")
-        nav = guest_page.locator("#fs-nav-btns")
-        bar_box = bar.bounding_box()
-        nav_box = nav.bounding_box()
-        assert bar_box and nav_box, "Could not measure bounding boxes"
-        bar_right = bar_box["x"] + bar_box["width"]
-        nav_left = nav_box["x"]
-        assert bar_right <= nav_left, (
-            f"Progress bar right edge ({bar_right:.0f}px) overlaps "
-            f"nav chips left edge ({nav_left:.0f}px)"
+    def test_progress_bar_below_app_nav(self, guest_page):
+        """The flashcard top bar sits wholly below the app nav bar."""
+        bar = guest_page.locator("#fs-progress").bounding_box()
+        nav = guest_page.locator("#app-nav").bounding_box()
+        assert bar and nav, "Could not measure bounding boxes"
+        assert bar["y"] >= nav["y"] + nav["height"], (
+            f"Progress bar top ({bar['y']:.0f}px) is under the nav bar "
+            f"(bottom {nav['y'] + nav['height']:.0f}px)"
         )
+
+
+# ─── Lists home ───────────────────────────────────────────────────────────────
+
+class TestListsHome:
+
+    def test_guest_lands_on_lists(self, page, page_url):
+        page.goto(page_url)
+        page.click("text=Play as Guest")
+        page.wait_for_selector("#lists-screen.on", timeout=8000)
+        expect(page.locator("#app-nav .nav-tab.active")).to_have_text("⛏ Lists")
+
+    def test_empty_lists_show_import_panel(self, page, page_url):
+        page.goto(page_url)
+        page.click("text=Play as Guest")
+        page.wait_for_selector("#lists-screen.on", timeout=8000)
+        expect(page.locator("#list-create-panel")).to_be_visible()
+        expect(page.locator("#list-url-input")).to_be_visible()
+
+    def test_saved_list_opens_its_page(self, page, page_url):
+        page.goto(page_url)
+        # Mark the data as a guest's, or Play as Guest wipes it as another account's.
+        page.evaluate("() => localStorage.setItem('swlegion_data_owner','guest')")
+        page.evaluate("""() => localStorage.setItem('swlegion_lists', JSON.stringify([{
+            id:'lst_test', name:'Test Army', faction:'empire', points:800,
+            keywords:['Sharpshooter 1','Precise 1'],
+            units:[{count:1,name:'Stormtroopers',title:'',img:'',artTta:'',rank:'corps',
+                    cost:0,upgrades:[],upgradeCards:[],kws:['Precise 1'],weapons:[]}],
+            armyUrl:'', createdAt:new Date().toISOString()}]))""")
+        page.reload()
+        page.click("text=Play as Guest")
+        page.wait_for_selector("#lists-screen.on", timeout=8000)
+        page.click(".lcard >> text=Test Army")
+        page.wait_for_selector("#list-screen.on", timeout=5000)
+        expect(page.locator("#ld-name")).to_have_text("Test Army")
+        assert page.locator("#ld-kws .kw-tag").count() >= 1
+
+    def test_study_button_filters_flashcards(self, page, page_url):
+        page.goto(page_url)
+        # Mark the data as a guest's, or Play as Guest wipes it as another account's.
+        page.evaluate("() => localStorage.setItem('swlegion_data_owner','guest')")
+        page.evaluate("""() => localStorage.setItem('swlegion_lists', JSON.stringify([{
+            id:'lst_t2', name:'Study Army', faction:'rebels', points:0,
+            keywords:['Sharpshooter 1'], units:[], armyUrl:'',
+            createdAt:new Date().toISOString()}]))""")
+        page.reload()
+        page.click("text=Play as Guest")
+        page.wait_for_selector("#lists-screen.on", timeout=8000)
+        page.click(".lcard .lcard-btn.primary")
+        page.wait_for_selector("#flashcard-screen.on", timeout=5000)
+        expect(page.locator("#pill-list")).to_contain_text("Study Army")
 
 
 # ─── Catalog screen ───────────────────────────────────────────────────────────
@@ -212,7 +258,8 @@ class TestLegionIconFont:
     def test_unknown_tokens_stay_text(self, guest_page):
         out = guest_page.evaluate("""()=>{
             const d=document.createElement('div');
-            d.textContent='Spend [TAP] at [RANGE 1/2] for [HIT]'; document.body.appendChild(d);
+            d.textContent='Spend [WIBBLE] at [RANGE 1/2] for [HIT]'; document.body.appendChild(d);
             legionIconize(d); const t=d.textContent; d.remove(); return t;
         }""")
-        assert "[TAP]" in out and "[RANGE 1/2]" in out and "[HIT]" not in out
+        # [TAP] has a glyph since the exhaust icon fix; use a made-up token.
+        assert "[WIBBLE]" in out and "[RANGE 1/2]" in out and "[HIT]" not in out

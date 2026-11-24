@@ -1,1 +1,1 @@
-At end of activation, remove up to X suppression from a friendly unit at range 1-2.
+At end of activation, remove up to X total suppression from other allied units within range 2.

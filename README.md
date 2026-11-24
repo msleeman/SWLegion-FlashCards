@@ -73,7 +73,7 @@ SWLegion-FlashCards/
 ├── legion_helper.py              # Read Legion Helper's rendered rules text -> data/legion_helper.json
 ├── ocr_upgrades.py               # OCR upgrade card text -> data/upgrade_ocr.json
 ├── ocr_commands.py               # OCR command card text -> data/command_ocr.json
-└── documents/DOC56_SWQ_Rulebook.pdf  # Official rulebook, newest (optional, see src/config.RULEBOOK_PDFS)
+└── documents/DOC61_SWQ_Rulebook.pdf  # Official rulebook, newest (optional, see src/config.RULEBOOK_PDFS)
 ```
 
 ---

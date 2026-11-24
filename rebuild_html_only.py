@@ -21,7 +21,8 @@ from src.overrides import (
     apply_manual_overlays,
 )
 from src.scrape import (find_pdf, extract_keywords_from_pdf, fill_from_rulebook,
-                        rulebook_matcher, apply_legion_helper_text)
+                        rulebook_matcher, apply_legion_helper_text,
+                        retype_from_rulebook)
 from src.images import (download_images, download_upgrade_card_images,
                         download_tta_card_images, download_command_card_images)
 from src.render import build_html
@@ -36,6 +37,23 @@ with open(cache, "r", encoding="utf-8") as f:
     card_data = json.load(f)
 
 print(f"Loaded {len(card_data)} cards from cache")
+
+# ── 1b. Base cards added to data/base_keywords.json since the cache was made ──
+# (e.g. the Flying Vehicles concepts from the 2026-11-30 rules). Their text
+# comes from Legion Helper in step 4c; art, if any, from overrides/.
+from src.scrape import load_base_keywords
+_have = {c["name"].lower() for c in card_data}
+_new_base = [k for k in load_base_keywords() if k["name"].lower() not in _have]
+for k in _new_base:
+    art = find_card_art(k["name"])
+    card_data.append({
+        "name": k["name"], "definition": k["definition"], "summary": "",
+        "type": k["type"], "imgs": [art] if art else [],
+        "credit": "", "card_source": "",
+        "art_credit": find_card_art_credit(k["name"]) or "", "units": "",
+    })
+if _new_base:
+    print(f"  {len(_new_base)} base cards added that the cache predates")
 
 # ── 2. Re-apply image overrides ───────────────────────────────────────────────
 IMGDIR = DIST_IMGDIR
@@ -147,6 +165,47 @@ print(f"  Legion Helper text: {lh} definitions")
 manual_count = apply_manual_overlays(card_data)
 if manual_count:
     print(f"  {manual_count} definitions overridden from manual/ folder")
+
+# ── 4b2. Art for cards added after step 2 ────────────────────────────────────
+# Step 2 only sees the cached cards, so cards added later (override-only,
+# Tabletop Admiral, new base cards) had no art even when the image was already
+# in dist/images/ under the keyword's name or mapped to a unit card in
+# data/keyword_images.json. Order: overrides/ > keyword-named file > mapped
+# unit card > Wikimedia fallback photo.
+from urllib.parse import unquote as _unquote
+_files = {f.lower(): f for f in os.listdir(IMGDIR) if os.path.isfile(os.path.join(IMGDIR, f))}
+_kci = {k.lower(): v for k, v in KEYWORD_CARD_IMAGES.items()}
+
+def _art_on_disk(name):
+    n = re.sub(r'\s*\[X\]', '', name.replace('➦', '').replace('[]', '')).strip()
+    stems = [_keyword_stem(n)]
+    stems.append(stems[0] + '_X')
+    for s in stems:
+        for ext in ('.webp', '.png', '.jpg'):
+            if (s + ext).lower() in _files:
+                return 'images/' + _files[(s + ext).lower()]
+    key = _kw_lookup_key(n)
+    mapped = _kci.get(key.lower()) or _kci.get(re.sub(r':.*$', '', key).strip().lower())
+    if mapped and _unquote(mapped).lower() in _files:
+        return 'images/' + _files[_unquote(mapped).lower()]
+    for s in stems:
+        if (s + '_1.jpg').lower() in _files:
+            return 'images/' + _files[(s + '_1.jpg').lower()]
+    return None
+
+_wired = 0
+for c in card_data:
+    if c.get('imgs'):
+        continue
+    art = find_card_art(c['name']) or _art_on_disk(c['name'])
+    if art:
+        c['imgs'] = [art]
+        _wired += 1
+print(f"  {_wired} cards given art already on disk")
+
+# Cards injected above default to 'unit'; the rulebook knows which are weapon
+# and upgrade keywords.
+print(f"  {retype_from_rulebook(card_data)} cards retyped from the rulebook glossary")
 
 # ── 4c. Current Tabletop Admiral card art ─────────────────────────────────────
 # Must run BEFORE build_html: render.py decides whether a card has current art

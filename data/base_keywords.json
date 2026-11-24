@@ -1,5 +1,5 @@
 {
- "_comment": "The full build's base card set: names, types and Legion Helper page slugs. Frozen from the last HTML scrape (2026-09-28) so card names never change -- saved progress, notes and owner edits are keyed by card name. Rules text comes from data/legion_helper.json by slug.",
+ "_comment": "The full build's base card set: names, types and Legion Helper page slugs. Frozen from the last HTML scrape (2026-09-28) so card names never change -- saved progress, notes and owner edits are keyed by card name. Rules text comes from data/legion_helper.json by slug. Concept cards for the 2026-11-30 rules (Flying Vehicles) were appended on 2026-11-24.",
  "keywords": [
   {
    "slug": "cumbersome",
@@ -454,6 +454,66 @@
   {
    "slug": "within_range",
    "name": "Within, Completely Within, and Not Within",
+   "type": "concept"
+  },
+  {
+   "slug": "flying_vehicle",
+   "name": "Flying Vehicles",
+   "type": "concept"
+  },
+  {
+   "slug": "flying_vehicle_stand",
+   "name": "Flying Vehicle Stand",
+   "type": "concept"
+  },
+  {
+   "slug": "flying_vehicle_arcs",
+   "name": "Flying Vehicle Arcs",
+   "type": "concept"
+  },
+  {
+   "slug": "flying_vehicle_los_range",
+   "name": "Flying Vehicle LOS and Range",
+   "type": "concept"
+  },
+  {
+   "slug": "moving_flying_vehicles",
+   "name": "Moving Flying Vehicles",
+   "type": "concept"
+  },
+  {
+   "slug": "cruising_move",
+   "name": "Cruising Move",
+   "type": "concept"
+  },
+  {
+   "slug": "combat_move",
+   "name": "Combat Move",
+   "type": "concept"
+  },
+  {
+   "slug": "deploying_with_cruising_move",
+   "name": "Deploying with a Cruising Move",
+   "type": "concept"
+  },
+  {
+   "slug": "battlefield_approach",
+   "name": "Battlefield Approach",
+   "type": "concept"
+  },
+  {
+   "slug": "provide_air_support",
+   "name": "Provide Air Support",
+   "type": "concept"
+  },
+  {
+   "slug": "break_off",
+   "name": "Break Off",
+   "type": "concept"
+  },
+  {
+   "slug": "mandalorian_trooper",
+   "name": "Mandalorian Trooper",
    "type": "concept"
   }
  ]

@@ -1,1 +1,1 @@
-At the end of this unit's activation, remove up to X suppression tokens from 1 friendly unit at range 1-2.
+When this unit ends its Activation, remove up to X total Suppression tokens from other allied units within [RANGE 2].

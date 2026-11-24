@@ -131,8 +131,13 @@ function clrStatus(){ clearTimeout(_st); const el=document.getElementById('fs-st
 function showScreen(id){
   document.querySelectorAll('.screen').forEach(el=>el.classList.remove('on'));
   document.getElementById(id).classList.add('on');
+  // A list's own page sits under the Lists tab.
+  const tab=id==='list-screen'?'lists-screen':id;
+  document.querySelectorAll('#app-nav .nav-tab').forEach(b=>
+    b.classList.toggle('active',b.dataset.screen===tab));
   if(id==='catalog-screen') renderCatalog();
   if(id==='lists-screen'){ renderSavedLists(); }
+  if(id==='list-screen') renderListDetail();
   if(id==='commands-screen') initCommands();
 }
 
@@ -155,8 +160,10 @@ function filteredCards(){
   if(activeListId){
     const lst=getListById(activeListId);
     if(lst){
-      const kwSet=new Set(lst.keywords.map(k=>k.toLowerCase()));
-      const base=CARDS.filter(c=>kwSet.has(c.name.toLowerCase()));
+      // Resolve each keyword spelling to its card ("Sharpshooter 1" ->
+      // "Sharpshooter X"), the same way the list page and printouts do.
+      const idx=_cardIndexByNorm();
+      const base=[...new Set(lst.keywords.map(k=>findCardForKeyword(k,idx)).filter(Boolean))];
       const extras=CARDS.filter(c=>catExtras.has(c.type));
       const pinned=CARDS.filter(c=>s(c.name).pinned);
       cards=[...new Set([...base,...extras,...pinned])];
@@ -164,7 +171,8 @@ function filteredCards(){
   }
   const pinnedAll=CARDS.filter(c=>s(c.name).pinned);
   if(typeFilter==='weapon'){const f=cards.filter(c=>c.type==='weapon');return[...new Set([...f,...pinnedAll])];}
-  if(typeFilter==='unit'){const f=cards.filter(c=>c.type==='unit');return[...new Set([...f,...pinnedAll])];}
+  // Upgrade-card keywords (Repair, Treat, Small...) count as unit keywords here.
+  if(typeFilter==='unit'){const f=cards.filter(c=>c.type==='unit'||c.type==='upgrade');return[...new Set([...f,...pinnedAll])];}
   if(typeFilter==='noconcept'){const f=cards.filter(c=>c.type!=='concept');return[...new Set([...f,...pinnedAll])];}
   return [...new Set([...cards,...pinnedAll])];
 }
@@ -734,7 +742,7 @@ function renderCatalog(){
   }
   if(catFilter==='learned')    list=list.filter(c=>s(c.name).learned);
   if(catFilter==='unlearned')  list=list.filter(c=>!s(c.name).learned);
-  if(catFilter==='unit')       list=list.filter(c=>c.type==='unit');
+  if(catFilter==='unit')       list=list.filter(c=>c.type==='unit'||c.type==='upgrade');
   if(catFilter==='weapon')     list=list.filter(c=>c.type==='weapon');
   if(catFilter==='concept')    list=list.filter(c=>c.type==='concept');
   if(catFilter==='noconcept')  list=list.filter(c=>c.type!=='concept');
@@ -1050,6 +1058,8 @@ function closeMod(e){
   const picker=document.getElementById('mod-list-picker');
   if(picker) picker.style.display='none';
   document.getElementById('modal-bg').classList.remove('on'); mcard=null;
+  // Learned ticks on the list page follow changes made in the modal.
+  if(document.getElementById('list-screen').classList.contains('on')) renderListDetail();
 }
 function modShowAddToList(){
   const picker=document.getElementById('mod-list-picker');
@@ -1980,8 +1990,10 @@ function saveList(){
   _parsedArmy=null;
   document.getElementById('list-url-input').value='';
   document.getElementById('list-parse-result').style.display='none';
-  renderSavedLists();
+  toggleImportPanel(false);
   updateListPillLabel();
+  // Straight to the new list's page.
+  openListDetail(id);
 }
 
 function showListStatus(msg,cls){
@@ -1990,43 +2002,283 @@ function showListStatus(msg,cls){
   el.style.color=cls==='err'?'#f08080':'#6effc4';
 }
 
+// ─── LISTS HOME ───────────────────────────────────────────────────────────────
+// When each list was last opened, per device. Kept out of the list records so
+// opening a list doesn't trigger a cloud sync.
+function _listOpenedMap(){
+  try{ return JSON.parse(localStorage.getItem('swlegion_list_opened')||'{}'); }
+  catch(e){ return {}; }
+}
+function _markListOpened(id){
+  const m=_listOpenedMap(); m[id]=Date.now();
+  try{ localStorage.setItem('swlegion_list_opened',JSON.stringify(m)); }catch(e){}
+}
+// Most recently opened (or created) first.
+function sortedLists(){
+  const opened=_listOpenedMap();
+  const when=l=>opened[l.id]||Date.parse(l.createdAt||'')||0;
+  return loadLists().sort((a,b)=>when(b)-when(a));
+}
+
+function toggleImportPanel(force){
+  const panel=document.getElementById('list-create-panel');
+  const open=force===undefined?!panel.classList.contains('open'):!!force;
+  panel.classList.toggle('open',open);
+  document.getElementById('lists-import-btn').style.display=open?'none':'';
+  if(open) setTimeout(()=>document.getElementById('list-url-input').focus(),0);
+}
+
+// Art for a saved list's unit: resolved fresh so lists saved before an art
+// re-key still render.
+function savedUnitArt(u){
+  return currentUnitArt(u.name,u.title,u.rank)
+    ||(u.artTta?'images/units/tta/'+encodeURIComponent(u.artTta):'')
+    ||(u.img?'images/'+encodeURIComponent(u.img):'');
+}
+function savedUpgradeArt(up){
+  const tta=ttaUpgradeOf(up);
+  return (tta&&tta.a?'images/upgrades/tta/'+encodeURIComponent(tta.a):'')
+    ||currentUpgradeArt(up.n,up.c||0)
+    ||(up.a?'images/upgrades/tta/'+encodeURIComponent(up.a):'')
+    ||(up.i?'images/upgrades/'+encodeURIComponent(up.i):'');
+}
+
+// {learned, total} over the cards a list's keywords resolve to.
+function listLearnProgress(list){
+  const idx=_cardIndexByNorm();
+  const seen=new Set();
+  (list.keywords||[]).forEach(k=>{ const c=findCardForKeyword(k,idx); if(c) seen.add(c.name); });
+  const learned=[...seen].filter(n=>ST[n]&&ST[n].learned).length;
+  return {learned, total:seen.size};
+}
+function progressBar(p){
+  const pct=p.total?Math.round(p.learned/p.total*100):0;
+  return `<div class="lp-bar"><div class="lp-fill" style="width:${pct}%"></div></div>`+
+         `<span class="lp-txt">${p.learned}/${p.total} keywords learned</span>`;
+}
+
 function renderSavedLists(){
-  const lists=loadLists();
+  const lists=sortedLists();
   const el=document.getElementById('lists-container');
+  const sub=document.getElementById('lists-sub');
+  if(sub) sub.textContent=lists.length
+    ? `${lists.length} saved list${lists.length===1?'':'s'}` : '';
   if(!lists.length){
-    el.innerHTML='<div class="lists-empty">No lists saved yet. Import one above.</div>';
+    toggleImportPanel(true);
+    document.getElementById('list-import-close').style.display='none';
+    el.innerHTML=`<div class="lists-empty">
+      <div class="lists-empty-icon">&#9935;</div>
+      <div>No lists yet. Paste a LegionHQ2 or Tabletop Admiral link above to get started.</div></div>`;
     return;
   }
+  document.getElementById('list-import-close').style.display='';
   el.innerHTML=lists.map(lst=>{
+    const units=sortUnitsByRank(lst.units||[]);
+    const thumbs=units.slice(0,4).map(u=>{
+      const src=savedUnitArt(u);
+      return src?`<img loading="lazy" src="${src}" alt="" onerror="this.remove()">`:'';
+    }).join('');
+    const roster=units.map(u=>(u.count>1?u.count+'× ':'')+u.name).join(' · ');
+    const nUnits=units.reduce((n,u)=>n+(u.count||1),0);
     const isActive=activeListId===lst.id;
-    return `<div class="list-card${isActive?' active-filter':''}" data-list-id="${lst.id}" onclick="openListModal('${lst.id}')">
-      <div class="list-card-info">
-        <div class="list-card-name">${escHtml(lst.name)}</div>
-        <div class="list-card-meta">
-          <span class="faction-badge faction-${lst.faction||''}" style="font-size:10px;padding:2px 8px">${(lst.faction||'').toUpperCase()}</span>
-          &nbsp;${lst.points||0} pts &nbsp;&#183;&nbsp; ${lst.keywords.length} keywords
+    return `<div class="lcard faction-edge-${escHtml(lst.faction||'')}${isActive?' active-filter':''}"
+        data-list-id="${lst.id}" onclick="openListDetail('${lst.id}')">
+      <div class="lcard-art${thumbs?'':' empty'}">${thumbs||'&#9935;'}</div>
+      <div class="lcard-body">
+        <div class="lcard-name">${escHtml(lst.name)}</div>
+        <div class="lcard-meta">
+          <span class="faction-badge faction-${escHtml(lst.faction||'')}">${escHtml((lst.faction||'').toUpperCase())}</span>
+          ${lst.points?`<span>${lst.points} pts</span>`:''}
+          ${nUnits?`<span>${nUnits} units</span>`:''}
+          <span>${listKeywordEntries(lst).length} keywords</span>
         </div>
+        ${roster?`<div class="lcard-roster" title="${escHtml(roster)}">${escHtml(roster)}</div>`:''}
+        <div class="lcard-progress">${progressBar(listLearnProgress(lst))}</div>
       </div>
-      <div class="list-card-actions" onclick="event.stopPropagation()">
-        <button class="list-btn-edit" onclick="printListUnits('${lst.id}')" title="Print unit cards with their keywords">&#128444; By Unit</button>
-        <button class="list-btn-edit" onclick="printListKeywords('${lst.id}')" title="Print keywords as PDF">&#128438; PDF</button>
-        <button class="list-btn-filter${isActive?' on':''}" data-list-id="${lst.id}"
-          onclick="toggleListFilter('${lst.id}')">${isActive?'Filtering':'Filter'}</button>
-        <button class="list-btn-edit" onclick="openListModal('${lst.id}')">Edit</button>
-        <button class="list-btn-delete" onclick="deleteList('${lst.id}')" title="Delete this list">&#128465; Delete</button>
+      <div class="lcard-acts" onclick="event.stopPropagation()">
+        <button class="lcard-btn primary" onclick="studyList('${lst.id}','learn')" title="Flashcards for this list's keywords">&#9654; Study</button>
+        <button class="lcard-btn" onclick="printListUnits('${lst.id}')" title="Print unit cards with their keywords">&#128444; By unit</button>
+        <button class="lcard-btn" onclick="printListKeywords('${lst.id}')" title="Print every keyword in the list">&#128438; Keywords</button>
       </div>
     </div>`;
   }).join('');
 }
 
+// Study (or quiz) only this list's keywords.
+function studyList(listId,m){
+  if(!getListById(listId)) return;
+  setListFilter(listId);
+  showScreen('flashcard-screen');
+  setMode(m||'learn');
+}
 function toggleListFilter(listId){
-  if(activeListId===listId){
-    setListFilter(null);
-  } else {
-    setListFilter(listId);
-    showScreen('flashcard-screen');
+  if(activeListId===listId) setListFilter(null);
+  else studyList(listId,'learn');
+}
+
+function renameList(listId){
+  const lists=loadLists();
+  const lst=lists.find(l=>l.id===listId);
+  if(!lst) return;
+  const name=(prompt('Rename list',lst.name)||'').trim();
+  if(!name||name===lst.name) return;
+  lst.name=name.slice(0,60);
+  saveLists(lists);
+  updateListPillLabel(); updateCatListPillLabel();
+  renderListDetail();
+}
+
+// ─── LIST PAGE ────────────────────────────────────────────────────────────────
+let _ldListId=null;
+let _ldKwFilter='all';
+
+function openListDetail(listId){
+  if(!getListById(listId)) return;
+  _ldListId=listId;
+  _ldKwFilter='all';
+  _markListOpened(listId);
+  showScreen('list-screen');
+  document.getElementById('list-screen').scrollTop=0;
+}
+
+function _kwChip(name, card){
+  const learned=card&&ST[card.name]&&ST[card.name].learned;
+  const type=card?card.type||'':'';
+  const tip=card?(card.summary||card.definition||'').slice(0,220):'No rules card for this keyword';
+  const click=card?` onclick="openMod(${escHtml(JSON.stringify(card.name))})"`:'';
+  return `<span class="kw-tag ld-kw ld-kw-${escHtml(type)}${learned?' learned':''}${card?'':' nocard'}"`+
+         ` title="${escHtml(tip)}"${click}>${learned?'&#10003; ':''}${escHtml(name)}</span>`;
+}
+
+function setLdKwFilter(f){ _ldKwFilter=f; renderListDetail(); }
+
+function renderListDetail(){
+  const list=getListById(_ldListId);
+  if(!list){ showScreen('lists-screen'); return; }
+  const units=sortUnitsByRank(list.units||[]);
+
+  // Hero: name, faction, points, the commander's art as a backdrop.
+  document.getElementById('ld-name').textContent=list.name;
+  const nUnits=units.reduce((n,u)=>n+(u.count||1),0);
+  const metaBits=[
+    `<span class="faction-badge faction-${escHtml(list.faction||'')}">${escHtml((list.faction||'').toUpperCase())}</span>`,
+    list.points?`<span>${list.points} pts</span>`:'',
+    nUnits?`<span>${nUnits} units</span>`:'',
+    list.createdAt?`<span>Saved ${escHtml(new Date(list.createdAt).toLocaleDateString())}</span>`:''];
+  document.getElementById('ld-meta').innerHTML=metaBits.filter(Boolean).join('');
+  document.getElementById('ld-progress').innerHTML=progressBar(listLearnProgress(list));
+  const hero=document.getElementById('ld-hero');
+  const lead=units.find(u=>savedUnitArt(u));
+  hero.style.setProperty('--hero-img',lead?`url("${savedUnitArt(lead)}")`:'none');
+  hero.className='ld-hero faction-edge-'+(list.faction||'');
+  const link=document.getElementById('ld-source-link');
+  if(list.armyUrl&&/^https?:\/\//.test(list.armyUrl)){
+    link.href=list.armyUrl; link.style.display='';
+  } else link.style.display='none';
+
+  // Roster
+  document.getElementById('ld-unit-count').textContent=nUnits?`${nUnits} units`:'';
+  const active=(list.keywords&&list.keywords.length)?list.keywords.map(kwParse):null;
+  const rosterEl=document.getElementById('ld-roster');
+  if(!units.length){
+    rosterEl.innerHTML=`<div class="lists-empty">This list was saved before unit details were kept.
+      Re-import it to see the roster.</div>`;
+  } else rosterEl.innerHTML=units.map(u=>{
+    const removed=new Set(active?(u.kws||[]).map(kwParse)
+      .filter(e=>!active.some(a=>kwSame(a,e))).map(e=>e.key):[]);
+    const srcs=unitKeywordSources(u,removed);
+    const art=savedUnitArt(u);
+    const cap=escHtml(JSON.stringify(u.name+(u.title?' — '+u.title:'')));
+    const img=art
+      ? `<img class="ld-unit-art" loading="lazy" src="${art}" alt=""
+           onclick="openImgViewer(${escHtml(JSON.stringify(art))},${cap})"
+           onerror="this.outerHTML='<div class=\\'ld-unit-art noimg\\'>No card art</div>'">`
+      : `<div class="ld-unit-art noimg">No card art</div>`;
+    const ttaU=ttaUnitFor(u);
+    const base=ttaU&&ttaU.c!==undefined?ttaU.c:(u.cost||0);
+    const upgCards=u.upgradeCards&&u.upgradeCards.length
+      ? u.upgradeCards : (u.upgrades||[]).map(n=>({n,c:0,i:''}));
+    const upgCost=up=>{ const t=ttaUpgradeOf(up); return t&&t.c!==undefined?t.c:(up.c||0); };
+    const each=base+upgCards.reduce((n,up)=>n+upgCost(up),0);
+    const upgs=upgCards.map(up=>{
+      const src=savedUpgradeArt(up);
+      const c=upgCost(up);
+      const ucap=escHtml(JSON.stringify(up.n));
+      return `<span class="ld-upg${src?'':' noart'}"${src?` onclick="openImgViewer(${escHtml(JSON.stringify(src))},${ucap})"`:''}>`+
+        (src?`<img loading="lazy" src="${src}" alt="" onerror="this.parentNode.classList.add('noart');this.remove()">`:'')+
+        `<span>${escHtml(up.n)}${c?` <em>${c}</em>`:''}</span></span>`;
+    }).join('');
+    const chips=g=>_kwChip(kwDisplay(g),g.card);
+    const unitKws=srcs.unit.map(chips).join('');
+    const upgKws=srcs.upgrades.map(chips).join('');
+    return `<div class="ld-unit">
+      ${img}
+      <div class="ld-unit-body">
+        <div class="ld-unit-head">
+          ${u.count>1?`<span class="list-unit-count">${u.count}&times;</span>`:''}
+          <span class="ld-unit-name">${escHtml(u.name)}</span>
+          ${u.title?`<span class="ld-unit-title">${escHtml(u.title)}</span>`:''}
+        </div>
+        <div class="ld-unit-sub">
+          ${u.rank?`<span class="ld-rank">${escHtml(u.rank)}</span>`:''}
+          ${each?`<span>${each} pts${u.count>1?' each':''}</span>`:''}
+        </div>
+        ${upgs?`<div class="ld-upgs">${upgs}</div>`:''}
+        ${unitKws?`<div class="ld-kwrow">${unitKws}</div>`:''}
+        ${upgKws?`<div class="ld-kwrow"><span class="ld-kwlbl">From upgrades</span>${upgKws}</div>`:''}
+      </div>
+    </div>`;
+  }).join('');
+
+  // Keywords: one chip per keyword meaning, filterable by type.
+  const entries=listKeywordEntries(list);
+  const typeOf=e=>e.card?(e.card.type||'other'):'other';
+  const counts={all:entries.length,unit:0,weapon:0,upgrade:0,concept:0,other:0};
+  entries.forEach(e=>{ const t=typeOf(e); counts[t in counts?t:'other']++; });
+  const learnedN=entries.filter(e=>e.card&&ST[e.card.name]&&ST[e.card.name].learned).length;
+  counts.todo=entries.length-learnedN;
+  document.getElementById('ld-kw-count').textContent=entries.length;
+  const filters=[['all','All'],['unit','Unit'],['weapon','Weapon'],['upgrade','Upgrade'],['concept','Concept'],['todo','Not learned']]
+    .filter(([k])=>k==='all'||counts[k]);
+  document.getElementById('ld-kw-filter').innerHTML=filters.map(([k,l])=>
+    `<button class="dark-pill${_ldKwFilter===k?' active':''}" onclick="setLdKwFilter('${k}')">${l} <span>${counts[k]}</span></button>`).join('');
+  const shown=entries.filter(e=>_ldKwFilter==='all'
+    ||(_ldKwFilter==='todo'?!(e.card&&ST[e.card.name]&&ST[e.card.name].learned):typeOf(e)===_ldKwFilter));
+  document.getElementById('ld-kws').innerHTML=shown.map(e=>_kwChip(e.name,e.card)).join('')
+    ||'<div class="lists-empty">Nothing here.</div>';
+
+  // Command cards (Tabletop Admiral JSON imports carry them).
+  const cmds=list.commandCards||[];
+  document.getElementById('ld-cmd-sec').style.display=cmds.length?'':'none';
+  document.getElementById('ld-cmds').innerHTML=cmds.map(n=>{
+    const name=String(n);
+    const idx=typeof COMMANDS!=='undefined'
+      ? COMMANDS.findIndex(c=>c.n.toLowerCase()===name.toLowerCase()) : -1;
+    const c=idx>=0?COMMANDS[idx]:null;
+    const pips=c&&c.p?'●'.repeat(c.p):'';
+    return `<div class="ld-cmd"${idx>=0?` onclick="openCmdModal(${idx})"`:''}>`+
+      (c&&c.i?`<img loading="lazy" src="images/commands/${encodeURIComponent(c.i)}" alt="" onerror="this.remove()">`:'')+
+      `<span>${pips?`<em>${pips}</em> `:''}${escHtml(name)}</span></div>`;
+  }).join('');
+
+  // Battlefield deck
+  const bd=list.battlefieldDeck;
+  document.getElementById('ld-bf-sec').style.display=bd?'':'none';
+  if(bd){
+    const grp=(h,a)=>a&&a.length?`<div class="ld-bf-grp"><div class="ld-kwlbl">${h}</div>${a.map(x=>`<div class="ld-bf-item">${escHtml(x)}</div>`).join('')}</div>`:'';
+    document.getElementById('ld-bf').innerHTML=
+      (bd.scenario?`<div class="ld-bf-scn">${escHtml(bd.scenario)}</div>`:'')+
+      grp('Objective',bd.objective)+grp('Deployment',bd.deployment)+grp('Conditions',bd.conditions);
   }
 }
+
+function openImgViewer(src,cap){
+  document.getElementById('img-viewer-img').src=src;
+  document.getElementById('img-viewer-cap').textContent=cap||'';
+  document.getElementById('img-viewer').classList.add('on');
+}
+function closeImgViewer(){ document.getElementById('img-viewer').classList.remove('on'); }
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeImgViewer(); });
 
 // kept for compatibility - just refreshes pill labels
 function updateListSelectDropdown(){ updateListPillLabel(); updateCatListPillLabel(); }
@@ -2105,6 +2357,7 @@ function lmSaveEdit(){
   openListModal(_lmListId);
   setLmTab('kw');
   renderSavedLists();
+  if(document.getElementById('list-screen').classList.contains('on')) renderListDetail();
   updateListPillLabel();
   // Update active filter if needed
   if(activeListId===_lmListId){ clrStatus(); initDeck(); render(); }
@@ -2170,11 +2423,11 @@ function findCardForKeyword(kw, cardByNorm){
   return card||null;
 }
 
-function printListKeywords(listId){
-  const list=getListById(listId);
-  if(!list||!list.keywords||!list.keywords.length){
-    alert('No keywords in this list to print.'); return;
-  }
+// One entry per keyword meaning in a list, with the units' real values:
+// [{name, card, value}] sorted A-Z. Shared by the keyword printout and the
+// list page.
+function listKeywordEntries(list){
+  if(!list||!list.keywords||!list.keywords.length) return [];
   // The list's keyword names come from Tabletop Admiral with "X" for the
   // value, so take the real values from the units: "Impact 1/4" when units
   // differ, "Assault 1" rather than "Assault X".
@@ -2197,12 +2450,20 @@ function printListKeywords(listId){
   groups.filter(g=>active.some(a=>kwSame(a,g))).forEach(collect);
   // Keywords added by hand in the Edit tab belong to no unit.
   active.filter(e=>!groups.some(g=>kwSame(g,e))).forEach(collect);
-  const entries=byMeaning.map(r=>{
+  return byMeaning.map(r=>{
     const vals=[...r.vals].sort((a,b)=>a-b);
     const param=r.param||r.paramRaw;
     const name=r.base+(vals.length?' '+vals.join('/'):(r.numeric?' X':''))+(param?': '+param:'');
     return {name, card:r.card, value:vals.length===1?vals[0]:null};
   }).sort((a,b)=>a.name.localeCompare(b.name));
+}
+
+function printListKeywords(listId){
+  const list=getListById(listId);
+  if(!list||!list.keywords||!list.keywords.length){
+    alert('No keywords in this list to print.'); return;
+  }
+  const entries=listKeywordEntries(list);
   const sorted=entries;
 
   const rows=entries.map(({name,card,value})=>{
@@ -3009,10 +3270,11 @@ function startApp(){
   updateAccountUI();
   applyPermImgs();
   annotateAllRules();
-  fitTopbarToNav();
   const aiBtn=document.getElementById('fs-ai-summary-btn');
   if(aiBtn) aiBtn.style.display=(_currentUser?.email==='martinjsleeman@gmail.com')?'':'none';
   setMode('learn');
+  // Lists are the home screen.
+  showScreen('lists-screen');
 }
 
 async function loadSharedContent(){
@@ -3057,6 +3319,7 @@ async function loadCloudState(){
     // Always clear stale cache first — even if there's no cloud row yet, a new
     // user must never inherit lists or card states from whoever logged in before them
     localStorage.removeItem('swlegion_lists');
+    localStorage.setItem('swlegion_data_owner', _currentUser.id);
     if(data){
       if(data.card_states && Object.keys(data.card_states).length){
         let merged = data.card_states;
@@ -3208,9 +3471,14 @@ async function authSignOut(){
 
 async function guestMode(){
   _isGuest = true; _currentUser = null;
-  // Guests never see another user's data — wipe any cached state from a previous login
-  localStorage.removeItem('swlegion_lists');
-  localStorage.removeItem('swlegion_v1');
+  // Guests never see another user's data: wipe cached state a signed-in
+  // account left behind. A guest's own lists and progress stay -- the sign-in
+  // screen promises "Guest progress is saved locally on this device".
+  if(localStorage.getItem('swlegion_data_owner')!=='guest'){
+    localStorage.removeItem('swlegion_lists');
+    localStorage.removeItem('swlegion_v1');
+  }
+  localStorage.setItem('swlegion_data_owner','guest');
   await loadSharedContent();  // guests still see owner's curated content
   hideAuthScreen();
   startApp();
@@ -3226,42 +3494,6 @@ function toggleAcctDropdown(){
       closeAcctDropdown(); document.removeEventListener('click',_c);
     }
   }); },0);
-}
-// The nav chips sit absolutely positioned over the top bar's right end, so the
-// top bar reserves their measured width (plus a gap) to keep the progress bar
-// from running underneath them. Re-measured whenever the chips change size.
-function fitTopbarToNav(){
-  const nav=document.getElementById('fs-nav-btns');
-  const bar=document.getElementById('fs-topbar');
-  if(!nav||!bar) return;
-  const fit=()=>{ if(nav.offsetWidth) bar.style.setProperty('--nav-clear',(nav.offsetWidth+26)+'px'); };
-  if(window.ResizeObserver) new ResizeObserver(fit).observe(nav);
-  fit();
-}
-
-// Top-bar Lists menu: every saved list with one-click print buttons, plus a
-// link through to the Lists screen for importing and editing.
-function toggleListsMenu(){
-  const dd=document.getElementById('lists-menu');
-  if(dd.classList.contains('open')){ closeListsMenu(); return; }
-  const lists=loadLists();
-  let html=lists.map(l=>`<div class="lists-menu-row">
-      <div class="lists-menu-name" title="${escHtml(l.name)}">${escHtml(l.name)}</div>
-      <button class="lists-menu-btn" onclick="closeListsMenu();printListUnits('${l.id}')" title="Print unit cards with their keywords">&#128444; By Unit</button>
-      <button class="lists-menu-btn" onclick="closeListsMenu();printListKeywords('${l.id}')" title="Print keywords as PDF">&#128438; PDF</button>
-    </div>`).join('');
-  if(!lists.length) html=`<div class="list-dd-item none-item">No lists saved yet</div>`;
-  html+=`<div class="acct-item lists-menu-manage" onclick="closeListsMenu();showScreen('lists-screen')">Import / manage lists&hellip;</div>`;
-  dd.innerHTML=html;
-  dd.classList.add('open');
-  setTimeout(()=>{ document.addEventListener('click', function _c(e){
-    if(!document.getElementById('lists-menu-wrap').contains(e.target)){
-      closeListsMenu(); document.removeEventListener('click',_c);
-    }
-  }); },0);
-}
-function closeListsMenu(){
-  document.getElementById('lists-menu').classList.remove('open');
 }
 function closeAcctDropdown(){
   document.getElementById('acct-dropdown').classList.remove('open');

@@ -1,1 +1,1 @@
-Lets the army skip the commander minimum; can be nominated to issue orders from command cards. Same-faction allies within range 3 may treat it as a commander with courage 2.
+Lets the army skip the commander minimum. With no commander left, it gains a Commander token, and same-faction allies within range 3 treat it as a commander with courage 2. Counts as a commander when building a command hand.

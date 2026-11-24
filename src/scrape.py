@@ -51,6 +51,8 @@ _SECTION_TYPES = {
     "UNIT KEYWORDS":                      "unit",
     "WEAPON KEYWORDS":                    "weapon",
     "UPGRADE AND COMMAND CARD KEYWORDS":  "upgrade",
+    # DOC61 (2026-11): "UPGRADE CARD, COMMAND CARD, AND MINIATURE KEYWORDS"
+    "UPGRADE CARD, COMMAND CARD":         "upgrade",
     "UPGRADE KEYWORDS":                   "upgrade",
     "COMMAND CARD KEYWORDS":              "upgrade",
 }
@@ -115,6 +117,10 @@ def _extract_keywords_new_format(pdf):
         nonlocal current_name_parts, current_def_parts, in_name
         name = _clean_text(' '.join(current_name_parts))
         defn = _clean_text(' '.join(current_def_parts))
+        # The rulebook's change log ("NOVEMBER 2026 UPDATE") sits in the
+        # glossary typography but is not a keyword.
+        if re.search(r'\b(19|20)\d\d\s+UPDATE\b', name.upper()):
+            name = ''
         if name and len(defn) > 20:
             display = _title_kw(name)
             keywords[display] = {
@@ -602,6 +608,31 @@ def rulebook_matcher(pdf_dict):
         f, b = _rulebook_keys(name)
         return full.get(f) or base.get(b)
     return match
+
+
+def retype_from_rulebook(cards):
+    """Give cards typed 'unit' only by default the rulebook's glossary section.
+
+    Cards added from Tabletop Admiral or from an override file are all typed
+    'unit', so Impact, Pierce and Repair showed up under Unit keywords. Where
+    the rulebook files a keyword under Weapon or Upgrade keywords, use that.
+    Concept cards keep their type. Returns the number of cards retyped.
+    """
+    pdf_path = find_pdf()
+    if not pdf_path:
+        return 0
+    if pdf_path not in _PDF_CACHE:
+        _PDF_CACHE[pdf_path] = extract_keywords_from_pdf(pdf_path) or {}
+    match = rulebook_matcher(_PDF_CACHE[pdf_path])
+    n = 0
+    for c in cards:
+        if c.get('type') != 'unit':
+            continue
+        hit = match(c['name'])
+        if hit and hit.get('type') in ('weapon', 'upgrade'):
+            c['type'] = hit['type']
+            n += 1
+    return n
 
 
 def fill_from_rulebook(cards, credit, only_credit='tabletopadmiral.com'):

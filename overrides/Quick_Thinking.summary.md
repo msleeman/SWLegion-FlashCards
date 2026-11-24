@@ -1,1 +1,1 @@
-Card action: gain 1 aim token and 1 dodge token.
+Card or free card action: gain 1 aim token and 1 dodge token.

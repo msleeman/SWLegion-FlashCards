@@ -1,1 +1,1 @@
-When a unit makes an attack that has the Anti-Materiel X keyword in the Attack Pool, if the defending unit is a Vehicle unit, upgrade X of that weapon’s attack dice.
+When this keyword is in an Attack Pool, if the unit defending from that Attack Pool is a Vehicle unit, upgrade X attack dice in the Attack Pool.
