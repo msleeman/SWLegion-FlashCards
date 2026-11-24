@@ -141,8 +141,7 @@
  },
  "Axe Woves|30": {
   "m": 1,
-  "t": "Add 1 Axe Woves miniature.",
-  "w": "LEADER. This unit gains INDEPENDENT: AIM 1 OR Dodge 1 and INFILTRATE."
+  "t": "Clan Kryze only. Add 1 Axe Woves miniature. Leader. This unit gains Independent: Aim 1 or Dodge 1 and Infiltrate."
  },
  "B1 Battle Droid Squad|38": {
   "m": 7,
@@ -310,8 +309,7 @@
   "t": "Choose up to 2 enemy units within and in LOS. Each chosen unit gains 1 Ploy token. Admiral Trench may make this Action twice per Activation. When an enemy Trooper unit within $and in LOS that has 1 or more Ploy tokens attacks an allied unit, you may spend 1 of those tokens. If you do, after the attack is resolved, the enemy unit gains 2 Suppression tokens."
  },
  "Champion of the Watch|0": {
-  "t": "人MANDALORIAN TROOPER OR ^ MANDALORIAN TROOPER ONLY. This unit changes its Affiliation to X.",
-  "w": "This unit gains THIS IS THE WAY: AIM 1 OR DODGE 1."
+  "t": "[COMMANDER] Mandalorian Trooper or [OPERATIVE] Mandalorian Trooper only. This unit changes its Affiliation to Children of the Watch. This unit gains This Is the Way: Aim 1 or Dodge 1."
  },
  "Chewbacca|0": {
   "m": 1,
@@ -324,14 +322,13 @@
   "w": "CHEWBACCA's BOWCASTER IMPACT 1"
  },
  "Children of the Watch|0": {
-  "t": "This unit changes its Affiliation to If this unit is a Mandalorian Warrior unit it gains THIs Is THE WAY: Dodge 1. If this unit is a Mandalorian Warrior (Fire Support) unit, it gains THIs Is THE WAY: Aim 1 instead."
+  "t": "Mandalorian Trooper only. This unit changes its Affiliation to Children of the Watch. If this unit is a Mandalorian Warrior unit, it gains This Is the Way: Dodge 1. If this unit is a Mandalorian Warrior (Fire Support) unit, it gains This Is the Way: Aim 1 instead."
  },
  "Clairvoyance|10": {
   "t": "When this unit attacks, it may [TAP] this card during the reroll dice step. If it does, it rerolls all of its attack dice, then converts any results as normal. You may not further modify the attack roll. When this unit defends, it may [× this card during the reroll dice step. If it does, it rerolls all of its defense dice, then converts any R7 results as normal. You may not further modify. the defense roll."
  },
  "Clan Kryze|0": {
-  "t": "This unit changes its Affiliation to ?",
-  "w": "This unit gain MANDALORIANs ARE STRONGER TOGETHER."
+  "t": "Mandalorian Trooper only. This unit changes its Affiliation to Clan Kryze. This unit gains Mandalorians Are Stronger Together."
  },
  "Clan Saxon|0": {
   "t": "This unit changes its affiliation to This unit gains Victory OR DEATH."
@@ -491,8 +488,7 @@
   "w": "DW-3 GRENADE LAUNCHER $1-2 FIXED: FRONT. BLAST"
  },
  "Deadeye|5": {
-  "t": "MANDALORIAN LEADER OR MANDALORIAN HUNTER ONLY. This unit gains TARGET 1",
-  "w": "and SHARPSHOOTER 1."
+  "t": "Mandalorian Leader or Mandalorian Hunter only. This unit gains Target 1 and Sharpshooter 1."
  },
  "Defend in Depth|10": {
   "t": "IMPERIAL AGENT OR IMPERIAL OFFICER ONLY. During the END Phase, choose 1 allied Trooper unit within of this unit. The chosen unit does not remove 1 Aim token.",
@@ -695,11 +691,11 @@
  },
  "Flame Projector|0": {
   "t": "When this unit attacks, 1 miniature in this unit may use the weapon below.",
-  "w": "FLAME PROJECTOR BLAST. SPRAY. SUPPRESSIVE"
+  "w": "Flame Projector Blast. Spray. Suppressive"
  },
  "Flame Projector|5": {
   "t": "When this unit attacks, 1 miniature in this unit may use the weapon below.",
-  "w": "FLAME PROJECTOR BLAST. SPRAY. SUPPRESSIVE"
+  "w": "Flame Projector Blast. Spray. Suppressive"
  },
  "Flametrooper|20": {
   "m": 1,
@@ -773,12 +769,12 @@
  },
  "GALAAR-90 Sniper Rifle|35": {
   "m": 1,
-  "t": "OR MANDALORIAN TROOPER ONLY. Add 1 GALAAR-90 Sniper miniature.",
-  "w": "GALAAR-90 SNIPER RIFLE LETHAL 1"
+  "t": "[SPECIAL FORCES] or [SUPPORT] Mandalorian Trooper only. Add 1 GALAAR-90 Sniper miniature.",
+  "w": "GALAAR-90 Sniper Rifle Lethal 1"
  },
  "GALAAR-90 Sniper Rifle|5": {
-  "t": "MANDALORIAN LEADER OR MANDALORIAN HUNTER ONLY This unit gains SHARPSHOOTER 1.",
-  "w": "GALAAR-90 SNIPER RIFLE HIGH VELOCITY. PIERCE 1"
+  "t": "Mandalorian Leader or Mandalorian Hunter only. This unit gains Sharpshooter 1.",
+  "w": "GALAAR-90 Sniper Rifle High Velocity. Pierce 1"
  },
  "Gang Boss|10": {
   "t": "This unit gains Command VEHICLE 2. Only units may benefit from this unit's",
@@ -1017,8 +1013,8 @@
   "t": "JEDI KNIGHT OR JEDI KNIGHT GENERAL ONLY. If this unit has Block, it gains Outmaneuver. If it does not, this unit gains Block instead. This unit's Melee Weapons gains CRITICAL 1. This unit gains JUMP 1."
  },
  "Jetpack Rockets|10": {
-  "t": "",
-  "w": "JETPACK RoCKETS h-E? ANTI MATERIEL 4. IMPACT 4"
+  "t": "Mandalorian Trooper only.",
+  "w": "Jetpack Rockets Anti-Materiel 4. Impact 4"
  },
  "Jetpack Rockets|5": {
   "t": "",
@@ -1152,8 +1148,8 @@
  },
  "Micro-Grenade Launcher|22": {
   "m": 1,
-  "t": "Add 1 Micro-Grenade Launcher Mandalorian miniature. CYCLE.",
-  "w": "MICRO-GRENADE LAUNCHER $1-2 BLAST. IMPACT 1"
+  "t": "Mandalorian Trooper only. Add 1 Micro-Grenade Launcher Mandalorian miniature. Cycle.",
+  "w": "Micro-Grenade Launcher Blast. Impact 1"
  },
  "Missile Pod Rocket Droid|24": {
   "m": 1,
@@ -1261,8 +1257,8 @@
  },
  "Paz Vizsla|40": {
   "m": 1,
-  "t": "Add 1 Paz Vizsla miniature. LEADER. This unit gains THIS IS THE WAY: AIM 1.",
-  "w": "REPEATING Blast ER OVERWHELM"
+  "t": "Add 1 Paz Vizsla miniature. Leader. This unit gains This Is the Way: Aim 1.",
+  "w": "Repeating Blaster Overwhelm"
  },
  "Personal Combat Shield|10": {
   "t": "人MANDALORIAN TROOPER OR ^ MANDALORIAN TROOPER ONLY. This unit gains SHIELDED 1 and RECHARGE 1. During the End Phase, if this unit did not flip any active Shield tokens this Round, it may flip up to 1 of its inactive Shield tokens."
@@ -1441,8 +1437,8 @@
  },
  "SHUKUR-05 Repeater|28": {
   "m": 1,
-  "t": "Add 1 SHUKUR-05 Mandalorian miniature.",
-  "w": "SHUKUR-05 Repeat ER OVERWHELM"
+  "t": "Mandalorian Trooper only. Add 1 SHUKUR-05 Mandalorian miniature.",
+  "w": "SHUKUR-05 Repeater Overwhelm"
  },
  "SM-9 Frag Launcher|40": {
   "m": 1,
@@ -1708,8 +1704,8 @@
   "w": "THE DARKSABER Impact 2. Pierce 2"
  },
  "The Darksaber|10": {
-  "t": "This unit gains ALLIES OF Convenience and IMMUNE: PIERCE Allied Mandalorian Trooper units gain MANDALORIANS ARE STRONGER TOGETHER.",
-  "w": "THE DARKSABER Impact 1. Pierce 1"
+  "t": "Bo-Katan Kryze only. Mandalorian Clans only. This unit gains Allies of Convenience and Immune: Pierce. Allied Mandalorian Trooper units gain Mandalorians Are Stronger Together.",
+  "w": "The Darksaber Impact 1. Pierce 1"
  },
  "The Darksaber|15": {
   "t": "This unit gains Demoralize 1 and IMMUNE: MELEE PIERCE.",
@@ -1826,8 +1822,7 @@
   "w": "RECON Blast ER"
  },
  "War Party Leader|5": {
-  "t": "This unit increases its by 1. This unit gains",
-  "w": "DIRECT: MERCENARY TROOPER and INSPIRE 1."
+  "t": "Mandalorian Leader only. This unit increases its [COURAGE] by 1. This unit gains Direct: Mercenary Trooper and Inspire 1."
  },
  "Waxer|20": {
   "m": 1,
